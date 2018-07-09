@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+#!/bin/sh
 #
 # This file is part of REANA.
 # Copyright (C) 2018 CERN.
@@ -20,4 +20,4 @@
 # granted to it by virtue of its status as an Intergovernmental Organization or
 # submit itself to any jurisdiction.
 
--e git+git://github.com/reanahub/reana-commons.git#egg=reana-commons
+sphinx-build -qnN docs docs/_build/html
