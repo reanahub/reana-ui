@@ -1,0 +1,4 @@
+.. _developerguide:
+
+Developer guide
+===============
