@@ -34,7 +34,7 @@ Features
 Useful links
 ------------
 
-- `documentation <https://reana-cluster.readthedocs.io/>`_
+- `documentation <https://reana-ui.readthedocs.io/>`_
 - `releases <https://github.com/reanahub/reana-ui/releases>`_
 - `known issues <https://github.com/reanahub/reana-ui/issues>`_
 - `source code <https://github.com/reanahub/reana-ui>`_
