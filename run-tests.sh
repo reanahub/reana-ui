@@ -21,3 +21,4 @@
 # submit itself to any jurisdiction.
 
 sphinx-build -qnN docs docs/_build/html
+prettier reana-ui/src/**/*.js --list-different

@@ -3,6 +3,9 @@
 Developer guide
 ===============
 
+Quick start
+-----------
+
 This guide explains how to locally-start REANA-UI, with reloading activated:
 
 1. Clone reana-ui Github project into your computer
@@ -34,3 +37,22 @@ This guide explains how to locally-start REANA-UI, with reloading activated:
       To create a production build, use npm run build.
 
 4. Open the browser in localhost:3000 (address by default)
+
+
+Code style
+----------
+
+We are using Prettier to format our code. In order to use it before a Pull Request:
+
+1. Install the package from NPM
+
+   .. code-block:: console
+
+      $ npm install prettier
+
+
+2. Style your code
+
+   .. code-block:: console
+
+      $ prettier --write **/*.js
