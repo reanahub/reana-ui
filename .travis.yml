@@ -1,0 +1,19 @@
+notifications:
+  email: false
+
+sudo: false
+
+language: node_js
+
+node_js:
+  - "6"
+
+python:
+  - "2.7"
+
+before_script:
+  - pip install --user -r docs/requirements.txt
+  - npm install prettier
+
+script:
+  - ./run-tests.sh
