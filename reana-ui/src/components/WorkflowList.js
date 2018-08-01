@@ -21,26 +21,28 @@
 	submit itself to any jurisdiction.
 */
 
+import axios from "axios";
 import React, { Component } from "react";
 import { Icon, Menu, Segment, Table } from "semantic-ui-react";
 import WorkflowProgress from "./WorkflowProgress";
 import WorkflowActions from "./WorkflowActions";
 import _ from "lodash";
-
-const URL = "http://reana-dev.cern.ch/api/workflows?";
-const TOKEN = "<ACCESS_TOKEN>";
-const POOLING_PERIOD = 5;
+import Config from "../config";
 
 export default class WorkflowList extends Component {
   /**
    * Variables defining the state of the table
    */
-  state = {
-    column: null,
-    data: [],
-    direction: null,
-    interval: null
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      column: null,
+      data: [],
+      direction: null,
+      interval: null,
+      token: this.props.token
+    };
+  }
 
   /**
    * Transforms millisecond into a 'HH MM SS' string format
@@ -82,16 +84,20 @@ export default class WorkflowList extends Component {
    * Gets data from the specified API
    */
   getData() {
-    fetch(URL + "access_token=" + TOKEN)
-      .then(response => response.json())
-      .then(data => {
-        const { column, direction } = this.state;
+    const { column, direction, token } = this.state;
 
-        data = _.sortBy(WorkflowList.parseData(data), [column]);
-        this.setState({
-          data: direction === "descending" ? data.reverse() : data
-        });
+    axios({
+      method: "get",
+      url: Config.api + "/api/workflows",
+      headers: {
+        Authorization: "JWT " + token
+      }
+    }).then(res => {
+      let data = _.sortBy(WorkflowList.parseData(res.data), [column]);
+      this.setState({
+        data: direction === "descending" ? data.reverse() : data
       });
+    });
   }
 
   /**
@@ -102,7 +108,7 @@ export default class WorkflowList extends Component {
     this.setState({
       interval: setInterval(() => {
         this.getData();
-      }, POOLING_PERIOD * 1000)
+      }, Config.pooling_secs * 1000)
     });
   }
 

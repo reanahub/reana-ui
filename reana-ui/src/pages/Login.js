@@ -22,64 +22,10 @@
 */
 
 import React, { Component } from "react";
-import {
-  Button,
-  Divider,
-  Form,
-  Grid,
-  Image,
-  Message,
-  Segment
-} from "semantic-ui-react";
-import LogoImg from "../images/logo-reana.svg";
+import LoginForm from "../components/LoginForm";
 
 export default class LoginPage extends Component {
   render() {
-    return (
-      <div className="login-form">
-        <style>{`
-          body > div,
-          body > div > div,
-          body > div > div > div.login-form {
-            height: 100%;
-          }
-    `}</style>
-        <Grid
-          textAlign="center"
-          style={{ height: "100%" }}
-          verticalAlign="middle"
-        >
-          <Grid.Column style={{ maxWidth: 450 }}>
-            <Image centered spaced src={LogoImg} size="small" />
-            <Divider />
-            <Form size="large">
-              <Segment stacked>
-                <Form.Input
-                  fluid
-                  icon="user"
-                  iconPosition="left"
-                  placeholder="E-mail"
-                  name="email"
-                />
-                <Form.Input
-                  fluid
-                  icon="lock"
-                  iconPosition="left"
-                  placeholder="Token"
-                  name="token"
-                />
-
-                <Button color="blue" fluid size="large">
-                  Login
-                </Button>
-              </Segment>
-            </Form>
-            <Message>
-              New to us? <a href="#">Sign Up</a>
-            </Message>
-          </Grid.Column>
-        </Grid>
-      </div>
-    );
+    return <LoginForm />;
   }
 }
