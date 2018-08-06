@@ -24,12 +24,12 @@
 import axios from "axios";
 import React, { Component } from "react";
 import { Icon, Menu, Segment, Table } from "semantic-ui-react";
-import WorkflowProgress from "./WorkflowProgress";
-import WorkflowActions from "./WorkflowActions";
+import WorkflowsProgress from "./WorkflowsProgress";
+import WorkflowsActions from "./WorkflowsActions";
 import _ from "lodash";
-import Config from "../config";
+import Config from "../../config";
 
-export default class WorkflowList extends Component {
+export default class WorkflowsList extends Component {
   /**
    * Variables defining the state of the table
    */
@@ -75,7 +75,7 @@ export default class WorkflowList extends Component {
       let date = new Date(workflow["created"]);
       workflow["created"] =
         date.getFullYear() + "-" + date.getMonth() + "-" + date.getDate();
-      workflow["duration"] = WorkflowList.msToTime(Date.now() - date.getTime());
+      workflow["duration"] = WorkflowsList.msToTime(Date.now() - date.getTime());
     });
 
     return data;
@@ -94,7 +94,7 @@ export default class WorkflowList extends Component {
         Authorization: "JWT " + jwt_token
       }
     }).then(res => {
-      let data = _.sortBy(WorkflowList.parseData(res.data), [column]);
+      let data = _.sortBy(WorkflowsList.parseData(res.data), [column]);
       this.setState({
         data: direction === "descending" ? data.reverse() : data
       });
@@ -135,7 +135,7 @@ export default class WorkflowList extends Component {
   };
 
   render() {
-    const { column, data, direction } = this.state;
+    const { column, data, direction, token } = this.state;
 
     return (
       <Segment attached padded="very">
@@ -195,11 +195,11 @@ export default class WorkflowList extends Component {
                 <Table.Cell colSpan="2">{created}</Table.Cell>
                 <Table.Cell colSpan="2">{duration}</Table.Cell>
                 <Table.Cell colSpan="8">
-                  <WorkflowProgress completed={0} total={0} status={status} />
+                  <WorkflowsProgress completed={0} total={0} status={status} />
                 </Table.Cell>
                 <Table.Cell colSpan="1">{status}</Table.Cell>
                 <Table.Cell colSpan="4">
-                  <WorkflowActions status={status} />
+                  <WorkflowsActions status={status} id={id} token={token} />
                 </Table.Cell>
               </Table.Row>
             ))}

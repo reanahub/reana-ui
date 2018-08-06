@@ -34,9 +34,9 @@ import {
   Segment
 } from "semantic-ui-react";
 
-import LogoImg from "../images/logo-reana.svg";
-import WorkflowPage from "../pages/Workflows";
-import Config from "../config";
+import LogoImg from "../../images/logo-reana.svg";
+import WorkflowPage from "../../pages/WorkflowsList";
+import Config from "../../config";
 
 export default class LoginPage extends Component {
   /**

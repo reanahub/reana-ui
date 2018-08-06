@@ -22,19 +22,43 @@
 */
 
 import React, { Component } from "react";
-import Header from "../components/Header";
-import WorkflowList from "../components/WorkflowList";
+import { Progress } from "semantic-ui-react";
 
-export default class WorkflowsPage extends Component {
+export default class WorkflowsProgress extends Component {
+  static handleActive(status) {
+    return status === "running";
+  }
+
+  static handleColor(status) {
+    if (status === "created") {
+      return "grey";
+    }
+    if (status === "running") {
+      return "blue";
+    } else if (status === "finished") {
+      return "green";
+    } else if (status === "failed") {
+      return "red";
+    }
+  }
+
+  static handlePercentage(completedSteps, totalSteps) {
+    return Math.floor((completedSteps * 100) / totalSteps);
+  }
+
   render() {
     return (
-      <div>
-        <Header />
-        <WorkflowList
-          token={this.props.token}
-          jwt_token={this.props.jwt_token}
-        />
-      </div>
+      <Progress
+        size="small"
+        percent={WorkflowsProgress.handlePercentage(
+          this.props.completed,
+          this.props.total
+        )}
+        color={WorkflowsProgress.handleColor(this.props.status)}
+        active={WorkflowsProgress.handleActive(this.props.status)}
+      >
+        {this.props.completed} / {this.props.total}
+      </Progress>
     );
   }
 }

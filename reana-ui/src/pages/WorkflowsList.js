@@ -22,10 +22,19 @@
 */
 
 import React, { Component } from "react";
-import LoginForm from "../components/login/LoginForm";
+import Header from "../components/Header";
+import WorkflowsList from "../components/workflowsList/WorkflowsList";
 
-export default class LoginPage extends Component {
+export default class WorkflowsListPage extends Component {
   render() {
-    return <LoginForm />;
+    return (
+      <div>
+        <Header />
+        <WorkflowsList
+          token={this.props.token}
+          jwt_token={this.props.jwt_token}
+        />
+      </div>
+    );
   }
 }

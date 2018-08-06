@@ -22,9 +22,11 @@
 */
 
 import React, { Component } from "react";
+import ReactDOM from "react-dom";
 import { Button } from "semantic-ui-react";
+import WorkflowDetailsPage from "../../pages/WorkflowDetails";
 
-export default class WorkflowActions extends Component {
+export default class WorkflowsActions extends Component {
   static disableView() {
     return false;
   }
@@ -41,28 +43,39 @@ export default class WorkflowActions extends Component {
     return status === "created" || status === "running";
   }
 
+  static showDetails = (id, token) => () => {
+    ReactDOM.render(
+      <WorkflowDetailsPage id={id} token={token} />,
+      document.getElementById("root")
+    );
+  };
+
   render() {
     return (
       <Button.Group basic icon size="tiny" color="blue" widths="4">
         <Button
-          disabled={WorkflowActions.disableView()}
+          disabled={WorkflowsActions.disableView()}
+          onClick={WorkflowsActions.showDetails(
+            this.props.id,
+            this.props.token
+          )}
           icon="eye"
           content=" View"
           compact
         />
         <Button
-          disabled={WorkflowActions.disablePause()}
+          disabled={WorkflowsActions.disablePause()}
           icon="pause"
           content=" Pause"
           compact
         />
         <Button
-          disabled={WorkflowActions.disableResume(this.props.status)}
+          disabled={WorkflowsActions.disableResume(this.props.status)}
           icon="play"
           content=" Resume"
         />
         <Button
-          disabled={WorkflowActions.disableRunnable(this.props.status)}
+          disabled={WorkflowsActions.disableRunnable(this.props.status)}
           icon="refresh"
           content=" Rerun"
         />
