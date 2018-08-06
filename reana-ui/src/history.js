@@ -21,30 +21,6 @@
 	submit itself to any jurisdiction.
 */
 
-import React, { Component } from "react";
-import { Segment, Image, Button, Menu, Icon } from "semantic-ui-react";
-import LogoImg from "../images/logo-reana.svg";
+import { createBrowserHistory } from "history";
 
-export default class Header extends Component {
-  render() {
-    return (
-      <Segment secondary clearing attached="top" padded>
-        <Image src={LogoImg} size="small" floated="left" />
-        <Button size="medium" icon primary floated="right">
-          <Icon name="user" />
-        </Button>
-        <Menu size="small" floated="right">
-          <Menu.Item href="http://www.reana.io" target="_blank">
-            About
-          </Menu.Item>
-          <Menu.Item
-            href="https://reana.readthedocs.io/en/latest/"
-            target="_blank"
-          >
-            Documentation
-          </Menu.Item>
-        </Menu>
-      </Segment>
-    );
-  }
-}
+export default createBrowserHistory();

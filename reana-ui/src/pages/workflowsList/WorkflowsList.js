@@ -22,21 +22,18 @@
 */
 
 import React, { Component } from "react";
-import Header from "../components/Header";
-import WorkflowInputs from "../components/workflowDetails/WorkflowInputs";
-import WorkflowSteps from "../components/workflowDetails/WorkflowSteps";
-import WorkflowOutputs from "../components/workflowDetails/WorkflowOutputs";
-import WorkflowLogs from "../components/workflowDetails/WorkflowLogs";
+import Header from "../../components/Header";
+import WorkflowsList from "./components/WorkflowsList";
 
-export default class WorkflowDetailsPage extends Component {
+export default class WorkflowsListPage extends Component {
   render() {
     return (
       <div>
         <Header />
-        <WorkflowInputs />
-        <WorkflowSteps />
-        <WorkflowOutputs />
-        <WorkflowLogs />
+        <WorkflowsList
+          token={this.props.token}
+          jwt_token={this.props.jwt_token}
+        />
       </div>
     );
   }

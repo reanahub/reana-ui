@@ -23,7 +23,26 @@
 
 import React from "react";
 import ReactDOM from "react-dom";
-import LoginPage from "./pages/Login";
+import { Router, Route } from "react-router-dom";
+import history from "./history";
+import LoginPage from "./pages/login/Login";
+import WorkflowsList from "./pages/workflowsList/WorkflowsList";
+import WorkflowDetails from "./pages/workflowDetails/WorkflowDetails";
 import "semantic-ui-css/semantic.min.css";
 
-ReactDOM.render(<LoginPage />, document.getElementById("root"));
+ReactDOM.render(
+  <Router history={history}>
+    <div>
+      <Route exact path="/" component={LoginPage} />
+      <Route
+        path="/workflows"
+        render={props => <WorkflowsList {...props.location.state} />}
+      />
+      <Route
+        path="/details"
+        render={props => <WorkflowDetails {...props.location.state} />}
+      />
+    </div>
+  </Router>,
+  document.getElementById("root")
+);

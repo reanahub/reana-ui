@@ -22,10 +22,21 @@
 */
 
 import React, { Component } from "react";
-import LoginForm from "../components/login/LoginForm";
+import { Grid } from "semantic-ui-react";
+import Header from "../../components/Header";
+import WorkflowHeader from "./components/WorkflowHeader";
+import WorkflowFiles from "./components/WorkflowFiles";
 
-export default class LoginPage extends Component {
+export default class WorkflowDetailsPage extends Component {
   render() {
-    return <LoginForm />;
+    return (
+      <div>
+        <Header />
+        <Grid columns="equal" padded>
+          <WorkflowHeader id={this.props.id} token={this.props.token} />
+          <WorkflowFiles id={this.props.id} token={this.props.token} />
+        </Grid>
+      </div>
+    );
   }
 }

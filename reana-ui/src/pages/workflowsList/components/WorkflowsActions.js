@@ -22,9 +22,8 @@
 */
 
 import React, { Component } from "react";
-import ReactDOM from "react-dom";
+import history from "../../../history";
 import { Button } from "semantic-ui-react";
-import WorkflowDetailsPage from "../../pages/WorkflowDetails";
 
 export default class WorkflowsActions extends Component {
   static disableView() {
@@ -43,11 +42,12 @@ export default class WorkflowsActions extends Component {
     return status === "created" || status === "running";
   }
 
-  static showDetails = (id, token) => () => {
-    ReactDOM.render(
-      <WorkflowDetailsPage id={id} token={token} />,
-      document.getElementById("root")
-    );
+  static showDetails = (id, token, listInterval) => () => {
+    clearInterval(listInterval);
+    history.push("/details", {
+      id: id,
+      token: token
+    });
   };
 
   render() {
@@ -57,7 +57,8 @@ export default class WorkflowsActions extends Component {
           disabled={WorkflowsActions.disableView()}
           onClick={WorkflowsActions.showDetails(
             this.props.id,
-            this.props.token
+            this.props.token,
+            this.props.interval
           )}
           icon="eye"
           content=" View"

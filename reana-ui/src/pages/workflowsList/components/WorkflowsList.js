@@ -27,7 +27,7 @@ import { Icon, Menu, Segment, Table } from "semantic-ui-react";
 import WorkflowsProgress from "./WorkflowsProgress";
 import WorkflowsActions from "./WorkflowsActions";
 import _ from "lodash";
-import Config from "../../config";
+import Config from "../../../config";
 
 export default class WorkflowsList extends Component {
   /**
@@ -75,7 +75,9 @@ export default class WorkflowsList extends Component {
       let date = new Date(workflow["created"]);
       workflow["created"] =
         date.getFullYear() + "-" + date.getMonth() + "-" + date.getDate();
-      workflow["duration"] = WorkflowsList.msToTime(Date.now() - date.getTime());
+      workflow["duration"] = WorkflowsList.msToTime(
+        Date.now() - date.getTime()
+      );
     });
 
     return data;
@@ -135,7 +137,7 @@ export default class WorkflowsList extends Component {
   };
 
   render() {
-    const { column, data, direction, token } = this.state;
+    const { column, data, direction, interval, token } = this.state;
 
     return (
       <Segment attached padded="very">
@@ -199,7 +201,12 @@ export default class WorkflowsList extends Component {
                 </Table.Cell>
                 <Table.Cell colSpan="1">{status}</Table.Cell>
                 <Table.Cell colSpan="4">
-                  <WorkflowsActions status={status} id={id} token={token} />
+                  <WorkflowsActions
+                    interval={interval}
+                    status={status}
+                    id={id}
+                    token={token}
+                  />
                 </Table.Cell>
               </Table.Row>
             ))}

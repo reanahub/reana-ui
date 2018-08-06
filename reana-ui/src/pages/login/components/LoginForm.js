@@ -23,7 +23,7 @@
 
 import axios from "axios";
 import React, { Component } from "react";
-import ReactDOM from "react-dom";
+import history from "../../../history";
 import {
   Button,
   Divider,
@@ -34,13 +34,12 @@ import {
   Segment
 } from "semantic-ui-react";
 
-import LogoImg from "../../images/logo-reana.svg";
-import WorkflowPage from "../../pages/WorkflowsList";
-import Config from "../../config";
+import LogoImg from "../../../images/logo-reana.svg";
+import Config from "../../../config";
 
 export default class LoginForm extends Component {
   /**
-   * Variables defining the state of the login
+   * Variables defining the state of the components
    */
   constructor(props) {
     super(props);
@@ -77,11 +76,10 @@ export default class LoginForm extends Component {
     })
       .then(res => {
         this.setState({ show_message: false });
-        let data = res.data;
-        ReactDOM.render(
-          <WorkflowPage token={token} jwt_token={data["access_token"]} />,
-          document.getElementById("root")
-        );
+        history.push("/workflows", {
+          token: token,
+          jwt_token: res.data["access_token"]
+        });
       })
       .catch(error => {
         this.setState({ show_message: true });
