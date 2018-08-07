@@ -23,7 +23,7 @@
 
 import React from "react";
 import ReactDOM from "react-dom";
-import App from "./App";
+import LoginPage from "./pages/Login";
 import "semantic-ui-css/semantic.min.css";
 
-ReactDOM.render(<App />, document.getElementById("root"));
+ReactDOM.render(<LoginPage />, document.getElementById("root"));

@@ -38,7 +38,7 @@ import LogoImg from "../../images/logo-reana.svg";
 import WorkflowPage from "../../pages/WorkflowsList";
 import Config from "../../config";
 
-export default class LoginPage extends Component {
+export default class LoginForm extends Component {
   /**
    * Variables defining the state of the login
    */
