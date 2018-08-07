@@ -30,7 +30,10 @@ export default class WorkflowsPage extends Component {
     return (
       <div>
         <Header />
-        <WorkflowList token={this.props.token} />
+        <WorkflowList
+          token={this.props.token}
+          jwt_token={this.props.jwt_token}
+        />
       </div>
     );
   }

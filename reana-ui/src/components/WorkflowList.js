@@ -40,7 +40,8 @@ export default class WorkflowList extends Component {
       data: [],
       direction: null,
       interval: null,
-      token: this.props.token
+      token: this.props.token,
+      jwt_token: this.props.jwt_token
     };
   }
 
@@ -84,13 +85,13 @@ export default class WorkflowList extends Component {
    * Gets data from the specified API
    */
   getData() {
-    const { column, direction, token } = this.state;
+    const { column, direction, jwt_token } = this.state;
 
     axios({
       method: "get",
       url: Config.api + "/api/workflows",
       headers: {
-        Authorization: "JWT " + token
+        Authorization: "JWT " + jwt_token
       }
     }).then(res => {
       let data = _.sortBy(WorkflowList.parseData(res.data), [column]);

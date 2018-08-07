@@ -79,7 +79,7 @@ export default class LoginPage extends Component {
         this.setState({ show_message: false });
         let data = res.data;
         ReactDOM.render(
-          <WorkflowPage token={data["access_token"]} />,
+          <WorkflowPage token={token} jwt_token={data["access_token"]} />,
           document.getElementById("root")
         );
       })
