@@ -24,6 +24,7 @@
 import React, { Component } from "react";
 import history from "../../../history";
 import { Button } from "semantic-ui-react";
+import State from "../../../state";
 
 export default class WorkflowsActions extends Component {
   static disableView() {
@@ -42,12 +43,13 @@ export default class WorkflowsActions extends Component {
     return status === "created" || status === "running";
   }
 
-  static showDetails = (id, token, listInterval) => () => {
-    clearInterval(listInterval);
-    history.push("/details", {
-      id: id,
-      token: token
-    });
+  static showDetails = (id, name, run, created, status) => () => {
+    State.details.id = id;
+    State.details.name = name;
+    State.details.run = run;
+    State.details.created = created;
+    State.details.status = status;
+    history.push("/details");
   };
 
   render() {
@@ -57,8 +59,10 @@ export default class WorkflowsActions extends Component {
           disabled={WorkflowsActions.disableView()}
           onClick={WorkflowsActions.showDetails(
             this.props.id,
-            this.props.token,
-            this.props.interval
+            this.props.name,
+            this.props.run,
+            this.props.created,
+            this.props.status
           )}
           icon="eye"
           content=" View"

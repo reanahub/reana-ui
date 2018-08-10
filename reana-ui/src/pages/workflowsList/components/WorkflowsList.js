@@ -21,13 +21,14 @@
 	submit itself to any jurisdiction.
 */
 
-import axios from "axios";
 import React, { Component } from "react";
+import axios from "axios";
+import _ from "lodash";
 import { Icon, Menu, Segment, Table } from "semantic-ui-react";
 import WorkflowsProgress from "./WorkflowsProgress";
 import WorkflowsActions from "./WorkflowsActions";
-import _ from "lodash";
 import Config from "../../../config";
+import State from "../../../state";
 
 export default class WorkflowsList extends Component {
   /**
@@ -35,13 +36,11 @@ export default class WorkflowsList extends Component {
    */
   constructor(props) {
     super(props);
+    this.interval = null;
     this.state = {
       column: null,
       data: [],
-      direction: null,
-      interval: null,
-      token: this.props.token,
-      jwt_token: this.props.jwt_token
+      direction: null
     };
   }
 
@@ -67,17 +66,15 @@ export default class WorkflowsList extends Component {
   static parseData(data) {
     if (!Array.isArray(data)) return [];
 
-    data.forEach(workflow => {
-      let info = workflow["name"].split(".");
-      workflow["name"] = info[0];
-      workflow["run"] = info[1];
+    data.forEach(wf => {
+      let info = wf["name"].split(".");
+      wf["name"] = info[0];
+      wf["run"] = info[1];
 
-      let date = new Date(workflow["created"]);
-      workflow["created"] =
+      let date = new Date(wf["created"]);
+      wf["created"] =
         date.getFullYear() + "-" + date.getMonth() + "-" + date.getDate();
-      workflow["duration"] = WorkflowsList.msToTime(
-        Date.now() - date.getTime()
-      );
+      wf["duration"] = WorkflowsList.msToTime(Date.now() - date.getTime());
     });
 
     return data;
@@ -87,13 +84,13 @@ export default class WorkflowsList extends Component {
    * Gets data from the specified API
    */
   getData() {
-    const { column, direction, jwt_token } = this.state;
+    const { column, direction } = this.state;
 
     axios({
       method: "get",
       url: Config.api + "/api/workflows",
       headers: {
-        Authorization: "JWT " + jwt_token
+        Authorization: "JWT " + State.login.jwt_token
       }
     }).then(res => {
       let data = _.sortBy(WorkflowsList.parseData(res.data), [column]);
@@ -108,11 +105,16 @@ export default class WorkflowsList extends Component {
    */
   componentDidMount() {
     this.getData();
-    this.setState({
-      interval: setInterval(() => {
-        this.getData();
-      }, Config.pooling_secs * 1000)
-    });
+    this.interval = setInterval(() => {
+      this.getData();
+    }, Config.pooling_secs * 1000);
+  }
+
+  /**
+   * Default runnable method when the component is unloaded
+   */
+  componentWillUnmount() {
+    clearInterval(this.interval);
   }
 
   /**
@@ -137,7 +139,7 @@ export default class WorkflowsList extends Component {
   };
 
   render() {
-    const { column, data, direction, interval, token } = this.state;
+    const { column, data, direction } = this.state;
 
     return (
       <Segment attached padded="very">
@@ -202,10 +204,11 @@ export default class WorkflowsList extends Component {
                 <Table.Cell colSpan="1">{status}</Table.Cell>
                 <Table.Cell colSpan="4">
                   <WorkflowsActions
-                    interval={interval}
-                    status={status}
                     id={id}
-                    token={token}
+                    name={name}
+                    run={run}
+                    created={created}
+                    status={status}
                   />
                 </Table.Cell>
               </Table.Row>

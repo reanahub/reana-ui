@@ -22,11 +22,12 @@
 */
 
 import React, { Component } from "react";
+import axios from "axios";
+import _ from "lodash";
 import { Grid, List, Header, Segment } from "semantic-ui-react";
 import WorkflowSteps from "./WorkflowSteps";
 import Config from "../../../config";
-import axios from "axios";
-import _ from "lodash";
+import State from "../../../state";
 
 export default class WorkflowFiles extends Component {
   /**
@@ -45,13 +46,11 @@ export default class WorkflowFiles extends Component {
    * Gets data from the specified API
    */
   getData() {
-    const { id, token } = this.state;
-
     axios({
       method: "get",
-      url: Config.api + "/api/workflows/" + id + "/workspace",
+      url: Config.api + "/api/workflows/" + State.details.id + "/workspace",
       params: {
-        access_token: token
+        access_token: State.login.user_token
       }
     }).then(res => {
       this.setState({

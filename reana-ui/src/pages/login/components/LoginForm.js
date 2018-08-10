@@ -36,6 +36,7 @@ import {
 
 import LogoImg from "../../../images/logo-reana.svg";
 import Config from "../../../config";
+import State from "../../../state";
 
 export default class LoginForm extends Component {
   /**
@@ -44,8 +45,8 @@ export default class LoginForm extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      email: "",
-      token: "",
+      input_email: "",
+      input_token: "",
       show_message: false
     };
   }
@@ -61,7 +62,7 @@ export default class LoginForm extends Component {
    * Handling submit button
    */
   handleSubmit = () => {
-    const { email, token } = this.state;
+    const { input_email, input_token } = this.state;
 
     axios({
       method: "post",
@@ -70,16 +71,15 @@ export default class LoginForm extends Component {
         "Content-type": "application/json"
       },
       data: {
-        username: email,
-        password: token
+        username: input_email,
+        password: input_token
       }
     })
       .then(res => {
         this.setState({ show_message: false });
-        history.push("/workflows", {
-          token: token,
-          jwt_token: res.data["access_token"]
-        });
+        State.login.user_token = input_token;
+        State.login.jwt_token = res.data["access_token"];
+        history.push("/workflows");
       })
       .catch(error => {
         this.setState({ show_message: true });
@@ -87,7 +87,7 @@ export default class LoginForm extends Component {
   };
 
   render() {
-    const { email, token, show_message } = this.state;
+    const { input_email, input_token, show_message } = this.state;
     return (
       <div className="login-form">
         <style>{`
@@ -112,8 +112,8 @@ export default class LoginForm extends Component {
                   icon="user"
                   iconPosition="left"
                   placeholder="E-mail"
-                  name="email"
-                  value={email}
+                  name="input_email"
+                  value={input_email}
                   onChange={this.handleChange}
                 />
                 <Form.Input
@@ -121,8 +121,8 @@ export default class LoginForm extends Component {
                   icon="lock"
                   iconPosition="left"
                   placeholder="Token"
-                  name="token"
-                  value={token}
+                  name="input_token"
+                  value={input_token}
                   onChange={this.handleChange}
                   type="password"
                 />

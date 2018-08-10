@@ -33,8 +33,8 @@ export default class WorkflowDetailsPage extends Component {
       <div>
         <Header />
         <Grid columns="equal" padded>
-          <WorkflowHeader id={this.props.id} token={this.props.token} />
-          <WorkflowFiles id={this.props.id} token={this.props.token} />
+          <WorkflowHeader />
+          <WorkflowFiles />
         </Grid>
       </div>
     );

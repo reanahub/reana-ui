@@ -21,22 +21,18 @@
 	submit itself to any jurisdiction.
 */
 
-import React from "react";
-import ReactDOM from "react-dom";
-import { Router, Route } from "react-router-dom";
-import history from "./history";
-import LoginPage from "./pages/login/Login";
-import WorkflowsList from "./pages/workflowsList/WorkflowsList";
-import WorkflowDetails from "./pages/workflowDetails/WorkflowDetails";
-import "semantic-ui-css/semantic.min.css";
+let state = {
+  login: {
+    user_token: "",
+    jwt_token: ""
+  },
+  details: {
+    id: "",
+    name: "",
+    run: "",
+    created: "",
+    status: ""
+  }
+};
 
-ReactDOM.render(
-  <Router history={history}>
-    <div>
-      <Route exact path="/" component={LoginPage} />
-      <Route path="/workflows" component={WorkflowsList} />
-      <Route path="/details" component={WorkflowDetails} />
-    </div>
-  </Router>,
-  document.getElementById("root")
-);
+export default state;

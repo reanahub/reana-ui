@@ -22,83 +22,39 @@
 */
 
 import React, { Component } from "react";
-import { Button, Grid, Segment } from "semantic-ui-react";
+import { Button, Segment } from "semantic-ui-react";
 import { Link } from "react-router-dom";
-import Config from "../../../config";
-import axios from "axios";
+import State from "../../../state";
 
 export default class WorkflowHeader extends Component {
-  /**
-   * Variables defining the state of the table
-   */
-  constructor(props) {
-    super(props);
-    this.state = {
-      id: this.props.id,
-      name: "",
-      created: "",
-      status: "",
-      token: this.props.token
-    };
-  }
-
-  /**
-   * Gets data from the specified API
-   */
-  getData() {
-    const { id, token } = this.state;
-
-    axios({
-      method: "get",
-      url: Config.api + "/api/workflows/" + id + "/status",
-      params: {
-        access_token: token
-      }
-    }).then(res => {
-      let data = res.data;
-      this.setState({
-        name: data.name,
-        created: data.created,
-        status: data.status
-      });
-    });
-  }
-
-  /**
-   * Default runnable method when the component is loaded
-   */
-  componentDidMount() {
-    this.getData();
-  }
-
   render() {
-    const { name, created, status } = this.state;
     return (
-      <Grid.Row>
-        <Grid.Column>
-          <Segment basic padded>
-            <Link to="/workflows">
-              <Button primary icon="angle left" size="big" />
-            </Link>
+      <Segment basic clearing className="workflow_header">
+        <Segment basic floated="left">
+          <Link to="/workflows">
+            <Button primary icon="angle left" size="big" />
+          </Link>
+        </Segment>
+
+        <Segment.Group horizontal size="large" floated="right">
+          <Segment>
+            <b>Name: </b>
+            {State.details.name}
           </Segment>
-        </Grid.Column>
-        <Grid.Column width={15}>
-          <Segment.Group horizontal size="small">
-            <Segment padded>
-              <b>Name: </b>
-              {name}
-            </Segment>
-            <Segment padded>
-              <b>Created: </b>
-              {created}
-            </Segment>
-            <Segment padded>
-              <b>Status: </b>
-              {status}
-            </Segment>
-          </Segment.Group>
-        </Grid.Column>
-      </Grid.Row>
+          <Segment>
+            <b>Run: </b>
+            {State.details.run}
+          </Segment>
+          <Segment>
+            <b>Created: </b>
+            {State.details.created}
+          </Segment>
+          <Segment>
+            <b>Status: </b>
+            {State.details.status}
+          </Segment>
+        </Segment.Group>
+      </Segment>
     );
   }
 }
