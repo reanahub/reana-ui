@@ -90,13 +90,6 @@ export default class LoginForm extends Component {
     const { input_email, input_token, show_message } = this.state;
     return (
       <div className="login-form">
-        <style>{`
-          body > div,
-          body > div > div,
-          body > div > div > div.login-form {
-            height: 100%;
-          }
-    `}</style>
         <Grid
           textAlign="center"
           style={{ height: "100%" }}
@@ -106,7 +99,7 @@ export default class LoginForm extends Component {
             <Image centered spaced src={LogoImg} size="small" />
             <Divider />
             <Form size="large" onSubmit={this.handleSubmit}>
-              <Segment stacked>
+              <Segment>
                 <Form.Input
                   fluid
                   icon="user"

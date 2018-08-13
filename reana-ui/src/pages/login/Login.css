@@ -21,12 +21,8 @@
 	submit itself to any jurisdiction.
 */
 
-import React, { Component } from "react";
-import LoginForm from "./components/LoginForm";
-import "./Login.css";
-
-export default class LoginPage extends Component {
-  render() {
-    return <LoginForm />;
-  }
+body > div,
+body > div > div,
+body > div > div > div.login-form {
+    height: 100%;
 }

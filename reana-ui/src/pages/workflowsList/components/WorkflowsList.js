@@ -142,7 +142,7 @@ export default class WorkflowsList extends Component {
     const { column, data, direction } = this.state;
 
     return (
-      <Segment attached padded="very">
+      <Segment basic padded>
         <Table sortable fixed>
           <Table.Header>
             <Table.Row>

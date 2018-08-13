@@ -21,12 +21,17 @@
 	submit itself to any jurisdiction.
 */
 
-import React, { Component } from "react";
-import LoginForm from "./components/LoginForm";
-import "./Login.css";
+body > div,
+body > div > div,
+body > div > div > div {
+    height: 100%;
+}
 
-export default class LoginPage extends Component {
-  render() {
-    return <LoginForm />;
-  }
+.workflow_header {
+    height: 90px;
+    padding: 0;
+}
+
+.controls {
+    height: calc(100% - 220px);
 }

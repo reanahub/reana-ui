@@ -22,20 +22,18 @@
 */
 
 import React, { Component } from "react";
-import { Grid } from "semantic-ui-react";
 import Header from "../../components/Header";
 import WorkflowHeader from "./components/WorkflowHeader";
 import WorkflowFiles from "./components/WorkflowFiles";
+import "./WorkflowDetails.css";
 
 export default class WorkflowDetailsPage extends Component {
   render() {
     return (
       <div>
         <Header />
-        <Grid columns="equal" padded>
-          <WorkflowHeader />
-          <WorkflowFiles />
-        </Grid>
+        <WorkflowHeader />
+        <WorkflowFiles />
       </div>
     );
   }

@@ -24,6 +24,7 @@
 import React, { Component } from "react";
 import Header from "../../components/Header";
 import WorkflowsList from "./components/WorkflowsList";
+import "./WorkflowsList.css";
 
 export default class WorkflowsListPage extends Component {
   render() {
