@@ -35,6 +35,7 @@ export default class WorkflowFiles extends Component {
    */
   constructor(props) {
     super(props);
+    this.url = Config.api + "/api/workflows/" + State.details.id + "/";
     this.state = {
       input_files: [],
       code_files: [],
@@ -45,10 +46,10 @@ export default class WorkflowFiles extends Component {
   /**
    * Gets data from the specified API
    */
-  getData() {
+  getWorkspace() {
     axios({
       method: "get",
-      url: Config.api + "/api/workflows/" + State.details.id + "/workspace",
+      url: this.url + "workspace",
       params: {
         access_token: State.login.user_token
       }
@@ -62,10 +63,34 @@ export default class WorkflowFiles extends Component {
   }
 
   /**
+   * Downloads the file from the API
+   */
+  getFile = file_name => () => {
+    axios({
+      method: "get",
+      url: this.url + "workspace/" + file_name,
+      params: {
+        access_token: State.login.user_token
+      }
+    }).then(res => {
+      let element = document.createElement("a");
+      element.setAttribute(
+        "href",
+        "data:application/octet-stream," + encodeURIComponent(res.data)
+      );
+      element.setAttribute("download", file_name);
+      element.style.display = "none";
+      document.body.appendChild(element);
+      element.click();
+      document.body.removeChild(element);
+    });
+  };
+
+  /**
    * Default runnable method when the component is loaded
    */
   componentDidMount() {
-    this.getData();
+    this.getWorkspace();
   }
 
   render() {
@@ -79,7 +104,7 @@ export default class WorkflowFiles extends Component {
               <Header size="medium">Inputs</Header>
               <List link>
                 {_.map(input_files, ({ name }) => (
-                  <List.Item as="a" key={name}>
+                  <List.Item onClick={this.getFile(name)} as="a" key={name}>
                     {name}
                   </List.Item>
                 ))}
@@ -89,7 +114,7 @@ export default class WorkflowFiles extends Component {
               <Header size="medium">Code</Header>
               <List link>
                 {_.map(code_files, ({ name }) => (
-                  <List.Item as="a" key={name}>
+                  <List.Item onClick={this.getFile(name)} as="a" key={name}>
                     {name}
                   </List.Item>
                 ))}
@@ -109,7 +134,7 @@ export default class WorkflowFiles extends Component {
               <Header size="medium">Outputs</Header>
               <List link>
                 {_.map(output_files, ({ name }) => (
-                  <List.Item as="a" key={name}>
+                  <List.Item onClick={this.getFile(name)} as="a" key={name}>
                     {name}
                   </List.Item>
                 ))}
