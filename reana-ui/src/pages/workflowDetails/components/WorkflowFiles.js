@@ -26,6 +26,7 @@ import axios from "axios";
 import _ from "lodash";
 import { Grid, List, Header, Segment } from "semantic-ui-react";
 import WorkflowSteps from "./WorkflowSteps";
+import WorkflowLogs from "./workflowLogs";
 import Config from "../../../config";
 import State from "../../../state";
 
@@ -100,7 +101,7 @@ export default class WorkflowFiles extends Component {
       <Grid columns="equal" padded className="controls">
         <Grid.Row stretched>
           <Grid.Column>
-            <Segment padded color="grey">
+            <Segment raised padded secondary>
               <Header size="medium">Inputs</Header>
               <List link>
                 {_.map(input_files, ({ name }) => (
@@ -110,7 +111,7 @@ export default class WorkflowFiles extends Component {
                 ))}
               </List>
             </Segment>
-            <Segment padded color="grey">
+            <Segment raised padded secondary>
               <Header size="medium">Code</Header>
               <List link>
                 {_.map(code_files, ({ name }) => (
@@ -123,14 +124,12 @@ export default class WorkflowFiles extends Component {
           </Grid.Column>
 
           <Grid.Column width={10}>
-            <Segment padded secondary>
-              <Header size="medium">Steps</Header>
-            </Segment>
             <WorkflowSteps />
+            <WorkflowLogs />
           </Grid.Column>
 
           <Grid.Column>
-            <Segment padded color="grey">
+            <Segment raised padded secondary>
               <Header size="medium">Outputs</Header>
               <List link>
                 {_.map(output_files, ({ name }) => (

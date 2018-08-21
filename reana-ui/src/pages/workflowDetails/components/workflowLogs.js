@@ -22,50 +22,54 @@
 */
 
 import React, { Component } from "react";
+import axios from "axios";
 import { Header, Segment } from "semantic-ui-react";
-import Graph from "react-graph-vis";
+import Config from "../../../config";
+import State from "../../../state";
 
-export default class WorkflowSteps extends Component {
+export default class WorkflowLogs extends Component {
   /**
    * Variables defining the state of the table
    */
   constructor(props) {
     super(props);
+    this.url = Config.api + "/api/workflows/" + State.details.id + "/";
     this.state = {
-      graph: {
-        nodes: [
-          { id: 1, label: "Node 1" },
-          { id: 2, label: "Node 2" },
-          { id: 3, label: "Node 3" },
-          { id: 4, label: "Node 4" },
-          { id: 5, label: "Node 5" }
-        ],
-        edges: [
-          { from: 1, to: 2 },
-          { from: 1, to: 3 },
-          { from: 2, to: 4 },
-          { from: 2, to: 5 }
-        ]
-      },
-      options: {
-        layout: {
-          hierarchical: true
-        },
-        edges: {
-          color: "#000000"
-        }
-      },
-      events: {}
+      logs: ""
     };
   }
 
+  /**
+   * Gets data from the specified API
+   */
+  getLogs() {
+    axios({
+      method: "get",
+      url: this.url + "logs",
+      params: {
+        access_token: State.login.user_token
+      }
+    }).then(res => {
+      this.setState({
+        logs: res.data.logs
+      });
+    });
+  }
+
+  /**
+   * Default runnable method when the component is loaded
+   */
+  componentDidMount() {
+    this.getLogs();
+  }
+
   render() {
-    const { graph, options, events } = this.state;
+    const { logs } = this.state;
 
     return (
-      <Segment raised padded style={{ height: "100%" }}>
-        <Header size="medium">Steps</Header>
-        <Graph graph={graph} options={options} events={events} />
+      <Segment raised padded secondary className="logs-area">
+        <Header size="medium">Logs</Header>
+        <pre>{logs}</pre>
       </Segment>
     );
   }

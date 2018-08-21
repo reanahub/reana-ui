@@ -29,7 +29,7 @@ import State from "../../../state";
 export default class WorkflowHeader extends Component {
   render() {
     return (
-      <Segment basic clearing className="workflow_header">
+      <Segment basic clearing className="workflow-header">
         <Segment basic floated="left">
           <Link to="/workflows">
             <Button primary icon="angle left" size="big" />

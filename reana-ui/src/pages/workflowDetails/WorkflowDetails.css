@@ -27,11 +27,17 @@ body > div > div > div {
     height: 100%;
 }
 
-.workflow_header {
+.workflow-header {
     height: 90px;
     padding: 0;
 }
 
 .controls {
     height: calc(100% - 220px);
+}
+
+.logs-area {
+    height: 200px;
+    overflow-y: scroll;
+    overflow-x: hidden;
 }
