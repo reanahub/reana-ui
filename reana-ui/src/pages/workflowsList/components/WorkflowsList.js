@@ -72,8 +72,7 @@ export default class WorkflowsList extends Component {
       wf["run"] = info[1];
 
       let date = new Date(wf["created"]);
-      wf["created"] =
-        date.getFullYear() + "-" + date.getMonth() + "-" + date.getDate();
+      wf["created"] = wf["created"].replace("T", " ");
       wf["duration"] = WorkflowsList.msToTime(Date.now() - date.getTime());
     });
 

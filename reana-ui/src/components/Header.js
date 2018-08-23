@@ -22,18 +22,25 @@
 */
 
 import React, { Component } from "react";
-import { Segment, Image, Button, Menu, Icon } from "semantic-ui-react";
+import history from "../history";
+import { Segment, Image, Menu, Icon } from "semantic-ui-react";
 import LogoImg from "../images/logo-reana.svg";
+import Cookies from "universal-cookie";
+import "./Header.css";
+
+const cookies = new Cookies();
 
 export default class Header extends Component {
   render() {
     return (
       <Segment secondary clearing attached="top" padded>
-        <Image src={LogoImg} size="small" floated="left" />
-        <Button size="medium" icon primary floated="right">
-          <Icon name="user" />
-        </Button>
-        <Menu size="small" floated="right">
+        <Image
+          src={LogoImg}
+          size="small"
+          floated="left"
+          style={{ margin: "0px" }}
+        />
+        <Menu size="large" floated="right">
           <Menu.Item href="http://www.reana.io" target="_blank">
             About
           </Menu.Item>
@@ -42,6 +49,14 @@ export default class Header extends Component {
             target="_blank"
           >
             Documentation
+          </Menu.Item>
+          <Menu.Item
+            className="logout-button"
+            onClick={this.logOut}
+            style={{ backgroundColor: "#0088CB", color: "white" }}
+          >
+            <Icon inverted name="user" />
+            Log out
           </Menu.Item>
         </Menu>
       </Segment>

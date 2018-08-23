@@ -63,8 +63,8 @@ export default class WorkflowSteps extends Component {
     const { graph, options, events } = this.state;
 
     return (
-      <Segment raised padded style={{ height: "100%" }}>
-        <Header size="medium">Steps</Header>
+      <Segment raised style={{ height: "100%" }}>
+        <Header size="medium">Workflow</Header>
         <Graph graph={graph} options={options} events={events} />
       </Segment>
     );

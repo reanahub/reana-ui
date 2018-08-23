@@ -39,7 +39,6 @@ export default class WorkflowFiles extends Component {
     this.url = Config.api + "/api/workflows/" + State.details.id + "/";
     this.state = {
       input_files: [],
-      code_files: [],
       output_files: []
     };
   }
@@ -57,7 +56,6 @@ export default class WorkflowFiles extends Component {
     }).then(res => {
       this.setState({
         input_files: res.data,
-        code_files: res.data,
         output_files: res.data
       });
     });
@@ -95,7 +93,7 @@ export default class WorkflowFiles extends Component {
   }
 
   render() {
-    const { input_files, code_files, output_files } = this.state;
+    const { input_files, output_files } = this.state;
 
     return (
       <Grid columns="equal" padded className="controls">
@@ -105,16 +103,6 @@ export default class WorkflowFiles extends Component {
               <Header size="medium">Inputs</Header>
               <List link>
                 {_.map(input_files, ({ name }) => (
-                  <List.Item onClick={this.getFile(name)} as="a" key={name}>
-                    {name}
-                  </List.Item>
-                ))}
-              </List>
-            </Segment>
-            <Segment raised padded secondary>
-              <Header size="medium">Code</Header>
-              <List link>
-                {_.map(code_files, ({ name }) => (
                   <List.Item onClick={this.getFile(name)} as="a" key={name}>
                     {name}
                   </List.Item>

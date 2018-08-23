@@ -67,7 +67,7 @@ export default class WorkflowLogs extends Component {
     const { logs } = this.state;
 
     return (
-      <Segment raised padded secondary className="logs-area">
+      <Segment raised secondary className="logs-area">
         <Header size="medium">Logs</Header>
         <pre>{logs}</pre>
       </Segment>

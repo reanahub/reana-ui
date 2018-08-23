@@ -29,14 +29,19 @@ import State from "../../../state";
 export default class WorkflowHeader extends Component {
   render() {
     return (
-      <Segment basic clearing className="workflow-header">
-        <Segment basic floated="left">
+      <Segment
+        basic
+        clearing
+        className="workflow-header"
+        style={{ margin: "0px" }}
+      >
+        <Segment basic floated="left" style={{ margin: "0px" }}>
           <Link to="/workflows">
             <Button primary icon="angle left" size="big" />
           </Link>
         </Segment>
 
-        <Segment.Group horizontal size="large" floated="right">
+        <Segment.Group horizontal size="medium" floated="right">
           <Segment>
             <b>Name: </b>
             {State.details.name}
