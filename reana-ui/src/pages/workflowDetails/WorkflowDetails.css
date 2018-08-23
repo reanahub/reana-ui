@@ -36,8 +36,16 @@ body > div > div > div {
     height: calc(100% - 220px);
 }
 
+.files-row {
+    color: #999999;
+    cursor: pointer;
+}
+.files-row:hover {
+    color: #515151;
+}
+
 .logs-area {
-    height: 200px;
+    height: 250px;
     overflow-y: scroll;
     overflow-x: hidden;
 }

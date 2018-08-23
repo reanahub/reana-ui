@@ -24,7 +24,7 @@
 import React, { Component } from "react";
 import axios from "axios";
 import _ from "lodash";
-import { Grid, List, Header, Segment } from "semantic-ui-react";
+import { Grid, Header, Icon, Segment, Table } from "semantic-ui-react";
 import WorkflowSteps from "./WorkflowSteps";
 import WorkflowLogs from "./workflowLogs";
 import Config from "../../../config";
@@ -38,9 +38,32 @@ export default class WorkflowFiles extends Component {
     super(props);
     this.url = Config.api + "/api/workflows/" + State.details.id + "/";
     this.state = {
-      input_files: [],
-      output_files: []
+      inputs: {
+        col: null,
+        files: [],
+        dir: null
+      },
+      outputs: {
+        col: null,
+        files: [],
+        dir: null
+      }
     };
+  }
+
+  /**
+   * Parses API data into displayable data
+   */
+  static parseData(data) {
+    if (!Array.isArray(data)) return [];
+
+    data.forEach(file => {
+      file["mod_date"] = file["last-modified"].substr(0, 19);
+      file["mod_date"] = file["mod_date"].replace("T", " ");
+      delete file["last-modified"];
+    });
+
+    return data;
   }
 
   /**
@@ -54,9 +77,10 @@ export default class WorkflowFiles extends Component {
         access_token: State.login.user_token
       }
     }).then(res => {
+      let data = WorkflowFiles.parseData(res.data);
       this.setState({
-        input_files: res.data,
-        output_files: res.data
+        inputs: { files: data },
+        outputs: { files: data }
       });
     });
   }
@@ -64,26 +88,26 @@ export default class WorkflowFiles extends Component {
   /**
    * Downloads the file from the API
    */
-  getFile = file_name => () => {
-    axios({
-      method: "get",
-      url: this.url + "workspace/" + file_name,
-      params: {
-        access_token: State.login.user_token
-      }
-    }).then(res => {
-      let element = document.createElement("a");
-      element.setAttribute(
-        "href",
-        "data:application/octet-stream," + encodeURIComponent(res.data)
-      );
-      element.setAttribute("download", file_name);
-      element.style.display = "none";
-      document.body.appendChild(element);
-      element.click();
-      document.body.removeChild(element);
-    });
-  };
+  // getFile = file_name => () => {
+  //   axios({
+  //     method: "get",
+  //     url: this.url + "workspace/" + file_name,
+  //     params: {
+  //       access_token: State.login.user_token
+  //     }
+  //   }).then(res => {
+  //     let element = document.createElement("a");
+  //     element.setAttribute(
+  //       "href",
+  //       "data:application/octet-stream," + encodeURIComponent(res.data)
+  //     );
+  //     element.setAttribute("download", file_name);
+  //     element.style.display = "none";
+  //     document.body.appendChild(element);
+  //     element.click();
+  //     document.body.removeChild(element);
+  //   });
+  // };
 
   /**
    * Default runnable method when the component is loaded
@@ -92,8 +116,54 @@ export default class WorkflowFiles extends Component {
     this.getWorkspace();
   }
 
+  /**
+   * Performs the sorting when a column header is clicked
+   */
+  handleSortInputs = clickedColumn => () => {
+    const { inputs } = this.state;
+    if (inputs.col !== clickedColumn) {
+      this.setState({
+        inputs: {
+          col: clickedColumn,
+          files: _.sortBy(inputs.files, [clickedColumn]),
+          dir: "ascending"
+        }
+      });
+      return;
+    }
+    this.setState({
+      inputs: {
+        files: inputs.files.reverse(),
+        dir: inputs.dir === "ascending" ? "descending" : "ascending"
+      }
+    });
+  };
+
+  /**
+   * Performs the sorting when a column header is clicked
+   */
+  handleSortOutputs = clickedColumn => () => {
+    const { outputs } = this.state;
+    if (outputs.col !== clickedColumn) {
+      this.setState({
+        outputs: {
+          col: clickedColumn,
+          files: _.sortBy(outputs.files, [clickedColumn]),
+          dir: "ascending"
+        }
+      });
+      return;
+    }
+    this.setState({
+      outputs: {
+        files: outputs.files.reverse(),
+        dir: outputs.dir === "ascending" ? "descending" : "ascending"
+      }
+    });
+  };
+
   render() {
-    const { input_files, output_files } = this.state;
+    const { inputs, outputs } = this.state;
 
     return (
       <Grid columns="equal" padded className="controls">
@@ -101,13 +171,36 @@ export default class WorkflowFiles extends Component {
           <Grid.Column>
             <Segment raised padded secondary>
               <Header size="medium">Inputs</Header>
-              <List link>
-                {_.map(input_files, ({ name }) => (
-                  <List.Item onClick={this.getFile(name)} as="a" key={name}>
-                    {name}
-                  </List.Item>
-                ))}
-              </List>
+              <Table fixed compact sortable basic="very">
+                <Table.Header>
+                  <Table.Row>
+                    <Table.HeaderCell
+                      sorted={inputs.col === "name" ? inputs.dir : null}
+                      onClick={this.handleSortInputs("name")}
+                    >
+                      Name
+                    </Table.HeaderCell>
+                    <Table.HeaderCell
+                      sorted={inputs.col === "mod_date" ? inputs.dir : null}
+                      onClick={this.handleSortInputs("mod_date")}
+                    >
+                      Modified date
+                    </Table.HeaderCell>
+                  </Table.Row>
+                </Table.Header>
+
+                <Table.Body className="files-list">
+                  {_.map(inputs.files, ({ name, mod_date }) => (
+                    <Table.Row key={name} className="files-row">
+                      <Table.Cell>
+                        <Icon name="file" />
+                        {name}
+                      </Table.Cell>
+                      <Table.Cell>{mod_date}</Table.Cell>
+                    </Table.Row>
+                  ))}
+                </Table.Body>
+              </Table>
             </Segment>
           </Grid.Column>
 
@@ -119,13 +212,36 @@ export default class WorkflowFiles extends Component {
           <Grid.Column>
             <Segment raised padded secondary>
               <Header size="medium">Outputs</Header>
-              <List link>
-                {_.map(output_files, ({ name }) => (
-                  <List.Item onClick={this.getFile(name)} as="a" key={name}>
-                    {name}
-                  </List.Item>
-                ))}
-              </List>
+              <Table fixed compact sortable basic="very">
+                <Table.Header>
+                  <Table.Row>
+                    <Table.HeaderCell
+                      sorted={outputs.col === "name" ? outputs.dir : null}
+                      onClick={this.handleSortOutputs("name")}
+                    >
+                      Name
+                    </Table.HeaderCell>
+                    <Table.HeaderCell
+                      sorted={outputs.col === "mod_date" ? outputs.dir : null}
+                      onClick={this.handleSortOutputs("mod_date")}
+                    >
+                      Modified date
+                    </Table.HeaderCell>
+                  </Table.Row>
+                </Table.Header>
+
+                <Table.Body>
+                  {_.map(outputs.files, ({ name, mod_date }) => (
+                    <Table.Row key={name} className="files-row">
+                      <Table.Cell>
+                        <Icon name="file" />
+                        {name}
+                      </Table.Cell>
+                      <Table.Cell>{mod_date}</Table.Cell>
+                    </Table.Row>
+                  ))}
+                </Table.Body>
+              </Table>
             </Segment>
           </Grid.Column>
         </Grid.Row>
