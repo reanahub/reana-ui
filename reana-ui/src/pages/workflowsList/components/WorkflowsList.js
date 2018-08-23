@@ -82,9 +82,7 @@ export default class WorkflowsList extends Component {
   /**
    * Gets data from the specified API
    */
-  getData() {
-    const { column, direction } = this.state;
-
+  getWorkflows() {
     axios({
       method: "get",
       url: Config.api + "/api/workflows",
@@ -92,9 +90,39 @@ export default class WorkflowsList extends Component {
         Authorization: "JWT " + State.login.jwt_token
       }
     }).then(res => {
-      let data = _.sortBy(WorkflowsList.parseData(res.data), [column]);
-      this.setState({
-        data: direction === "descending" ? data.reverse() : data
+      let data = WorkflowsList.parseData(res.data);
+      this.setState({ data: data });
+
+      this.updateProgresses();
+      this.interval = setInterval(() => {
+        this.updateProgresses();
+      }, Config.pooling_secs * 1000);
+    });
+  }
+
+  /**
+   * Gets data from the specified API
+   */
+  updateProgresses() {
+    const { data } = this.state;
+
+    data.forEach(wf => {
+      axios({
+        method: "get",
+        url: Config.api + "/api/workflows/" + wf["id"] + "/status",
+        params: {
+          access_token: State.login.user_token
+        }
+      }).then(res => {
+        let progress = res.data.progress.finished;
+        let total = res.data.progress.total;
+        wf["completed"] = typeof progress === "object" ? progress.total : 0;
+        wf["total"] = total.total;
+
+        let date = new Date(res.data.created);
+        wf["duration"] = WorkflowsList.msToTime(Date.now() - date.getTime());
+
+        this.setState({ data: data });
       });
     });
   }
@@ -103,10 +131,7 @@ export default class WorkflowsList extends Component {
    * Default runnable method when the component is loaded
    */
   componentDidMount() {
-    this.getData();
-    this.interval = setInterval(() => {
-      this.getData();
-    }, Config.pooling_secs * 1000);
+    this.getWorkflows();
   }
 
   /**
@@ -191,27 +216,43 @@ export default class WorkflowsList extends Component {
             </Table.Row>
           </Table.Header>
           <Table.Body>
-            {_.map(data, ({ id, name, run, created, duration, status }) => (
-              <Table.Row key={id}>
-                <Table.Cell colSpan="2">{name}</Table.Cell>
-                <Table.Cell colSpan="1">{run}</Table.Cell>
-                <Table.Cell colSpan="2">{created}</Table.Cell>
-                <Table.Cell colSpan="2">{duration}</Table.Cell>
-                <Table.Cell colSpan="8">
-                  <WorkflowsProgress completed={0} total={0} status={status} />
-                </Table.Cell>
-                <Table.Cell colSpan="1">{status}</Table.Cell>
-                <Table.Cell colSpan="4">
-                  <WorkflowsActions
-                    id={id}
-                    name={name}
-                    run={run}
-                    created={created}
-                    status={status}
-                  />
-                </Table.Cell>
-              </Table.Row>
-            ))}
+            {_.map(
+              data,
+              ({
+                id,
+                name,
+                run,
+                created,
+                duration,
+                completed,
+                total,
+                status
+              }) => (
+                <Table.Row key={id}>
+                  <Table.Cell colSpan="2">{name}</Table.Cell>
+                  <Table.Cell colSpan="1">{run}</Table.Cell>
+                  <Table.Cell colSpan="2">{created}</Table.Cell>
+                  <Table.Cell colSpan="2">{duration}</Table.Cell>
+                  <Table.Cell colSpan="8">
+                    <WorkflowsProgress
+                      completed={completed}
+                      total={total}
+                      status={status}
+                    />
+                  </Table.Cell>
+                  <Table.Cell colSpan="1">{status}</Table.Cell>
+                  <Table.Cell colSpan="4">
+                    <WorkflowsActions
+                      id={id}
+                      name={name}
+                      run={run}
+                      created={created}
+                      status={status}
+                    />
+                  </Table.Cell>
+                </Table.Row>
+              )
+            )}
           </Table.Body>
           <Table.Footer>
             <Table.Row>
