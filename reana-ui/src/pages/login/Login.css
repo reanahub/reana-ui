@@ -23,6 +23,18 @@
 
 body > div,
 body > div > div,
-body > div > div > div.login-form {
+body > div > div > div {
     height: 100%;
+}
+
+.login-form {
+    height: 100%;
+}
+
+.login-grid {
+    height: 100%;
+}
+
+.login-column {
+    max-width: 450px;
 }

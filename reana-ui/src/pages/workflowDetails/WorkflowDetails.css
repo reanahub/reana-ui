@@ -39,9 +39,23 @@ body > div > div > div {
 .files-row {
     color: #999999;
     cursor: pointer;
+    white-space: nowrap;
 }
+
 .files-row:hover {
     color: #515151;
+}
+
+.modal-view {
+    height: 80%;
+}
+
+.modal-header {
+    height: 60px;
+}
+
+.modal-actions {
+    height: 60px;
 }
 
 .logs-area {

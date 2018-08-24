@@ -24,7 +24,7 @@
 import React, { Component } from "react";
 import Header from "../../components/Header";
 import WorkflowHeader from "./components/WorkflowHeader";
-import WorkflowFiles from "./components/WorkflowFiles";
+import WorkflowSpace from "./components/WorkflowSpace";
 import "./WorkflowDetails.css";
 
 export default class WorkflowDetailsPage extends Component {
@@ -33,7 +33,7 @@ export default class WorkflowDetailsPage extends Component {
       <div>
         <Header />
         <WorkflowHeader />
-        <WorkflowFiles />
+        <WorkflowSpace />
       </div>
     );
   }
