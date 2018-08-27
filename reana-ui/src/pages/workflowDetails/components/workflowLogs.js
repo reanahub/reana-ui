@@ -25,7 +25,9 @@ import React, { Component } from "react";
 import axios from "axios";
 import { Header, Segment } from "semantic-ui-react";
 import Config from "../../../config";
-import State from "../../../state";
+import Cookies from "universal-cookie";
+
+const cookies = new Cookies();
 
 export default class WorkflowLogs extends Component {
   /**
@@ -33,7 +35,7 @@ export default class WorkflowLogs extends Component {
    */
   constructor(props) {
     super(props);
-    this.url = Config.api + "/api/workflows/" + State.details.id + "/";
+    this.url = Config.api + "/api/workflows/" + cookies.get("workflow-id");
     this.state = {
       logs: ""
     };
@@ -45,9 +47,9 @@ export default class WorkflowLogs extends Component {
   getLogs() {
     axios({
       method: "get",
-      url: this.url + "logs",
+      url: this.url + "/logs",
       params: {
-        access_token: State.login.user_token
+        access_token: cookies.get("user_token")
       }
     }).then(res => {
       this.setState({

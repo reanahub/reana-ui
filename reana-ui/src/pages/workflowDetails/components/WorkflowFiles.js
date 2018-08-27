@@ -26,7 +26,9 @@ import axios from "axios";
 import _ from "lodash";
 import { Button, Header, Icon, Modal, Segment, Table } from "semantic-ui-react";
 import Config from "../../../config";
-import State from "../../../state";
+import Cookies from "universal-cookie";
+
+const cookies = new Cookies();
 
 export default class WorkflowFiles extends Component {
   /**
@@ -34,7 +36,7 @@ export default class WorkflowFiles extends Component {
    */
   constructor(props) {
     super(props);
-    this.url = Config.api + "/api/workflows/" + State.details.id + "/";
+    this.url = Config.api + "/api/workflows/" + cookies.get("workflow-id");
     this.state = {
       modal_content: null,
       column: null,
@@ -50,9 +52,9 @@ export default class WorkflowFiles extends Component {
   getFile = file_name => () => {
     axios({
       method: "get",
-      url: this.url + "workspace/" + file_name,
+      url: this.url + "/workspace/" + file_name,
       params: {
-        access_token: State.login.user_token
+        access_token: cookies.get("user_token")
       }
     }).then(res => {
       this.setState({ modal_content: res.data });
@@ -102,7 +104,7 @@ export default class WorkflowFiles extends Component {
     const { modal_content, column, direction, files, title } = this.state;
 
     return (
-      <Segment raised padded secondary>
+      <Segment raised secondary>
         <Header size="medium">{title}</Header>
         <Table fixed compact basic="very">
           <Table.Header>
@@ -119,7 +121,7 @@ export default class WorkflowFiles extends Component {
                 onClick={this.handleSort("mod_date")}
                 style={{ cursor: "pointer" }}
               >
-                Modified date
+                Modified
               </Table.HeaderCell>
             </Table.Row>
           </Table.Header>

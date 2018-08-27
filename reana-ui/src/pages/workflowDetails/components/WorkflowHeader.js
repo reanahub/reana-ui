@@ -24,7 +24,9 @@
 import React, { Component } from "react";
 import { Button, Segment } from "semantic-ui-react";
 import { Link } from "react-router-dom";
-import State from "../../../state";
+import Cookies from "universal-cookie";
+
+const cookies = new Cookies();
 
 export default class WorkflowHeader extends Component {
   render() {
@@ -44,19 +46,19 @@ export default class WorkflowHeader extends Component {
         <Segment.Group horizontal size="medium" floated="right">
           <Segment>
             <b>Name: </b>
-            {State.details.name}
+            {cookies.get("workflow-name")}
           </Segment>
           <Segment>
             <b>Run: </b>
-            {State.details.run}
+            {cookies.get("workflow-run")}
           </Segment>
           <Segment>
             <b>Created: </b>
-            {State.details.created}
+            {cookies.get("workflow-created")}
           </Segment>
           <Segment>
             <b>Status: </b>
-            {State.details.status}
+            {cookies.get("workflow-status")}
           </Segment>
         </Segment.Group>
       </Segment>

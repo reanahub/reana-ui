@@ -23,12 +23,15 @@
 
 import React, { Component } from "react";
 import axios from "axios";
+import history from "../../../history";
 import { Grid, Loader } from "semantic-ui-react";
 import WorkflowFiles from "./WorkflowFiles";
 import WorkflowSteps from "./WorkflowSteps";
 import WorkflowLogs from "./workflowLogs";
 import Config from "../../../config";
-import State from "../../../state";
+import Cookies from "universal-cookie";
+
+const cookies = new Cookies();
 
 export default class WorkflowSpace extends Component {
   /**
@@ -36,7 +39,7 @@ export default class WorkflowSpace extends Component {
    */
   constructor(props) {
     super(props);
-    this.url = Config.api + "/api/workflows/" + State.details.id + "/";
+    this.url = Config.api + "/api/workflows/" + cookies.get("workflow-id");
     this.state = {
       inputs: [],
       outputs: [],
@@ -65,9 +68,9 @@ export default class WorkflowSpace extends Component {
   getWorkspace() {
     axios({
       method: "get",
-      url: this.url + "workspace",
+      url: this.url + "/workspace",
       params: {
-        access_token: State.login.user_token
+        access_token: cookies.get("user_token")
       }
     }).then(res => {
       let data = WorkflowSpace.parseData(res.data);
@@ -83,7 +86,11 @@ export default class WorkflowSpace extends Component {
    * Default runnable method when the component is loaded
    */
   componentDidMount() {
-    this.getWorkspace();
+    if (cookies.get("user_token") === undefined) {
+      history.replace("/");
+    } else {
+      this.getWorkspace();
+    }
   }
 
   render() {

@@ -31,6 +31,20 @@ import "./Header.css";
 const cookies = new Cookies();
 
 export default class Header extends Component {
+  /**
+   * Logs out the current session
+   */
+  logOut = () => {
+    cookies.remove("user_token");
+    cookies.remove("jwt_token");
+    cookies.remove("workflow-id");
+    cookies.remove("workflow-name");
+    cookies.remove("workflow-run");
+    cookies.remove("workflow-created");
+    cookies.remove("workflow-status");
+    history.replace("/");
+  };
+
   render() {
     return (
       <Segment secondary clearing attached="top" padded>

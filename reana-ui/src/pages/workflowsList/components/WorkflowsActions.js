@@ -24,7 +24,9 @@
 import React, { Component } from "react";
 import history from "../../../history";
 import { Button } from "semantic-ui-react";
-import State from "../../../state";
+import Cookies from "universal-cookie";
+
+const cookies = new Cookies();
 
 export default class WorkflowsActions extends Component {
   static disableView() {
@@ -44,11 +46,11 @@ export default class WorkflowsActions extends Component {
   }
 
   static showDetails = (id, name, run, created, status) => () => {
-    State.details.id = id;
-    State.details.name = name;
-    State.details.run = run;
-    State.details.created = created;
-    State.details.status = status;
+    cookies.set("workflow-id", id, { path: "/" });
+    cookies.set("workflow-name", name, { path: "/" });
+    cookies.set("workflow-run", run, { path: "/" });
+    cookies.set("workflow-created", created, { path: "/" });
+    cookies.set("workflow-status", status, { path: "/" });
     history.push("/details");
   };
 

@@ -14,7 +14,8 @@
     "react-scripts": "1.1.4",
     "semantic-ui-css": "^2.3.3",
     "semantic-ui-react": "^0.82.0",
-    "webpack": "^3.11.0"
+    "webpack": "^3.11.0",
+    "universal-cookie": "latest"
   },
   "scripts": {
     "start": "react-scripts start",

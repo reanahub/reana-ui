@@ -24,11 +24,14 @@
 import React, { Component } from "react";
 import axios from "axios";
 import _ from "lodash";
+import history from "../../../history";
 import { Icon, Menu, Segment, Table } from "semantic-ui-react";
 import WorkflowsProgress from "./WorkflowsProgress";
 import WorkflowsActions from "./WorkflowsActions";
 import Config from "../../../config";
-import State from "../../../state";
+import Cookies from "universal-cookie";
+
+const cookies = new Cookies();
 
 export default class WorkflowsList extends Component {
   /**
@@ -87,7 +90,7 @@ export default class WorkflowsList extends Component {
       method: "get",
       url: Config.api + "/api/workflows",
       headers: {
-        Authorization: "JWT " + State.login.jwt_token
+        Authorization: "JWT " + cookies.get("jwt_token")
       }
     }).then(res => {
       let data = WorkflowsList.parseData(res.data);
@@ -111,7 +114,7 @@ export default class WorkflowsList extends Component {
         method: "get",
         url: Config.api + "/api/workflows/" + wf["id"] + "/status",
         params: {
-          access_token: State.login.user_token
+          access_token: cookies.get("user_token")
         }
       }).then(res => {
         let progress = res.data.progress.finished;
@@ -131,7 +134,11 @@ export default class WorkflowsList extends Component {
    * Default runnable method when the component is loaded
    */
   componentDidMount() {
-    this.getWorkflows();
+    if (cookies.get("user_token") === undefined) {
+      history.replace("/");
+    } else {
+      this.getWorkflows();
+    }
   }
 
   /**
@@ -175,7 +182,7 @@ export default class WorkflowsList extends Component {
                 sorted={column === "name" ? direction : null}
                 onClick={this.handleSort("name")}
               >
-                Workflow
+                Name
               </Table.HeaderCell>
               <Table.HeaderCell
                 colSpan="1"
