@@ -5,7 +5,7 @@
 .. image:: https://img.shields.io/travis/reanahub/reana-ui.svg
    :target: https://travis-ci.org/reanahub/reana-ui
 
-.. image:: https://readthedocs.org/projects/docs/badge/?version=latest
+.. image:: https://readthedocs.org/projects/reana-ui/badge/?version=latest
    :target: https://reana-ui.readthedocs.io/en/latest/?badge=latest
 
 .. image:: https://badges.gitter.im/Join%20Chat.svg
