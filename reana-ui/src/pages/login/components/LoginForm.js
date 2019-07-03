@@ -23,9 +23,7 @@ import {
 
 import LogoImg from "../../../images/logo-reana.svg";
 import Config from "../../../config";
-import Cookies from "universal-cookie";
 
-const cookies = new Cookies();
 
 export default class LoginForm extends Component {
   /**
@@ -57,32 +55,21 @@ export default class LoginForm extends Component {
       method: "post",
       url: Config.api + "/auth",
       headers: {
-        "Content-type": "application/json"
+        "Content-type": "application/json",
       },
       data: {
         username: input_email,
         password: input_token
-      }
-    })
-      .then(res => {
+      },
+      withCredentials: true
+    }).then(res => {
         this.setState({ show_message: false });
-        cookies.set("user_token", input_token, { path: "/" });
-        cookies.set("jwt_token", res.data["access_token"], { path: "/" });
         history.push("/workflows");
       })
       .catch(error => {
         this.setState({ show_message: true });
       });
   };
-
-  /**
-   * Default runnable method when the component is loaded
-   */
-  componentDidMount() {
-    if (cookies.get("user_token") !== undefined) {
-      history.replace("/workflows");
-    }
-  }
 
   render() {
     const { input_email, input_token, show_message } = this.state;

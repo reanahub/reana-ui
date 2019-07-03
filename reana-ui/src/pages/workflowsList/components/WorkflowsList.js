@@ -75,10 +75,8 @@ export default class WorkflowsList extends Component {
   getWorkflows() {
     axios({
       method: "get",
-      url: Config.api + "/api/workflows",
-      headers: {
-        Authorization: "JWT " + cookies.get("jwt_token")
-      }
+      url: Config.api + "/workflows",
+      withCredentials: true
     }).then(res => {
       let data = WorkflowsList.parseData(res.data);
       this.setState({ data: data });
@@ -121,11 +119,7 @@ export default class WorkflowsList extends Component {
    * Default runnable method when the component is loaded
    */
   componentDidMount() {
-    if (cookies.get("user_token") === undefined) {
-      history.replace("/");
-    } else {
-      this.getWorkflows();
-    }
+    this.getWorkflows();
   }
 
   /**

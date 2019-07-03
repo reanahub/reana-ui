@@ -11,7 +11,7 @@
 const config = {
   name: "CERN REANA UI",
   sign_up_email: "info@reana.io",
-  api: "http://reana-dev.cern.ch",
+  api: "http://localhost:5000/api",
   pooling_secs: 5
 };
 
