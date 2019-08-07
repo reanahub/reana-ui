@@ -11,6 +11,9 @@ node_js:
 python:
   - "2.7"
 
+services:
+  - docker
+
 before_script:
   - pip install --user -r docs/requirements.txt
   - npm install prettier

@@ -8,3 +8,4 @@
 
 sphinx-build -qnN docs docs/_build/html
 prettier reana-ui/src/**/*.js --list-different
+docker build -t reanahub/reana-ui .
