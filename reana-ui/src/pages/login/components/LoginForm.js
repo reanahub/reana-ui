@@ -8,123 +8,36 @@
   under the terms of the MIT License; see LICENSE file for more details.
 */
 
-import axios from "axios";
 import React, { Component } from "react";
-import history from "../../../history";
 import {
   Button,
   Divider,
-  Form,
   Grid,
   Image,
   Message,
   Segment
 } from "semantic-ui-react";
-
-import LogoImg from "../../../images/logo-reana.svg";
 import Config from "../../../config";
-import Cookies from "universal-cookie";
-
-const cookies = new Cookies();
+import LogoImg from "../../../images/logo-reana.svg";
 
 export default class LoginForm extends Component {
-  /**
-   * Variables defining the state of the components
-   */
-  constructor(props) {
-    super(props);
-    this.state = {
-      input_email: "",
-      input_token: "",
-      show_message: false
-    };
-  }
 
-  /**
-   * Updates state variables given user input
-   */
-  handleChange = (e, { name, value }) => {
-    this.setState({ [name]: value });
-  };
-
-  /**
-   * Handling submit button
-   */
-  handleSubmit = () => {
-    const { input_email, input_token } = this.state;
-
-    axios({
-      method: "post",
-      url: Config.api + "/auth",
-      headers: {
-        "Content-type": "application/json"
-      },
-      data: {
-        username: input_email,
-        password: input_token
-      }
-    })
-      .then(res => {
-        this.setState({ show_message: false });
-        cookies.set("user_token", input_token, { path: "/" });
-        cookies.set("jwt_token", res.data["access_token"], { path: "/" });
-        history.push("/workflows");
-      })
-      .catch(error => {
-        this.setState({ show_message: true });
-      });
-  };
-
-  /**
-   * Default runnable method when the component is loaded
-   */
-  componentDidMount() {
-    if (cookies.get("user_token") !== undefined) {
-      history.replace("/workflows");
-    }
+  handleClick = () => {
+    window.location.href = Config.api + "/oauth/login/cern"
   }
 
   render() {
-    const { input_email, input_token, show_message } = this.state;
     return (
       <div className="login-form">
         <Grid textAlign="center" verticalAlign="middle" className="login-grid">
           <Grid.Column className="login-column">
             <Image centered spaced src={LogoImg} size="small" />
             <Divider />
-            <Form size="large" onSubmit={this.handleSubmit}>
               <Segment>
-                <Form.Input
-                  fluid
-                  icon="user"
-                  iconPosition="left"
-                  placeholder="E-mail"
-                  name="input_email"
-                  value={input_email}
-                  onChange={this.handleChange}
-                />
-                <Form.Input
-                  fluid
-                  icon="lock"
-                  iconPosition="left"
-                  placeholder="Token"
-                  name="input_token"
-                  value={input_token}
-                  onChange={this.handleChange}
-                  type="password"
-                />
-
-                <Button color="blue" fluid size="large">
+                <Button color="blue" fluid size="large" onClick={this.handleClick}>
                   Login
                 </Button>
-                <Message
-                  visible={show_message}
-                  error
-                  header="Invalid user / token"
-                  content="Please introduce a valid user and token"
-                />
               </Segment>
-            </Form>
             <Message>
               New user? <a href="mailto:info@reana.io">Request a token</a>
             </Message>
