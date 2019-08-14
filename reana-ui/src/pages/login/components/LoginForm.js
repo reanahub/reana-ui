@@ -126,7 +126,7 @@ export default class LoginForm extends Component {
               </Segment>
             </Form>
             <Message>
-              New to us? <a href="mailto:info@reana.io">Ask for a token</a>
+              New user? <a href="mailto:info@reana.io">Request a token</a>
             </Message>
           </Grid.Column>
         </Grid>
