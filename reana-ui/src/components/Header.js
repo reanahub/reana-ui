@@ -12,6 +12,8 @@ import React, { Component } from "react";
 import history from "../history";
 import { Segment, Image, Menu, Icon } from "semantic-ui-react";
 import LogoImg from "../images/logo-reana.svg";
+import GitLabLogo from "../images/gitlab-icon-rgb.svg";
+import Config from "../config";
 import Cookies from "universal-cookie";
 import "./Header.css";
 
@@ -33,6 +35,9 @@ export default class Header extends Component {
   };
 
   render() {
+    let authorize_gitlab = `${Config.reana_gitlab_url}/oauth/authorize?client_id=` +
+                           `${Config.reana_gitlab_client_id}&redirect_uri=${Config.api}/gitlab` +
+                           `&response_type=code&scope=api`
     return (
       <Segment secondary clearing attached="top" padded>
         <Image
@@ -50,6 +55,17 @@ export default class Header extends Component {
             target="_blank"
           >
             Documentation
+          </Menu.Item>
+          <Menu.Item
+              href={authorize_gitlab}
+            >
+              <Image
+                src={GitLabLogo}
+                size="mini"
+                floated="left"
+                style={{ margin: "-7px", paddingRight: "7px" }}
+              />
+            Connect with GitLab
           </Menu.Item>
           <Menu.Item
             className="logout-button"

@@ -10,6 +10,7 @@ pids
 *.pid
 *.seed
 *.pid.lock
+.DS_Store
 
 # built docs
 docs/_build
