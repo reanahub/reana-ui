@@ -15,6 +15,7 @@ import history from "./history";
 import LoginPage from "./pages/login/Login";
 import WorkflowsList from "./pages/workflowsList/WorkflowsList";
 import WorkflowDetails from "./pages/workflowDetails/WorkflowDetails";
+import GitLabProjects from "./pages/gitlabProjects/GitLabProjects";
 import "semantic-ui-css/semantic.min.css";
 
 ReactDOM.render(
@@ -23,6 +24,7 @@ ReactDOM.render(
       <Route exact path="/" component={LoginPage} />
       <Route path="/workflows" component={WorkflowsList} />
       <Route path="/details" component={WorkflowDetails} />
+      <Route path="/projects" component={GitLabProjects} />
     </div>
   </Router>,
   document.getElementById("root")

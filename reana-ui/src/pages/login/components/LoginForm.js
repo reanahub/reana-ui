@@ -17,6 +17,7 @@ import {
   Message,
   Segment
 } from "semantic-ui-react";
+import { Link } from "react-router-dom";
 import Config from "../../../config";
 import LogoImg from "../../../images/logo-reana.svg";
 
@@ -41,6 +42,10 @@ export default class LoginForm extends Component {
             <Message>
               New user? <a href="mailto:info@reana.io">Request a token</a>
             </Message>
+            <Divider />
+            <Segment basic floated="left" style={{ margin: "0px" }}>
+              Go to <Link to="/projects">my GitLab projects</Link>
+            </Segment>
           </Grid.Column>
         </Grid>
       </div>

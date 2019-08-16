@@ -56,9 +56,7 @@ export default class WorkflowSpace extends Component {
     axios({
       method: "get",
       url: this.url + "/workspace",
-      params: {
-        access_token: cookies.get("user_token")
-      }
+      withCredentials: true
     }).then(res => {
       let data = WorkflowSpace.parseData(res.data);
       this.setState({

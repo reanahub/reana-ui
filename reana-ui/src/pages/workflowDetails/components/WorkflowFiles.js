@@ -40,9 +40,7 @@ export default class WorkflowFiles extends Component {
     axios({
       method: "get",
       url: this.url + "/workspace/" + file_name,
-      params: {
-        access_token: cookies.get("user_token")
-      }
+      withCredentials: true
     }).then(res => {
       this.setState({ modal_content: res.data });
     });

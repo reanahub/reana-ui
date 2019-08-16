@@ -76,9 +76,7 @@ export default class WorkflowsList extends Component {
     axios({
       method: "get",
       url: Config.api + "/api/workflows",
-      headers: {
-        Authorization: "JWT " + cookies.get("jwt_token")
-      }
+      withCredentials: true
     }).then(res => {
       let data = WorkflowsList.parseData(res.data);
       this.setState({ data: data });
@@ -100,9 +98,7 @@ export default class WorkflowsList extends Component {
       axios({
         method: "get",
         url: Config.api + "/api/workflows/" + wf["id"] + "/status",
-        params: {
-          access_token: cookies.get("user_token")
-        }
+        withCredentials: true
       }).then(res => {
         let progress = res.data.progress.finished;
         let total = res.data.progress.total;

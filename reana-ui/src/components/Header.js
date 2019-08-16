@@ -35,9 +35,10 @@ export default class Header extends Component {
   };
 
   render() {
-    let authorize_gitlab = `${Config.reana_gitlab_url}/oauth/authorize?client_id=` +
-                           `${Config.reana_gitlab_client_id}&redirect_uri=${Config.api}/gitlab` +
-                           `&response_type=code&scope=api`
+    let authorize_gitlab =
+      `${Config.reana_gitlab_url}/oauth/authorize?client_id=` +
+      `${Config.reana_gitlab_client_id}&redirect_uri=${Config.api}/api/gitlab` +
+      `&response_type=code&scope=api`;
     return (
       <Segment secondary clearing attached="top" padded>
         <Image
@@ -56,15 +57,13 @@ export default class Header extends Component {
           >
             Documentation
           </Menu.Item>
-          <Menu.Item
-              href={authorize_gitlab}
-            >
-              <Image
-                src={GitLabLogo}
-                size="mini"
-                floated="left"
-                style={{ margin: "-7px", paddingRight: "7px" }}
-              />
+          <Menu.Item href={authorize_gitlab}>
+            <Image
+              src={GitLabLogo}
+              size="mini"
+              floated="left"
+              style={{ margin: "-7px", paddingRight: "7px" }}
+            />
             Connect with GitLab
           </Menu.Item>
           <Menu.Item

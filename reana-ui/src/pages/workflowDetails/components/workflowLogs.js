@@ -35,9 +35,7 @@ export default class WorkflowLogs extends Component {
     axios({
       method: "get",
       url: this.url + "/logs",
-      params: {
-        access_token: cookies.get("user_token")
-      }
+      withCredentials: true
     }).then(res => {
       this.setState({
         logs: res.data.logs
