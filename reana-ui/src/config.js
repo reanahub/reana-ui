@@ -14,7 +14,7 @@ const config = {
   api: "http://reana-dev.cern.ch",
   pooling_secs: 5,
   reana_gitlab_url: "https://gitlab.com",
-  reana_gitlab_client_id: "CHANGE_ME",
+  reana_gitlab_application_id: "CHANGE_ME"
 };
 
 export default config;

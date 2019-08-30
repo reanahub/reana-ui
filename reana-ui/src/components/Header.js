@@ -37,7 +37,7 @@ export default class Header extends Component {
   render() {
     let authorize_gitlab =
       `${Config.reana_gitlab_url}/oauth/authorize?client_id=` +
-      `${Config.reana_gitlab_client_id}&redirect_uri=${Config.api}/api/gitlab` +
+      `${Config.reana_gitlab_application_id}&redirect_uri=${Config.api}/api/gitlab` +
       `&response_type=code&scope=api`;
     return (
       <Segment secondary clearing attached="top" padded>
