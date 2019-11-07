@@ -10,3 +10,4 @@
 
 export const isLoggedIn = state => !!state.auth.email;
 export const getUserEmail = state => state.auth.email;
+export const loadingUser = state => state.auth.loadingUser;

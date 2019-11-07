@@ -12,7 +12,7 @@ import React from "react";
 import history from "../history";
 import { Redirect, Router, Route } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { isLoggedIn } from "../selectors";
+import { isLoggedIn, loadingUser } from "../selectors";
 import LoginPage from "../pages/login/Login";
 import WorkflowsList from "../pages/workflowsList/WorkflowsList";
 import WorkflowDetails from "../pages/workflowDetails/WorkflowDetails";
@@ -31,14 +31,21 @@ function ProtectedRoute(props) {
 }
 
 export default function App() {
+  const loading = useSelector(loadingUser);
   return (
     <Router history={history}>
-      <div>
-        <Route exact path="/" component={LoginPage} />
-        <ProtectedRoute path="/projects" component={GitLabProjects} />
-        <ProtectedRoute path="/workflows" component={WorkflowsList} />
-        <ProtectedRoute path="/details" component={WorkflowDetails} />
-      </div>
+      <>
+        {loading ? (
+          "Loading..."
+        ) : (
+          <div>
+            <Route exact path="/" component={LoginPage} />
+            <ProtectedRoute path="/projects" component={GitLabProjects} />
+            <ProtectedRoute path="/workflows" component={WorkflowsList} />
+            <ProtectedRoute path="/details" component={WorkflowDetails} />
+          </div>
+        )}
+      </>
     </Router>
   );
 }

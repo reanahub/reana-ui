@@ -9,20 +9,24 @@
 */
 
 import { combineReducers } from "redux";
-import { USER_RECEIVED } from "./actions";
+import { USER_FETCH, USER_RECEIVED } from "./actions";
 
 const initialState = {
   email: null,
-  reanaToken: null
+  reanaToken: null,
+  loadingUser: false
 };
 
 const auth = (state = initialState, action) => {
   switch (action.type) {
+    case USER_FETCH:
+      return { ...state, loadingUser: true };
     case USER_RECEIVED:
       return {
         ...state,
         email: action.email,
-        reanaToken: action.reana_token
+        reanaToken: action.reana_token,
+        loadingUser: false
       };
     default:
       return state;

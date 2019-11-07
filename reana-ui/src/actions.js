@@ -10,16 +10,21 @@
 
 import config from "./config";
 
+export const USER_FETCH = "Fetch user authentication info";
 export const USER_RECEIVED = "User logged in";
 
 const USER_INFO_URL = config.api + "/api/me";
 
+export function fetchUser() {
+  return { type: USER_FETCH };
+}
+
 export function loadUser() {
   return async dispatch => {
     let resp, data;
-
     try {
       // TODO: Extract fetching logic to a different file
+      dispatch(fetchUser());
       resp = await fetch(USER_INFO_URL, { credentials: "include" });
     } catch (err) {
       throw new Error(USER_INFO_URL, 0, err);
