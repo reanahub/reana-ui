@@ -9,7 +9,7 @@
 */
 
 import { combineReducers } from "redux";
-import { USER_FETCH, USER_RECEIVED } from "./actions";
+import { USER_FETCH, USER_RECEIVED, USER_LOGOUT } from "./actions";
 
 const initialState = {
   email: null,
@@ -28,6 +28,8 @@ const auth = (state = initialState, action) => {
         reanaToken: action.reana_token,
         loadingUser: false
       };
+    case USER_LOGOUT:
+      return initialState;
     default:
       return state;
   }

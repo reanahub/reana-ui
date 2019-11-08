@@ -11,9 +11,12 @@
 import config from "./config";
 
 export const USER_FETCH = "Fetch user authentication info";
-export const USER_RECEIVED = "User logged in";
+export const USER_RECEIVED = "User info received";
+export const USER_LOGOUT = "User logged out";
 
 const USER_INFO_URL = config.api + "/api/me";
+const USER_LOGOUT_URL =
+  config.api + "/api/logout?next=" + window.location.origin;
 
 export function fetchUser() {
   return { type: USER_FETCH };
@@ -36,5 +39,12 @@ export function loadUser() {
     }
     dispatch({ type: USER_RECEIVED, ...data });
     return resp;
+  };
+}
+
+export function userLogout() {
+  return async dispatch => {
+    dispatch({ type: USER_LOGOUT });
+    window.location.href = USER_LOGOUT_URL;
   };
 }
