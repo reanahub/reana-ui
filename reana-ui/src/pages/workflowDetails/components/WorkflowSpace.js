@@ -10,7 +10,6 @@
 
 import React, { Component } from "react";
 import axios from "axios";
-import history from "../../../history";
 import { Grid, Loader } from "semantic-ui-react";
 import WorkflowFiles from "./WorkflowFiles";
 import WorkflowSteps from "./WorkflowSteps";
@@ -71,11 +70,7 @@ export default class WorkflowSpace extends Component {
    * Default runnable method when the component is loaded
    */
   componentDidMount() {
-    if (cookies.get("user_token") === undefined) {
-      history.replace("/");
-    } else {
-      this.getWorkspace();
-    }
+    this.getWorkspace();
   }
 
   render() {

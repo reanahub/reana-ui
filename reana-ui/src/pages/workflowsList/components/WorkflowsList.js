@@ -11,14 +11,10 @@
 import React, { Component } from "react";
 import axios from "axios";
 import _ from "lodash";
-import history from "../../../history";
 import { Icon, Menu, Segment, Table } from "semantic-ui-react";
 import WorkflowsProgress from "./WorkflowsProgress";
 import WorkflowsActions from "./WorkflowsActions";
 import Config from "../../../config";
-import Cookies from "universal-cookie";
-
-const cookies = new Cookies();
 
 export default class WorkflowsList extends Component {
   /**
@@ -117,11 +113,7 @@ export default class WorkflowsList extends Component {
    * Default runnable method when the component is loaded
    */
   componentDidMount() {
-    if (cookies.get("user_token") === undefined) {
-      history.replace("/");
-    } else {
-      this.getWorkflows();
-    }
+    this.getWorkflows();
   }
 
   /**
