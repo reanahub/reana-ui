@@ -162,12 +162,8 @@ To setup the GitLab integration locally you need to follow these steps:
 * ``REANA_GITLAB_HOST``: GitLab instance URL, e.g. ``gitlab-test.cern.ch``
 * ``REANA_GITLAB_OAUTH_REDIRECT_URL``: Endpoint to authorize GitLab from REANA, e.g. ``https://reana-johndoe.cern.ch/api/gitlab``
 
-3. Edit REANA-UI's `config.js <https://github.com/reanahub/reana-ui/blob/master/reana-ui/src/config.js>`_:
 
-* ``reana_gitlab_url``: GitLab instance URL, same as in the previous step, e.g. ``gitlab-test.cern.ch``
-* ``reana_gitlab_application_id``: ID generated when the application is created, same as in the previous step.
-
-4. Rebuild the image and deploy:
+3. Rebuild the image and deploy:
 
 .. code-block:: console
 
@@ -177,7 +173,7 @@ To setup the GitLab integration locally you need to follow these steps:
   $ CLUSTER_FLAGS=--ui SERVER_URL=https://reana-johndoe.cern.ch \
     CLUSTER_CONFIG=dev make deploy
 
-5. Run REANA-UI as described in the `Quick start`_ section, log in and go to the projects page.
+4. Run REANA-UI as described in the `Quick start`_ section, log in and go to the projects page.
    Click on *Connect with GitLab* and you will be redirected to a page like this one:
 
 .. important::
@@ -188,7 +184,7 @@ To setup the GitLab integration locally you need to follow these steps:
 
 .. image:: _static/gitlab-authorize.png
 
-6. Authorize the GitLab application and you will be able to see all your GitLab projects.
+5. Authorize the GitLab application and you will be able to see all your GitLab projects.
    Select any of them and click on *Connect project*. A webhook will be created for this
    repository so whenever you push some changes to it, as long as it is REANA-compatible
    and it has a ``reana.yaml`` file, a workflow will be started updating the commit status.

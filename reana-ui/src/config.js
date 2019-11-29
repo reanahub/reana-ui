@@ -13,8 +13,6 @@ const config = {
   sign_up_email: "info@reana.io",
   api: "http://reana-dev.cern.ch",
   pooling_secs: 5,
-  reana_gitlab_url: "https://gitlab.com",
-  reana_gitlab_application_id: "CHANGE_ME"
 };
 
 export default config;

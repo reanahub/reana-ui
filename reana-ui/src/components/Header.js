@@ -20,6 +20,10 @@ import "./Header.css";
 
 const cookies = new Cookies();
 
+const GITLAB_AUTH_URL = Config.api + "/api/gitlab/connect";
+const REANA_DOCS_URL = "https://reana.readthedocs.io/en/latest/";
+const REANA_SITE_URL = "http://www.reana.io";
+
 export default function Header() {
   const dispatch = useDispatch();
 
@@ -37,11 +41,6 @@ export default function Header() {
     dispatch(userLogout());
   };
 
-  // TODO: Refactor and clean
-  let authorize_gitlab =
-    `${Config.reana_gitlab_url}/oauth/authorize?client_id=` +
-    `${Config.reana_gitlab_application_id}&redirect_uri=${Config.api}/api/gitlab` +
-    `&response_type=code&scope=api`;
   return (
     <Segment secondary clearing attached="top" padded>
       <Image
@@ -51,23 +50,20 @@ export default function Header() {
         style={{ margin: "0px" }}
       />
       <Menu size="large" floated="right">
-        <Menu.Item href="http://www.reana.io" target="_blank">
+        <Menu.Item href={REANA_SITE_URL} target="_blank">
           About
         </Menu.Item>
-        <Menu.Item
-          href="https://reana.readthedocs.io/en/latest/"
-          target="_blank"
-        >
+        <Menu.Item href={REANA_DOCS_URL} target="_blank">
           Documentation
         </Menu.Item>
-        <Menu.Item href={authorize_gitlab}>
+        <Menu.Item href={GITLAB_AUTH_URL}>
           <Image
             src={GitLabLogo}
             size="mini"
             floated="left"
             style={{ margin: "-7px", paddingRight: "7px" }}
           />
-          Connect with GitLab
+          Connect to GitLab
         </Menu.Item>
         <Menu.Item
           className="logout-button"
