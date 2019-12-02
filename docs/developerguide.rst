@@ -154,13 +154,11 @@ To setup the GitLab integration locally you need to follow these steps:
       + - REANA_GITLAB_OAUTH_APP_ID: "<GitLab-Application-ID>"
       + - REANA_GITLAB_OAUTH_APP_SECRET: "<GitLab-Secret>"
       + - REANA_GITLAB_HOST: "gitlab-test.cern.ch"
-      + - REANA_GITLAB_OAUTH_REDIRECT_URL: "https://<hostname>/api/gitlab" # e.g. "https://reana-johndoe.cern.ch/api/gitlab"
 
 
 * ``REANA_GITLAB_OAUTH_APP_ID``: ID generated when the application is created. It can be consulted on the GitLab application page.
 * ``REANA_GITLAB_OAUTH_APP_SECRET``: Secret generated when the application is created. It can be consulted on the GitLab application page.
 * ``REANA_GITLAB_HOST``: GitLab instance URL, e.g. ``gitlab-test.cern.ch``
-* ``REANA_GITLAB_OAUTH_REDIRECT_URL``: Endpoint to authorize GitLab from REANA, e.g. ``https://reana-johndoe.cern.ch/api/gitlab``
 
 
 3. Rebuild the image and deploy:
