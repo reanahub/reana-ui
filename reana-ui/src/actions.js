@@ -15,8 +15,7 @@ export const USER_RECEIVED = "User info received";
 export const USER_LOGOUT = "User logged out";
 
 const USER_INFO_URL = config.api + "/api/me";
-const USER_LOGOUT_URL =
-  config.api + "/api/logout?next=" + window.location.origin;
+const USER_LOGOUT_URL = config.api + "/api/logout";
 
 export function fetchUser() {
   return { type: USER_FETCH };
