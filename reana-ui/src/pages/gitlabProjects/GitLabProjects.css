@@ -25,6 +25,5 @@
 .ui.button.gitlab-btn {
     display: inline-flex;
     align-items: center;
-    /* padding: 0.5em 1em 0.5em 0.6em; */
     margin-left: 1em;
 }

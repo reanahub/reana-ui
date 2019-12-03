@@ -17,7 +17,6 @@ import {
   Loader,
   Radio,
   Segment,
-  Image,
   Message,
   Icon
 } from "semantic-ui-react";
@@ -25,7 +24,6 @@ import TopHeader from "../../components/TopHeader";
 import axios from "axios";
 import history from "../../history";
 import config from "../../config";
-import GitLabLogo from "../../images/gitlab-icon-rgb.svg";
 
 import "./GitLabProjects.css";
 
@@ -104,8 +102,8 @@ export default function GitLabProjects() {
                   to grant permissions.
                 </span>
                 <Button href={GITLAB_AUTH_URL} primary className="gitlab-btn">
-                  <Image src={GitLabLogo} className="gitlab-logo" />
-                  <span>Connect</span>
+                  <Icon name="gitlab" />
+                  Connect
                 </Button>
               </div>
             </Message.Content>
