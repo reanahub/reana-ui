@@ -8,53 +8,68 @@
   under the terms of the MIT License; see LICENSE file for more details.
 */
 
-import React, { Component } from "react";
-import Header from "../../components/Header";
+import React, { useEffect, useState } from "react";
+import {
+  Button,
+  Container,
+  Dimmer,
+  List,
+  Loader,
+  Radio,
+  Segment,
+  Image,
+  Message,
+  Icon
+} from "semantic-ui-react";
+import TopHeader from "../../components/TopHeader";
 import axios from "axios";
 import history from "../../history";
-import Config from "../../config";
-import { Button, List, Radio, Segment } from "semantic-ui-react";
+import config from "../../config";
+import GitLabLogo from "../../images/gitlab-icon-rgb.svg";
 
-export default class GitLabProjects extends Component {
-  state = {
-    selected_project: "",
-    projects: []
-  };
+import "./GitLabProjects.css";
 
-  /**
-   * Default runnable method when the component is loaded
-   */
-  componentDidMount() {
-    this.getProjects();
-  }
+const GITLAB_AUTH_URL = config.api + "/api/gitlab/connect";
 
-  /**
-   * Gets data from the specified API
-   */
-  getProjects() {
-    axios({
-      method: "get",
-      url: Config.api + "/api/gitlab/projects",
-      withCredentials: true
-    })
-      .then(res => {
-        this.setState({ projects: res.data });
+export default function GitLabProjects() {
+  const [selectedProject, setSelectedProject] = useState(null);
+  const [projects, setProjects] = useState(null);
+  const [fetchingProjects, setFetchingProjects] = useState(false);
+
+  useEffect(() => {
+    /**
+     * Gets data from the specified API
+     */
+    const getProjects = () => {
+      setFetchingProjects(true);
+      axios({
+        method: "get",
+        url: config.api + "/api/gitlab/projects",
+        withCredentials: true
       })
-      .catch(e => {
-        this.setState({ projects: [] });
-      });
-  }
+        .then(res => {
+          setProjects(res.data);
+          setFetchingProjects(false);
+        })
+        .catch(e => {
+          setProjects(null);
+          setFetchingProjects(false);
+        });
+    };
 
-  handleProjectClick = project => {
-    this.setState({ selected_project: project.target.id });
+    getProjects();
+  }, []);
+
+  const handleProjectClick = project => {
+    setSelectedProject(project.target.id);
   };
 
-  handleClick = () => {
+  const handleClick = () => {
     axios({
       method: "post",
-      url: Config.api + "/api/gitlab/webhook",
+      url: config.api + "/api/gitlab/webhook",
       data: {
-        project_id: this.state.selected_project
+        project_id: selectedProject
       },
       withCredentials: true
     })
@@ -62,36 +77,90 @@ export default class GitLabProjects extends Component {
         history.replace("/workflows");
       })
       .catch(e => {
-        this.setState({ selected_project: "" });
+        setSelectedProject(null);
       });
   };
 
-  render() {
+  if (fetchingProjects) {
+    return (
+      <Dimmer active>
+        <Loader>Fetching projects...</Loader>
+      </Dimmer>
+    );
+  }
+
+  if (!projects) {
     return (
       <div>
-        <Header />
-        <Segment basic padded>
-          <List selection>
-            {this.state.projects.map(project => {
-              return (
-                <Radio
-                  key={project.id}
-                  id={project.id}
-                  onClick={this.handleProjectClick}
-                  label={project.name}
-                ></Radio>
-              );
-            })}
-          </List>
-          <Button
-            primary
-            floated="right"
-            disabled={!this.state.selected_project}
-            onClick={this.handleClick}
-          >
-            Connect project
-          </Button>
-        </Segment>
+        <TopHeader />
+        <Container text className="gitlab-container">
+          <Message info icon>
+            <Icon name="info circle" />
+            <Message.Content>
+              <Message.Header>Connect to GitLab</Message.Header>
+              <div className="gitlab-msg-body">
+                <span>
+                  In order to integrate your GitLab projects with REANA you need
+                  to grant permissions.
+                </span>
+                <Button href={GITLAB_AUTH_URL} primary className="gitlab-btn">
+                  <Image src={GitLabLogo} className="gitlab-logo" />
+                  <span>Connect</span>
+                </Button>
+              </div>
+            </Message.Content>
+          </Message>
+        </Container>
+      </div>
+    );
+  } else {
+    return (
+      <div>
+        <TopHeader />
+        {projects.length ? (
+          <Segment basic padded>
+            <List selection>
+              {projects.map(project => {
+                return (
+                  <Radio
+                    key={project.id}
+                    id={project.id}
+                    onClick={handleProjectClick}
+                    label={project.name}
+                  ></Radio>
+                );
+              })}
+            </List>
+            <Button
+              primary
+              floated="right"
+              disabled={!selectedProject}
+              onClick={handleClick}
+            >
+              Connect project
+            </Button>
+          </Segment>
+        ) : (
+          <Container text className="no-projects-container">
+            <Message info icon>
+              <Icon name="info circle" />
+              <Message.Content>
+                <Message.Header>No GitLab projects found</Message.Header>
+                <p>
+                  If you would like to use REANA with GitLab, please{" "}
+                  <a
+                    href="https://gitlab.cern.ch/projects/new"
+                    rel="noopener noreferrer"
+                    target="_blank"
+                  >
+                    create a project
+                  </a>{" "}
+                  and come back.
+                </p>
+              </Message.Content>
+            </Message>
+          </Container>
+        )}
       </div>
     );
   }

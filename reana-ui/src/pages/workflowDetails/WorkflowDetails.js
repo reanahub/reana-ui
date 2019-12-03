@@ -9,7 +9,7 @@
 */
 
 import React, { Component } from "react";
-import Header from "../../components/Header";
+import TopHeader from "../../components/TopHeader";
 import WorkflowHeader from "./components/WorkflowHeader";
 import WorkflowSpace from "./components/WorkflowSpace";
 import "./WorkflowDetails.css";
@@ -18,7 +18,7 @@ export default class WorkflowDetailsPage extends Component {
   render() {
     return (
       <div>
-        <Header />
+        <TopHeader />
         <WorkflowHeader />
         <WorkflowSpace />
       </div>

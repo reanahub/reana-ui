@@ -12,19 +12,16 @@ import React from "react";
 import { Segment, Image, Menu, Icon } from "semantic-ui-react";
 import { useDispatch } from "react-redux";
 import LogoImg from "../images/logo-reana.svg";
-import GitLabLogo from "../images/gitlab-icon-rgb.svg";
 import Cookies from "universal-cookie";
-import Config from "../config";
 import { userLogout } from "../actions";
-import "./Header.css";
+import "./TopHeader.css";
 
 const cookies = new Cookies();
 
-const GITLAB_AUTH_URL = Config.api + "/api/gitlab/connect";
 const REANA_DOCS_URL = "https://reana.readthedocs.io/en/latest/";
 const REANA_SITE_URL = "http://www.reana.io";
 
-export default function Header() {
+export default function TopHeader() {
   const dispatch = useDispatch();
 
   /**
@@ -55,15 +52,6 @@ export default function Header() {
         </Menu.Item>
         <Menu.Item href={REANA_DOCS_URL} target="_blank">
           Documentation
-        </Menu.Item>
-        <Menu.Item href={GITLAB_AUTH_URL}>
-          <Image
-            src={GitLabLogo}
-            size="mini"
-            floated="left"
-            style={{ margin: "-7px", paddingRight: "7px" }}
-          />
-          Connect to GitLab
         </Menu.Item>
         <Menu.Item
           className="logout-button"
