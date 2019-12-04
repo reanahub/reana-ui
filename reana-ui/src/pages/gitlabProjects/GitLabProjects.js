@@ -8,6 +8,7 @@
   under the terms of the MIT License; see LICENSE file for more details.
 */
 
+import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import {
   Button,
@@ -22,7 +23,6 @@ import {
 } from "semantic-ui-react";
 import TopHeader from "../../components/TopHeader";
 import axios from "axios";
-import history from "../../history";
 import config from "../../config";
 
 import "./GitLabProjects.css";
@@ -30,7 +30,6 @@ import "./GitLabProjects.css";
 const GITLAB_AUTH_URL = config.api + "/api/gitlab/connect";
 
 export default function GitLabProjects() {
-  const [selectedProject, setSelectedProject] = useState(null);
   const [projects, setProjects] = useState(null);
   const [fetchingProjects, setFetchingProjects] = useState(false);
 
@@ -58,25 +57,30 @@ export default function GitLabProjects() {
     getProjects();
   }, []);
 
-  const handleProjectClick = project => {
-    setSelectedProject(project.target.id);
-  };
-
-  const handleClick = () => {
-    axios({
-      method: "post",
-      url: config.api + "/api/gitlab/webhook",
-      data: {
-        project_id: selectedProject
-      },
-      withCredentials: true
-    })
-      .then(res => {
-        history.replace("/workflows");
+  const onToggleProject = (_, { value: projectId, checked }) => {
+    setProjects({
+      ...projects,
+      [projectId]: { ...projects[projectId], connected: checked }
+    });
+    if (checked) {
+      axios({
+        method: "post",
+        url: config.api + "/api/gitlab/webhook",
+        data: {
+          project_id: projectId
+        },
+        withCredentials: true
       })
-      .catch(e => {
-        setSelectedProject(null);
-      });
+        .then(res => {
+          if (res.status === 201) {
+            console.log(`GitLab webhook created for project id ${projectId}`);
+          }
+        })
+        .catch(e => {
+          throw new Error(e);
+        });
+    }
+    // TODO: Handle webhook deletion
   };
 
   if (fetchingProjects) {
@@ -115,28 +119,23 @@ export default function GitLabProjects() {
     return (
       <div>
         <TopHeader />
-        {projects.length ? (
+        {!_.isEmpty(projects) ? (
           <Segment basic padded>
             <List selection>
-              {projects.map(project => {
+              {Object.entries(projects).map(([id, { name, connected }]) => {
                 return (
-                  <Radio
-                    key={project.id}
-                    id={project.id}
-                    onClick={handleProjectClick}
-                    label={project.name}
-                  ></Radio>
+                  <div key={id}>
+                    <label>{name}</label>
+                    <Radio
+                      toggle
+                      value={id}
+                      defaultChecked={connected}
+                      onChange={onToggleProject}
+                    />
+                  </div>
                 );
               })}
             </List>
-            <Button
-              primary
-              floated="right"
-              disabled={!selectedProject}
-              onClick={handleClick}
-            >
-              Connect project
-            </Button>
           </Segment>
         ) : (
           <Container text className="no-projects-container">
