@@ -58,29 +58,38 @@ export default function GitLabProjects() {
   }, []);
 
   const onToggleProject = (_, { value: projectId, checked }) => {
-    setProjects({
-      ...projects,
-      [projectId]: { ...projects[projectId], connected: checked }
-    });
+    let data = { project_id: projectId };
+    let method, expectedStatus;
+
     if (checked) {
-      axios({
-        method: "post",
-        url: config.api + "/api/gitlab/webhook",
-        data: {
-          project_id: projectId
-        },
-        withCredentials: true
-      })
-        .then(res => {
-          if (res.status === 201) {
-            console.log(`GitLab webhook created for project id ${projectId}`);
-          }
-        })
-        .catch(e => {
-          throw new Error(e);
-        });
+      method = "post";
+      expectedStatus = 201;
+    } else {
+      method = "delete";
+      data.hook_id = projects[projectId].hook_id;
+      expectedStatus = 204;
     }
-    // TODO: Handle webhook deletion
+
+    axios({
+      method: method,
+      url: config.api + "/api/gitlab/webhook",
+      data: data,
+      withCredentials: true
+    })
+      .then(res => {
+        if (res.status === expectedStatus) {
+          setProjects({
+            ...projects,
+            [projectId]: {
+              ...projects[projectId],
+              hook_id: checked ? res.data.id : null
+            }
+          });
+        }
+      })
+      .catch(e => {
+        throw new Error(e);
+      });
   };
 
   if (fetchingProjects) {
@@ -122,19 +131,21 @@ export default function GitLabProjects() {
         {!_.isEmpty(projects) ? (
           <Segment basic padded>
             <List selection>
-              {Object.entries(projects).map(([id, { name, connected }]) => {
-                return (
-                  <div key={id}>
-                    <label>{name}</label>
-                    <Radio
-                      toggle
-                      value={id}
-                      defaultChecked={connected}
-                      onChange={onToggleProject}
-                    />
-                  </div>
-                );
-              })}
+              {Object.entries(projects).map(
+                ([id, { name, hook_id: hookId }]) => {
+                  return (
+                    <div key={id}>
+                      <label>{name}</label>
+                      <Radio
+                        toggle
+                        value={id}
+                        checked={hookId !== null}
+                        onChange={onToggleProject}
+                      />
+                    </div>
+                  );
+                }
+              )}
             </List>
           </Segment>
         ) : (
