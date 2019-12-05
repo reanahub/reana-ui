@@ -14,10 +14,10 @@ import {
   Button,
   Container,
   Dimmer,
+  Header,
   List,
   Loader,
   Radio,
-  Segment,
   Message,
   Icon
 } from "semantic-ui-react";
@@ -104,7 +104,7 @@ export default function GitLabProjects() {
     return (
       <div>
         <TopHeader />
-        <Container text className="gitlab-container">
+        <Container text className="container">
           <Message info icon>
             <Icon name="info circle" />
             <Message.Content>
@@ -129,27 +129,38 @@ export default function GitLabProjects() {
       <div>
         <TopHeader />
         {!_.isEmpty(projects) ? (
-          <Segment basic padded>
-            <List selection>
+          <Container text className="container">
+            <Header as="h2">My projects</Header>
+            <List>
               {Object.entries(projects).map(
-                ([id, { name, hook_id: hookId }]) => {
+                ([id, { name, hook_id: hookId, path, url }]) => {
                   return (
-                    <div key={id}>
-                      <label>{name}</label>
+                    <List.Item key={id} className="list-item">
+                      <List.Icon
+                        name="book"
+                        size="large"
+                        verticalAlign="middle"
+                      />
+                      <List.Content>
+                        <List.Header as="a">{name}</List.Header>
+                        <List.Description as="a" href={url} target="_blank">
+                          {path}
+                        </List.Description>
+                      </List.Content>
                       <Radio
                         toggle
                         value={id}
                         checked={hookId !== null}
                         onChange={onToggleProject}
                       />
-                    </div>
+                    </List.Item>
                   );
                 }
               )}
             </List>
-          </Segment>
+          </Container>
         ) : (
-          <Container text className="no-projects-container">
+          <Container text className="container no-projects-container">
             <Message info icon>
               <Icon name="info circle" />
               <Message.Content>

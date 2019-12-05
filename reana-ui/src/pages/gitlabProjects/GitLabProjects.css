@@ -8,13 +8,17 @@
   under the terms of the MIT License; see LICENSE file for more details.
 */
 
-.gitlab-container,
-.no-projects-container {
+.container {
     margin-top: 5em;
 }
 
 .no-projects-container a {
     font-weight: bold;
+}
+
+.ui.list > .item.list-item {
+    display: flex;
+    align-items: center;
 }
 
 .gitlab-msg-body {
