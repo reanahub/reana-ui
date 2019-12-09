@@ -25,6 +25,8 @@ const auth = (state = initialState, action) => {
       return {
         ...state,
         email: action.email,
+        fullName: action.full_name,
+        username: action.username,
         reanaToken: action.reana_token,
         loadingUser: false
       };

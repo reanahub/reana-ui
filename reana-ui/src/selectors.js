@@ -10,4 +10,6 @@
 
 export const isLoggedIn = state => !!state.auth.email;
 export const getUserEmail = state => state.auth.email;
+export const getUserFullName = state => state.auth.fullName;
 export const loadingUser = state => state.auth.loadingUser;
+export const getReanaToken = state => state.auth.reanaToken;

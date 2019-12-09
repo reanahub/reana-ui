@@ -8,20 +8,59 @@
   under the terms of the MIT License; see LICENSE file for more details.
 */
 
-body > div,
-body > div > div,
-body > div > div > div {
+body {
     height: 100%;
 }
 
 .login-form {
-    height: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
-.login-grid {
+.ui.grid.login-grid {
     height: 100%;
+    margin-left: 1em;
+    margin-right: 1em;
 }
 
 .login-column {
     max-width: 450px;
+}
+
+.reana-logo {
+    padding-bottom: 4em;
+}
+
+.welcome-msg {
+    font-size: 1.2em;
+}
+
+.welcome-msg > div {
+    margin-bottom: 0.5em;
+}
+
+.footer-bottom {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 75px;
+    font-size: 1.1em;
+}
+
+.token-container {
+    margin: 1em;
+}
+
+.token-input {
+    width: 300px;
+}
+
+.ui.input.token-input  > input  {
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: bold;
+    color: #707070;
+}
+
+i.icons .corner.icon.copy-check-icon {
+    font-size: 0.65em;
 }

@@ -8,55 +8,94 @@
   under the terms of the MIT License; see LICENSE file for more details.
 */
 
-import React from "react";
-import {
-  Button,
-  Divider,
-  Grid,
-  Image,
-  Message,
-  Segment
-} from "semantic-ui-react";
+import React, { useState } from "react";
+import { Button, Grid, Input, Image, Segment, Icon } from "semantic-ui-react";
 import { useSelector } from "react-redux";
-import { isLoggedIn, getUserEmail } from "../../../selectors";
-import { Link } from "react-router-dom";
+import { CopyToClipboard } from "react-copy-to-clipboard";
+import { isLoggedIn, getUserFullName, getReanaToken } from "../../../selectors";
 import Config from "../../../config";
 import LogoImg from "../../../images/logo-reana.svg";
 
+const COPY_CHECK_TIMEOUT = 1500;
+
 export default function LoginForm() {
+  const [copied, setCopied] = useState(false);
   const loggedIn = useSelector(isLoggedIn);
-  const userEmail = useSelector(getUserEmail);
+  const userFullName = useSelector(getUserFullName);
+  const reanaToken = useSelector(getReanaToken);
   const handleClick = () => {
     window.location.href = Config.api + "/oauth/login/cern";
   };
+
+  const handleCopied = () => {
+    setCopied(true);
+
+    const timeout = setTimeout(() => {
+      setCopied(false);
+      clearTimeout(timeout);
+    }, COPY_CHECK_TIMEOUT);
+  };
+
   return (
     <div className="login-form">
       <Grid textAlign="center" verticalAlign="middle" className="login-grid">
         <Grid.Column className="login-column">
-          <Image centered spaced src={LogoImg} size="small" />
-          <Divider />
+          <Image
+            centered
+            spaced
+            src={LogoImg}
+            size="medium"
+            className="reana-logo"
+          />
           {loggedIn ? (
-            <>
-              Hello {userEmail}
-              <Segment basic floated="left" style={{ margin: "0px" }}>
-                Go to <Link to="/projects">my GitLab projects</Link>
-              </Segment>
-            </>
+            <div className="welcome-msg">
+              <div>Hello {userFullName}!</div>
+              <div>
+                {" "}
+                Your REANA command-line token is:
+                <div className="token-container">
+                  <Input value={reanaToken} className="token-input" action>
+                    <input />
+                    <CopyToClipboard text={reanaToken} onCopy={handleCopied}>
+                      <Button primary icon>
+                        <Icon.Group>
+                          <Icon name="copy" />
+                          {copied && (
+                            <Icon
+                              corner
+                              name="check"
+                              color="green"
+                              className="copy-check-icon"
+                            />
+                          )}
+                        </Icon.Group>
+                      </Button>
+                    </CopyToClipboard>
+                  </Input>
+                </div>
+              </div>
+              <div>
+                <a href="https://reana-client.readthedocs.io/en/latest/gettingstarted.html">
+                  How to use it?
+                </a>
+              </div>
+            </div>
           ) : (
             <>
-              <Segment>
+              <Segment className="signin">
                 <Button color="blue" fluid size="large" onClick={handleClick}>
-                  Login
+                  Sign in
                 </Button>
               </Segment>
-              <Message>
-                New user? <a href="mailto:info@reana.io">Request a token</a>
-              </Message>
             </>
           )}
-          <Divider />
         </Grid.Column>
       </Grid>
+      <footer className="footer-bottom">
+        <span>
+          © 2019 CERN · <a href="http://www.reana.io">www.reana.io</a>
+        </span>
+      </footer>
     </div>
   );
 }
