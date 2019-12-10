@@ -9,7 +9,7 @@
 */
 
 import React, { useState } from "react";
-import { Button, Grid, Input, Image, Segment, Icon } from "semantic-ui-react";
+import { Button, Grid, Input, Image, Segment, Popup } from "semantic-ui-react";
 import { useSelector } from "react-redux";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { isLoggedIn, getUserFullName, getReanaToken } from "../../../selectors";
@@ -56,21 +56,20 @@ export default function LoginForm() {
                 <div className="token-container">
                   <Input value={reanaToken} className="token-input" action>
                     <input />
-                    <CopyToClipboard text={reanaToken} onCopy={handleCopied}>
-                      <Button primary icon>
-                        <Icon.Group>
-                          <Icon name="copy" />
-                          {copied && (
-                            <Icon
-                              corner
-                              name="check"
-                              color="green"
-                              className="copy-check-icon"
-                            />
-                          )}
-                        </Icon.Group>
-                      </Button>
-                    </CopyToClipboard>
+
+                    <Popup
+                      trigger={
+                        <CopyToClipboard
+                          text={reanaToken}
+                          onCopy={handleCopied}
+                        >
+                          <Button primary icon="copy" />
+                        </CopyToClipboard>
+                      }
+                      content="Copied."
+                      open={copied}
+                      inverted
+                    />
                   </Input>
                 </div>
               </div>

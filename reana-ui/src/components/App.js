@@ -18,6 +18,8 @@ import WorkflowsList from "../pages/workflowsList/WorkflowsList";
 import WorkflowDetails from "../pages/workflowDetails/WorkflowDetails";
 import GitLabProjects from "../pages/gitlabProjects/GitLabProjects";
 
+import "./App.scss";
+
 function ProtectedRoute(props) {
   const loggedIn = useSelector(isLoggedIn);
   const { component: Component, render, ...restProps } = props;
@@ -38,12 +40,12 @@ export default function App() {
         {loading ? (
           "Loading..."
         ) : (
-          <div>
+          <>
             <Route exact path="/" component={LoginPage} />
             <ProtectedRoute path="/projects" component={GitLabProjects} />
             <ProtectedRoute path="/workflows" component={WorkflowsList} />
             <ProtectedRoute path="/details" component={WorkflowDetails} />
-          </div>
+          </>
         )}
       </>
     </Router>

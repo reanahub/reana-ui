@@ -11,7 +11,6 @@
 import React, { Component } from "react";
 import TopHeader from "../../components/TopHeader";
 import WorkflowsList from "./components/WorkflowsList";
-import "./WorkflowsList.scss";
 
 export default class WorkflowsListPage extends Component {
   render() {
