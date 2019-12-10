@@ -1,0 +1,67 @@
+/*
+	-*- coding: utf-8 -*-
+
+	This file is part of REANA.
+	Copyright (C) 2019 CERN.
+
+  REANA is free software; you can redistribute it and/or modify it
+  under the terms of the MIT License; see LICENSE file for more details.
+*/
+
+@import '../../styles/palette';
+
+body {
+    height: 100%;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+
+    .ui.grid.login-grid {
+        height: 100%;
+        margin-left: 1em;
+        margin-right: 1em;
+    }
+
+    .login-column {
+        max-width: 450px;
+    }
+
+    .reana-logo {
+        padding-bottom: 4em
+    }
+
+    .welcome-msg {
+        font-size: 1.2em;
+        & > div {
+            margin-bottom: 0.5em;
+        }
+    }
+
+    .footer-bottom {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 75px;
+        font-size: 1.1em;
+    }
+
+    .token-container {
+        margin: 1em;
+    }
+
+    .ui.input.token-input {
+        width: 300px;
+
+        > input  {
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: bold;
+            color: $grey;
+        }
+
+        i.icons .corner.icon.copy-check-icon {
+            font-size: 0.65em;
+        }
+    }
+}

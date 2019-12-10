@@ -14,7 +14,7 @@ import { useDispatch } from "react-redux";
 import LogoImg from "../images/logo-reana.svg";
 import Cookies from "universal-cookie";
 import { userLogout } from "../actions";
-import "./TopHeader.css";
+import "./TopHeader.scss";
 
 const cookies = new Cookies();
 

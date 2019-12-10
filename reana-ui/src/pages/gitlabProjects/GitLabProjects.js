@@ -25,7 +25,7 @@ import TopHeader from "../../components/TopHeader";
 import axios from "axios";
 import config from "../../config";
 
-import "./GitLabProjects.css";
+import "./GitLabProjects.scss";
 
 const GITLAB_AUTH_URL = config.api + "/api/gitlab/connect";
 
