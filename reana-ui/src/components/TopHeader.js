@@ -11,6 +11,7 @@
 import React from "react";
 import { Segment, Image, Menu, Icon } from "semantic-ui-react";
 import { useDispatch } from "react-redux";
+import { Link } from "react-router-dom";
 import LogoImg from "../images/logo-reana.svg";
 import Cookies from "universal-cookie";
 import { userLogout } from "../actions";
@@ -41,12 +42,14 @@ export default function TopHeader() {
 
   return (
     <Segment secondary clearing attached="top" padded>
-      <Image
-        src={LogoImg}
-        size="small"
-        floated="left"
-        style={{ margin: "0px" }}
-      />
+      <Link to="/">
+        <Image
+          src={LogoImg}
+          size="small"
+          floated="left"
+          style={{ margin: "0px" }}
+        />
+      </Link>
       <Menu size="large" floated="right">
         <Menu.Item href={REANA_SITE_URL} target="_blank">
           About
