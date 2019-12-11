@@ -14,6 +14,8 @@ import { Header, Segment } from "semantic-ui-react";
 import Config from "../../../config";
 import Cookies from "universal-cookie";
 
+import styles from "./WorkflowLogs.module.scss";
+
 const cookies = new Cookies();
 
 export default class WorkflowLogs extends Component {
@@ -54,7 +56,7 @@ export default class WorkflowLogs extends Component {
     const { logs } = this.state;
 
     return (
-      <Segment raised secondary className="logs-area">
+      <Segment raised secondary className={styles["logs-area"]}>
         <Header size="medium">Logs</Header>
         <pre>{logs}</pre>
       </Segment>

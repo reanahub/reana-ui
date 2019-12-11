@@ -13,6 +13,8 @@ import { Button, Segment } from "semantic-ui-react";
 import { Link } from "react-router-dom";
 import Cookies from "universal-cookie";
 
+import styles from "./WorkflowHeader.module.scss";
+
 const cookies = new Cookies();
 
 export default class WorkflowHeader extends Component {
@@ -21,7 +23,7 @@ export default class WorkflowHeader extends Component {
       <Segment
         basic
         clearing
-        className="workflow-header"
+        className={styles["workflow-header"]}
         style={{ margin: "0px" }}
       >
         <Segment basic floated="left" style={{ margin: "0px" }}>

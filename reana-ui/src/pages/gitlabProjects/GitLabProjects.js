@@ -25,7 +25,7 @@ import TopHeader from "../../components/TopHeader";
 import axios from "axios";
 import config from "../../config";
 
-import "./GitLabProjects.scss";
+import styles from "./GitLabProjects.module.scss";
 
 const GITLAB_AUTH_URL = config.api + "/api/gitlab/connect";
 
@@ -104,17 +104,21 @@ export default function GitLabProjects() {
     return (
       <div>
         <TopHeader />
-        <Container text className="container">
+        <Container text className={styles["container"]}>
           <Message info icon>
             <Icon name="info circle" />
             <Message.Content>
               <Message.Header>Connect to GitLab</Message.Header>
-              <div className="gitlab-msg-body">
+              <div className={styles["gitlab-msg-body"]}>
                 <span>
                   In order to integrate your GitLab projects with REANA you need
                   to grant permissions.
                 </span>
-                <Button href={GITLAB_AUTH_URL} primary className="gitlab-btn">
+                <Button
+                  href={GITLAB_AUTH_URL}
+                  className={styles["gitlab-btn"]}
+                  primary
+                >
                   <Icon name="gitlab" />
                   Connect
                 </Button>
@@ -129,13 +133,13 @@ export default function GitLabProjects() {
       <div>
         <TopHeader />
         {!_.isEmpty(projects) ? (
-          <Container text className="container">
+          <Container text className={styles["container"]}>
             <Header as="h2">My projects</Header>
             <List>
               {Object.entries(projects).map(
                 ([id, { name, hook_id: hookId, path, url }]) => {
                   return (
-                    <List.Item key={id} className="list-item">
+                    <List.Item key={id} className={styles["list-item"]}>
                       <List.Icon
                         name="book"
                         size="large"
@@ -160,7 +164,10 @@ export default function GitLabProjects() {
             </List>
           </Container>
         ) : (
-          <Container text className="container no-projects-container">
+          <Container
+            text
+            className={`${styles["container"]} ${styles["no-projects-container"]}`}
+          >
             <Message info icon>
               <Icon name="info circle" />
               <Message.Content>

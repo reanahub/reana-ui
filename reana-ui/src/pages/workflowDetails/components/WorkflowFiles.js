@@ -15,6 +15,8 @@ import { Button, Header, Icon, Modal, Segment, Table } from "semantic-ui-react";
 import Config from "../../../config";
 import Cookies from "universal-cookie";
 
+import styles from "./WorkflowFiles.module.scss";
+
 const cookies = new Cookies();
 
 export default class WorkflowFiles extends Component {
@@ -111,14 +113,14 @@ export default class WorkflowFiles extends Component {
             </Table.Row>
           </Table.Header>
 
-          <Table.Body className="files-list">
+          <Table.Body className={styles["files-list"]}>
             {_.map(files, ({ name, mod_date }) => (
               <Modal
                 key={name}
                 onOpen={this.getFile(name)}
-                className="modal-view"
+                className={styles["modal-view"]}
                 trigger={
-                  <Table.Row className="files-row">
+                  <Table.Row className={styles["files-row"]}>
                     <Table.Cell>
                       <Icon name="file" />
                       {name}
@@ -127,11 +129,13 @@ export default class WorkflowFiles extends Component {
                   </Table.Row>
                 }
               >
-                <Modal.Header className="modal-header">{name}</Modal.Header>
+                <Modal.Header className={styles["modal-header"]}>
+                  {name}
+                </Modal.Header>
                 <Modal.Content scrolling>
                   <pre>{modal_content}</pre>
                 </Modal.Content>
-                <Modal.Actions className="modal-actions">
+                <Modal.Actions className={styles["modal-actions"]}>
                   <Button color="blue" onClick={this.downloadFile(name)}>
                     <Icon name="download" /> Download
                   </Button>

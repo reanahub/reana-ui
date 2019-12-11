@@ -16,6 +16,8 @@ import { isLoggedIn, getUserFullName, getReanaToken } from "../../../selectors";
 import Config from "../../../config";
 import LogoImg from "../../../images/logo-reana.svg";
 
+import styles from "../Login.module.scss";
+
 const COPY_CHECK_TIMEOUT = 1500;
 
 export default function LoginForm() {
@@ -37,24 +39,32 @@ export default function LoginForm() {
   };
 
   return (
-    <div className="login-form">
-      <Grid textAlign="center" verticalAlign="middle" className="login-grid">
-        <Grid.Column className="login-column">
+    <div className={styles["login-form"]}>
+      <Grid
+        textAlign="center"
+        verticalAlign="middle"
+        className={styles["login-grid"]}
+      >
+        <Grid.Column className={styles["login-column"]}>
           <Image
             centered
             spaced
             src={LogoImg}
             size="medium"
-            className="reana-logo"
+            className={styles["reana-logo"]}
           />
           {loggedIn ? (
-            <div className="welcome-msg">
+            <div className={styles["welcome-msg"]}>
               <div>Hello {userFullName}!</div>
               <div>
                 {" "}
                 Your REANA command-line token is:
-                <div className="token-container">
-                  <Input value={reanaToken} className="token-input" action>
+                <div className={styles["token-container"]}>
+                  <Input
+                    value={reanaToken}
+                    className={styles["token-input"]}
+                    action
+                  >
                     <input />
 
                     <Popup
@@ -81,7 +91,7 @@ export default function LoginForm() {
             </div>
           ) : (
             <>
-              <Segment className="signin">
+              <Segment className={styles["signin"]}>
                 <Button color="blue" fluid size="large" onClick={handleClick}>
                   Sign in
                 </Button>
@@ -90,7 +100,7 @@ export default function LoginForm() {
           )}
         </Grid.Column>
       </Grid>
-      <footer className="footer-bottom">
+      <footer className={styles["footer-bottom"]}>
         <span>
           © 2019 CERN · <a href="http://www.reana.io">www.reana.io</a>
         </span>

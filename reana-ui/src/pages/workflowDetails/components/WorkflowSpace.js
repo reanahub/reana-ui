@@ -13,9 +13,11 @@ import axios from "axios";
 import { Grid, Loader } from "semantic-ui-react";
 import WorkflowFiles from "./WorkflowFiles";
 import WorkflowSteps from "./WorkflowSteps";
-import WorkflowLogs from "./workflowLogs";
+import WorkflowLogs from "./WorkflowLogs";
 import Config from "../../../config";
 import Cookies from "universal-cookie";
+
+import styles from "./WorkflowSpace.module.scss";
 
 const cookies = new Cookies();
 
@@ -82,7 +84,7 @@ export default class WorkflowSpace extends Component {
     }
 
     return (
-      <Grid columns="equal" padded className="controls">
+      <Grid columns="equal" padded className={styles["controls"]}>
         <Grid.Row stretched>
           <Grid.Column>
             <WorkflowFiles files={inputs} title="Inputs" />

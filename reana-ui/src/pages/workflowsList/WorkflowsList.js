@@ -15,10 +15,10 @@ import WorkflowsList from "./components/WorkflowsList";
 export default class WorkflowsListPage extends Component {
   render() {
     return (
-      <div>
+      <>
         <TopHeader />
         <WorkflowsList />
-      </div>
+      </>
     );
   }
 }

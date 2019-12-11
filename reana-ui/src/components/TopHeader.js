@@ -14,7 +14,8 @@ import { useDispatch } from "react-redux";
 import LogoImg from "../images/logo-reana.svg";
 import Cookies from "universal-cookie";
 import { userLogout } from "../actions";
-import "./TopHeader.scss";
+
+import styles from "./TopHeader.module.scss";
 
 const cookies = new Cookies();
 
@@ -53,11 +54,7 @@ export default function TopHeader() {
         <Menu.Item href={REANA_DOCS_URL} target="_blank">
           Documentation
         </Menu.Item>
-        <Menu.Item
-          className="logout-button"
-          onClick={logOut}
-          style={{ backgroundColor: "#0088CB", color: "white" }}
-        >
+        <Menu.Item onClick={logOut} className={styles["logout-button"]}>
           <Icon inverted name="user" />
           Log out
         </Menu.Item>

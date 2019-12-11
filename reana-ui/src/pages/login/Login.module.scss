@@ -15,7 +15,7 @@
     display: flex;
     flex-direction: column;
 
-    .ui.grid.login-grid {
+    :global(.ui.grid).login-grid {
         height: 100%;
         margin-left: 1em;
         margin-right: 1em;
@@ -49,7 +49,7 @@
         margin: 1em;
     }
 
-    .ui.input.token-input {
+    :global(.ui.input).token-input {
         width: 300px;
 
         > input  {
@@ -58,7 +58,7 @@
             color: $grey;
         }
 
-        i.icons .corner.icon.copy-check-icon {
+        :global(i.icons .corner.icon).copy-check-icon {
             font-size: 0.65em;
         }
     }

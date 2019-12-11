@@ -18,7 +18,7 @@ import WorkflowsList from "../pages/workflowsList/WorkflowsList";
 import WorkflowDetails from "../pages/workflowDetails/WorkflowDetails";
 import GitLabProjects from "../pages/gitlabProjects/GitLabProjects";
 
-import "./App.scss";
+import "./App.module.scss";
 
 function ProtectedRoute(props) {
   const loggedIn = useSelector(isLoggedIn);
