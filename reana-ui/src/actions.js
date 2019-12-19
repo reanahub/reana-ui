@@ -25,7 +25,6 @@ export function loadUser() {
   return async dispatch => {
     let resp, data;
     try {
-      // TODO: Extract fetching logic to a different file
       dispatch(fetchUser());
       resp = await fetch(USER_INFO_URL, { credentials: "include" });
     } catch (err) {

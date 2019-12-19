@@ -90,6 +90,7 @@ REANA-UI uses Single Sign-On (SSO) for Authentication.
   * Description: Whatever description you like.
 
 2. Edit REANA-UI's `config.js <https://github.com/reanahub/reana-ui/blob/master/reana-ui/src/config.js#L14>`_:
+
   * ``api``: REANA-Server hostname, e.g. ``https://reana-johndoe.cern.ch``.
 
 3. Configure SSO-related REANA-Cluster environment variables. You can do this in two ways:
@@ -101,7 +102,9 @@ REANA-UI uses Single Sign-On (SSO) for Authentication.
 
     .. code-block:: console
 
-      $ kubectl set env deployment/server CERN_CONSUMER_KEY=reana-johndoe CERN_CONSUMER_SECRET=<my-generated-secret>
+      $ kubectl set env deployment/server \
+        CERN_CONSUMER_KEY=reana-johndoe \
+        CERN_CONSUMER_SECRET=<my-generated-secret>
 
 * ``CERN_CONSUMER_KEY``: ``client_id`` of your OAuth client previously registered.
 * ``CERN_CONSUMER_SECRET``:  Generated secret, it can be consulted
@@ -118,8 +121,10 @@ To setup the GitLab integration locally you need to follow these steps:
 
 1. Create an application on `gitlab-test.cern.ch <https://gitlab-test.cern.ch>`_, to do that go to
    *Settings > Applications*:
+
   * Name: Application name, e.g. ``reana-jonhdoe``.
   * Redirect URI: Your hostname followed by ``/api/gitlab`` e.g. ``https://reana-johndoe.cern.ch/api/gitlab``
+
   Select ``api`` scope and *Save application*.
 
 2. Configure GitLab-related REANA-Cluster environment variables. You can do this directly on the

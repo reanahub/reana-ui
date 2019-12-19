@@ -10,9 +10,8 @@
 
 const config = {
   name: "CERN REANA UI",
-  sign_up_email: "info@reana.io",
-  api: "http://reana-dev.cern.ch",
-  pooling_secs: 5,
+  api: "https://reana.cern.ch",
+  pooling_secs: 5
 };
 
 export default config;
