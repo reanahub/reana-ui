@@ -93,16 +93,36 @@ REANA-UI uses Single Sign-On (SSO) for Authentication.
 
   * ``api``: REANA-Server hostname, e.g. ``https://reana-johndoe.cern.ch``.
 
-3. Configure SSO-related REANA-Cluster environment variables. You can do this in two ways:
+3. Configure SSO-related environment variables. You can do this in two ways:
 
    * Setting the variables before deploying on
-     `reana-cluster.yaml <https://github.com/reanahub/reana-cluster/blob/master/reana_cluster/configurations/reana-cluster-minikube-dev.yaml>`_.
+     `reanahub/reana`'s `helm/reana-dev/values.yaml <https://github.com/reanahub/reana/blob/master/helm/reana/values.yaml>`_.
+
+    .. code-block:: diff
+
+      + reana_url: <hostname> # e.g. "reana-johndoe.cern.ch"
+      debug:
+        enabled: false
+      ui:
+        enabled: false
+      ...
+      secrets:
+        ...
+        cern:
+          sso:
+      -      CERN_CONSUMER_KEY: <CHANGEME>
+      +      CERN_CONSUMER_KEY: <real_cern_consumer_client_id>
+      -      CERN_CONSUMER_SECRET: <CHANGEME>
+      +      CERN_CONSUMER_SECRET: <real_cern_consumer_secret>
+      ...
+
+
    * Changing the variable names directly on the REANA-Server deployment if you made a mistake and
      you don't want to deploy REANA again:
 
     .. code-block:: console
 
-      $ kubectl set env deployment/server \
+      $ kubectl set env deployment/reana-server \
         CERN_CONSUMER_KEY=reana-johndoe \
         CERN_CONSUMER_SECRET=<my-generated-secret>
 
@@ -127,38 +147,27 @@ To setup the GitLab integration locally you need to follow these steps:
 
   Select ``api`` scope and *Save application*.
 
-2. Configure GitLab-related REANA-Cluster environment variables. You can do this directly on the
-   `reana-cluster.yaml <https://github.com/reanahub/reana-cluster/blob/master/reana_cluster/configurations/reana-cluster-minikube-dev.yaml>`_:
+2. Configure GitLab-related environment variables. You can do this directly on the
+   `reanahub/reana`'s `helm/reana-dev/values.yaml <https://github.com/reanahub/reana/blob/master/helm/reana/values.yaml>`_:
 
 .. code-block:: diff
 
-      cluster:
-      type: "kubernetes"
       + reana_url: <hostname> # e.g. "reana-johndoe.cern.ch"
+      debug:
+        enabled: false
+      ui:
+        enabled: false
       ...
-      reana-workflow-controller:
-      type: "docker"
-      image: "reanahub/reana-workflow-controller:latest"
-      mountpoints:
-        - type: hostPath
-        name: reana-workflow-controller-code
-        path: "/code/reana-workflow-controller:/code"
-      environment:
+      secrets:
+        ...
+        gitlab:
+      -    REANA_GITLAB_OAUTH_APP_ID: <CHANGEME>
+      +    REANA_GITLAB_OAUTH_APP_ID: <real_gitlab_oauth_app_id>
+      -    REANA_GITLAB_OAUTH_APP_SECRET: <CHANGEME>
+      +    REANA_GITLAB_OAUTH_APP_SECRET: <real_gitlab_oauth_app_secret>
+      -    REANA_GITLAB_HOST: <CHANGEME>
+      +    REANA_GITLAB_HOST: gitlab-test.cern.ch
       ...
-      + - REANA_GITLAB_HOST: "gitlab-test.cern.ch"
-      ...
-      reana-server:
-      type: "docker"
-      image: "reanahub/reana-server:latest"
-      mountpoints:
-        - type: hostPath
-        name: reana-server-code
-        path: "/code/reana-server:/code"
-      environment:
-      ...
-      + - REANA_GITLAB_OAUTH_APP_ID: "<GitLab-Application-ID>"
-      + - REANA_GITLAB_OAUTH_APP_SECRET: "<GitLab-Secret>"
-      + - REANA_GITLAB_HOST: "gitlab-test.cern.ch"
 
 
 * ``REANA_GITLAB_OAUTH_APP_ID``: ID generated when the application is created. It can be consulted on the GitLab application page.
@@ -171,10 +180,11 @@ To setup the GitLab integration locally you need to follow these steps:
 .. code-block:: console
 
   $ cd reana/
-  $ CLUSTER_CONFIG=dev make build
+  $ CLUSTER_FLAGS=debug.enabled=true make build
   $ # Replace reana-johndoe with your machine's hostname
-  $ CLUSTER_FLAGS=--ui SERVER_URL=https://reana-johndoe.cern.ch \
-    CLUSTER_CONFIG=dev make deploy
+  $ CLUSTER_FLAGS=debug.enabled=true,ui.enabled=true \
+    SERVER_URL=https://reana-johndoe.cern.ch \
+    make deploy
 
 4. Run REANA-UI as described in the `Quick start`_ section, log in and go to the projects page.
    Click on *Connect with GitLab* and you will be redirected to a page like this one:
