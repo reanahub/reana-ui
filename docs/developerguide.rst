@@ -65,17 +65,7 @@ Prerequisites
 ~~~~~~~~~~~~~
 
 * Be inside the CERN network.
-* Set port forwarding from your machine to the VM where REANA runs. The supported way
-  of doing so is using VirtualBox VM driver for Minikube. To set it up you can follow
-  the next steps:
-
-  * Go to the VirtualBox UI and select the running VM, then in the *Network* section
-    select *Advanced* > *Port Forwarding*
-
-    .. image:: _static/virtualbox-port-forwarding.png
-
-  * Add a new entry (in the screenshot ``reana-backend``) to forward all the requests going to the port
-    443 (default for HTTPS) to the internal port 30443 (where REANA-Server is listening).
+* Have set up the REANA cluster using the `Makefile <https://reana.readthedocs.io/en/latest/developerguide.html#local-development-workflow>`_.
 
 Authentication
 ~~~~~~~~~~~~~~
