@@ -8,16 +8,18 @@
   under the terms of the MIT License; see LICENSE file for more details.
 */
 
-@import "../styles/palette";
+@import '../styles/palette';
 
-.top-header {
+.footer-bottom {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  border-top: 5px solid $sepia;
   padding: 2em 3em;
-  border-bottom: 5px solid $sepia;
+  height: 60px;
+  color: $grey;
 
-  .user-icon {
-    margin-left: 1.5em;
+  .links > a {
+    margin-left: 1em;
   }
 }

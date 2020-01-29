@@ -8,8 +8,6 @@
   under the terms of the MIT License; see LICENSE file for more details.
 */
 
-@import '../../styles/palette';
-
 .login-form {
     height: 100%;
     display: flex;
@@ -27,39 +25,5 @@
 
     .reana-logo {
         padding-bottom: 4em;
-    }
-
-    .welcome-msg {
-        font-size: 1.2em;
-
-        & > div {
-            margin-bottom: 0.5em;
-        }
-    }
-
-    .footer-bottom {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 75px;
-        font-size: 1.1em;
-    }
-
-    .token-container {
-        margin: 1em;
-    }
-
-    :global(.ui.input).token-input {
-        width: 300px;
-
-        > input  {
-            font-family: 'Courier New', Courier, monospace;
-            font-weight: bold;
-            color: $grey;
-        }
-
-        :global(i.icons .corner.icon).copy-check-icon {
-            font-size: 0.65em;
-        }
     }
 }

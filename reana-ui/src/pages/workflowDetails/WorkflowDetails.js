@@ -8,19 +8,17 @@
   under the terms of the MIT License; see LICENSE file for more details.
 */
 
-import React, { Component } from "react";
-import TopHeader from "../../components/TopHeader";
+import React from "react";
+
+import BasePage from "../BasePage";
 import WorkflowHeader from "./components/WorkflowHeader";
 import WorkflowSpace from "./components/WorkflowSpace";
 
-export default class WorkflowDetailsPage extends Component {
-  render() {
-    return (
-      <div>
-        <TopHeader />
-        <WorkflowHeader />
-        <WorkflowSpace />
-      </div>
-    );
-  }
+export default function WorkflowDetailsPage() {
+  return (
+    <BasePage>
+      <WorkflowHeader />
+      <WorkflowSpace />
+    </BasePage>
+  );
 }

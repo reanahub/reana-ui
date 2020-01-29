@@ -27,13 +27,14 @@ function ProtectedRoute(props) {
   return (
     <Route
       {...restProps}
-      render={() => (loggedIn ? renderContent : <Redirect to="/" />)}
+      render={() => (loggedIn ? renderContent : <Redirect to="/login" />)}
     />
   );
 }
 
 export default function App() {
   const loading = useSelector(loadingUser);
+  const loggedIn = useSelector(isLoggedIn);
   return (
     <Router history={history}>
       <>
@@ -41,9 +42,12 @@ export default function App() {
           "Loading..."
         ) : (
           <>
-            <Route exact path="/" component={LoginPage} />
+            <Route
+              path="/login"
+              render={() => (loggedIn ? <Redirect to="/" /> : <LoginPage />)}
+            />
+            <ProtectedRoute exact path="/" component={WorkflowsList} />
             <ProtectedRoute path="/projects" component={GitLabProjects} />
-            <ProtectedRoute path="/workflows" component={WorkflowsList} />
             <ProtectedRoute path="/details" component={WorkflowDetails} />
           </>
         )}

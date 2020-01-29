@@ -9,59 +9,54 @@
 */
 
 import React from "react";
-import { Segment, Image, Menu, Icon } from "semantic-ui-react";
+import { Image, Icon, Popup, List } from "semantic-ui-react";
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import LogoImg from "../images/logo-reana.svg";
-import Cookies from "universal-cookie";
 import { userLogout } from "../actions";
+import config from "../config";
 
 import styles from "./TopHeader.module.scss";
 
-const cookies = new Cookies();
-
-const REANA_DOCS_URL = "https://reana.readthedocs.io/en/latest/";
-const REANA_SITE_URL = "http://www.reana.io";
-
 export default function TopHeader() {
   const dispatch = useDispatch();
-
-  /**
-   * Logs out the current session
-   */
   const logOut = () => {
-    cookies.remove("user_token");
-    cookies.remove("jwt_token");
-    cookies.remove("workflow-id");
-    cookies.remove("workflow-name");
-    cookies.remove("workflow-run");
-    cookies.remove("workflow-created");
-    cookies.remove("workflow-status");
     dispatch(userLogout());
   };
 
   return (
-    <Segment secondary clearing attached="top" padded>
+    <div className={styles["top-header"]}>
       <Link to="/">
-        <Image
-          src={LogoImg}
-          size="small"
-          floated="left"
-          style={{ margin: "0px" }}
-        />
+        <Image src={LogoImg} size="small" />
       </Link>
-      <Menu size="large" floated="right">
-        <Menu.Item href={REANA_SITE_URL} target="_blank">
-          About
-        </Menu.Item>
-        <Menu.Item href={REANA_DOCS_URL} target="_blank">
-          Documentation
-        </Menu.Item>
-        <Menu.Item onClick={logOut} className={styles["logout-button"]}>
-          <Icon inverted name="user" />
-          Log out
-        </Menu.Item>
-      </Menu>
-    </Segment>
+      <section>
+        <a href={config.docs_url} target="_blank" rel="noopener noreferrer">
+          <Icon name="question circle outline"></Icon> Help
+        </a>
+        <Popup
+          trigger={
+            <Icon
+              link
+              name="user outline"
+              size="large"
+              color="brown"
+              className={styles["user-icon"]}
+            />
+          }
+          content={
+            <List>
+              <List.Item as="a" href="/profile">
+                Your profile
+              </List.Item>
+              <List.Item as="a" onClick={logOut}>
+                Sign out
+              </List.Item>
+            </List>
+          }
+          position="bottom right"
+          on="click"
+        />
+      </section>
+    </div>
   );
 }

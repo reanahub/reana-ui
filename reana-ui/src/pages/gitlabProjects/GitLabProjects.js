@@ -21,7 +21,8 @@ import {
   Message,
   Icon
 } from "semantic-ui-react";
-import TopHeader from "../../components/TopHeader";
+
+import BasePage from "../BasePage";
 import axios from "axios";
 import config from "../../config";
 
@@ -102,8 +103,7 @@ export default function GitLabProjects() {
 
   if (!projects) {
     return (
-      <div>
-        <TopHeader />
+      <BasePage>
         <Container text className={styles["container"]}>
           <Message info icon>
             <Icon name="info circle" />
@@ -126,12 +126,11 @@ export default function GitLabProjects() {
             </Message.Content>
           </Message>
         </Container>
-      </div>
+      </BasePage>
     );
   } else {
     return (
-      <div>
-        <TopHeader />
+      <BasePage>
         {!_.isEmpty(projects) ? (
           <Container text className={styles["container"]}>
             <Header as="h2">My projects</Header>
@@ -187,7 +186,7 @@ export default function GitLabProjects() {
             </Message>
           </Container>
         )}
-      </div>
+      </BasePage>
     );
   }
 }
