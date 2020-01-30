@@ -16,7 +16,7 @@ import { isLoggedIn, loadingUser } from "../selectors";
 import LoginPage from "../pages/login/Login";
 import WorkflowsList from "../pages/workflowsList/WorkflowsList";
 import WorkflowDetails from "../pages/workflowDetails/WorkflowDetails";
-import GitLabProjects from "../pages/gitlabProjects/GitLabProjects";
+import Profile from "../pages/profile/Profile";
 
 import "./App.module.scss";
 
@@ -47,8 +47,8 @@ export default function App() {
               render={() => (loggedIn ? <Redirect to="/" /> : <LoginPage />)}
             />
             <ProtectedRoute exact path="/" component={WorkflowsList} />
-            <ProtectedRoute path="/projects" component={GitLabProjects} />
             <ProtectedRoute path="/details" component={WorkflowDetails} />
+            <ProtectedRoute path="/profile" component={Profile} />
           </>
         )}
       </>

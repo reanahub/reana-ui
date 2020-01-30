@@ -8,18 +8,19 @@
   under the terms of the MIT License; see LICENSE file for more details.
 */
 
-@import '../styles/palette';
 
-.footer-bottom {
+.gitlab-msg-body {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-top: 5px solid $sepia;
-  padding: 2em 3em;
-  height: 60px;
-  color: $gray;
+  align-items: baseline;
+}
 
-  .links > a {
-    margin-left: 1em;
-  }
+:global(.ui.button).gitlab-btn {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 1em;
+}
+
+:global(.ui.list > .item).list-item {
+  display: flex;
+  align-items: center;
 }

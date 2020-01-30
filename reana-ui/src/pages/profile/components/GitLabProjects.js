@@ -1,8 +1,8 @@
 /*
 	-*- coding: utf-8 -*-
 
-	This file is part of REANA.
-	Copyright (C) 2020 CERN.
+  This file is part of REANA.
+  Copyright (C) 2020 CERN.
 
   REANA is free software; you can redistribute it and/or modify it
   under the terms of the MIT License; see LICENSE file for more details.
@@ -10,21 +10,10 @@
 
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
-import {
-  Button,
-  Container,
-  Dimmer,
-  Header,
-  List,
-  Loader,
-  Radio,
-  Message,
-  Icon
-} from "semantic-ui-react";
+import { Button, List, Loader, Radio, Message, Icon } from "semantic-ui-react";
 
-import BasePage from "../BasePage";
 import axios from "axios";
-import config from "../../config";
+import config from "../../../config";
 
 import styles from "./GitLabProjects.module.scss";
 
@@ -95,52 +84,47 @@ export default function GitLabProjects() {
 
   if (fetchingProjects) {
     return (
-      <Dimmer active>
-        <Loader>Fetching projects...</Loader>
-      </Dimmer>
+      <Loader active inline="centered">
+        Fetching projects...
+      </Loader>
     );
   }
 
   if (!projects) {
     return (
-      <BasePage>
-        <Container text className={styles["container"]}>
-          <Message info icon>
-            <Icon name="info circle" />
-            <Message.Content>
-              <Message.Header>Connect to GitLab</Message.Header>
-              <div className={styles["gitlab-msg-body"]}>
-                <span>
-                  In order to integrate your GitLab projects with REANA you need
-                  to grant permissions.
-                </span>
-                <Button
-                  href={GITLAB_AUTH_URL}
-                  className={styles["gitlab-btn"]}
-                  primary
-                >
-                  <Icon name="gitlab" />
-                  Connect
-                </Button>
-              </div>
-            </Message.Content>
-          </Message>
-        </Container>
-      </BasePage>
+      <Message info icon>
+        <Icon name="info circle" />
+        <Message.Content>
+          <Message.Header>Connect to GitLab</Message.Header>
+          <div className={styles["gitlab-msg-body"]}>
+            <span>
+              In order to integrate your GitLab projects with REANA you need to
+              grant permissions.
+            </span>
+            <Button
+              href={GITLAB_AUTH_URL}
+              className={styles["gitlab-btn"]}
+              primary
+            >
+              <Icon name="gitlab" />
+              Connect
+            </Button>
+          </div>
+        </Message.Content>
+      </Message>
     );
   } else {
     return (
-      <BasePage>
+      <>
         {!_.isEmpty(projects) ? (
-          <Container text className={styles["container"]}>
-            <Header as="h2">My projects</Header>
+          <>
             <List>
               {Object.entries(projects).map(
                 ([id, { name, hook_id: hookId, path, url }]) => {
                   return (
                     <List.Item key={id} className={styles["list-item"]}>
                       <List.Icon
-                        name="book"
+                        name="gitlab"
                         size="large"
                         verticalAlign="middle"
                       />
@@ -161,32 +145,27 @@ export default function GitLabProjects() {
                 }
               )}
             </List>
-          </Container>
+          </>
         ) : (
-          <Container
-            text
-            className={`${styles["container"]} ${styles["no-projects-container"]}`}
-          >
-            <Message info icon>
-              <Icon name="info circle" />
-              <Message.Content>
-                <Message.Header>No GitLab projects found</Message.Header>
-                <p>
-                  If you would like to use REANA with GitLab, please{" "}
-                  <a
-                    href="https://gitlab.cern.ch/projects/new"
-                    rel="noopener noreferrer"
-                    target="_blank"
-                  >
-                    create a project
-                  </a>{" "}
-                  and come back.
-                </p>
-              </Message.Content>
-            </Message>
-          </Container>
+          <Message info icon>
+            <Icon name="info circle" />
+            <Message.Content>
+              <Message.Header>No GitLab projects found</Message.Header>
+              <p>
+                If you would like to use REANA with GitLab, please{" "}
+                <a
+                  href="https://gitlab.cern.ch/projects/new"
+                  rel="noopener noreferrer"
+                  target="_blank"
+                >
+                  create a project
+                </a>{" "}
+                and come back.
+              </p>
+            </Message.Content>
+          </Message>
         )}
-      </BasePage>
+      </>
     );
   }
 }

@@ -18,7 +18,7 @@ export default class WorkflowsProgress extends Component {
 
   static handleColor(status) {
     if (status === "created") {
-      return "grey";
+      return "gray";
     }
     if (status === "running") {
       return "blue";
