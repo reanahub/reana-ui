@@ -15,7 +15,7 @@ import store from "./store";
 import { checkLoggedInStatus } from "./auth";
 import App from "./components/App";
 
-import "semantic-ui-css/semantic.min.css";
+import "semantic-ui-less/semantic.less";
 
 checkLoggedInStatus(store);
 
