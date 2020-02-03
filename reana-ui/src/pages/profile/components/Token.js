@@ -13,6 +13,7 @@ import { useSelector } from "react-redux";
 
 import { getReanaToken } from "../../../selectors";
 import CodeSnippet from "../../../components/CodeSnippet";
+import config from "../../../config";
 
 export default function Token() {
   const reanaToken = useSelector(getReanaToken);
@@ -22,7 +23,7 @@ export default function Token() {
       In order to use your token, make sure you have reana-client installed and
       run:
       <CodeSnippet>
-        {`export REANA_SERVER_URL=https://reana.cern.ch\nexport REANA_ACCESS_TOKEN=${reanaToken}`}
+        {`export REANA_SERVER_URL=${config.api}\nexport REANA_ACCESS_TOKEN=${reanaToken}`}
       </CodeSnippet>
     </>
   );

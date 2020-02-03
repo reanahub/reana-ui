@@ -8,32 +8,89 @@
   under the terms of the MIT License; see LICENSE file for more details.
 */
 
-import React, { Component } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import _ from "lodash";
 import { Icon, Menu, Segment, Table } from "semantic-ui-react";
+
 import WorkflowsProgress from "./WorkflowsProgress";
 import WorkflowsActions from "./WorkflowsActions";
-import Config from "../../../config";
+import NoWorkflows from "./NoWorkflows";
+import config from "../../../config";
 
-export default class WorkflowsList extends Component {
-  /**
-   * Variables defining the state of the table
-   */
-  constructor(props) {
-    super(props);
-    this.interval = null;
-    this.state = {
-      column: null,
-      data: [],
-      direction: null
-    };
-  }
+export default function WorkflowsList() {
+  const [column, setColumn] = useState(null);
+  const [workflows, setWorkflows] = useState([]);
+  const [direction, setDirection] = useState(null);
+  const interval = useRef(null);
+
+  useEffect(() => {
+    /**
+     * Gets data from the specified API
+     */
+    function getWorkflows() {
+      axios({
+        method: "get",
+        url: config.api + "/api/workflows",
+        withCredentials: true
+      }).then(res => {
+        setWorkflows(parseData(res.data));
+      });
+    }
+
+    /**
+     * Parses API data into displayable data
+     */
+    function parseData(wfs) {
+      if (!Array.isArray(wfs)) return [];
+
+      wfs.forEach(wf => {
+        let info = wf["name"].split(".");
+        wf["name"] = info[0];
+        wf["run"] = info[1];
+
+        let date = new Date(wf["created"]);
+        wf["created"] = wf["created"].replace("T", " ");
+        wf["duration"] = msToTime(Date.now() - date.getTime());
+      });
+
+      return wfs;
+    }
+
+    getWorkflows();
+  }, []);
+
+  useEffect(() => {
+    function updateProgresses() {
+      workflows.forEach(wf => {
+        axios({
+          method: "get",
+          url: config.api + "/api/workflows/" + wf["id"] + "/status",
+          withCredentials: true
+        }).then(res => {
+          const progress = res.data.progress.finished;
+          const total = res.data.progress.total;
+          wf["completed"] = typeof progress === "object" ? progress.total : 0;
+          wf["total"] = total.total;
+
+          const date = new Date(res.data.created);
+          wf["duration"] = msToTime(Date.now() - date.getTime());
+        });
+      });
+      setWorkflows([...workflows]);
+    }
+
+    if (!interval.current && workflows.length) {
+      interval.current = setInterval(() => {
+        updateProgresses();
+      }, config.pooling_secs * 1000);
+    }
+  }, [workflows]);
 
   /**
    * Transforms millisecond into a 'HH MM SS' string format
    */
-  static msToTime(millis) {
+  function msToTime(millis) {
     let seconds = Math.floor((millis / 1000) % 60);
     let minutes = Math.floor((millis / (1000 * 60)) % 60);
     let hours = Math.floor((millis / (1000 * 60 * 60)) % 24);
@@ -47,106 +104,23 @@ export default class WorkflowsList extends Component {
   }
 
   /**
-   * Parses API data into displayable data
-   */
-  static parseData(data) {
-    if (!Array.isArray(data)) return [];
-
-    data.forEach(wf => {
-      let info = wf["name"].split(".");
-      wf["name"] = info[0];
-      wf["run"] = info[1];
-
-      let date = new Date(wf["created"]);
-      wf["created"] = wf["created"].replace("T", " ");
-      wf["duration"] = WorkflowsList.msToTime(Date.now() - date.getTime());
-    });
-
-    return data;
-  }
-
-  /**
-   * Gets data from the specified API
-   */
-  getWorkflows() {
-    axios({
-      method: "get",
-      url: Config.api + "/api/workflows",
-      withCredentials: true
-    }).then(res => {
-      let data = WorkflowsList.parseData(res.data);
-      this.setState({ data: data });
-
-      this.updateProgresses();
-      this.interval = setInterval(() => {
-        this.updateProgresses();
-      }, Config.pooling_secs * 1000);
-    });
-  }
-
-  /**
-   * Gets data from the specified API
-   */
-  updateProgresses() {
-    const { data } = this.state;
-
-    data.forEach(wf => {
-      axios({
-        method: "get",
-        url: Config.api + "/api/workflows/" + wf["id"] + "/status",
-        withCredentials: true
-      }).then(res => {
-        let progress = res.data.progress.finished;
-        let total = res.data.progress.total;
-        wf["completed"] = typeof progress === "object" ? progress.total : 0;
-        wf["total"] = total.total;
-
-        let date = new Date(res.data.created);
-        wf["duration"] = WorkflowsList.msToTime(Date.now() - date.getTime());
-
-        this.setState({ data: data });
-      });
-    });
-  }
-
-  /**
-   * Default runnable method when the component is loaded
-   */
-  componentDidMount() {
-    this.getWorkflows();
-  }
-
-  /**
-   * Default runnable method when the component is unloaded
-   */
-  componentWillUnmount() {
-    clearInterval(this.interval);
-  }
-
-  /**
    * Performs the sorting when a column header is clicked
    */
-  handleSort = clickedColumn => () => {
-    const { column, data, direction } = this.state;
-
+  const handleSort = clickedColumn => () => {
     if (column !== clickedColumn) {
-      this.setState({
-        column: clickedColumn,
-        data: _.sortBy(data, [clickedColumn]),
-        direction: "ascending"
-      });
+      setColumn(clickedColumn);
+      setWorkflows(_.sortBy(workflows, [clickedColumn]));
+      setDirection("ascending");
       return;
     }
-
-    this.setState({
-      data: data.reverse(),
-      direction: direction === "ascending" ? "descending" : "ascending"
-    });
+    setWorkflows(workflows.reverse());
+    setDirection(direction === "ascending" ? "descending" : "ascending");
   };
 
-  render() {
-    const { column, data, direction } = this.state;
-
+  // TODO: Add loading
+  if (!workflows.length) {
+    return <NoWorkflows />;
+  } else {
     return (
       <Segment basic padded>
         <Table sortable fixed>
@@ -155,42 +129,42 @@ export default class WorkflowsList extends Component {
               <Table.HeaderCell
                 colSpan="2"
                 sorted={column === "name" ? direction : null}
-                onClick={this.handleSort("name")}
+                onClick={handleSort("name")}
               >
                 Name
               </Table.HeaderCell>
               <Table.HeaderCell
                 colSpan="1"
                 sorted={column === "run" ? direction : null}
-                onClick={this.handleSort("run")}
+                onClick={handleSort("run")}
               >
                 Run
               </Table.HeaderCell>
               <Table.HeaderCell
                 colSpan="2"
                 sorted={column === "created" ? direction : null}
-                onClick={this.handleSort("created")}
+                onClick={handleSort("created")}
               >
                 Created
               </Table.HeaderCell>
               <Table.HeaderCell
                 colSpan="2"
                 sorted={column === "duration" ? direction : null}
-                onClick={this.handleSort("duration")}
+                onClick={handleSort("duration")}
               >
                 Duration
               </Table.HeaderCell>
               <Table.HeaderCell
                 colSpan="8"
                 sorted={column === "progress" ? direction : null}
-                onClick={this.handleSort("progress")}
+                onClick={handleSort("progress")}
               >
                 Progress
               </Table.HeaderCell>
               <Table.HeaderCell
                 colSpan="1"
                 sorted={column === "status" ? direction : null}
-                onClick={this.handleSort("status")}
+                onClick={handleSort("status")}
               >
                 Status
               </Table.HeaderCell>
@@ -199,7 +173,7 @@ export default class WorkflowsList extends Component {
           </Table.Header>
           <Table.Body>
             {_.map(
-              data,
+              workflows,
               ({
                 id,
                 name,
