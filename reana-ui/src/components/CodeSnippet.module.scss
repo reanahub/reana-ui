@@ -14,15 +14,25 @@
   display: flex;
   justify-content: space-between;
   margin: 1em 0;
-  line-height: 1.5em;
+  line-height: 2em;
   width: 100%;
   white-space: pre-line;
   font-family: "Consolas", "Monaco", "Courier New", Courier, monospace;
   color: $light-gray;
   background-color: $dark-gray;
 
+  &.light {
+    background-color: $light-gray;
+    color: $dark-blue;
+    border: 3px solid lighten($gray, 40%);
+  }
+
   .content {
     padding: 1em;
+
+    &.small {
+      font-size: 0.85em;
+    }
   }
 
   .copy-icon {

@@ -11,12 +11,13 @@
 import React, { useState } from "react";
 import { Icon, Popup } from "semantic-ui-react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
+import PropTypes from "prop-types";
 
 import styles from "./CodeSnippet.module.scss";
 
 const COPY_CHECK_TIMEOUT = 1500;
 
-export default function CodeSnippet({ children }) {
+export default function CodeSnippet({ children, light, small }) {
   const [copied, setCopied] = useState(false);
 
   const handleCopied = () => {
@@ -29,8 +30,10 @@ export default function CodeSnippet({ children }) {
   };
 
   return (
-    <div className={styles["container"]}>
-      <div className={styles["content"]}>{children}</div>
+    <div className={`${styles["container"]} ${light ? styles["light"] : ""}`}>
+      <div className={`${styles["content"]} ${small ? styles["small"] : ""}`}>
+        {children}
+      </div>
       <Popup
         trigger={
           <CopyToClipboard text={children} onCopy={handleCopied}>
@@ -44,3 +47,13 @@ export default function CodeSnippet({ children }) {
     </div>
   );
 }
+
+CodeSnippet.propTypes = {
+  light: PropTypes.bool,
+  small: PropTypes.bool
+};
+
+CodeSnippet.defaultProps = {
+  light: false,
+  small: false
+};

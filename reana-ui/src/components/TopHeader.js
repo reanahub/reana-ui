@@ -25,7 +25,7 @@ export default function TopHeader() {
   };
 
   return (
-    <div className={styles["top-header"]}>
+    <header className={styles["top-header"]}>
       <Link to="/">
         <Image src={LogoImg} size="small" />
       </Link>
@@ -57,6 +57,6 @@ export default function TopHeader() {
           on="click"
         />
       </section>
-    </div>
+    </header>
   );
 }

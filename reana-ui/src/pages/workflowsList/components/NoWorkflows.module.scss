@@ -8,20 +8,10 @@
   under the terms of the MIT License; see LICENSE file for more details.
 */
 
-@import '../styles/palette';
+@import "../../../styles/palette";
 
-:global {
-  #root {
-      height: 100%;
-  }
-
-  header, footer {
-    a {
-      color: $raven;
-
-      &:hover {
-        color: $dark-blue;
-      }
-    }
-  }
+.container {
+  background-color: $sepia;
+  padding: 2em 4em;
+  margin: 4em 0;
 }

@@ -11,7 +11,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import _ from "lodash";
-import { Icon, Menu, Segment, Table } from "semantic-ui-react";
+import { Dimmer, Icon, Menu, Segment, Table, Loader } from "semantic-ui-react";
 
 import WorkflowsProgress from "./WorkflowsProgress";
 import WorkflowsActions from "./WorkflowsActions";
@@ -20,8 +20,9 @@ import config from "../../../config";
 
 export default function WorkflowsList() {
   const [column, setColumn] = useState(null);
-  const [workflows, setWorkflows] = useState([]);
+  const [workflows, setWorkflows] = useState(null);
   const [direction, setDirection] = useState(null);
+  const [loading, setLoading] = useState(false);
   const interval = useRef(null);
 
   useEffect(() => {
@@ -29,12 +30,14 @@ export default function WorkflowsList() {
      * Gets data from the specified API
      */
     function getWorkflows() {
+      setLoading(true);
       axios({
         method: "get",
         url: config.api + "/api/workflows",
         withCredentials: true
       }).then(res => {
         setWorkflows(parseData(res.data));
+        setLoading(false);
       });
     }
 
@@ -80,7 +83,7 @@ export default function WorkflowsList() {
       setWorkflows([...workflows]);
     }
 
-    if (!interval.current && workflows.length) {
+    if (!interval.current && workflows && workflows.length) {
       interval.current = setInterval(() => {
         updateProgresses();
       }, config.pooling_secs * 1000);
@@ -117,8 +120,13 @@ export default function WorkflowsList() {
     setDirection(direction === "ascending" ? "descending" : "ascending");
   };
 
-  // TODO: Add loading
-  if (!workflows.length) {
+  if (loading) {
+    return (
+      <Dimmer active>
+        <Loader>Loading workflows</Loader>
+      </Dimmer>
+    );
+  } else if (workflows && !workflows.length) {
     return <NoWorkflows />;
   } else {
     return (
