@@ -23,7 +23,8 @@ export default function Token() {
       In order to use your token, make sure you have reana-client installed and
       run:
       <CodeSnippet>
-        {`export REANA_SERVER_URL=${config.api}\nexport REANA_ACCESS_TOKEN=${reanaToken}`}
+        <div>export REANA_SERVER_URL={config.api}</div>
+        <div>export REANA_ACCESS_TOKEN={reanaToken}</div>
       </CodeSnippet>
     </>
   );

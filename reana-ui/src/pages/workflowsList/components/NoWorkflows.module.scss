@@ -14,4 +14,9 @@
   background-color: $sepia;
   padding: 2em 4em;
   margin: 4em 0;
+  color: darken($gray, 10%);
+
+  :global(.ui.header).header {
+    margin-bottom: 1em;
+  }
 }

@@ -33,6 +33,10 @@
     &.small {
       font-size: 0.85em;
     }
+
+    & > div::before {
+      content: '$ ';
+    }
   }
 
   .copy-icon {

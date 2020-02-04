@@ -23,7 +23,7 @@ export default function NoWorkflows() {
 
   return (
     <Container text className={styles["container"]}>
-      <Header as="h2">
+      <Header as="h2" dividing className={styles["header"]}>
         It seems that you are using REANA for the first time!
       </Header>
       <div>
@@ -32,13 +32,15 @@ export default function NoWorkflows() {
           launch:
         </p>
         <CodeSnippet light small>
-          {`ssh lxplus.cern.ch\n` +
-            `source ~simko/public/reana/bin/activate\n` +
-            `export REANA_SERVER_URL=https://reana.cern.ch\n` +
-            `export REANA_ACCESS_TOKEN=${reanaToken}\n` +
-            `git clone https://github.com/reanahub/reana-demo-root6-roofit\n` +
-            `cd reana-demo-root6-roofit\n` +
-            `reana-client run -w root6-roofit`}
+          <div>ssh lxplus.cern.ch</div>
+          <div>source ~simko/public/reana/bin/activate</div>
+          <div>export REANA_SERVER_URL={config.api}</div>
+          <div>export REANA_ACCESS_TOKEN={reanaToken}</div>
+          <div>
+            git clone https://github.com/reanahub/reana-demo-root6-roofit
+          </div>
+          <div>cd reana-demo-root6-roofit</div>
+          <div>reana-client run -w root6-roofit</div>
         </CodeSnippet>
         <p>and come back to this web page once launched!</p>
         <p>

@@ -11,7 +11,6 @@
 import React from "react";
 
 import LoginForm from "./components/LoginForm";
-import Footer from "../../components/Footer";
 
 import styles from "./Login.module.scss";
 
@@ -19,7 +18,6 @@ export default function LoginPage() {
   return (
     <div className={styles["login-form"]}>
       <LoginForm />
-      <Footer />
     </div>
   );
 }

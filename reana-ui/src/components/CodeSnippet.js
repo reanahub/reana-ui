@@ -36,7 +36,15 @@ export default function CodeSnippet({ children, light, small }) {
       </div>
       <Popup
         trigger={
-          <CopyToClipboard text={children} onCopy={handleCopied}>
+          <CopyToClipboard
+            text={children
+              .map(el => {
+                const children = el.props.children;
+                return Array.isArray(children) ? children.join("") : children;
+              })
+              .join("\n")}
+            onCopy={handleCopied}
+          >
             <Icon name="copy outline" className={styles["copy-icon"]} />
           </CopyToClipboard>
         }

@@ -27,7 +27,7 @@ function ProtectedRoute(props) {
   return (
     <Route
       {...restProps}
-      render={() => (loggedIn ? renderContent : <Redirect to="/login" />)}
+      render={() => (loggedIn ? renderContent : <Redirect to="/signin" />)}
     />
   );
 }
@@ -43,7 +43,7 @@ export default function App() {
         ) : (
           <>
             <Route
-              path="/login"
+              path="/signin"
               render={() => (loggedIn ? <Redirect to="/" /> : <LoginPage />)}
             />
             <ProtectedRoute exact path="/" component={WorkflowsList} />
