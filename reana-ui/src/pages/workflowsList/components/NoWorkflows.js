@@ -24,14 +24,14 @@ export default function NoWorkflows() {
   return (
     <Container text className={styles["container"]}>
       <Header as="h2" dividing className={styles["header"]}>
-        It seems that you are using REANA for the first time!
+        Welcome to REANA!
       </Header>
       <div>
         <p>
-          Would you like to try out a small example? Please login to LXPLUS and
-          launch:
+          It seems that you are using REANA for the first time. Would you like
+          to try out a small example? Please login to LXPLUS and launch:
         </p>
-        <CodeSnippet light small>
+        <CodeSnippet light>
           <div>ssh lxplus.cern.ch</div>
           <div>source ~simko/public/reana/bin/activate</div>
           <div>export REANA_SERVER_URL={config.api}</div>

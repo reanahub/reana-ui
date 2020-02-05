@@ -22,9 +22,8 @@
   background-color: $dark-gray;
 
   &.light {
-    background-color: $light-gray;
+    background-color: $sepia;
     color: $dark-blue;
-    border: 3px solid lighten($gray, 40%);
   }
 
   .content {
