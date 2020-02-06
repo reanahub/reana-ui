@@ -9,21 +9,21 @@
 */
 
 .login-form {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  :global(.ui.grid).login-grid {
     height: 100%;
-    display: flex;
-    flex-direction: column;
+    margin-left: 1em;
+    margin-right: 1em;
+  }
 
-    :global(.ui.grid).login-grid {
-        height: 100%;
-        margin-left: 1em;
-        margin-right: 1em;
-    }
+  .login-column {
+    max-width: 450px;
+  }
 
-    .login-column {
-        max-width: 450px;
-    }
-
-    .reana-logo {
-        padding-bottom: 4em;
-    }
+  .reana-logo {
+    padding-bottom: 4em;
+  }
 }

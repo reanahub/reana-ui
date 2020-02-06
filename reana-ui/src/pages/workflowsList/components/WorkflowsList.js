@@ -10,18 +10,16 @@
 
 import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
-import _ from "lodash";
-import { Dimmer, Icon, Menu, Segment, Table, Loader } from "semantic-ui-react";
+import moment from "moment";
+import { Dimmer, Icon, Loader, Container, Popup } from "semantic-ui-react";
 
-import WorkflowsProgress from "./WorkflowsProgress";
-import WorkflowsActions from "./WorkflowsActions";
 import NoWorkflows from "./NoWorkflows";
 import config from "../../../config";
 
+import styles from "./WorkflowsList.module.scss";
+
 export default function WorkflowsList() {
-  const [column, setColumn] = useState(null);
   const [workflows, setWorkflows] = useState(null);
-  const [direction, setDirection] = useState(null);
   const [loading, setLoading] = useState(false);
   const interval = useRef(null);
 
@@ -48,13 +46,10 @@ export default function WorkflowsList() {
       if (!Array.isArray(wfs)) return [];
 
       wfs.forEach(wf => {
-        let info = wf["name"].split(".");
-        wf["name"] = info[0];
-        wf["run"] = info[1];
-
-        let date = new Date(wf["created"]);
-        wf["created"] = wf["created"].replace("T", " ");
-        wf["duration"] = msToTime(Date.now() - date.getTime());
+        const info = wf.name.split(".");
+        wf.name = info.shift();
+        wf.run = info.join(".");
+        wf = parseDates(wf);
       });
 
       return wfs;
@@ -68,16 +63,18 @@ export default function WorkflowsList() {
       workflows.forEach(wf => {
         axios({
           method: "get",
-          url: config.api + "/api/workflows/" + wf["id"] + "/status",
+          url: config.api + "/api/workflows/" + wf.id + "/status",
           withCredentials: true
         }).then(res => {
           const progress = res.data.progress.finished;
           const total = res.data.progress.total;
-          wf["completed"] = typeof progress === "object" ? progress.total : 0;
-          wf["total"] = total.total;
+          wf.completed = typeof progress === "object" ? progress.total : 0;
+          wf.total = total.total;
 
-          const date = new Date(res.data.created);
-          wf["duration"] = msToTime(Date.now() - date.getTime());
+          wf.status = res.data.status;
+          wf.run_started_at = res.data.progress.run_started_at;
+          wf.run_finished_at = res.data.progress.run_finished_at;
+          wf = parseDates(wf);
         });
       });
       setWorkflows([...workflows]);
@@ -90,34 +87,52 @@ export default function WorkflowsList() {
     }
   }, [workflows]);
 
-  /**
-   * Transforms millisecond into a 'HH MM SS' string format
-   */
-  function msToTime(millis) {
-    let seconds = Math.floor((millis / 1000) % 60);
-    let minutes = Math.floor((millis / (1000 * 60)) % 60);
-    let hours = Math.floor((millis / (1000 * 60 * 60)) % 24);
-    let days = Math.floor(millis / (1000 * 60 * 60 * 24));
+  function parseDates(wf) {
+    const createdMoment = moment.utc(wf.created);
+    const startedMoment = moment.utc(wf.run_started_at);
+    const finishedMoment = moment.utc(wf.run_finished_at);
+    wf.createdDate = createdMoment.format("Do MMM YYYY HH:mm");
+    wf.startedDate = startedMoment.format("Do MMM YYYY HH:mm");
+    wf.finishedDate = finishedMoment.format("Do MMM YYYY HH:mm");
+    wf.friendlyCreated = moment
+      .duration(-moment().diff(createdMoment))
+      .humanize(true);
+    let duration;
+    if (startedMoment.isValid()) {
+      wf.friendlyStarted = moment
+        .duration(-moment().diff(startedMoment))
+        .humanize(true);
+      if (finishedMoment.isValid()) {
+        duration = finishedMoment.diff(startedMoment);
+        wf.friendlyFinished = moment
+          .duration(-moment().diff(finishedMoment))
+          .humanize(true);
+      } else if (startedMoment.isValid()) {
+        duration = moment().diff(startedMoment);
+      }
 
-    hours = hours < 10 ? "0" + hours : hours;
-    minutes = minutes < 10 ? "0" + minutes : minutes;
-    seconds = seconds < 10 ? "0" + seconds : seconds;
-
-    return days + "d " + hours + "h " + minutes + "m " + seconds + "s";
+      const durationMoment = moment.duration(duration);
+      let format;
+      if (durationMoment.hours()) {
+        format = "H[h] m[m] s[s]";
+      } else if (durationMoment.minutes()) {
+        format = "m [min] s [sec]";
+      } else {
+        format = "s [seconds]";
+      }
+      wf.duration = moment.utc(duration).format(format);
+    }
+    return wf;
   }
 
-  /**
-   * Performs the sorting when a column header is clicked
-   */
-  const handleSort = clickedColumn => () => {
-    if (column !== clickedColumn) {
-      setColumn(clickedColumn);
-      setWorkflows(_.sortBy(workflows, [clickedColumn]));
-      setDirection("ascending");
-      return;
-    }
-    setWorkflows(workflows.reverse());
-    setDirection(direction === "ascending" ? "descending" : "ascending");
+  const statusMapping = {
+    finished: { icon: "check circle", color: "green" },
+    running: { icon: "spinner", color: "blue" },
+    failed: { icon: "delete", color: "red" },
+    created: { icon: "file outline", color: "violet" },
+    stopped: { icon: "pause circle outline", color: "yellow" },
+    queued: { icon: "hourglass outline", color: "teal" },
+    deleted: { icon: "eraser", color: "gray" }
   };
 
   if (loading) {
@@ -130,114 +145,74 @@ export default function WorkflowsList() {
     return <NoWorkflows />;
   } else {
     return (
-      <Segment basic padded>
-        <Table sortable fixed>
-          <Table.Header>
-            <Table.Row>
-              <Table.HeaderCell
-                colSpan="2"
-                sorted={column === "name" ? direction : null}
-                onClick={handleSort("name")}
+      <Container text className={styles["container"]}>
+        {workflows &&
+          workflows.length &&
+          workflows.map(
+            ({
+              id,
+              name,
+              run,
+              createdDate,
+              startedDate,
+              finishedDate,
+              friendlyCreated,
+              friendlyStarted,
+              friendlyFinished,
+              duration,
+              completed,
+              total,
+              status
+            }) => (
+              <div
+                key={id}
+                className={`${styles["workflow"]} ${
+                  status === "deleted" ? styles["deleted"] : ""
+                }`}
               >
-                Name
-              </Table.HeaderCell>
-              <Table.HeaderCell
-                colSpan="1"
-                sorted={column === "run" ? direction : null}
-                onClick={handleSort("run")}
-              >
-                Run
-              </Table.HeaderCell>
-              <Table.HeaderCell
-                colSpan="2"
-                sorted={column === "created" ? direction : null}
-                onClick={handleSort("created")}
-              >
-                Created
-              </Table.HeaderCell>
-              <Table.HeaderCell
-                colSpan="2"
-                sorted={column === "duration" ? direction : null}
-                onClick={handleSort("duration")}
-              >
-                Duration
-              </Table.HeaderCell>
-              <Table.HeaderCell
-                colSpan="8"
-                sorted={column === "progress" ? direction : null}
-                onClick={handleSort("progress")}
-              >
-                Progress
-              </Table.HeaderCell>
-              <Table.HeaderCell
-                colSpan="1"
-                sorted={column === "status" ? direction : null}
-                onClick={handleSort("status")}
-              >
-                Status
-              </Table.HeaderCell>
-              <Table.HeaderCell colSpan="4">Actions</Table.HeaderCell>
-            </Table.Row>
-          </Table.Header>
-          <Table.Body>
-            {_.map(
-              workflows,
-              ({
-                id,
-                name,
-                run,
-                created,
-                duration,
-                completed,
-                total,
-                status
-              }) => (
-                <Table.Row key={id}>
-                  <Table.Cell colSpan="2">{name}</Table.Cell>
-                  <Table.Cell colSpan="1">{run}</Table.Cell>
-                  <Table.Cell colSpan="2">{created}</Table.Cell>
-                  <Table.Cell colSpan="2">{duration}</Table.Cell>
-                  <Table.Cell colSpan="8">
-                    <WorkflowsProgress
-                      completed={completed}
-                      total={total}
-                      status={status}
-                    />
-                  </Table.Cell>
-                  <Table.Cell colSpan="1">{status}</Table.Cell>
-                  <Table.Cell colSpan="4">
-                    <WorkflowsActions
-                      id={id}
-                      name={name}
-                      run={run}
-                      created={created}
-                      status={status}
-                    />
-                  </Table.Cell>
-                </Table.Row>
-              )
-            )}
-          </Table.Body>
-          <Table.Footer>
-            <Table.Row>
-              <Table.HeaderCell colSpan="20">
-                <Menu floated="right" pagination>
-                  <Menu.Item as="a" icon>
-                    <Icon name="chevron left" />
-                  </Menu.Item>
-                  <Menu.Item as="a">1</Menu.Item>
-                  <Menu.Item as="a">2</Menu.Item>
-                  <Menu.Item as="a">3</Menu.Item>
-                  <Menu.Item as="a">4</Menu.Item>
-                  <Menu.Item as="a" icon>
-                    <Icon name="chevron right" />
-                  </Menu.Item>
-                </Menu>
-              </Table.HeaderCell>
-            </Table.Row>
-          </Table.Footer>
-        </Table>
-      </Segment>
+                <div>
+                  <Icon
+                    name={statusMapping[status].icon}
+                    color={statusMapping[status].color}
+                  />{" "}
+                  <span className={styles["name"]}>{name}</span>
+                  <span className={styles["run"]}>#{run}</span>
+                  <Popup
+                    trigger={
+                      <div>
+                        {friendlyFinished
+                          ? `Finished ${friendlyFinished}`
+                          : friendlyStarted
+                          ? `Started ${friendlyStarted}`
+                          : `Created ${friendlyCreated}`}
+                      </div>
+                    }
+                    content={
+                      friendlyFinished
+                        ? finishedDate
+                        : friendlyStarted
+                        ? startedDate
+                        : createdDate
+                    }
+                  />
+                </div>
+                <div className={styles["status-box"]}>
+                  <span
+                    className={`${styles["status"]} ${
+                      styles[statusMapping[status].color]
+                    }`}
+                  >
+                    {status}
+                  </span>{" "}
+                  {duration}
+                  <div>
+                    step {completed}/{total}
+                  </div>
+                </div>
+              </div>
+            )
+          )}
+      </Container>
     );
   }
 }

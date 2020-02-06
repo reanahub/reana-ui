@@ -32,7 +32,7 @@ export default function Footer() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          <Icon name="conversation"></Icon> Mattermost
+          <Icon name="conversation"></Icon> Chat
         </a>
       </span>
     </footer>
