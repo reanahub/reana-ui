@@ -9,11 +9,12 @@
 */
 
 import React from "react";
-import { Container, Header } from "semantic-ui-react";
+import { Container } from "semantic-ui-react";
 
 import BasePage from "../BasePage";
 import GitLabProjects from "./components/GitLabProjects";
 import Token from "./components/Token";
+import Title from "../../components/Title";
 
 import styles from "./Profile.module.scss";
 
@@ -22,11 +23,11 @@ export default function Profile() {
     <BasePage>
       <Container text className={styles["container"]}>
         <div>
-          <Header as="h2">Your REANA token</Header>
+          <Title>Your REANA token</Title>
           <Token />
         </div>
         <div>
-          <Header as="h2">Your GitLab projects</Header>
+          <Title>Your GitLab projects</Title>
           <GitLabProjects />
         </div>
       </Container>

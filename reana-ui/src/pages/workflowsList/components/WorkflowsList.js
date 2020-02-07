@@ -17,6 +17,7 @@ import NoWorkflows from "./NoWorkflows";
 import config from "../../../config";
 
 import styles from "./WorkflowsList.module.scss";
+import Title from "../../../components/Title";
 
 export default function WorkflowsList() {
   const [workflows, setWorkflows] = useState(null);
@@ -28,7 +29,7 @@ export default function WorkflowsList() {
      * Gets data from the specified API
      */
     function getWorkflows() {
-      setLoading(true);
+      setLoading(!interval.current);
       axios({
         method: "get",
         url: config.api + "/api/workflows",
@@ -42,55 +43,36 @@ export default function WorkflowsList() {
     /**
      * Parses API data into displayable data
      */
-    function parseData(wfs) {
-      if (!Array.isArray(wfs)) return [];
+    function parseData(workflows) {
+      if (!Array.isArray(workflows)) return [];
+      workflows.sort((a, b) => a.created < b.created);
 
-      wfs.forEach(wf => {
+      workflows.forEach(wf => {
         const info = wf.name.split(".");
         wf.name = info.shift();
         wf.run = info.join(".");
+        const progress = wf.progress.finished;
+        const total = wf.progress.total;
+        wf.completed = typeof progress === "object" ? progress.total : 0;
+        wf.total = total.total;
         wf = parseDates(wf);
       });
 
-      return wfs;
+      return workflows;
     }
-
     getWorkflows();
-  }, []);
 
-  useEffect(() => {
-    function updateProgresses() {
-      workflows.forEach(wf => {
-        axios({
-          method: "get",
-          url: config.api + "/api/workflows/" + wf.id + "/status",
-          withCredentials: true
-        }).then(res => {
-          const progress = res.data.progress.finished;
-          const total = res.data.progress.total;
-          wf.completed = typeof progress === "object" ? progress.total : 0;
-          wf.total = total.total;
-
-          wf.status = res.data.status;
-          wf.run_started_at = res.data.progress.run_started_at;
-          wf.run_finished_at = res.data.progress.run_finished_at;
-          wf = parseDates(wf);
-        });
-      });
-      setWorkflows([...workflows]);
-    }
-
-    if (!interval.current && workflows && workflows.length) {
+    if (!interval.current) {
       interval.current = setInterval(() => {
-        updateProgresses();
+        getWorkflows();
       }, config.pooling_secs * 1000);
     }
-  }, [workflows]);
+  }, []);
 
   function parseDates(wf) {
     const createdMoment = moment.utc(wf.created);
-    const startedMoment = moment.utc(wf.run_started_at);
-    const finishedMoment = moment.utc(wf.run_finished_at);
+    const startedMoment = moment.utc(wf.progress.run_started_at);
+    const finishedMoment = moment.utc(wf.progress.run_finished_at);
     wf.createdDate = createdMoment.format("Do MMM YYYY HH:mm");
     wf.startedDate = startedMoment.format("Do MMM YYYY HH:mm");
     wf.finishedDate = finishedMoment.format("Do MMM YYYY HH:mm");
@@ -126,13 +108,17 @@ export default function WorkflowsList() {
   }
 
   const statusMapping = {
-    finished: { icon: "check circle", color: "green" },
-    running: { icon: "spinner", color: "blue" },
-    failed: { icon: "delete", color: "red" },
+    finished: { icon: "check circle", color: "green", preposition: "in" },
+    running: { icon: "spinner", color: "blue", preposition: "for" },
+    failed: { icon: "delete", color: "red", preposition: "in" },
     created: { icon: "file outline", color: "violet" },
-    stopped: { icon: "pause circle outline", color: "yellow" },
-    queued: { icon: "hourglass outline", color: "teal" },
-    deleted: { icon: "eraser", color: "gray" }
+    stopped: {
+      icon: "pause circle outline",
+      color: "yellow",
+      preposition: "after"
+    },
+    queued: { icon: "hourglass outline", color: "teal", preposition: "for" },
+    deleted: { icon: "eraser", color: "gray", preposition: "after" }
   };
 
   if (loading) {
@@ -146,6 +132,7 @@ export default function WorkflowsList() {
   } else {
     return (
       <Container text className={styles["container"]}>
+        <Title>Your workflows</Title>
         {workflows &&
           workflows.length &&
           workflows.map(
@@ -204,7 +191,7 @@ export default function WorkflowsList() {
                   >
                     {status}
                   </span>{" "}
-                  {duration}
+                  {statusMapping[status].preposition} {duration}
                   <div>
                     step {completed}/{total}
                   </div>

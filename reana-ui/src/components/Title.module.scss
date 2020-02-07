@@ -8,11 +8,11 @@
   under the terms of the MIT License; see LICENSE file for more details.
 */
 
-@import "../../styles/palette";
+@import "../styles/palette";
 
-.container {
-    margin-top: 5em;
-    > div {
-      margin-bottom: 3em;
-    }
+:global(.ui.header).title {
+  color: $dark-gray;
+  padding-bottom: 0.25em;
+  margin-bottom: 1em;
+  border-bottom: 5px solid $sepia;
 }
