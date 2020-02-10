@@ -15,8 +15,8 @@
     "react-dom": "^16.11.0",
     "react-graph-vis": "^1.0.2",
     "react-redux": "^7.1.1",
-    "react-router-dom": "^4.3.1",
-    "react-scripts": "^3.0.1",
+    "react-router-dom": "^5.1.2",
+    "react-scripts": "^3.3.1",
     "redux": "^4.0.4",
     "redux-devtools-extension": "^2.13.8",
     "redux-thunk": "^2.3.0",
@@ -43,8 +43,9 @@
     ]
   },
   "devDependencies": {
+    "eslint": "^6.8.0",
     "eslint-config-prettier": "^6.5.0",
-    "eslint-config-react-app": "^5.0.2",
+    "eslint-config-react-app": "^5.2.0",
     "eslint-plugin-prettier": "^3.1.1",
     "prettier": "^1.18.2"
   }
