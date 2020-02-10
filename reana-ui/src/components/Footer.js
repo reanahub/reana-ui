@@ -21,14 +21,14 @@ export default function Footer() {
     <footer className={styles["footer-bottom"]}>
       <span>Copyright © 2020 CERN</span>
       <span className={styles["links"]}>
-        <a href={config.docs_url} target="_blank" rel="noopener noreferrer">
+        <a href={config.docsURL} target="_blank" rel="noopener noreferrer">
           <Icon name="book"></Icon> Docs
         </a>
-        <a href={config.forum_url} target="_blank" rel="noopener noreferrer">
+        <a href={config.forumURL} target="_blank" rel="noopener noreferrer">
           <Icon name="discourse"></Icon> Forum
         </a>
         <a
-          href={config.mattermost_url}
+          href={config.mattermostURL}
           target="_blank"
           rel="noopener noreferrer"
         >

@@ -14,7 +14,7 @@ import { Redirect, Router, Route } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { isLoggedIn, loadingUser } from "../selectors";
 import LoginPage from "../pages/login/Login";
-import WorkflowsList from "../pages/workflowsList/WorkflowsList";
+import WorkflowList from "../pages/workflowList/WorkflowList";
 import WorkflowDetails from "../pages/workflowDetails/WorkflowDetails";
 import Profile from "../pages/profile/Profile";
 
@@ -46,7 +46,7 @@ export default function App() {
               path="/signin"
               render={() => (loggedIn ? <Redirect to="/" /> : <LoginPage />)}
             />
-            <ProtectedRoute exact path="/" component={WorkflowsList} />
+            <ProtectedRoute exact path="/" component={WorkflowList} />
             <ProtectedRoute path="/details" component={WorkflowDetails} />
             <ProtectedRoute path="/profile" component={Profile} />
           </>

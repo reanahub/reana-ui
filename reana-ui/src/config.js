@@ -11,10 +11,10 @@
 const config = {
   name: "CERN REANA UI",
   api: "https://reana.cern.ch",
-  pooling_secs: 5,
-  docs_url: "https://reana.readthedocs.io/en/latest/",
-  forum_url: "https://forum.reana.io/",
-  mattermost_url: "https://mattermost.web.cern.ch/it-dep/channels/reana"
+  poolingSecs: 5,
+  docsURL: "https://reana.readthedocs.io/en/latest/",
+  forumURL: "https://forum.reana.io/",
+  mattermostURL: "https://mattermost.web.cern.ch/it-dep/channels/reana"
 };
 
 export default config;

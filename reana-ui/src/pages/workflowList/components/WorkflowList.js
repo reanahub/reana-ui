@@ -1,8 +1,8 @@
 /*
-	-*- coding: utf-8 -*-
+  -*- coding: utf-8 -*-
 
-	This file is part of REANA.
-	Copyright (C) 2020 CERN.
+  This file is part of REANA.
+  Copyright (C) 2020 CERN.
 
   REANA is free software; you can redistribute it and/or modify it
   under the terms of the MIT License; see LICENSE file for more details.
@@ -16,10 +16,10 @@ import { Dimmer, Icon, Loader, Container, Popup } from "semantic-ui-react";
 import NoWorkflows from "./NoWorkflows";
 import config from "../../../config";
 
-import styles from "./WorkflowsList.module.scss";
+import styles from "./WorkflowList.module.scss";
 import Title from "../../../components/Title";
 
-export default function WorkflowsList() {
+export default function WorkflowList() {
   const [workflows, setWorkflows] = useState(null);
   const [loading, setLoading] = useState(false);
   const interval = useRef(null);
@@ -45,7 +45,7 @@ export default function WorkflowsList() {
      */
     function parseData(workflows) {
       if (!Array.isArray(workflows)) return [];
-      workflows.sort((a, b) => a.created < b.created);
+      workflows.sort((a, b) => (a.created < b.created ? 1 : -1));
 
       workflows.forEach(wf => {
         const info = wf.name.split(".");
@@ -65,8 +65,12 @@ export default function WorkflowsList() {
     if (!interval.current) {
       interval.current = setInterval(() => {
         getWorkflows();
-      }, config.pooling_secs * 1000);
+      }, config.poolingSecs * 1000);
     }
+
+    return function cleanup() {
+      clearInterval(interval.current);
+    };
   }, []);
 
   function parseDates(wf) {
@@ -110,7 +114,7 @@ export default function WorkflowsList() {
   const statusMapping = {
     finished: { icon: "check circle", color: "green", preposition: "in" },
     running: { icon: "spinner", color: "blue", preposition: "for" },
-    failed: { icon: "delete", color: "red", preposition: "in" },
+    failed: { icon: "delete", color: "red", preposition: "after" },
     created: { icon: "file outline", color: "violet" },
     stopped: {
       icon: "pause circle outline",
@@ -121,84 +125,86 @@ export default function WorkflowsList() {
     deleted: { icon: "eraser", color: "gray", preposition: "after" }
   };
 
+  if (!workflows) {
+    return null;
+  }
+
   if (loading) {
     return (
       <Dimmer active>
         <Loader>Loading workflows</Loader>
       </Dimmer>
     );
-  } else if (workflows && !workflows.length) {
+  } else if (!workflows.length) {
     return <NoWorkflows />;
   } else {
     return (
       <Container text className={styles["container"]}>
         <Title>Your workflows</Title>
-        {workflows &&
-          workflows.length &&
-          workflows.map(
-            ({
-              id,
-              name,
-              run,
-              createdDate,
-              startedDate,
-              finishedDate,
-              friendlyCreated,
-              friendlyStarted,
-              friendlyFinished,
-              duration,
-              completed,
-              total,
-              status
-            }) => (
-              <div
-                key={id}
-                className={`${styles["workflow"]} ${
-                  status === "deleted" ? styles["deleted"] : ""
-                }`}
-              >
-                <div>
-                  <Icon
-                    name={statusMapping[status].icon}
-                    color={statusMapping[status].color}
-                  />{" "}
-                  <span className={styles["name"]}>{name}</span>
-                  <span className={styles["run"]}>#{run}</span>
-                  <Popup
-                    trigger={
-                      <div>
-                        {friendlyFinished
-                          ? `Finished ${friendlyFinished}`
-                          : friendlyStarted
-                          ? `Started ${friendlyStarted}`
-                          : `Created ${friendlyCreated}`}
-                      </div>
-                    }
-                    content={
-                      friendlyFinished
-                        ? finishedDate
+        {workflows.map(
+          ({
+            id,
+            name,
+            run,
+            createdDate,
+            startedDate,
+            finishedDate,
+            friendlyCreated,
+            friendlyStarted,
+            friendlyFinished,
+            duration,
+            completed,
+            total,
+            status
+          }) => (
+            <div
+              key={id}
+              className={`${styles["workflow"]} ${
+                status === "deleted" ? styles["deleted"] : ""
+              }`}
+            >
+              <div>
+                <Icon
+                  name={statusMapping[status].icon}
+                  color={statusMapping[status].color}
+                />{" "}
+                <span className={styles["name"]}>{name}</span>
+                <span className={styles["run"]}>#{run}</span>
+                <Popup
+                  trigger={
+                    <div>
+                      {friendlyFinished
+                        ? `Finished ${friendlyFinished}`
                         : friendlyStarted
-                        ? startedDate
-                        : createdDate
-                    }
-                  />
-                </div>
-                <div className={styles["status-box"]}>
-                  <span
-                    className={`${styles["status"]} ${
-                      styles[statusMapping[status].color]
-                    }`}
-                  >
-                    {status}
-                  </span>{" "}
-                  {statusMapping[status].preposition} {duration}
-                  <div>
-                    step {completed}/{total}
-                  </div>
+                        ? `Started ${friendlyStarted}`
+                        : `Created ${friendlyCreated}`}
+                    </div>
+                  }
+                  content={
+                    friendlyFinished
+                      ? finishedDate
+                      : friendlyStarted
+                      ? startedDate
+                      : createdDate
+                  }
+                />
+              </div>
+              <div className={styles["status-box"]}>
+                <span
+                  className={`${styles["status"]} ${
+                    styles[statusMapping[status].color]
+                  }`}
+                >
+                  {status}
+                </span>{" "}
+                {statusMapping[status].preposition} {duration}
+                <div>
+                  step {completed}/{total}
                 </div>
               </div>
-            )
-          )}
+            </div>
+          )
+        )}
       </Container>
     );
   }

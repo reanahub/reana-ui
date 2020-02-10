@@ -45,11 +45,11 @@ export default function NoWorkflows() {
         <p>and come back to this web page once launched!</p>
         <p>
           For more information about REANA, please see{" "}
-          <a href={config.docs_url}>docs.reana.io</a>
+          <a href={config.docsURL}>docs.reana.io</a>
         </p>
         <p>
           You can contact us at{" "}
-          <a href={config.mattermost_url}>reana mattermost channel</a>.
+          <a href={config.mattermostURL}>REANA Mattermost channel</a>.
         </p>
         <p>
           Thanks for flying REANA! <Icon name="rocket" />
