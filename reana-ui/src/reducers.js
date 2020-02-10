@@ -9,15 +9,26 @@
 */
 
 import { combineReducers } from "redux";
-import { USER_FETCH, USER_RECEIVED, USER_LOGOUT } from "./actions";
+import {
+  USER_FETCH,
+  USER_RECEIVED,
+  USER_LOGOUT,
+  WORKFLOWS_FETCH,
+  WORKFLOWS_RECEIVED
+} from "./actions";
 
-const initialState = {
+const authInitialState = {
   email: null,
   reanaToken: null,
   loadingUser: false
 };
 
-const auth = (state = initialState, action) => {
+const workflowsInitialState = {
+  workflows: null,
+  loadingWorkflows: false
+};
+
+const auth = (state = authInitialState, action) => {
   switch (action.type) {
     case USER_FETCH:
       return { ...state, loadingUser: true };
@@ -31,14 +42,30 @@ const auth = (state = initialState, action) => {
         loadingUser: false
       };
     case USER_LOGOUT:
-      return initialState;
+      return authInitialState;
+    default:
+      return state;
+  }
+};
+
+const workflows = (state = workflowsInitialState, action) => {
+  switch (action.type) {
+    case WORKFLOWS_FETCH:
+      return { ...state, loadingWorkflows: true };
+    case WORKFLOWS_RECEIVED:
+      return {
+        ...state,
+        workflows: action.workflows,
+        loadingWorkflows: false
+      };
     default:
       return state;
   }
 };
 
 const reanaApp = combineReducers({
-  auth
+  auth,
+  workflows
 });
 
 export default reanaApp;
