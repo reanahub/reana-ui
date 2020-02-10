@@ -13,12 +13,15 @@ import React from "react";
 import BasePage from "../BasePage";
 import WorkflowHeader from "./components/WorkflowHeader";
 import WorkflowSpace from "./components/WorkflowSpace";
+import { useParams } from "react-router-dom";
 
 export default function WorkflowDetailsPage() {
+  const { id: workflowId } = useParams();
+
   return (
     <BasePage>
       <WorkflowHeader />
-      <WorkflowSpace />
+      <WorkflowSpace id={workflowId} />
     </BasePage>
   );
 }

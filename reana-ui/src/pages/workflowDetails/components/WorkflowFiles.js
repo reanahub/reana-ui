@@ -13,11 +13,8 @@ import axios from "axios";
 import _ from "lodash";
 import { Button, Header, Icon, Modal, Segment, Table } from "semantic-ui-react";
 import Config from "../../../config";
-import Cookies from "universal-cookie";
 
 import styles from "./WorkflowFiles.module.scss";
-
-const cookies = new Cookies();
 
 export default class WorkflowFiles extends Component {
   /**
@@ -25,7 +22,7 @@ export default class WorkflowFiles extends Component {
    */
   constructor(props) {
     super(props);
-    this.url = Config.api + "/api/workflows/" + cookies.get("workflow-id");
+    this.url = Config.api + "/api/workflows/" + props.id;
     this.state = {
       modal_content: null,
       column: null,

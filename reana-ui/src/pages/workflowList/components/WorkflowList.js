@@ -11,12 +11,14 @@
 import React from "react";
 import { Icon, Container, Popup } from "semantic-ui-react";
 import PropTypes from "prop-types";
+import { useHistory } from "react-router-dom";
 
 import Title from "../../../components/Title";
 
 import styles from "./WorkflowList.module.scss";
 
 export default function WorkflowList({ workflows, refreshedAt }) {
+  const history = useHistory();
   const statusMapping = {
     finished: { icon: "check circle", color: "green", preposition: "in" },
     running: { icon: "spinner", color: "blue", preposition: "for" },
@@ -56,6 +58,7 @@ export default function WorkflowList({ workflows, refreshedAt }) {
         }) => (
           <div
             key={id}
+            onClick={() => history.push(`/details/${id}`)}
             className={`${styles["workflow"]} ${
               status === "deleted" ? styles["deleted"] : ""
             }`}

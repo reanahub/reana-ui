@@ -15,11 +15,8 @@ import WorkflowFiles from "./WorkflowFiles";
 import WorkflowSteps from "./WorkflowSteps";
 import WorkflowLogs from "./WorkflowLogs";
 import Config from "../../../config";
-import Cookies from "universal-cookie";
 
 import styles from "./WorkflowSpace.module.scss";
-
-const cookies = new Cookies();
 
 export default class WorkflowSpace extends Component {
   /**
@@ -27,7 +24,7 @@ export default class WorkflowSpace extends Component {
    */
   constructor(props) {
     super(props);
-    this.url = Config.api + "/api/workflows/" + cookies.get("workflow-id");
+    this.url = Config.api + "/api/workflows/" + props.id;
     this.state = {
       inputs: [],
       outputs: [],
@@ -87,16 +84,16 @@ export default class WorkflowSpace extends Component {
       <Grid columns="equal" padded className={styles["controls"]}>
         <Grid.Row stretched>
           <Grid.Column>
-            <WorkflowFiles files={inputs} title="Inputs" />
+            <WorkflowFiles files={inputs} title="Inputs" id={this.props.id} />
           </Grid.Column>
 
           <Grid.Column width={10}>
             <WorkflowSteps />
-            <WorkflowLogs />
+            <WorkflowLogs id={this.props.id} />
           </Grid.Column>
 
           <Grid.Column>
-            <WorkflowFiles files={outputs} title="Outputs" />
+            <WorkflowFiles files={outputs} title="Outputs" id={this.props.id} />
           </Grid.Column>
         </Grid.Row>
       </Grid>

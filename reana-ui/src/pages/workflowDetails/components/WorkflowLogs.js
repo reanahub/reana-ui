@@ -12,11 +12,8 @@ import React, { Component } from "react";
 import axios from "axios";
 import { Header, Segment } from "semantic-ui-react";
 import Config from "../../../config";
-import Cookies from "universal-cookie";
 
 import styles from "./WorkflowLogs.module.scss";
-
-const cookies = new Cookies();
 
 export default class WorkflowLogs extends Component {
   /**
@@ -24,7 +21,7 @@ export default class WorkflowLogs extends Component {
    */
   constructor(props) {
     super(props);
-    this.url = Config.api + "/api/workflows/" + cookies.get("workflow-id");
+    this.url = Config.api + "/api/workflows/" + props.id;
     this.state = {
       logs: ""
     };

@@ -8,49 +8,51 @@
   under the terms of the MIT License; see LICENSE file for more details.
 */
 
-import React, { Component } from "react";
+import React from "react";
+import { useSelector } from "react-redux";
 import { Button, Segment } from "semantic-ui-react";
-import { Link } from "react-router-dom";
-import Cookies from "universal-cookie";
+import { Link, useParams } from "react-router-dom";
+
+import { getWorkflow } from "../../../selectors";
 
 import styles from "./WorkflowHeader.module.scss";
 
-const cookies = new Cookies();
+export default function WorkflowHeader() {
+  const { id: workflowId } = useParams();
 
-export default class WorkflowHeader extends Component {
-  render() {
-    return (
-      <Segment
-        basic
-        clearing
-        className={styles["workflow-header"]}
-        style={{ margin: "0px" }}
-      >
-        <Segment basic floated="left" style={{ margin: "0px" }}>
-          <Link to="/workflows">
-            <Button primary icon="angle left" size="big" />
-          </Link>
-        </Segment>
+  const workflow = useSelector(getWorkflow(workflowId));
 
-        <Segment.Group horizontal size="medium" floated="right">
-          <Segment>
-            <b>Name: </b>
-            {cookies.get("workflow-name")}
-          </Segment>
-          <Segment>
-            <b>Run: </b>
-            {cookies.get("workflow-run")}
-          </Segment>
-          <Segment>
-            <b>Created: </b>
-            {cookies.get("workflow-created")}
-          </Segment>
-          <Segment>
-            <b>Status: </b>
-            {cookies.get("workflow-status")}
-          </Segment>
-        </Segment.Group>
+  return (
+    <Segment
+      basic
+      clearing
+      className={styles["workflow-header"]}
+      style={{ margin: "0px" }}
+    >
+      <Segment basic floated="left" style={{ margin: "0px" }}>
+        <Link to="/workflows">
+          <Button primary icon="angle left" size="big" />
+        </Link>
       </Segment>
-    );
-  }
+
+      <Segment.Group horizontal size="medium" floated="right">
+        <Segment>
+          <b>Name: </b>
+          {workflow.name}
+        </Segment>
+        <Segment>
+          <b>Run: </b>
+          {workflow.run}
+        </Segment>
+        <Segment>
+          <b>Created: </b>
+          {workflow.created}
+        </Segment>
+        <Segment>
+          <b>Status: </b>
+          {workflow.status}
+        </Segment>
+      </Segment.Group>
+    </Segment>
+  );
 }

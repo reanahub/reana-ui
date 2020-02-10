@@ -9,8 +9,7 @@
 */
 
 import React from "react";
-import history from "../history";
-import { Redirect, Router, Route } from "react-router-dom";
+import { Redirect, BrowserRouter, Route, Switch } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { isLoggedIn, loadingUser } from "../selectors";
 import LoginPage from "../pages/login/Login";
@@ -36,22 +35,21 @@ export default function App() {
   const loading = useSelector(loadingUser);
   const loggedIn = useSelector(isLoggedIn);
   return (
-    <Router history={history}>
-      <>
-        {loading ? (
-          "Loading..."
-        ) : (
-          <>
-            <Route
-              path="/signin"
-              render={() => (loggedIn ? <Redirect to="/" /> : <LoginPage />)}
-            />
-            <ProtectedRoute exact path="/" component={WorkflowList} />
-            <ProtectedRoute path="/details" component={WorkflowDetails} />
-            <ProtectedRoute path="/profile" component={Profile} />
-          </>
-        )}
-      </>
-    </Router>
+    <BrowserRouter>
+      {loading ? (
+        // TODO: Change for a better loading indicator
+        "Loading..."
+      ) : (
+        <Switch>
+          <Route
+            path="/signin"
+            render={() => (loggedIn ? <Redirect to="/" /> : <LoginPage />)}
+          />
+          <ProtectedRoute exact path="/" component={WorkflowList} />
+          <ProtectedRoute path="/details/:id" component={WorkflowDetails} />
+          <ProtectedRoute path="/profile" component={Profile} />
+        </Switch>
+      )}
+    </BrowserRouter>
   );
 }
