@@ -8,7 +8,5 @@
   under the terms of the MIT License; see LICENSE file for more details.
 */
 
-.logs {
-    height: 300px;
-    overflow-x: hidden;
-}
+export { default as WorkflowLogs } from "./WorkflowLogs";
+export { default as WorkflowInfo } from "./WorkflowInfo";

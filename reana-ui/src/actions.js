@@ -10,6 +10,7 @@
 
 import config from "./config";
 import { parseWorkflows } from "./util";
+import { getWorkflow } from "./selectors";
 
 export const USER_FETCH = "Fetch user authentication info";
 export const USER_RECEIVED = "User info received";
@@ -17,10 +18,13 @@ export const USER_LOGOUT = "User logged out";
 
 export const WORKFLOWS_FETCH = "Fetch workflows info";
 export const WORKFLOWS_RECEIVED = "Workflows info received";
+export const WORKFLOW_LOGS_FETCH = "Fetch workflow logs";
+export const WORKFLOW_LOGS_RECEIVED = "Workflow logs received";
 
-const USER_INFO_URL = config.api + "/api/me";
-const USER_LOGOUT_URL = config.api + "/api/logout";
-const WORKFLOWS_URL = config.api + "/api/workflows";
+const USER_INFO_URL = `${config.api}/api/me`;
+const USER_LOGOUT_URL = `${config.api}/api/logout`;
+const WORKFLOWS_URL = `${config.api}/api/workflows`;
+const WORKFLOW_LOGS_URL = id => `${config.api}/api/workflows/${id}/logs`;
 
 export function loadUser() {
   return async dispatch => {
@@ -61,6 +65,41 @@ export function fetchWorkflows() {
       data = await resp.json();
     }
     dispatch({ type: WORKFLOWS_RECEIVED, workflows: parseWorkflows(data) });
+    return resp;
+  };
+}
+
+export function fetchWorkflow(id) {
+  return async (dispatch, getStore) => {
+    const state = getStore();
+    const workflow = getWorkflow(id)(state);
+    // Only fetch if needed
+    if (workflow) {
+      return workflow;
+    } else {
+      dispatch(fetchWorkflows());
+    }
+  };
+}
+
+export function fetchWorkflowLogs(id) {
+  return async dispatch => {
+    let resp, data;
+    try {
+      dispatch({ type: WORKFLOW_LOGS_FETCH });
+      resp = await fetch(WORKFLOW_LOGS_URL(id), { credentials: "include" });
+    } catch (err) {
+      throw new Error(USER_INFO_URL, 0, err);
+    }
+    if (resp.ok) {
+      data = await resp.json();
+    }
+    // XXX: Which jobs to display? what happens with job logs?
+    dispatch({
+      type: WORKFLOW_LOGS_RECEIVED,
+      id,
+      logs: JSON.parse(data.logs).workflow_logs
+    });
     return resp;
   };
 }

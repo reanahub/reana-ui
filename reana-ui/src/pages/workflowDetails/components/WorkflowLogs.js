@@ -8,55 +8,34 @@
   under the terms of the MIT License; see LICENSE file for more details.
 */
 
-import React, { Component } from "react";
-import axios from "axios";
-import { Header, Segment } from "semantic-ui-react";
-import Config from "../../../config";
+import React, { useEffect } from "react";
+import PropTypes from "prop-types";
+import { useDispatch, useSelector } from "react-redux";
+
+import { fetchWorkflowLogs } from "../../../actions";
+import { getWorkflowLogs, loadingDetails } from "../../../selectors";
+import CodeSnippet from "../../../components/CodeSnippet";
 
 import styles from "./WorkflowLogs.module.scss";
 
-export default class WorkflowLogs extends Component {
-  /**
-   * Variables defining the state of the table
-   */
-  constructor(props) {
-    super(props);
-    this.url = Config.api + "/api/workflows/" + props.id;
-    this.state = {
-      logs: ""
-    };
-  }
+export default function WorkflowLogs({ id }) {
+  const dispatch = useDispatch();
+  const loading = useSelector(loadingDetails);
+  const logs = useSelector(getWorkflowLogs(id));
 
-  /**
-   * Gets data from the specified API
-   */
-  getLogs() {
-    axios({
-      method: "get",
-      url: this.url + "/logs",
-      withCredentials: true
-    }).then(res => {
-      this.setState({
-        logs: res.data.logs
-      });
-    });
-  }
+  useEffect(() => {
+    dispatch(fetchWorkflowLogs(id));
+  }, [dispatch, id]);
 
-  /**
-   * Default runnable method when the component is loaded
-   */
-  componentDidMount() {
-    this.getLogs();
-  }
-
-  render() {
-    const { logs } = this.state;
-
-    return (
-      <Segment raised secondary className={styles["logs-area"]}>
-        <Header size="medium">Logs</Header>
-        <pre>{logs}</pre>
-      </Segment>
-    );
-  }
+  return loading ? (
+    "Loading..."
+  ) : (
+    <CodeSnippet dollarPrefix={false} classes={styles.logs}>
+      <div>{logs}</div>
+    </CodeSnippet>
+  );
 }
+
+WorkflowLogs.propTypes = {
+  id: PropTypes.string.isRequired
+};

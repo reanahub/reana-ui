@@ -14,7 +14,9 @@ import {
   USER_RECEIVED,
   USER_LOGOUT,
   WORKFLOWS_FETCH,
-  WORKFLOWS_RECEIVED
+  WORKFLOWS_RECEIVED,
+  WORKFLOW_LOGS_FETCH,
+  WORKFLOW_LOGS_RECEIVED
 } from "./actions";
 
 const authInitialState = {
@@ -26,6 +28,11 @@ const authInitialState = {
 const workflowsInitialState = {
   workflows: null,
   loadingWorkflows: false
+};
+
+const detailsInitialState = {
+  details: null,
+  loadingDetails: false
 };
 
 const auth = (state = authInitialState, action) => {
@@ -63,9 +70,25 @@ const workflows = (state = workflowsInitialState, action) => {
   }
 };
 
+const details = (state = detailsInitialState, action) => {
+  switch (action.type) {
+    case WORKFLOW_LOGS_FETCH:
+      return { ...state, loadingDetails: true };
+    case WORKFLOW_LOGS_RECEIVED:
+      return {
+        ...state,
+        details: { [action.id]: { logs: action.logs } },
+        loadingDetails: false
+      };
+    default:
+      return state;
+  }
+};
+
 const reanaApp = combineReducers({
   auth,
-  workflows
+  workflows,
+  details
 });
 
 export default reanaApp;

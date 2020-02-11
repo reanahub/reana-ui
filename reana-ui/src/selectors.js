@@ -18,4 +18,10 @@ export const getReanaToken = state => state.auth.reanaToken;
 // Workflows
 export const loadingWorkflows = state => state.workflows.loadingWorkflows;
 export const getWorkflows = state => state.workflows.workflows;
-export const getWorkflow = id => state => state.workflows.workflows[id];
+export const getWorkflow = id => state =>
+  state.workflows.workflows && state.workflows.workflows[id];
+
+// Details
+export const loadingDetails = state => state.details.loadingDetails;
+export const getWorkflowLogs = id => state =>
+  state.details.details && state.details.details[id].logs;

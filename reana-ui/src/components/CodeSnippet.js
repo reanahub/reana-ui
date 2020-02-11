@@ -17,7 +17,14 @@ import styles from "./CodeSnippet.module.scss";
 
 const COPY_CHECK_TIMEOUT = 1500;
 
-export default function CodeSnippet({ children, light, small }) {
+export default function CodeSnippet({
+  children,
+  dark,
+  small,
+  copy,
+  dollarPrefix,
+  classes
+}) {
   const [copied, setCopied] = useState(false);
 
   const handleCopied = () => {
@@ -30,38 +37,52 @@ export default function CodeSnippet({ children, light, small }) {
   };
 
   return (
-    <div className={`${styles["container"]} ${light ? styles["light"] : ""}`}>
-      <div className={`${styles["content"]} ${small ? styles["small"] : ""}`}>
+    <div
+      className={`${styles["container"]} ${
+        dark ? styles["dark"] : ""
+      } ${classes}`}
+    >
+      <div
+        className={`${styles["content"]} ${small ? styles["small"] : ""} ${
+          dollarPrefix ? styles["dollar"] : ""
+        }`}
+      >
         {children}
       </div>
-      <Popup
-        trigger={
-          <CopyToClipboard
-            text={children
-              .map(el => {
-                const children = el.props.children;
-                return Array.isArray(children) ? children.join("") : children;
-              })
-              .join("\n")}
-            onCopy={handleCopied}
-          >
-            <Icon name="copy outline" className={styles["copy-icon"]} />
-          </CopyToClipboard>
-        }
-        content="Copied!"
-        open={copied}
-        inverted
-      />
+      {copy && (
+        <Popup
+          trigger={
+            <CopyToClipboard
+              text={children
+                .map(el => {
+                  const children = el.props.children;
+                  return Array.isArray(children) ? children.join("") : children;
+                })
+                .join("\n")}
+              onCopy={handleCopied}
+            >
+              <Icon name="copy outline" className={styles["copy-icon"]} />
+            </CopyToClipboard>
+          }
+          content="Copied!"
+          open={copied}
+          inverted
+        />
+      )}
     </div>
   );
 }
 
 CodeSnippet.propTypes = {
-  light: PropTypes.bool,
-  small: PropTypes.bool
+  dark: PropTypes.bool,
+  small: PropTypes.bool,
+  copy: PropTypes.bool,
+  dollarPrefix: PropTypes.bool
 };
 
 CodeSnippet.defaultProps = {
-  light: false,
-  small: false
+  dark: false,
+  small: false,
+  copy: false,
+  dollarPrefix: true
 };

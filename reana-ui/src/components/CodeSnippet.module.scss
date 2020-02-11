@@ -18,12 +18,12 @@
   width: 100%;
   white-space: pre-line;
   font-family: "Consolas", "Monaco", "Courier New", Courier, monospace;
-  color: $light-gray;
-  background-color: $dark-gray;
+  background-color: $sepia;
+  color: $dark-blue;
 
-  &.light {
-    background-color: $sepia;
-    color: $dark-blue;
+  &.dark {
+    color: $light-gray;
+    background-color: $dark-gray;
   }
 
   .content {
@@ -33,7 +33,7 @@
       font-size: 0.85em;
     }
 
-    & > div::before {
+    &.dollar > div::before {
       content: '$ ';
     }
   }
