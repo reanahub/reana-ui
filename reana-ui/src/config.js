@@ -11,8 +11,8 @@
 const config = {
   name: "CERN REANA UI",
   api: "https://reana.cern.ch",
-  poolingSecs: 5,
-  docsURL: "https://reana.readthedocs.io/en/latest/",
+  poolingSecs: 15,
+  docsURL: "http://docs.reana.io/",
   forumURL: "https://forum.reana.io/",
   mattermostURL: "https://mattermost.web.cern.ch/it-dep/channels/reana"
 };

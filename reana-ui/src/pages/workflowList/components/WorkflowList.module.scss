@@ -14,6 +14,17 @@
   padding-top: 4em;
 }
 
+.title {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+
+  .refresh {
+    color: $light-gray;
+    font-size: 12px;
+  }
+}
+
 .workflow {
   display: flex;
   justify-content: space-between;

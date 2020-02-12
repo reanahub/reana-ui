@@ -9,23 +9,16 @@
 */
 
 import React from "react";
-import PropTypes from "prop-types";
 import { Header } from "semantic-ui-react";
 
 import styles from "./Title.module.scss";
 
-export default function Title({ children, as }) {
+export default function Title({ className, ...restProps }) {
   return (
-    <Header as={as} className={styles["title"]}>
-      {children}
-    </Header>
+    <Header
+      as="h2"
+      {...restProps}
+      className={`${styles["title"]} ${className}`}
+    />
   );
 }
-
-Title.propTypes = {
-  as: PropTypes.string
-};
-
-Title.defaultProps = {
-  as: "h2"
-};

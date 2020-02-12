@@ -20,8 +20,10 @@ import styles from "./WorkflowList.module.scss";
 import Title from "../../../components/Title";
 
 export default function WorkflowList() {
+  const currentUTCTime = () => moment.utc().format("HH:mm:ss [UTC]");
   const [workflows, setWorkflows] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [refreshedAt, setRefreshedAt] = useState(currentUTCTime());
   const interval = useRef(null);
 
   useEffect(() => {
@@ -65,6 +67,7 @@ export default function WorkflowList() {
     if (!interval.current) {
       interval.current = setInterval(() => {
         getWorkflows();
+        setRefreshedAt(currentUTCTime());
       }, config.poolingSecs * 1000);
     }
 
@@ -140,7 +143,11 @@ export default function WorkflowList() {
   } else {
     return (
       <Container text className={styles["container"]}>
-        <Title>Your workflows</Title>
+        <Title className={styles.title}>
+          <span>Your workflows</span>
+          <span className={styles.refresh}>Refreshed at {refreshedAt}</span>
+        </Title>
+
         {workflows.map(
           ({
             id,
