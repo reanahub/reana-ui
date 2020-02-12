@@ -77,7 +77,7 @@ const details = (state = detailsInitialState, action) => {
     case WORKFLOW_LOGS_RECEIVED:
       return {
         ...state,
-        details: { [action.id]: { logs: action.logs } },
+        details: { ...state.details, [action.id]: { logs: action.logs } },
         loadingDetails: false
       };
     default:

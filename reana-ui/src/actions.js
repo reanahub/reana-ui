@@ -9,7 +9,7 @@
 */
 
 import config from "./config";
-import { parseWorkflows } from "./util";
+import { parseWorkflows, parseLogs } from "./util";
 import { getWorkflow } from "./selectors";
 
 export const USER_FETCH = "Fetch user authentication info";
@@ -94,11 +94,10 @@ export function fetchWorkflowLogs(id) {
     if (resp.ok) {
       data = await resp.json();
     }
-    // XXX: Which jobs to display? what happens with job logs?
     dispatch({
       type: WORKFLOW_LOGS_RECEIVED,
       id,
-      logs: JSON.parse(data.logs).workflow_logs
+      logs: parseLogs(data.logs)
     });
     return resp;
   };

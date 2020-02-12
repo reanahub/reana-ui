@@ -10,37 +10,14 @@
 
 @import "../../../styles/palette";
 
-.container {
-  padding-top: 4em;
-}
-
-.title {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-
-  .refresh {
-    color: $light-gray;
-    font-size: 12px;
-  }
-}
-
 .workflow {
-  display: flex;
-  justify-content: space-between;
   color: $raven;
-  border: 5px solid $sepia;
   margin: 1rem 0;
-  padding: 1em 1em;
 
-  &:hover {
-    background-color: lighten($sepia, 3%);
-    border-color: darken($sepia, 10%);
-    cursor: pointer;
-  }
-
-  &.deleted {
-    opacity: 0.5;
+  .info {
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: 1em;
   }
 
   .name, .status {
@@ -55,11 +32,8 @@
     font-size: 1.2em;
   }
 
-  .status-box {
-    width: 210px;
-  }
-
   .run {
     padding-left: 0.8em;
   }
 }
+

@@ -8,6 +8,17 @@
   under the terms of the MIT License; see LICENSE file for more details.
 */
 
-.container {
+@import '../../styles/palette';
+
+.warning {
   margin-top: 2em;
+}
+
+.content {
+  padding: 2em 8em !important;
+  font-size: 16px;
+
+  :global(.ui.header).separator {
+    color: $raven;
+  }
 }

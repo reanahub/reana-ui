@@ -52,7 +52,7 @@ function Workflows() {
     };
   }, [dispatch]);
 
-  if (!workflows && loading) {
+  if (!workflows || loading) {
     return (
       <Dimmer active>
         <Loader>Loading workflows...</Loader>

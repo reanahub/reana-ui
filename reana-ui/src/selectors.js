@@ -24,4 +24,7 @@ export const getWorkflow = id => state =>
 // Details
 export const loadingDetails = state => state.details.loadingDetails;
 export const getWorkflowLogs = id => state =>
-  state.details.details && state.details.details[id].logs;
+  (state.details.details &&
+    id in state.details.details &&
+    state.details.details[id].logs) ||
+  {};

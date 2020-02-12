@@ -11,6 +11,23 @@
 import moment from "moment";
 
 /**
+ * Mapping between workflow statuses and colors and icons.
+ */
+export const statusMapping = {
+  finished: { icon: "check circle", color: "green", preposition: "in" },
+  running: { icon: "spinner", color: "blue", preposition: "for" },
+  failed: { icon: "delete", color: "red", preposition: "after" },
+  created: { icon: "file outline", color: "violet" },
+  stopped: {
+    icon: "pause circle outline",
+    color: "yellow",
+    preposition: "after"
+  },
+  queued: { icon: "hourglass outline", color: "teal" },
+  deleted: { icon: "eraser", color: "gray", preposition: "after" }
+};
+
+/**
  * Parses API data into displayable data
  */
 export function parseWorkflows(workflows) {
@@ -72,4 +89,12 @@ function parseWorkflowDates(workflow) {
     workflow.duration = moment.utc(duration).format(format);
   }
   return workflow;
+}
+
+/**
+ * Parses workflow logs.
+ */
+export function parseLogs(logs) {
+  const parsedLogs = JSON.parse(logs);
+  return parsedLogs.job_logs;
 }

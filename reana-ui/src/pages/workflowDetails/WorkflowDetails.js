@@ -8,16 +8,24 @@
   under the terms of the MIT License; see LICENSE file for more details.
 */
 
+import _ from "lodash";
 import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
-import { Container, Dimmer, Grid, Loader, Message } from "semantic-ui-react";
+import {
+  Container,
+  Dimmer,
+  Grid,
+  Loader,
+  Message,
+  Divider,
+  Header,
+  Icon
+} from "semantic-ui-react";
 
 import { fetchWorkflow } from "../../actions";
 import { getWorkflow, loadingWorkflows } from "../../selectors";
 import BasePage from "../BasePage";
-import WorkflowHeader from "./components/WorkflowHeader";
-import WorkflowSpace from "./components/WorkflowSpace";
 import { WorkflowInfo, WorkflowLogs } from "./components";
 
 import styles from "./WorkflowDetails.module.scss";
@@ -41,17 +49,17 @@ function WorkflowDetails() {
     dispatch(fetchWorkflow(workflowId));
   }, [dispatch, workflowId]);
 
-  if (loading) {
+  if (loading || !workflow) {
     return (
       <Dimmer active>
-        <Loader>Loading workflow</Loader>
+        <Loader>Loading workflow...</Loader>
       </Dimmer>
     );
   }
 
-  if (!workflow) {
+  if (_.isEmpty(workflow)) {
     return (
-      <Container text className={styles.container}>
+      <Container text className={styles.warning}>
         <Message
           icon="warning sign"
           header="Workflow does not exist."
@@ -63,13 +71,24 @@ function WorkflowDetails() {
   } else {
     return (
       <Grid columns={3} padded>
-        <Grid.Row>
+        <Grid.Row className={styles.content}>
           <Grid.Column width={3}>Inputs</Grid.Column>
           <Grid.Column width={10}>
             <Grid.Row>
-              <WorkflowInfo workflow={workflow} />
+              <Grid columns={2}>
+                <Grid.Column width={6}>
+                  <WorkflowInfo workflow={workflow} />
+                </Grid.Column>
+                <Grid.Column></Grid.Column>
+              </Grid>
             </Grid.Row>
             <Grid.Row>
+              <Divider horizontal>
+                <Header as="h4" className={styles.separator}>
+                  <Icon name="cubes" />
+                  Jobs
+                </Header>
+              </Divider>
               <WorkflowLogs id={workflow.id} />
             </Grid.Row>
           </Grid.Column>

@@ -10,13 +10,71 @@
 
 import React from "react";
 import PropTypes from "prop-types";
+import { Icon, Popup } from "semantic-ui-react";
+
+import { statusMapping } from "../../../util";
+
+import styles from "./WorkflowInfo.module.scss";
+import WorkflowsProgress from "./WorkflowProgress";
 
 export default function WorkflowInfo({ workflow }) {
+  const {
+    name,
+    run,
+    createdDate,
+    startedDate,
+    finishedDate,
+    friendlyCreated,
+    friendlyStarted,
+    friendlyFinished,
+    duration,
+    completed,
+    total,
+    status
+  } = workflow;
   return (
-    <>
-      <div>{workflow.name}</div>
-      <div>{workflow.status}</div>
-    </>
+    <div className={styles.workflow}>
+      <section className={styles.info}>
+        <div>
+          <Icon
+            name={statusMapping[status].icon}
+            color={statusMapping[status].color}
+          />{" "}
+          <span className={styles["name"]}>{name}</span>
+          <span className={styles["run"]}>#{run}</span>
+          <Popup
+            trigger={
+              <div>
+                {friendlyFinished
+                  ? `Finished ${friendlyFinished}`
+                  : friendlyStarted
+                  ? `Started ${friendlyStarted}`
+                  : `Created ${friendlyCreated}`}
+              </div>
+            }
+            content={
+              friendlyFinished
+                ? finishedDate
+                : friendlyStarted
+                ? startedDate
+                : createdDate
+            }
+          />
+        </div>
+        <div>
+          <span
+            className={`${styles["status"]} sui-${statusMapping[status].color}`}
+          >
+            {status}
+          </span>{" "}
+          {statusMapping[status].preposition} {duration}
+          <div>
+            step {completed}/{total}
+          </div>
+        </div>
+      </section>
+      <WorkflowsProgress workflow={workflow} />
+    </div>
   );
 }
 

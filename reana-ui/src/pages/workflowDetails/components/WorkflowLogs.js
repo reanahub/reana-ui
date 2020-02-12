@@ -11,8 +11,10 @@
 import React, { useEffect } from "react";
 import PropTypes from "prop-types";
 import { useDispatch, useSelector } from "react-redux";
+import { Tab, Icon } from "semantic-ui-react";
 
 import { fetchWorkflowLogs } from "../../../actions";
+import { statusMapping } from "../../../util";
 import { getWorkflowLogs, loadingDetails } from "../../../selectors";
 import CodeSnippet from "../../../components/CodeSnippet";
 
@@ -27,12 +29,34 @@ export default function WorkflowLogs({ id }) {
     dispatch(fetchWorkflowLogs(id));
   }, [dispatch, id]);
 
+  const panes =
+    logs &&
+    Object.entries(logs).map(([_, log]) => ({
+      menuItem: log.job_name,
+      render: () => (
+        <Tab.Pane>
+          <div className={`sui-${statusMapping[log.status].color}`}>
+            {log.status}
+          </div>
+          <div>
+            <Icon name="cloud" />
+            {log.compute_backend}
+          </div>
+          <div>
+            <Icon name="docker" />
+            {log.docker_img}
+          </div>
+          <CodeSnippet dollarPrefix={false} classes={styles.logs}>
+            {log.logs}
+          </CodeSnippet>
+        </Tab.Pane>
+      )
+    }));
+
   return loading ? (
-    "Loading..."
+    "Loading..." //XXX: Improve
   ) : (
-    <CodeSnippet dollarPrefix={false} classes={styles.logs}>
-      <div>{logs}</div>
-    </CodeSnippet>
+    <Tab panes={panes} />
   );
 }
 

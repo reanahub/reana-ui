@@ -14,24 +14,12 @@ import PropTypes from "prop-types";
 import { useHistory } from "react-router-dom";
 
 import Title from "../../../components/Title";
+import { statusMapping } from "../../../util";
 
 import styles from "./WorkflowList.module.scss";
 
 export default function WorkflowList({ workflows, refreshedAt }) {
   const history = useHistory();
-  const statusMapping = {
-    finished: { icon: "check circle", color: "green", preposition: "in" },
-    running: { icon: "spinner", color: "blue", preposition: "for" },
-    failed: { icon: "delete", color: "red", preposition: "after" },
-    created: { icon: "file outline", color: "violet" },
-    stopped: {
-      icon: "pause circle outline",
-      color: "yellow",
-      preposition: "after"
-    },
-    queued: { icon: "hourglass outline", color: "teal", preposition: "for" },
-    deleted: { icon: "eraser", color: "gray", preposition: "after" }
-  };
 
   workflows.sort((a, b) => (a.created < b.created ? 1 : -1));
   return (
@@ -91,9 +79,7 @@ export default function WorkflowList({ workflows, refreshedAt }) {
             </div>
             <div className={styles["status-box"]}>
               <span
-                className={`${styles["status"]} ${
-                  styles[statusMapping[status].color]
-                }`}
+                className={`${styles["status"]} sui-${statusMapping[status].color}`}
               >
                 {status}
               </span>{" "}
