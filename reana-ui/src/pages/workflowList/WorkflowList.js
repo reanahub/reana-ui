@@ -34,6 +34,7 @@ function Workflows() {
   const [refreshedAt, setRefreshedAt] = useState(currentUTCTime());
   const dispatch = useDispatch();
   const workflows = useSelector(getWorkflows);
+  const loading = useSelector(loadingWorkflows);
   const interval = useRef(null);
 
   useEffect(() => {
@@ -51,21 +52,17 @@ function Workflows() {
     };
   }, [dispatch]);
 
-  if (!workflows) {
-    return null;
-  }
-
-  if (loadingWorkflows && !interval.current) {
+  if (!workflows && loading) {
     return (
       <Dimmer active>
-        <Loader>Loading workflows</Loader>
+        <Loader>Loading workflows...</Loader>
       </Dimmer>
     );
   } else if (_.isEmpty(workflows)) {
     return <NoWorkflows />;
   } else {
     const workflowArray = Object.entries(workflows).map(
-      ([id, workflow]) => workflow
+      ([_, workflow]) => workflow
     );
     return <WorkflowList workflows={workflowArray} refreshedAt={refreshedAt} />;
   }
