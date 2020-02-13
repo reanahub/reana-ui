@@ -26,5 +26,13 @@
 }
 
 .step-tags {
+  display: flex;
   margin: 1em;
+
+  .cmd {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    max-width: 300px;
+  }
 }
