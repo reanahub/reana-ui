@@ -52,11 +52,13 @@ function Workflows() {
     };
   }, [dispatch]);
 
-  if (!workflows || loading) {
+  if (!workflows) {
     return (
-      <Dimmer active>
-        <Loader>Loading workflows...</Loader>
-      </Dimmer>
+      loading && (
+        <Dimmer active>
+          <Loader>Loading workflows...</Loader>
+        </Dimmer>
+      )
     );
   } else if (_.isEmpty(workflows)) {
     return <NoWorkflows />;

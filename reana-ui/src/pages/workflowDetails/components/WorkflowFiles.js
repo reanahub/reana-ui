@@ -27,7 +27,6 @@ export default class WorkflowFiles extends Component {
       modal_content: null,
       column: null,
       direction: null,
-      files: props.files,
       title: props.title
     };
   }
@@ -67,28 +66,27 @@ export default class WorkflowFiles extends Component {
    * Performs the sorting when a column header is clicked
    */
   handleSort = clickedColumn => () => {
-    const { column, files, direction } = this.state;
+    const { column, direction } = this.state;
 
     if (column !== clickedColumn) {
       this.setState({
         column: clickedColumn,
-        files: _.sortBy(files, [clickedColumn]),
+        files: _.sortBy(this.props.files, [clickedColumn]),
         direction: "ascending"
       });
       return;
     }
 
     this.setState({
-      files: files.reverse(),
+      files: this.props.files.reverse(),
       direction: direction === "ascending" ? "descending" : "ascending"
     });
   };
 
   render() {
-    const { modal_content, column, direction, files, title } = this.state;
-
+    const { modal_content, column, direction, title } = this.state;
     return (
-      <Segment raised secondary>
+      <Segment>
         <Header size="medium">{title}</Header>
         <Table fixed compact basic="very">
           <Table.Header>
@@ -111,7 +109,7 @@ export default class WorkflowFiles extends Component {
           </Table.Header>
 
           <Table.Body className={styles["files-list"]}>
-            {_.map(files, ({ name, mod_date }) => (
+            {_.map(this.props.files, ({ name, mod_date }) => (
               <Modal
                 key={name}
                 onOpen={this.getFile(name)}

@@ -9,7 +9,8 @@
 */
 
 import _ from "lodash";
-import React, { useEffect } from "react";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
 import {
@@ -18,15 +19,14 @@ import {
   Grid,
   Loader,
   Message,
-  Divider,
-  Header,
-  Icon
+  Divider
 } from "semantic-ui-react";
 
+import config from "../../config";
 import { fetchWorkflow } from "../../actions";
 import { getWorkflow, loadingWorkflows } from "../../selectors";
 import BasePage from "../BasePage";
-import { WorkflowInfo, WorkflowLogs } from "./components";
+import { WorkflowInfo, WorkflowLogs, WorkflowFiles } from "./components";
 
 import styles from "./WorkflowDetails.module.scss";
 
@@ -45,9 +45,37 @@ function WorkflowDetails() {
   const workflow = useSelector(getWorkflow(workflowId));
   const loading = useSelector(loadingWorkflows);
 
+  const [files, setFiles] = useState([]);
+
   useEffect(() => {
     dispatch(fetchWorkflow(workflowId));
   }, [dispatch, workflowId]);
+
+  useEffect(() => {
+    function parseData(data) {
+      if (!Array.isArray(data)) return [];
+
+      data.forEach(file => {
+        file["mod_date"] = file["last-modified"].substr(0, 19);
+        file["mod_date"] = file["mod_date"].replace("T", " ");
+        delete file["last-modified"];
+      });
+
+      return data;
+    }
+
+    function getWorkspace() {
+      axios({
+        method: "get",
+        url: config.api + "/api/workflows/" + workflowId + "/workspace",
+        withCredentials: true
+      }).then(res => {
+        setFiles(parseData(res.data));
+      });
+    }
+
+    getWorkspace();
+  }, [workflowId]);
 
   if (loading || !workflow) {
     return (
@@ -72,27 +100,21 @@ function WorkflowDetails() {
     return (
       <Grid columns={3} padded>
         <Grid.Row className={styles.content}>
-          <Grid.Column width={3}>Inputs</Grid.Column>
+          <Grid.Column width={3}>
+            <WorkflowFiles files={files} title="Inputs" id={workflowId} />
+          </Grid.Column>
           <Grid.Column width={10}>
             <Grid.Row>
-              <Grid columns={2}>
-                <Grid.Column width={6}>
-                  <WorkflowInfo workflow={workflow} />
-                </Grid.Column>
-                <Grid.Column></Grid.Column>
-              </Grid>
+              <WorkflowInfo workflow={workflow} />
             </Grid.Row>
             <Grid.Row>
-              <Divider horizontal>
-                <Header as="h4" className={styles.separator}>
-                  <Icon name="cubes" />
-                  Jobs
-                </Header>
-              </Divider>
+              <Divider></Divider>
               <WorkflowLogs id={workflow.id} />
             </Grid.Row>
           </Grid.Column>
-          <Grid.Column width={3}>Outputs</Grid.Column>
+          <Grid.Column width={3}>
+            <WorkflowFiles files={files} title="Outputs" id={workflowId} />
+          </Grid.Column>
         </Grid.Row>
       </Grid>
     );

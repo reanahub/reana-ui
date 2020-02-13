@@ -12,3 +12,19 @@
     height: 40vh;
     overflow-x: hidden;
 }
+
+:global(.ui.label).step-label {
+  margin: 0;
+  border-bottom-right-radius: 0;
+  border-top-right-radius: 0;
+  line-height: 27px;
+}
+
+.step-info {
+  display: flex;
+  align-items: center;
+}
+
+.step-tags {
+  margin: 1em;
+}
