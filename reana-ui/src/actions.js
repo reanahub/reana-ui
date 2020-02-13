@@ -8,9 +8,10 @@
   under the terms of the MIT License; see LICENSE file for more details.
 */
 
+import _ from "lodash";
 import config from "./config";
-import { parseWorkflows, parseLogs } from "./util";
-import { getWorkflow } from "./selectors";
+import { parseWorkflows, parseLogs, parseFiles } from "./util";
+import { getWorkflow, getWorkflowFiles, getWorkflowLogs } from "./selectors";
 
 export const USER_FETCH = "Fetch user authentication info";
 export const USER_RECEIVED = "User info received";
@@ -20,11 +21,14 @@ export const WORKFLOWS_FETCH = "Fetch workflows info";
 export const WORKFLOWS_RECEIVED = "Workflows info received";
 export const WORKFLOW_LOGS_FETCH = "Fetch workflow logs";
 export const WORKFLOW_LOGS_RECEIVED = "Workflow logs received";
+export const WORKFLOW_FILES_FETCH = "Fetch workflow files";
+export const WORKFLOW_FILES_RECEIVED = "Workflow files received";
 
 const USER_INFO_URL = `${config.api}/api/me`;
 const USER_LOGOUT_URL = `${config.api}/api/logout`;
 const WORKFLOWS_URL = `${config.api}/api/workflows`;
 const WORKFLOW_LOGS_URL = id => `${config.api}/api/workflows/${id}/logs`;
+const WORKFLOW_FILES_URL = id => `${config.api}/api/workflows/${id}/workspace`;
 
 export function loadUser() {
   return async dispatch => {
@@ -83,7 +87,13 @@ export function fetchWorkflow(id) {
 }
 
 export function fetchWorkflowLogs(id) {
-  return async dispatch => {
+  return async (dispatch, getStore) => {
+    const state = getStore();
+    const logs = getWorkflowLogs(id)(state);
+    // Only fetch if needed
+    if (!_.isEmpty(logs)) {
+      return logs;
+    }
     let resp, data;
     try {
       dispatch({ type: WORKFLOW_LOGS_FETCH });
@@ -98,6 +108,33 @@ export function fetchWorkflowLogs(id) {
       type: WORKFLOW_LOGS_RECEIVED,
       id,
       logs: parseLogs(data.logs)
+    });
+    return resp;
+  };
+}
+
+export function fetchWorkflowFiles(id) {
+  return async (dispatch, getStore) => {
+    const state = getStore();
+    const files = getWorkflowFiles(id)(state);
+    // Only fetch if needed
+    if (!_.isEmpty(files)) {
+      return files;
+    }
+    let resp, data;
+    try {
+      dispatch({ type: WORKFLOW_FILES_FETCH });
+      resp = await fetch(WORKFLOW_FILES_URL(id), { credentials: "include" });
+    } catch (err) {
+      throw new Error(USER_INFO_URL, 0, err);
+    }
+    if (resp.ok) {
+      data = await resp.json();
+    }
+    dispatch({
+      type: WORKFLOW_FILES_RECEIVED,
+      id,
+      files: parseFiles(data)
     });
     return resp;
   };

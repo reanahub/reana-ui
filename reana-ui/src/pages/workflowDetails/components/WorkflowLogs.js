@@ -11,7 +11,7 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { useDispatch, useSelector } from "react-redux";
-import { Icon, Dropdown, Label, Popup } from "semantic-ui-react";
+import { Icon, Dropdown, Label, Popup, Loader } from "semantic-ui-react";
 
 import { fetchWorkflowLogs } from "../../../actions";
 import { statusMapping } from "../../../util";
@@ -30,6 +30,10 @@ export default function WorkflowLogs({ id }) {
     dispatch(fetchWorkflowLogs(id));
   }, [dispatch, id]);
 
+  useEffect(() => {
+    setSelectedStep(Object.keys(logs)[0]);
+  }, [logs]);
+
   const steps = Object.entries(logs).map(([id, log]) => ({
     key: id,
     text: log.job_name || log.backend_job_id,
@@ -38,7 +42,7 @@ export default function WorkflowLogs({ id }) {
 
   const log = logs[selectedStep];
   return loading ? (
-    "Loading..." //XXX: Improve
+    <Loader active inline="centered" />
   ) : (
     <>
       <section className={styles["step-info"]}>
@@ -51,7 +55,9 @@ export default function WorkflowLogs({ id }) {
             search
             selection
             options={steps}
+            value={selectedStep}
             onChange={(_, { value }) => setSelectedStep(value)}
+            className={styles.dropdown}
           />
         </div>
         {log && (
@@ -68,7 +74,7 @@ export default function WorkflowLogs({ id }) {
             <Popup
               trigger={
                 <Label className={styles.cmd}>
-                  <Icon name="terminal" />
+                  <Icon name="dollar" />
                   {log.cmd}
                 </Label>
               }

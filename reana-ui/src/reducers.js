@@ -16,7 +16,9 @@ import {
   WORKFLOWS_FETCH,
   WORKFLOWS_RECEIVED,
   WORKFLOW_LOGS_FETCH,
-  WORKFLOW_LOGS_RECEIVED
+  WORKFLOW_LOGS_RECEIVED,
+  WORKFLOW_FILES_FETCH,
+  WORKFLOW_FILES_RECEIVED
 } from "./actions";
 
 const authInitialState = {
@@ -31,7 +33,7 @@ const workflowsInitialState = {
 };
 
 const detailsInitialState = {
-  details: null,
+  details: {},
   loadingDetails: false
 };
 
@@ -77,7 +79,21 @@ const details = (state = detailsInitialState, action) => {
     case WORKFLOW_LOGS_RECEIVED:
       return {
         ...state,
-        details: { ...state.details, [action.id]: { logs: action.logs } },
+        details: {
+          ...state.details,
+          [action.id]: { ...state.details[action.id], logs: action.logs }
+        },
+        loadingDetails: false
+      };
+    case WORKFLOW_FILES_FETCH:
+      return { ...state, loadingDetails: true };
+    case WORKFLOW_FILES_RECEIVED:
+      return {
+        ...state,
+        details: {
+          ...state.details,
+          [action.id]: { ...state.details[action.id], files: action.files }
+        },
         loadingDetails: false
       };
     default:

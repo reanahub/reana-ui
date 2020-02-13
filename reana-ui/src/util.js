@@ -98,3 +98,19 @@ export function parseLogs(logs) {
   const parsedLogs = JSON.parse(logs);
   return parsedLogs.job_logs;
 }
+
+/**
+ * Parses workflow files.
+ */
+export function parseFiles(files) {
+  if (!Array.isArray(files)) return [];
+
+  files.forEach(file => {
+    // TODO: User moment.js
+    file["mod_date"] = file["last-modified"].substr(0, 19);
+    file["mod_date"] = file["mod_date"].replace("T", " ");
+    delete file["last-modified"];
+  });
+
+  return files;
+}

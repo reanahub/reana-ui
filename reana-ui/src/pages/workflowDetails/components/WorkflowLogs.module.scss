@@ -9,7 +9,7 @@
 */
 
 .logs {
-    height: 40vh;
+    height: 55vh;
     overflow-x: hidden;
 }
 
@@ -17,7 +17,12 @@
   margin: 0;
   border-bottom-right-radius: 0;
   border-top-right-radius: 0;
-  line-height: 27px;
+  line-height: 22px;
+}
+
+:global(.ui.selection.dropdown).dropdown {
+  border-bottom-left-radius: 0;
+  border-top-left-radius: 0;
 }
 
 .step-info {
