@@ -21,7 +21,8 @@ import { fetchWorkflowFiles } from "../../../actions";
 
 import styles from "./WorkflowFiles.module.scss";
 
-export default function WorkflowFiles({ id, title }) {
+const PREVIEW_WHITELIST = [".png", ".jpg", ".jpeg", ".tiff", ".gif"];
+export default function WorkflowFiles({ id }) {
   const dispatch = useDispatch();
   const loading = useSelector(loadingDetails);
   const _files = useSelector(getWorkflowFiles(id));
@@ -30,6 +31,7 @@ export default function WorkflowFiles({ id, title }) {
   const [modalContent, setModalContent] = useState(null);
   const [column, setColumn] = useState(null);
   const [direction, setDirection] = useState(null);
+  const [isPreviewable, setIsPreviewable] = useState(false);
 
   useEffect(() => {
     dispatch(fetchWorkflowFiles(id));
@@ -39,18 +41,38 @@ export default function WorkflowFiles({ id, title }) {
     setFiles(_files);
   }, [_files]);
 
+  const getFileURL = file_name =>
+    config.api +
+    "/api/workflows/" +
+    id +
+    "/workspace/" +
+    file_name +
+    "?preview";
+
   /**
    * Gets the file from the API
    */
   function getFile(file_name) {
-    // TODO: Move to actions
-    axios({
-      method: "get",
-      url: config.api + "/api/workflows/" + id + "/workspace/" + file_name,
-      withCredentials: true
-    }).then(res => {
-      setModalContent(res.data);
-    });
+    const url = getFileURL(file_name);
+    debugger;
+    const previewable = PREVIEW_WHITELIST.map(ext =>
+      file_name.endsWith(ext)
+    ).some(el => el);
+    setModalContent(url);
+    setIsPreviewable(previewable);
+    if (!previewable) {
+      axios({
+        method: "get",
+        url: url,
+        withCredentials: true
+      }).then(res => {
+        let result = res.data;
+        if (typeof result === "object") {
+          result = JSON.stringify(result);
+        }
+        setModalContent(result);
+      });
+    }
   }
 
   /**
@@ -145,7 +167,11 @@ export default function WorkflowFiles({ id, title }) {
                   {name}
                 </Modal.Header>
                 <Modal.Content scrolling>
-                  <pre>{modalContent}</pre>
+                  {isPreviewable ? (
+                    <img src={modalContent} alt={name} />
+                  ) : (
+                    <pre>{modalContent}</pre>
+                  )}
                 </Modal.Content>
                 <Modal.Actions className={styles["modal-actions"]}>
                   <Button color="blue" onClick={() => downloadFile(name)}>
@@ -161,6 +187,5 @@ export default function WorkflowFiles({ id, title }) {
 }
 
 WorkflowFiles.propTypes = {
-  title: PropTypes.string.isRequired,
   id: PropTypes.string.isRequired
 };
