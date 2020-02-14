@@ -8,6 +8,8 @@
   under the terms of the MIT License; see LICENSE file for more details.
 */
 
+@import "../../../styles/palette";
+
 .files-row {
     color: #999999;
     cursor: pointer;
@@ -15,7 +17,11 @@
 }
 
 .files-row:hover {
-    color: #515151;
+    background-color: $sepia;
+}
+
+:global(.ui.table thead).table-header :global(th) {
+    cursor: pointer;
 }
 
 .modal-view {

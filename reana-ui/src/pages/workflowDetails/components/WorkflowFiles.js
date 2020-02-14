@@ -83,59 +83,77 @@ export default function WorkflowFiles({ id, title }) {
     setDirection(direction === "ascending" ? "descending" : "ascending");
   }
 
+  const headerIcon = col => (
+    <Icon
+      name={
+        column === col
+          ? direction === "ascending"
+            ? "sort ascending"
+            : "sort descending"
+          : "sort"
+      }
+    />
+  );
+
   return loading ? (
     <Loader active inline="centered" />
   ) : (
     <Segment>
       <Table fixed compact basic="very">
-        <Table.Header>
+        <Table.Header className={styles["table-header"]}>
           <Table.Row>
             <Table.HeaderCell
               sorted={column === "name" ? direction : null}
               onClick={() => handleSort("name")}
-              style={{ cursor: "pointer" }}
             >
-              Name
+              Name {headerIcon("name")}
             </Table.HeaderCell>
             <Table.HeaderCell
-              sorted={column === "mod_date" ? direction : null}
-              onClick={() => handleSort("mod_date")}
-              style={{ cursor: "pointer" }}
+              sorted={column === "lastModified" ? direction : null}
+              onClick={() => handleSort("lastModified")}
             >
-              Modified
+              Modified {headerIcon("lastModified")}
+            </Table.HeaderCell>
+            <Table.HeaderCell
+              sorted={column === "size" ? direction : null}
+              onClick={() => handleSort("size")}
+            >
+              Size {headerIcon("size")}
             </Table.HeaderCell>
           </Table.Row>
         </Table.Header>
 
         <Table.Body className={styles["files-list"]}>
-          {_.map(files, ({ name, mod_date }) => (
-            <Modal
-              key={name}
-              onOpen={() => getFile(name)}
-              className={styles["modal-view"]}
-              trigger={
-                <Table.Row className={styles["files-row"]}>
-                  <Table.Cell>
-                    <Icon name="file" />
-                    {name}
-                  </Table.Cell>
-                  <Table.Cell>{mod_date}</Table.Cell>
-                </Table.Row>
-              }
-            >
-              <Modal.Header className={styles["modal-header"]}>
-                {name}
-              </Modal.Header>
-              <Modal.Content scrolling>
-                <pre>{modalContent}</pre>
-              </Modal.Content>
-              <Modal.Actions className={styles["modal-actions"]}>
-                <Button color="blue" onClick={() => downloadFile(name)}>
-                  <Icon name="download" /> Download
-                </Button>
-              </Modal.Actions>
-            </Modal>
-          ))}
+          {files &&
+            files.map(({ name, lastModified, size }) => (
+              <Modal
+                key={name}
+                onOpen={() => getFile(name)}
+                className={styles["modal-view"]}
+                trigger={
+                  <Table.Row className={styles["files-row"]}>
+                    <Table.Cell>
+                      <Icon name="file" />
+                      {name}
+                    </Table.Cell>
+                    <Table.Cell>{lastModified}</Table.Cell>
+                    <Table.Cell>{size}</Table.Cell>
+                  </Table.Row>
+                }
+              >
+                <Modal.Header className={styles["modal-header"]}>
+                  {name}
+                </Modal.Header>
+                <Modal.Content scrolling>
+                  <pre>{modalContent}</pre>
+                </Modal.Content>
+                <Modal.Actions className={styles["modal-actions"]}>
+                  <Button color="blue" onClick={() => downloadFile(name)}>
+                    <Icon name="download" /> Download
+                  </Button>
+                </Modal.Actions>
+              </Modal>
+            ))}
         </Table.Body>
       </Table>
     </Segment>

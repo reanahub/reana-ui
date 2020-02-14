@@ -104,11 +104,9 @@ export function parseLogs(logs) {
  */
 export function parseFiles(files) {
   if (!Array.isArray(files)) return [];
-
   files.forEach(file => {
-    // TODO: User moment.js
-    file["mod_date"] = file["last-modified"].substr(0, 19);
-    file["mod_date"] = file["mod_date"].replace("T", " ");
+    // TODO: Change on server side
+    file["lastModified"] = file["last-modified"];
     delete file["last-modified"];
   });
 
