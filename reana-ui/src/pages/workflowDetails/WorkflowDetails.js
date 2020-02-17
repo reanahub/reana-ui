@@ -17,7 +17,12 @@ import { Container, Dimmer, Loader, Message, Tab } from "semantic-ui-react";
 import { fetchWorkflow } from "../../actions";
 import { getWorkflow, loadingWorkflows } from "../../selectors";
 import BasePage from "../BasePage";
-import { WorkflowInfo, WorkflowLogs, WorkflowFiles } from "./components";
+import {
+  WorkflowInfo,
+  WorkflowLogs,
+  WorkflowFiles,
+  WorkflowSpecification
+} from "./components";
 
 import styles from "./WorkflowDetails.module.scss";
 
@@ -66,8 +71,20 @@ function WorkflowDetails() {
         render: () => <WorkflowLogs id={workflow.id} />
       },
       {
-        menuItem: { key: "files", icon: "folder outline", content: "Files" },
+        menuItem: {
+          key: "workspace",
+          icon: "folder outline",
+          content: "Workspace"
+        },
         render: () => <WorkflowFiles title="Workspace" id={workflow.id} />
+      },
+      {
+        menuItem: {
+          key: "specification",
+          icon: "file code outline",
+          content: "Specification"
+        },
+        render: () => <WorkflowSpecification id={workflow.id} />
       }
     ];
 

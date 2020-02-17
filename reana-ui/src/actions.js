@@ -11,7 +11,12 @@
 import _ from "lodash";
 import config from "./config";
 import { parseWorkflows, parseLogs, parseFiles } from "./util";
-import { getWorkflow, getWorkflowFiles, getWorkflowLogs } from "./selectors";
+import {
+  getWorkflow,
+  getWorkflowFiles,
+  getWorkflowLogs,
+  getWorkflowSpecification
+} from "./selectors";
 
 export const USER_FETCH = "Fetch user authentication info";
 export const USER_RECEIVED = "User info received";
@@ -23,11 +28,16 @@ export const WORKFLOW_LOGS_FETCH = "Fetch workflow logs";
 export const WORKFLOW_LOGS_RECEIVED = "Workflow logs received";
 export const WORKFLOW_FILES_FETCH = "Fetch workflow files";
 export const WORKFLOW_FILES_RECEIVED = "Workflow files received";
+export const WORKFLOW_SPECIFICATION_FETCH = "Fetch workflow specification";
+export const WORKFLOW_SPECIFICATION_RECEIVED =
+  "Workflow specification received";
 
 const USER_INFO_URL = `${config.api}/api/me`;
 const USER_LOGOUT_URL = `${config.api}/api/logout`;
 const WORKFLOWS_URL = `${config.api}/api/workflows`;
 const WORKFLOW_LOGS_URL = id => `${config.api}/api/workflows/${id}/logs`;
+const WORKFLOW_SPECIFICATION_URL = id =>
+  `${config.api}/api/workflows/${id}/specification`;
 const WORKFLOW_FILES_URL = id => `${config.api}/api/workflows/${id}/workspace`;
 
 export function loadUser() {
@@ -135,6 +145,35 @@ export function fetchWorkflowFiles(id) {
       type: WORKFLOW_FILES_RECEIVED,
       id,
       files: parseFiles(data)
+    });
+    return resp;
+  };
+}
+
+export function fetchWorkflowSpecification(id) {
+  return async (dispatch, getStore) => {
+    const state = getStore();
+    const specification = getWorkflowSpecification(id)(state);
+    // Only fetch if needed
+    if (!_.isEmpty(specification)) {
+      return specification;
+    }
+    let resp, data;
+    try {
+      dispatch({ type: WORKFLOW_SPECIFICATION_FETCH });
+      resp = await fetch(WORKFLOW_SPECIFICATION_URL(id), {
+        credentials: "include"
+      });
+    } catch (err) {
+      throw new Error(USER_INFO_URL, 0, err);
+    }
+    if (resp.ok) {
+      data = await resp.json();
+    }
+    dispatch({
+      type: WORKFLOW_SPECIFICATION_RECEIVED,
+      id,
+      specification: data
     });
     return resp;
   };

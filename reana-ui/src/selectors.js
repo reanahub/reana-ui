@@ -27,3 +27,5 @@ export const getWorkflowLogs = id => state =>
   (id in state.details.details && state.details.details[id].logs) || {};
 export const getWorkflowFiles = id => state =>
   id in state.details.details && state.details.details[id].files;
+export const getWorkflowSpecification = id => state =>
+  id in state.details.details && state.details.details[id].specification;

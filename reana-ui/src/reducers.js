@@ -17,6 +17,8 @@ import {
   WORKFLOWS_RECEIVED,
   WORKFLOW_LOGS_FETCH,
   WORKFLOW_LOGS_RECEIVED,
+  WORKFLOW_SPECIFICATION_FETCH,
+  WORKFLOW_SPECIFICATION_RECEIVED,
   WORKFLOW_FILES_FETCH,
   WORKFLOW_FILES_RECEIVED
 } from "./actions";
@@ -93,6 +95,20 @@ const details = (state = detailsInitialState, action) => {
         details: {
           ...state.details,
           [action.id]: { ...state.details[action.id], files: action.files }
+        },
+        loadingDetails: false
+      };
+    case WORKFLOW_SPECIFICATION_FETCH:
+      return { ...state, loadingDetails: true };
+    case WORKFLOW_SPECIFICATION_RECEIVED:
+      return {
+        ...state,
+        details: {
+          ...state.details,
+          [action.id]: {
+            ...state.details[action.id],
+            specification: action.specification
+          }
         },
         loadingDetails: false
       };
