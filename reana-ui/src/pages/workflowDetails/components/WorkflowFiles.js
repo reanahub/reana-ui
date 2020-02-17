@@ -41,20 +41,19 @@ export default function WorkflowFiles({ id }) {
     setFiles(_files);
   }, [_files]);
 
-  const getFileURL = file_name =>
+  const getFileURL = (file_name, preview = true) =>
     config.api +
     "/api/workflows/" +
     id +
     "/workspace/" +
     file_name +
-    "?preview";
+    (preview ? "?preview" : "");
 
   /**
    * Gets the file from the API
    */
   function getFile(file_name) {
     const url = getFileURL(file_name);
-    debugger;
     const previewable = PREVIEW_WHITELIST.map(ext =>
       file_name.endsWith(ext)
     ).some(el => el);
@@ -73,22 +72,6 @@ export default function WorkflowFiles({ id }) {
         setModalContent(result);
       });
     }
-  }
-
-  /**
-   * Downloads the file to the local machine
-   */
-  function downloadFile(file_name) {
-    let element = document.createElement("a");
-    element.setAttribute(
-      "href",
-      "data:text/plain;charset=utf-8," + encodeURIComponent(modalContent)
-    );
-    element.setAttribute("download", file_name);
-    element.style.display = "none";
-    document.body.appendChild(element);
-    element.click();
-    document.body.removeChild(element);
   }
 
   /**
@@ -145,13 +128,12 @@ export default function WorkflowFiles({ id }) {
           </Table.Row>
         </Table.Header>
 
-        <Table.Body className={styles["files-list"]}>
+        <Table.Body>
           {files &&
             files.map(({ name, lastModified, size }) => (
               <Modal
                 key={name}
                 onOpen={() => getFile(name)}
-                className={styles["modal-view"]}
                 trigger={
                   <Table.Row className={styles["files-row"]}>
                     <Table.Cell>
@@ -163,9 +145,7 @@ export default function WorkflowFiles({ id }) {
                   </Table.Row>
                 }
               >
-                <Modal.Header className={styles["modal-header"]}>
-                  {name}
-                </Modal.Header>
+                <Modal.Header>{name}</Modal.Header>
                 <Modal.Content scrolling>
                   {isPreviewable ? (
                     <img src={modalContent} alt={name} />
@@ -173,8 +153,8 @@ export default function WorkflowFiles({ id }) {
                     <pre>{modalContent}</pre>
                   )}
                 </Modal.Content>
-                <Modal.Actions className={styles["modal-actions"]}>
-                  <Button color="blue" onClick={() => downloadFile(name)}>
+                <Modal.Actions>
+                  <Button primary as="a" href={getFileURL(name, false)}>
                     <Icon name="download" /> Download
                   </Button>
                 </Modal.Actions>
