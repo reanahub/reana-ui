@@ -13,9 +13,9 @@ import PropTypes from "prop-types";
 import { Icon, Popup } from "semantic-ui-react";
 
 import { statusMapping } from "../../../util";
+import { WorkflowProgress } from "../components";
 
 import styles from "./WorkflowInfo.module.scss";
-import WorkflowsProgress from "./WorkflowProgress";
 
 export default function WorkflowInfo({ workflow }) {
   const {
@@ -73,7 +73,7 @@ export default function WorkflowInfo({ workflow }) {
           </div>
         </div>
       </section>
-      <WorkflowsProgress workflow={workflow} />
+      <WorkflowProgress workflow={workflow} />
     </div>
   );
 }

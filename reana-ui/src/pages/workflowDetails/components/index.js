@@ -11,3 +11,4 @@
 export { default as WorkflowLogs } from "./WorkflowLogs";
 export { default as WorkflowInfo } from "./WorkflowInfo";
 export { default as WorkflowFiles } from "./WorkflowFiles";
+export { default as WorkflowProgress } from "./WorkflowProgress";

@@ -14,7 +14,7 @@ import { Progress } from "semantic-ui-react";
 
 import { statusMapping } from "../../../util";
 
-export default function WorkflowsProgress({ workflow }) {
+export default function WorkflowProgress({ workflow }) {
   function handlePercentage(completedSteps, totalSteps) {
     return Math.floor((completedSteps * 100) / totalSteps);
   }
@@ -29,6 +29,6 @@ export default function WorkflowsProgress({ workflow }) {
   );
 }
 
-WorkflowsProgress.propTypes = {
+WorkflowProgress.propTypes = {
   workflow: PropTypes.object.isRequired
 };
