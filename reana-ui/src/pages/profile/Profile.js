@@ -14,7 +14,7 @@ import { Container } from "semantic-ui-react";
 import BasePage from "../BasePage";
 import GitLabProjects from "./components/GitLabProjects";
 import Token from "./components/Token";
-import Title from "../../components/Title";
+import { Title } from "../../components";
 
 import styles from "./Profile.module.scss";
 

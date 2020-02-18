@@ -13,7 +13,7 @@ import { Loader } from "semantic-ui-react";
 
 import { fetchWorkflowSpecification } from "../../../actions";
 import { getWorkflowSpecification, loadingDetails } from "../../../selectors";
-import CodeSnippet from "../../../components/CodeSnippet";
+import { CodeSnippet } from "../../../components";
 
 export default function WorkflowSpecification({ id }) {
   const dispatch = useDispatch();

@@ -12,7 +12,7 @@ import React from "react";
 import { useSelector } from "react-redux";
 
 import { getReanaToken } from "../../../selectors";
-import CodeSnippet from "../../../components/CodeSnippet";
+import { CodeSnippet } from "../../../components";
 import config from "../../../config";
 
 export default function Token() {

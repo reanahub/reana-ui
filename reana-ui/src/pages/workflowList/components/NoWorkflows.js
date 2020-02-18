@@ -13,7 +13,7 @@ import { useSelector } from "react-redux";
 import { Container, Header, Icon } from "semantic-ui-react";
 
 import { getReanaToken } from "../../../selectors";
-import CodeSnippet from "../../../components/CodeSnippet";
+import { CodeSnippet } from "../../../components";
 import config from "../../../config";
 
 import styles from "./NoWorkflows.module.scss";

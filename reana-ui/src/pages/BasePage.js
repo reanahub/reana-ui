@@ -9,8 +9,7 @@
 */
 
 import React from "react";
-import TopHeader from "../components/TopHeader";
-import Footer from "../components/Footer";
+import { Footer, TopHeader } from "../components";
 
 import styles from "./BasePage.module.scss";
 

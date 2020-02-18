@@ -13,7 +13,7 @@ import { Icon, Container, Popup } from "semantic-ui-react";
 import PropTypes from "prop-types";
 import { useHistory } from "react-router-dom";
 
-import Title from "../../../components/Title";
+import { Title } from "../../../components";
 import { statusMapping } from "../../../util";
 
 import styles from "./WorkflowList.module.scss";
