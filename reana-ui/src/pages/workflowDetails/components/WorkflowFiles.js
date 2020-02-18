@@ -13,7 +13,15 @@ import { useDispatch, useSelector } from "react-redux";
 import PropTypes from "prop-types";
 import axios from "axios";
 import _ from "lodash";
-import { Button, Icon, Modal, Segment, Table, Loader } from "semantic-ui-react";
+import {
+  Button,
+  Icon,
+  Modal,
+  Segment,
+  Table,
+  Loader,
+  Message
+} from "semantic-ui-react";
 
 import config from "../../../config";
 import { getWorkflowFiles, loadingDetails } from "../../../selectors";
@@ -22,6 +30,9 @@ import { fetchWorkflowFiles } from "../../../actions";
 import styles from "./WorkflowFiles.module.scss";
 
 const PREVIEW_WHITELIST = [".png", ".jpg", ".jpeg", ".tiff", ".gif"];
+const PREVIEW_BLACKLIST = [".root", ".pdf"];
+const SIZE_LIMIT = 5 * 1024 ** 2; // 5MB
+
 export default function WorkflowFiles({ id }) {
   const dispatch = useDispatch();
   const loading = useSelector(loadingDetails);
@@ -41,22 +52,54 @@ export default function WorkflowFiles({ id }) {
     setFiles(_files);
   }, [_files]);
 
-  const getFileURL = (file_name, preview = true) =>
+  const getFileURL = (fileName, preview = true) =>
     config.api +
     "/api/workflows/" +
     id +
     "/workspace/" +
-    file_name +
+    fileName +
     (preview ? "?preview" : "");
+
+  /**
+   * Check if the given file name matches any given extension
+   * @param {Array} list Array of extensions to check against
+   * @param {String} fileName File name to check
+   * @return {Boolean} Whether the file name matches one of the extensions
+   */
+  function matchesExtensions(list, fileName) {
+    return list.map(ext => fileName.endsWith(ext)).some(item => item);
+  }
+
+  /**
+   * Verify if file overpasses size limit or has a blacklisted extension.
+   * @param {*} fileName File name
+   * @param {*} size File size
+   * @return {component.Message|null} Component displaying reason or null
+   */
+  function checkConstraints(fileName, size) {
+    let content;
+    if (matchesExtensions(PREVIEW_BLACKLIST, fileName)) {
+      content = "ROOT files cannot be previewed. Please use download.";
+    } else if (size > SIZE_LIMIT) {
+      content = `File size is too big to be previewed (limit ${SIZE_LIMIT /
+        1024 ** 2}MB). Please use download.`;
+    }
+    return content ? (
+      <Message icon="info circle" content={content} info />
+    ) : null;
+  }
 
   /**
    * Gets the file from the API
    */
-  function getFile(file_name) {
-    const url = getFileURL(file_name);
-    const previewable = PREVIEW_WHITELIST.map(ext =>
-      file_name.endsWith(ext)
-    ).some(el => el);
+  function getFile(fileName, size) {
+    const message = checkConstraints(fileName, size);
+    if (message) {
+      setModalContent(message);
+      return;
+    }
+    const url = getFileURL(fileName);
+    const previewable = matchesExtensions(PREVIEW_WHITELIST, fileName);
     setModalContent(url);
     setIsPreviewable(previewable);
     if (!previewable) {
@@ -69,7 +112,7 @@ export default function WorkflowFiles({ id }) {
         if (typeof result === "object") {
           result = JSON.stringify(result);
         }
-        setModalContent(result);
+        setModalContent(<pre>{result}</pre>);
       });
     }
   }
@@ -133,7 +176,7 @@ export default function WorkflowFiles({ id }) {
             files.map(({ name, lastModified, size }) => (
               <Modal
                 key={name}
-                onOpen={() => getFile(name)}
+                onOpen={() => getFile(name, size)}
                 trigger={
                   <Table.Row className={styles["files-row"]}>
                     <Table.Cell>
@@ -150,7 +193,7 @@ export default function WorkflowFiles({ id }) {
                   {isPreviewable ? (
                     <img src={modalContent} alt={name} />
                   ) : (
-                    <pre>{modalContent}</pre>
+                    modalContent
                   )}
                 </Modal.Content>
                 <Modal.Actions>
