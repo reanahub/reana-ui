@@ -37,6 +37,11 @@ export default function WorkflowLogs({ id }) {
   const steps = Object.entries(logs).map(([id, log]) => ({
     key: id,
     text: log.job_name || log.backend_job_id,
+    icon: {
+      name: "dot circle outline",
+      size: "small",
+      color: statusMapping[log.status].color
+    },
     value: id
   }));
 
