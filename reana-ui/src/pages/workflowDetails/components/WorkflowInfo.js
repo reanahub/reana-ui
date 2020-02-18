@@ -17,6 +17,8 @@ import { WorkflowProgress } from "../components";
 
 import styles from "./WorkflowInfo.module.scss";
 
+const NON_FINISHED_STATUSES = ["created", "queued", "running"];
+
 export default function WorkflowInfo({ workflow }) {
   const {
     name,
@@ -68,6 +70,13 @@ export default function WorkflowInfo({ workflow }) {
             {status}
           </span>{" "}
           {statusMapping[status].preposition} {duration}
+          {NON_FINISHED_STATUSES.includes(status) && (
+            <Icon
+              name="refresh"
+              className={styles.refresh}
+              onClick={() => window.location.reload()}
+            />
+          )}
           <div>
             step {completed}/{total}
           </div>
