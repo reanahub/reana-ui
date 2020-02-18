@@ -178,6 +178,7 @@ export default function WorkflowFiles({ id }) {
               <Modal
                 key={name}
                 onOpen={() => getFile(name, size)}
+                closeIcon
                 trigger={
                   <Table.Row className={styles["files-row"]}>
                     <Table.Cell>
