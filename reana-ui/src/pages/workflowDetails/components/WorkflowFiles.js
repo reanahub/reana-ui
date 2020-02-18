@@ -97,10 +97,11 @@ export default function WorkflowFiles({ id }) {
     const message = checkConstraints(fileName, size);
     if (message) {
       setModalContent(message);
+      setIsPreviewable(false);
       return;
     }
     const url = getFileURL(fileName);
-    const previewable = matchesExtensions(PREVIEW_WHITELIST, fileName);
+    const previewable = !!matchesExtensions(PREVIEW_WHITELIST, fileName);
     setModalContent(url);
     setIsPreviewable(previewable);
     if (!previewable) {
