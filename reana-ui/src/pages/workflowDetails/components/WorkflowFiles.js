@@ -64,10 +64,10 @@ export default function WorkflowFiles({ id }) {
    * Check if the given file name matches any given extension
    * @param {Array} list Array of extensions to check against
    * @param {String} fileName File name to check
-   * @return {Boolean} Whether the file name matches one of the extensions
+   * @return {Boolean} Extension that matches the file name
    */
   function matchesExtensions(list, fileName) {
-    return list.map(ext => fileName.endsWith(ext)).some(item => item);
+    return list.find(ext => fileName.endsWith(ext));
   }
 
   /**
@@ -78,8 +78,9 @@ export default function WorkflowFiles({ id }) {
    */
   function checkConstraints(fileName, size) {
     let content;
-    if (matchesExtensions(PREVIEW_BLACKLIST, fileName)) {
-      content = "ROOT files cannot be previewed. Please use download.";
+    const match = matchesExtensions(PREVIEW_BLACKLIST, fileName);
+    if (match) {
+      content = `${match} files cannot be previewed. Please use download.`;
     } else if (size > SIZE_LIMIT) {
       content = `File size is too big to be previewed (limit ${SIZE_LIMIT /
         1024 ** 2}MB). Please use download.`;
