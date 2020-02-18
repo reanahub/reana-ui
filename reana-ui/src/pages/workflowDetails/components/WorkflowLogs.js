@@ -11,12 +11,12 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { useDispatch, useSelector } from "react-redux";
-import { Icon, Dropdown, Label, Popup, Loader } from "semantic-ui-react";
+import { Icon, Dropdown, Label, Loader } from "semantic-ui-react";
 
 import { fetchWorkflowLogs } from "../../../actions";
 import { statusMapping } from "../../../util";
 import { getWorkflowLogs, loadingDetails } from "../../../selectors";
-import CodeSnippet from "../../../components/CodeSnippet";
+import { CodeSnippet, TooltipIfTruncated } from "../../../components";
 
 import styles from "./WorkflowLogs.module.scss";
 
@@ -72,19 +72,18 @@ export default function WorkflowLogs({ id }) {
               <Icon name="cloud" />
               {log.compute_backend}
             </Label>
-            <Label>
-              <Icon name="docker" />
-              {log.docker_img}
-            </Label>
-            <Popup
-              trigger={
-                <Label className={styles.cmd}>
-                  <Icon name="dollar" />
-                  {log.cmd}
-                </Label>
-              }
-              content={log.cmd}
-            />
+            <TooltipIfTruncated tooltip={log.docker_img}>
+              <Label className={styles.ellipsized}>
+                <Icon name="docker" />
+                {log.docker_img}
+              </Label>
+            </TooltipIfTruncated>
+            <TooltipIfTruncated tooltip={log.cmd}>
+              <Label className={styles.ellipsized}>
+                <Icon name="dollar" />
+                {log.cmd}
+              </Label>
+            </TooltipIfTruncated>
           </div>
         )}
       </section>
