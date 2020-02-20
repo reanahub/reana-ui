@@ -8,6 +8,7 @@
   under the terms of the MIT License; see LICENSE file for more details.
 */
 
+import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { useDispatch, useSelector } from "react-redux";
@@ -31,7 +32,8 @@ export default function WorkflowLogs({ id }) {
   }, [dispatch, id]);
 
   useEffect(() => {
-    setSelectedStep(Object.keys(logs)[0]);
+    const failedStepId = _.findKey(logs, log => log.status === "failed");
+    setSelectedStep(failedStepId ? failedStepId : Object.keys(logs)[0]);
   }, [logs]);
 
   const steps = Object.entries(logs).map(([id, log]) => ({
