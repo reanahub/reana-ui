@@ -11,6 +11,8 @@
 import React from "react";
 import { Redirect, BrowserRouter, Route, Switch } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { Dimmer, Loader } from "semantic-ui-react";
+
 import { isLoggedIn, loadingUser } from "../selectors";
 import LoginPage from "../pages/login/Login";
 import WorkflowList from "../pages/workflowList/WorkflowList";
@@ -37,8 +39,9 @@ export default function App() {
   return (
     <BrowserRouter>
       {loading ? (
-        // TODO: Change for a better loading indicator
-        "Loading..."
+        <Dimmer active inverted>
+          <Loader inline="centered">Loading...</Loader>
+        </Dimmer>
       ) : (
         <Switch>
           <Route
