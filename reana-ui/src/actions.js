@@ -50,7 +50,8 @@ export function loadUser() {
       throw new Error(USER_INFO_URL, 0, err);
     }
     if (resp.status === 401) {
-      console.log("User must be logged in");
+      data = await resp.json();
+      console.log(data.message);
     } else if (resp.ok) {
       data = await resp.json();
     }
