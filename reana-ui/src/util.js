@@ -9,6 +9,7 @@
 */
 
 import moment from "moment";
+import mime from "mime";
 
 /**
  * Mapping between workflow statuses and colors and icons.
@@ -111,4 +112,17 @@ export function parseFiles(files) {
   });
 
   return files;
+}
+
+/**
+ * Returns mime-type of a given file name.
+ * @param {String} fileName File name
+ */
+export function getMimeType(fileName) {
+  // Formats not considered by mime npm package
+  const WHITELIST = [".py"];
+  if (WHITELIST.find(ext => fileName.endsWith(ext))) {
+    return "text/plain";
+  }
+  return mime.getType(fileName);
 }

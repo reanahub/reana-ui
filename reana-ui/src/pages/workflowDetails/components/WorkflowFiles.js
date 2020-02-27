@@ -26,11 +26,15 @@ import {
 import config from "../../../config";
 import { getWorkflowFiles, loadingDetails } from "../../../selectors";
 import { fetchWorkflowFiles } from "../../../actions";
+import { getMimeType } from "../../../util";
 
 import styles from "./WorkflowFiles.module.scss";
 
-const PREVIEW_WHITELIST = [".png", ".jpg", ".jpeg", ".tiff", ".gif"];
-const PREVIEW_BLACKLIST = [".root", ".pdf"];
+const PREVIEW_MIME_PREFIX_WHITELIST = {
+  "image/": { serverPreviewable: true },
+  "text/": { serverPreviewable: false },
+  "application/json": { serverPreviewable: false }
+};
 const SIZE_LIMIT = 5 * 1024 ** 2; // 5MB
 
 export default function WorkflowFiles({ id }) {
@@ -42,7 +46,7 @@ export default function WorkflowFiles({ id }) {
   const [modalContent, setModalContent] = useState(null);
   const [column, setColumn] = useState(null);
   const [direction, setDirection] = useState(null);
-  const [isPreviewable, setIsPreviewable] = useState(false);
+  const [isServerPreviewable, setIsServerPreviewable] = useState(false);
 
   useEffect(() => {
     dispatch(fetchWorkflowFiles(id));
@@ -61,26 +65,31 @@ export default function WorkflowFiles({ id }) {
     (preview ? "?preview" : "");
 
   /**
-   * Check if the given file name matches any given extension
-   * @param {Array} list Array of extensions to check against
+   * Check if the given file name matches any given mime-type
+   * @param {Array} list Array of mime-types to check against
    * @param {String} fileName File name to check
    * @return {Boolean} Extension that matches the file name
    */
-  function matchesExtensions(list, fileName) {
-    return list.find(ext => fileName.endsWith(ext));
+  function matchesMimeType(list, fileName) {
+    const mimeType = getMimeType(fileName);
+    return mimeType && list.find(ext => mimeType.startsWith(ext));
   }
 
   /**
-   * Verify if file overpasses size limit or has a blacklisted extension.
-   * @param {*} fileName File name
-   * @param {*} size File size
+   * Verify if file overpasses size limit or has a blacklisted mime-type.
+   * @param {String} fileName File name
+   * @param {Integer} size File size
    * @return {component.Message|null} Component displaying reason or null
    */
   function checkConstraints(fileName, size) {
     let content;
-    const match = matchesExtensions(PREVIEW_BLACKLIST, fileName);
-    if (match) {
-      content = `${match} files cannot be previewed. Please use download.`;
+    const match = matchesMimeType(
+      Object.keys(PREVIEW_MIME_PREFIX_WHITELIST),
+      fileName
+    );
+    if (!match) {
+      const fileExt = fileName.split(".").pop();
+      content = `${fileExt} files cannot be previewed. Please use download.`;
     } else if (size > SIZE_LIMIT) {
       content = `File size is too big to be previewed (limit ${SIZE_LIMIT /
         1024 ** 2}MB). Please use download.`;
@@ -97,14 +106,19 @@ export default function WorkflowFiles({ id }) {
     const message = checkConstraints(fileName, size);
     if (message) {
       setModalContent(message);
-      setIsPreviewable(false);
+      setIsServerPreviewable(false);
       return;
     }
     const url = getFileURL(fileName);
-    const previewable = !!matchesExtensions(PREVIEW_WHITELIST, fileName);
+    const mimeType = matchesMimeType(
+      Object.keys(PREVIEW_MIME_PREFIX_WHITELIST),
+      fileName
+    );
+    const serverPreviewable =
+      PREVIEW_MIME_PREFIX_WHITELIST[mimeType].serverPreviewable;
     setModalContent(url);
-    setIsPreviewable(previewable);
-    if (!previewable) {
+    setIsServerPreviewable(serverPreviewable);
+    if (!serverPreviewable) {
       axios({
         method: "get",
         url: url,
@@ -193,7 +207,7 @@ export default function WorkflowFiles({ id }) {
               >
                 <Modal.Header>{name}</Modal.Header>
                 <Modal.Content scrolling>
-                  {isPreviewable ? (
+                  {isServerPreviewable ? (
                     <img src={modalContent} alt={name} />
                   ) : (
                     modalContent
