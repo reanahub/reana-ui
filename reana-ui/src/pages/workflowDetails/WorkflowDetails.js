@@ -45,7 +45,7 @@ function WorkflowDetails() {
     dispatch(fetchWorkflow(workflowId));
   }, [dispatch, workflowId]);
 
-  if (loading || !workflow) {
+  if (loading) {
     return (
       <Dimmer active>
         <Loader>Loading workflow...</Loader>
@@ -53,12 +53,12 @@ function WorkflowDetails() {
     );
   }
 
-  if (_.isEmpty(workflow)) {
+  if (!workflow) {
     return (
       <Container text className={styles.warning}>
         <Message
           icon="warning sign"
-          header="Workflow does not exist."
+          header="Sorry, this workflow either does not exist or you are not authorised to see it."
           size="small"
           warning
         />
