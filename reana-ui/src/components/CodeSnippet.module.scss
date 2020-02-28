@@ -16,10 +16,11 @@
   margin: 1em 0;
   line-height: 2em;
   width: 100%;
-  white-space: pre-line;
+  white-space: pre-wrap;
   font-family: "Consolas", "Monaco", "Courier New", Courier, monospace;
   background-color: $sepia;
   color: $dark-blue;
+  overflow-x: hidden;
 
   &.dark {
     color: $light-gray;

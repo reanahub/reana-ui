@@ -15,6 +15,8 @@ import { fetchWorkflowSpecification } from "../../../actions";
 import { getWorkflowSpecification, loadingDetails } from "../../../selectors";
 import { CodeSnippet } from "../../../components";
 
+import styles from "./WorkflowSpecification.module.scss";
+
 export default function WorkflowSpecification({ id }) {
   const dispatch = useDispatch();
   const loading = useSelector(loadingDetails);
@@ -27,8 +29,8 @@ export default function WorkflowSpecification({ id }) {
   return loading ? (
     <Loader active inline="centered" />
   ) : (
-    <CodeSnippet>
-      <pre>{JSON.stringify(specification, null, 2)} </pre>
+    <CodeSnippet classes={styles.spec}>
+      {JSON.stringify(specification, null, 2)}
     </CodeSnippet>
   );
 }
