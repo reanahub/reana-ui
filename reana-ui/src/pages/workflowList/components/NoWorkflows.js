@@ -33,7 +33,7 @@ export default function NoWorkflows() {
         </p>
         <CodeSnippet>
           <div>ssh lxplus.cern.ch</div>
-          <div>source ~simko/public/reana/bin/activate</div>
+          <div>source /afs/cern.ch/user/r/reana/public/reana/bin/activate</div>
           <div>export REANA_SERVER_URL={config.api}</div>
           <div>export REANA_ACCESS_TOKEN={reanaToken}</div>
           <div>
