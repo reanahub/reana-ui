@@ -107,7 +107,8 @@ const details = (state = detailsInitialState, action) => {
           ...state.details,
           [action.id]: {
             ...state.details[action.id],
-            specification: action.specification
+            specification: action.specification,
+            parameters: action.parameters
           }
         },
         loadingDetails: false

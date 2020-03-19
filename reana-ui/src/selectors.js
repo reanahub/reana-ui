@@ -29,3 +29,5 @@ export const getWorkflowFiles = id => state =>
   id in state.details.details && state.details.details[id].files;
 export const getWorkflowSpecification = id => state =>
   id in state.details.details && state.details.details[id].specification;
+export const getWorkflowParameters = id => state =>
+  id in state.details.details && state.details.details[id].parameters;

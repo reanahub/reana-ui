@@ -174,7 +174,8 @@ export function fetchWorkflowSpecification(id) {
     dispatch({
       type: WORKFLOW_SPECIFICATION_RECEIVED,
       id,
-      specification: data
+      specification: data.specification,
+      parameters: data.parameters
     });
     return resp;
   };

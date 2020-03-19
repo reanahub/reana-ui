@@ -8,7 +8,6 @@
   under the terms of the MIT License; see LICENSE file for more details.
 */
 
-import _ from "lodash";
 import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
