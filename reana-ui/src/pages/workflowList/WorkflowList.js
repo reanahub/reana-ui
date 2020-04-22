@@ -18,7 +18,7 @@ import { fetchWorkflows } from "../../actions";
 import { getWorkflows, loadingWorkflows } from "../../selectors";
 import config from "../../config";
 import BasePage from "../BasePage";
-import NoWorkflows from "./components/NoWorkflows";
+import Welcome from "./components/Welcome";
 import WorkflowList from "./components/WorkflowList";
 
 export default function WorkflowListPage() {
@@ -61,7 +61,7 @@ function Workflows() {
       )
     );
   } else if (_.isEmpty(workflows)) {
-    return <NoWorkflows />;
+    return <Welcome />;
   } else {
     const workflowArray = Object.entries(workflows).map(
       ([_, workflow]) => workflow
