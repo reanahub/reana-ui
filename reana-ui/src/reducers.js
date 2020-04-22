@@ -26,7 +26,7 @@ import {
 const authInitialState = {
   email: null,
   reanaToken: null,
-  tokenRequested: null,
+  reanaTokenStatus: null,
   loadingUser: false
 };
 
@@ -51,7 +51,7 @@ const auth = (state = authInitialState, action) => {
         fullName: action.full_name,
         username: action.username,
         reanaToken: action.reana_token,
-        tokenRequested: action.token_requested,
+        reanaTokenStatus: action.reana_token_status,
         loadingUser: false
       };
     case USER_LOGOUT:

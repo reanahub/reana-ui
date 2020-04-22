@@ -12,7 +12,7 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { Button, Container, Icon } from "semantic-ui-react";
 
-import { getReanaToken, hasRequestedToken } from "../../../selectors";
+import { getReanaToken, getReanaTokenStatus } from "../../../selectors";
 import { CodeSnippet, Title } from "../../../components";
 import config from "../../../config";
 
@@ -20,7 +20,6 @@ import styles from "./Welcome.module.scss";
 
 export default function Welcome() {
   const reanaToken = useSelector(getReanaToken);
-  const tokenRequested = useSelector(hasRequestedToken);
 
   const tokenContent = (
     <div>
@@ -52,7 +51,25 @@ export default function Welcome() {
     </div>
   );
 
-  const tokenNotRequestedContent = (
+  return (
+    <Container text className={styles["container"]}>
+      <Title as="h2">Welcome to REANA!</Title>
+      {reanaToken ? tokenContent : <WelcomeNoTokenMsg />}
+    </Container>
+  );
+}
+
+export function WelcomeNoTokenMsg() {
+  const tokenStatus = useSelector(getReanaTokenStatus);
+
+  return tokenStatus === "requested" ? (
+    <div>
+      <p>
+        Your access token request has been forwarded to REANA administrators.
+      </p>
+      <Button content="Token requested" disabled />
+    </div>
+  ) : (
     <div>
       <p>
         It seems that this is your first login to REANA. In order to use the
@@ -60,25 +77,5 @@ export default function Welcome() {
       </p>
       <Button content="Request token" />
     </div>
-  );
-
-  const tokenRequestedContent = (
-    <div>
-      <p>
-        Your access token request has been forwarded to REANA administrators.
-      </p>
-      <Button content="Token requested" disabled />
-    </div>
-  );
-
-  return (
-    <Container text className={styles["container"]}>
-      <Title as="h2">Welcome to REANA!</Title>
-      {reanaToken
-        ? tokenContent
-        : tokenRequested
-        ? tokenRequestedContent
-        : tokenNotRequestedContent}
-    </Container>
   );
 }
