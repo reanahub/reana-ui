@@ -13,6 +13,8 @@ import {
   USER_FETCH,
   USER_RECEIVED,
   USER_LOGOUT,
+  USER_REQUEST_TOKEN,
+  USER_TOKEN_REQUESTED,
   WORKFLOWS_FETCH,
   WORKFLOWS_RECEIVED,
   WORKFLOW_LOGS_FETCH,
@@ -27,7 +29,8 @@ const authInitialState = {
   email: null,
   reanaToken: null,
   reanaTokenStatus: null,
-  loadingUser: false
+  loadingUser: false,
+  loadingTokenStatus: false
 };
 
 const workflowsInitialState = {
@@ -56,6 +59,14 @@ const auth = (state = authInitialState, action) => {
       };
     case USER_LOGOUT:
       return authInitialState;
+    case USER_REQUEST_TOKEN:
+      return { ...state, loadingTokenStatus: true };
+    case USER_TOKEN_REQUESTED:
+      return {
+        ...state,
+        reanaTokenStatus: action.reana_token_status,
+        loadingTokenStatus: false
+      };
     default:
       return state;
   }

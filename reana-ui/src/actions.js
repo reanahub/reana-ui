@@ -21,6 +21,8 @@ import {
 export const USER_FETCH = "Fetch user authentication info";
 export const USER_RECEIVED = "User info received";
 export const USER_LOGOUT = "User logged out";
+export const USER_REQUEST_TOKEN = "Request user token";
+export const USER_TOKEN_REQUESTED = "User token requested";
 
 export const WORKFLOWS_FETCH = "Fetch workflows info";
 export const WORKFLOWS_RECEIVED = "Workflows info received";
@@ -34,6 +36,7 @@ export const WORKFLOW_SPECIFICATION_RECEIVED =
 
 const USER_INFO_URL = `${config.api}/api/me`;
 const USER_LOGOUT_URL = `${config.api}/api/logout`;
+const USER_REQUEST_TOKEN_URL = `${config.api}/api/token`;
 const WORKFLOWS_URL = `${config.api}/api/workflows`;
 const WORKFLOW_LOGS_URL = id => `${config.api}/api/workflows/${id}/logs`;
 const WORKFLOW_SPECIFICATION_URL = id =>
@@ -64,6 +67,29 @@ export function userLogout() {
   return async dispatch => {
     dispatch({ type: USER_LOGOUT });
     window.location.href = USER_LOGOUT_URL;
+  };
+}
+
+export function requestToken() {
+  return async dispatch => {
+    let resp, data;
+    try {
+      dispatch({ type: USER_REQUEST_TOKEN });
+      resp = await fetch(USER_REQUEST_TOKEN_URL, {
+        method: "PUT",
+        credentials: "include"
+      });
+    } catch (err) {
+      throw new Error(USER_INFO_URL, 0, err);
+    }
+    if (resp.status === 401) {
+      data = await resp.json();
+      console.log(data.message);
+    } else if (resp.ok) {
+      data = await resp.json();
+    }
+    dispatch({ type: USER_TOKEN_REQUESTED, ...data });
+    return resp;
   };
 }
 

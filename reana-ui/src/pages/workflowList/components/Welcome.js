@@ -9,10 +9,15 @@
 */
 
 import React from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Button, Container, Icon } from "semantic-ui-react";
 
-import { getReanaToken, getReanaTokenStatus } from "../../../selectors";
+import { requestToken } from "../../../actions";
+import {
+  getReanaToken,
+  getReanaTokenStatus,
+  loadingTokenStatus
+} from "../../../selectors";
 import { CodeSnippet, Title } from "../../../components";
 import config from "../../../config";
 
@@ -61,21 +66,43 @@ export default function Welcome() {
 
 export function WelcomeNoTokenMsg() {
   const tokenStatus = useSelector(getReanaTokenStatus);
+  const loading = useSelector(loadingTokenStatus);
+  const dispatch = useDispatch();
 
-  return tokenStatus === "requested" ? (
-    <div>
-      <p>
-        Your access token request has been forwarded to REANA administrators.
-      </p>
-      <Button content="Token requested" disabled />
-    </div>
-  ) : (
-    <div>
-      <p>
-        It seems that this is your first login to REANA. In order to use the
-        system, you need to ask for an access token.
-      </p>
-      <Button content="Request token" />
-    </div>
-  );
+  const handleRequestToken = () => {
+    dispatch(requestToken());
+  };
+
+  switch (tokenStatus) {
+    case "requested":
+      return (
+        <div>
+          <p>
+            Your access token request has been forwarded to REANA
+            administrators.
+          </p>
+          <Button content="Token requested" disabled />
+        </div>
+      );
+    case "revoked":
+      return (
+        <div>
+          <p>Your token was revoked.</p>
+        </div>
+      );
+    default:
+      return (
+        <div>
+          <p>
+            It seems that this is your first login to REANA. In order to use the
+            system, you need to ask for an access token.
+          </p>
+          <Button
+            content="Request token"
+            onClick={handleRequestToken}
+            loading={loading}
+          />
+        </div>
+      );
+  }
 }

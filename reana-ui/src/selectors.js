@@ -15,6 +15,7 @@ export const getUserFullName = state => state.auth.fullName;
 export const loadingUser = state => state.auth.loadingUser;
 export const getReanaToken = state => state.auth.reanaToken;
 export const getReanaTokenStatus = state => state.auth.reanaTokenStatus;
+export const loadingTokenStatus = state => state.auth.loadingTokenStatus;
 
 // Workflows
 export const loadingWorkflows = state => state.workflows.loadingWorkflows;
