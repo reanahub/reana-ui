@@ -10,8 +10,10 @@
 
 import React from "react";
 import { Image, Icon, Popup, List } from "semantic-ui-react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+
+import { getUserEmail } from "../selectors";
 import LogoImg from "../images/logo-reana.svg";
 import { userLogout } from "../actions";
 import config from "../config";
@@ -20,6 +22,7 @@ import styles from "./TopHeader.module.scss";
 
 export default function TopHeader() {
   const dispatch = useDispatch();
+  const email = useSelector(getUserEmail);
   const logOut = () => {
     dispatch(userLogout());
   };
@@ -45,6 +48,9 @@ export default function TopHeader() {
           }
           content={
             <List>
+              <List.Item>
+                <List.Header>{email}</List.Header>
+              </List.Item>
               <List.Item as="a" href="/profile">
                 Your profile
               </List.Item>
