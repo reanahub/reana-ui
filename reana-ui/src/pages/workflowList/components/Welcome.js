@@ -73,36 +73,24 @@ export function WelcomeNoTokenMsg() {
     dispatch(requestToken());
   };
 
-  switch (tokenStatus) {
-    case "requested":
-      return (
-        <div>
-          <p>
-            Your access token request has been forwarded to REANA
-            administrators.
-          </p>
-          <Button content="Token requested" disabled />
-        </div>
-      );
-    case "revoked":
-      return (
-        <div>
-          <p>Your token was revoked.</p>
-        </div>
-      );
-    default:
-      return (
-        <div>
-          <p>
-            It seems that this is your first login to REANA. In order to use the
-            system, you need to ask for an access token.
-          </p>
-          <Button
-            content="Request token"
-            onClick={handleRequestToken}
-            loading={loading}
-          />
-        </div>
-      );
-  }
+  return tokenStatus === "requested" ? (
+    <div>
+      <p>
+        Your access token request has been forwarded to REANA administrators.
+      </p>
+      <Button content="Token requested" disabled />
+    </div>
+  ) : (
+    <div>
+      <p>
+        It seems that this is your first login to REANA. In order to use the
+        system, you need to ask for an access token.
+      </p>
+      <Button
+        content="Request token"
+        onClick={handleRequestToken}
+        loading={loading}
+      />
+    </div>
+  );
 }

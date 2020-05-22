@@ -20,6 +20,7 @@ import {
 
 export const USER_FETCH = "Fetch user authentication info";
 export const USER_RECEIVED = "User info received";
+export const USER_ERROR = "User fetch error";
 export const USER_LOGOUT = "User logged out";
 export const USER_REQUEST_TOKEN = "Request user token";
 export const USER_TOKEN_REQUESTED = "User token requested";
@@ -52,9 +53,9 @@ export function loadUser() {
     } catch (err) {
       throw new Error(USER_INFO_URL, 0, err);
     }
-    if (resp.status === 401) {
+    if (resp.status === 403) {
       data = await resp.json();
-      console.log(data.message);
+      dispatch({ type: USER_ERROR, ...data });
     } else if (resp.ok) {
       data = await resp.json();
     }
