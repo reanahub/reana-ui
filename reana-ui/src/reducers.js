@@ -28,10 +28,13 @@ import {
 
 const authInitialState = {
   email: null,
-  reanaToken: null,
-  reanaTokenStatus: null,
+  reanaToken: {
+    value: null,
+    status: null,
+    requestedAt: null,
+    loading: false
+  },
   loadingUser: false,
-  loadingTokenStatus: false,
   error: false
 };
 
@@ -55,8 +58,12 @@ const auth = (state = authInitialState, action) => {
         email: action.email,
         fullName: action.full_name,
         username: action.username,
-        reanaToken: action.reana_token,
-        reanaTokenStatus: action.reana_token_status,
+        reanaToken: {
+          ...state.reanaToken,
+          value: action.reana_token?.value,
+          status: action.reana_token?.status,
+          requestedAt: action.reana_token?.requested_at
+        },
         loadingUser: false
       };
     case USER_ERROR:
@@ -68,12 +75,16 @@ const auth = (state = authInitialState, action) => {
     case USER_LOGOUT:
       return authInitialState;
     case USER_REQUEST_TOKEN:
-      return { ...state, loadingTokenStatus: true };
+      return { ...state, reanaToken: { ...state.reanaToken, loading: true } };
     case USER_TOKEN_REQUESTED:
       return {
         ...state,
-        reanaTokenStatus: action.reana_token_status,
-        loadingTokenStatus: false
+        reanaToken: {
+          ...state.reanaToken,
+          status: action.reana_token?.status,
+          requestedAt: action.reana_token?.requested_at,
+          loading: false
+        }
       };
     default:
       return state;

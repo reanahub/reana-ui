@@ -14,9 +14,11 @@ export const getUserEmail = state => state.auth.email;
 export const getUserFullName = state => state.auth.fullName;
 export const getUserError = state => state.auth.error;
 export const loadingUser = state => state.auth.loadingUser;
-export const getReanaToken = state => state.auth.reanaToken;
-export const getReanaTokenStatus = state => state.auth.reanaTokenStatus;
-export const loadingTokenStatus = state => state.auth.loadingTokenStatus;
+export const getReanaToken = state => state.auth.reanaToken.value;
+export const getReanaTokenStatus = state => state.auth.reanaToken.status;
+export const loadingTokenStatus = state => state.auth.reanaToken.loading;
+export const getReanaTokenRequestedAt = state =>
+  state.auth.reanaToken.requestedAt;
 
 // Workflows
 export const loadingWorkflows = state => state.workflows.loadingWorkflows;

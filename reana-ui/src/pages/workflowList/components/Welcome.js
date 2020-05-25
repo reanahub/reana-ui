@@ -9,6 +9,7 @@
 */
 
 import React from "react";
+import moment from "moment";
 import { useDispatch, useSelector } from "react-redux";
 import { Button, Container, Icon } from "semantic-ui-react";
 
@@ -16,6 +17,7 @@ import { requestToken } from "../../../actions";
 import {
   getReanaToken,
   getReanaTokenStatus,
+  getReanaTokenRequestedAt,
   loadingTokenStatus
 } from "../../../selectors";
 import { CodeSnippet, Title } from "../../../components";
@@ -66,6 +68,7 @@ export default function Welcome() {
 
 export function WelcomeNoTokenMsg() {
   const tokenStatus = useSelector(getReanaTokenStatus);
+  const tokenRequestedAt = useSelector(getReanaTokenRequestedAt);
   const loading = useSelector(loadingTokenStatus);
   const dispatch = useDispatch();
 
@@ -79,6 +82,11 @@ export function WelcomeNoTokenMsg() {
         Your access token request has been forwarded to REANA administrators.
       </p>
       <Button content="Token requested" disabled />
+      <small className={styles.requested}>
+        <em>
+          {moment.utc(tokenRequestedAt).format("Do MMM YYYY HH:mm [UTC]")}
+        </em>
+      </small>
     </div>
   ) : (
     <div>
