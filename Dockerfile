@@ -1,4 +1,4 @@
-FROM node:10 as react-build
+FROM node:12 as react-build
 WORKDIR /code
 COPY ./reana-ui/package.json /code/reana-ui/package.json
 RUN cd reana-ui && yarn install
