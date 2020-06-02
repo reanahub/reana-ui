@@ -9,13 +9,14 @@
 */
 
 import React from "react";
-import { Footer, TopHeader } from "../components";
+import { Announcement, Footer, TopHeader } from "../components";
 
 import styles from "./BasePage.module.scss";
 
 export default function BasePage({ children }) {
   return (
     <div className={styles["reana-page"]}>
+      <Announcement />
       <TopHeader />
       <div className={styles["main"]}>{children}</div>
       <Footer />

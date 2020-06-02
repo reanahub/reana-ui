@@ -19,6 +19,7 @@ export const getReanaTokenStatus = state => state.auth.reanaToken.status;
 export const loadingTokenStatus = state => state.auth.reanaToken.loading;
 export const getReanaTokenRequestedAt = state =>
   state.auth.reanaToken.requestedAt;
+export const getAnnouncement = state => state.auth.announcement;
 
 // Workflows
 export const loadingWorkflows = state => state.workflows.loadingWorkflows;

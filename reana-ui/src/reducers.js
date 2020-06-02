@@ -35,6 +35,7 @@ const authInitialState = {
     loading: false
   },
   loadingUser: false,
+  announcement: null,
   error: false
 };
 
@@ -64,6 +65,7 @@ const auth = (state = authInitialState, action) => {
           status: action.reana_token?.status,
           requestedAt: action.reana_token?.requested_at
         },
+        announcement: action.announcement,
         loadingUser: false
       };
     case USER_ERROR:

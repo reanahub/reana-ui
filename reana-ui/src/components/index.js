@@ -8,6 +8,7 @@
   under the terms of the MIT License; see LICENSE file for more details.
 */
 
+export { default as Announcement } from "./Announcement";
 export { default as CodeSnippet } from "./CodeSnippet";
 export { default as Footer } from "./Footer";
 export { default as Title } from "./Title";
