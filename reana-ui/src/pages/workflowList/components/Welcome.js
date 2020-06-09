@@ -34,11 +34,14 @@ export default function Welcome() {
         It seems that you are using REANA for the first time. Would you like to
         try out a small example? Please login to LXPLUS and launch:
       </p>
-      <CodeSnippet>
+      <CodeSnippet reveal>
         <div>ssh lxplus.cern.ch</div>
         <div>source /afs/cern.ch/user/r/reana/public/reana/bin/activate</div>
         <div>export REANA_SERVER_URL={config.api}</div>
-        <div>export REANA_ACCESS_TOKEN={reanaToken}</div>
+        <div>
+          export REANA_ACCESS_TOKEN=
+          <span className="revealable">{reanaToken}</span>
+        </div>
         <div>git clone https://github.com/reanahub/reana-demo-root6-roofit</div>
         <div>cd reana-demo-root6-roofit</div>
         <div>reana-client run -w root6-roofit</div>

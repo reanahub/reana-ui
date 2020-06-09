@@ -22,10 +22,12 @@ export default function CodeSnippet({
   dark,
   small,
   copy,
+  reveal,
   dollarPrefix,
   classes
 }) {
   const [copied, setCopied] = useState(false);
+  const [revealed, setRevealed] = useState(false);
 
   const handleCopied = () => {
     setCopied(true);
@@ -34,6 +36,20 @@ export default function CodeSnippet({
       setCopied(false);
       clearTimeout(timeout);
     }, COPY_CHECK_TIMEOUT);
+  };
+
+  const toggleRevealed = () => {
+    setRevealed(!revealed);
+  };
+
+  const accessChildren = element => {
+    if (Array.isArray(element)) {
+      return element.map(el =>
+        el.props?.children ? accessChildren(el.props.children) : el
+      );
+    } else {
+      return element;
+    }
   };
 
   return (
@@ -45,7 +61,7 @@ export default function CodeSnippet({
       <div
         className={`${styles["content"]} ${small ? styles["small"] : ""} ${
           dollarPrefix ? styles["dollar"] : ""
-        }`}
+        } ${revealed ? styles["revealed"] : ""}`}
       >
         {children}
       </div>
@@ -53,20 +69,24 @@ export default function CodeSnippet({
         <Popup
           trigger={
             <CopyToClipboard
-              text={children
-                .map(el => {
-                  const children = el.props.children;
-                  return Array.isArray(children) ? children.join("") : children;
-                })
+              text={accessChildren(children)
+                .map(line => line.join(""))
                 .join("\n")}
               onCopy={handleCopied}
             >
-              <Icon name="copy outline" className={styles["copy-icon"]} />
+              <Icon name="copy outline" className={styles["action-icon"]} />
             </CopyToClipboard>
           }
           content="Copied!"
           open={copied}
           inverted
+        />
+      )}
+      {reveal && (
+        <Icon
+          name={revealed ? "eye slash" : "eye"}
+          className={styles["action-icon"]}
+          onClick={toggleRevealed}
         />
       )}
     </div>
@@ -77,12 +97,16 @@ CodeSnippet.propTypes = {
   dark: PropTypes.bool,
   small: PropTypes.bool,
   copy: PropTypes.bool,
-  dollarPrefix: PropTypes.bool
+  reveal: PropTypes.bool,
+  dollarPrefix: PropTypes.bool,
+  classes: PropTypes.string
 };
 
 CodeSnippet.defaultProps = {
   dark: false,
   small: false,
   copy: false,
-  dollarPrefix: true
+  reveal: false,
+  dollarPrefix: true,
+  classes: ""
 };

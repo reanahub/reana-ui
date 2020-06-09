@@ -29,6 +29,17 @@
 
   .content {
     padding: 1em;
+    flex: 1;
+
+    &.revealed {
+      :global(.revealable) {
+        background-color: transparent;
+      }
+    }
+
+    :global(.revealable) {
+      background-color: $dark-blue;
+    }
 
     &.small {
       font-size: 0.85em;
@@ -39,7 +50,7 @@
     }
   }
 
-  .copy-icon {
+  .action-icon {
     cursor: pointer;
     opacity: 0.7;
 
