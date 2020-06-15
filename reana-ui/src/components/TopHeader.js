@@ -51,8 +51,8 @@ export default function TopHeader() {
               <List.Item>
                 <List.Header>{email}</List.Header>
               </List.Item>
-              <List.Item as="a" href="/profile">
-                Your profile
+              <List.Item>
+                <Link to="/profile">Your profile</Link>
               </List.Item>
               <List.Item as="a" onClick={logOut}>
                 Sign out
