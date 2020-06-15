@@ -8,18 +8,18 @@
   under the terms of the MIT License; see LICENSE file for more details.
 */
 
-.login-form {
+.signin-form {
   height: 100%;
   display: flex;
   flex-direction: column;
 
-  :global(.ui.grid).login-grid {
+  :global(.ui.grid).signin-grid {
     height: 100%;
     margin-left: 1em;
     margin-right: 1em;
   }
 
-  .login-column {
+  .signin-column {
     max-width: 450px;
   }
 

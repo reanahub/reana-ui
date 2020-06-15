@@ -15,6 +15,9 @@ const config = {
   docsURL: "http://docs.reana.io/",
   forumURL: "https://forum.reana.io/",
   mattermostURL: "https://mattermost.web.cern.ch/it-dep/channels/reana",
+  // TODO: Move to reana-server config
+  sso: true,
+  localUsers: true
 };
 
 export default config;

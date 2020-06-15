@@ -14,7 +14,7 @@ import { useSelector } from "react-redux";
 import { Dimmer, Loader } from "semantic-ui-react";
 
 import { getUserError, isLoggedIn, loadingUser } from "../selectors";
-import LoginPage from "../pages/login/Login";
+import Signin from "../pages/signin/Signin";
 import WorkflowList from "../pages/workflowList/WorkflowList";
 import WorkflowDetails from "../pages/workflowDetails/WorkflowDetails";
 import Profile from "../pages/profile/Profile";
@@ -52,7 +52,11 @@ export default function App() {
         <Switch>
           <Route
             path="/signin"
-            render={() => (loggedIn ? <Redirect to="/" /> : <LoginPage />)}
+            render={() => (loggedIn ? <Redirect to="/" /> : <Signin />)}
+          />
+          <Route
+            path="/signup"
+            render={() => (loggedIn ? <Redirect to="/" /> : <Signin signup />)}
           />
           <ProtectedRoute exact path="/" component={WorkflowList} />
           <ProtectedRoute path="/details/:id" component={WorkflowDetails} />
