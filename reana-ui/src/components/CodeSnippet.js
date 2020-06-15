@@ -65,6 +65,13 @@ export default function CodeSnippet({
       >
         {children}
       </div>
+      {reveal && (
+        <Icon
+          name={revealed ? "eye slash" : "eye"}
+          className={styles["action-icon"]}
+          onClick={toggleRevealed}
+        />
+      )}
       {copy && (
         <Popup
           trigger={
@@ -80,13 +87,6 @@ export default function CodeSnippet({
           content="Copied!"
           open={copied}
           inverted
-        />
-      )}
-      {reveal && (
-        <Icon
-          name={revealed ? "eye slash" : "eye"}
-          className={styles["action-icon"]}
-          onClick={toggleRevealed}
         />
       )}
     </div>
