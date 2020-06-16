@@ -26,7 +26,8 @@ export const USER_SIGNUP = "Sign user up";
 export const USER_SIGNEDUP = "User signed up";
 export const USER_SIGNIN = "Sign user in";
 export const USER_SIGNEDIN = "User signed in";
-export const USER_SIGNOUT = "User signed out";
+export const USER_SIGNOUT = "Sign user out";
+export const USER_SIGNEDOUT = "User signed out";
 export const USER_REQUEST_TOKEN = "Request user token";
 export const USER_TOKEN_REQUESTED = "User token requested";
 
@@ -107,8 +108,20 @@ export const userSignin = formData =>
 
 export function userSignout() {
   return async dispatch => {
-    dispatch({ type: USER_SIGNOUT });
-    window.location.href = USER_SIGNOUT_URL;
+    let resp;
+    try {
+      dispatch({ type: USER_SIGNOUT });
+      resp = await fetch(USER_SIGNOUT_URL, {
+        method: "POST",
+        credentials: "include"
+      });
+    } catch (err) {
+      throw new Error(USER_SIGNOUT_URL, 0, err);
+    }
+    if (resp.ok) {
+      dispatch({ type: USER_SIGNEDOUT });
+    }
+    return resp;
   };
 }
 

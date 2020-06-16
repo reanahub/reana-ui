@@ -13,7 +13,7 @@ import {
   USER_FETCH,
   USER_RECEIVED,
   USER_ERROR,
-  USER_SIGNOUT,
+  USER_SIGNEDOUT,
   USER_REQUEST_TOKEN,
   USER_TOKEN_REQUESTED,
   WORKFLOWS_FETCH,
@@ -74,7 +74,7 @@ const auth = (state = authInitialState, action) => {
         error: action.message,
         loadingUser: false
       };
-    case USER_SIGNOUT:
+    case USER_SIGNEDOUT:
       return authInitialState;
     case USER_REQUEST_TOKEN:
       return { ...state, reanaToken: { ...state.reanaToken, loading: true } };
