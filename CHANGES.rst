@@ -1,6 +1,12 @@
 Changes
 =======
 
+Version master (UNRELEASED)
+---------------------------
+
+- Adds local users forms for sign in and sign up functionalites.
+
+
 Version 0.6.0 (2019-12-20)
 --------------------------
 

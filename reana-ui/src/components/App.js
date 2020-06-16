@@ -13,7 +13,7 @@ import { Redirect, BrowserRouter, Route, Switch } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { Dimmer, Loader } from "semantic-ui-react";
 
-import { getUserError, isLoggedIn, loadingUser } from "../selectors";
+import { getUserError, isSignedIn, loadingUser } from "../selectors";
 import Signin from "../pages/signin/Signin";
 import WorkflowList from "../pages/workflowList/WorkflowList";
 import WorkflowDetails from "../pages/workflowDetails/WorkflowDetails";
@@ -23,20 +23,26 @@ import Error from "./Error";
 import "./App.module.scss";
 
 function ProtectedRoute(props) {
-  const loggedIn = useSelector(isLoggedIn);
+  const signedIn = useSelector(isSignedIn);
   const { component: Component, render, ...restProps } = props;
   const renderContent = render ? render() : <Component {...restProps} />;
   return (
     <Route
       {...restProps}
-      render={() => (loggedIn ? renderContent : <Redirect to="/signin" />)}
+      render={({ location }) =>
+        signedIn ? (
+          renderContent
+        ) : (
+          <Redirect to={{ pathname: "/signin", state: { from: location } }} />
+        )
+      }
     />
   );
 }
 
 export default function App() {
   const loading = useSelector(loadingUser);
-  const loggedIn = useSelector(isLoggedIn);
+  const signedIn = useSelector(isSignedIn);
   const error = useSelector(getUserError);
   if (error) {
     return <Error title="Access denied" message={error} />;
@@ -52,11 +58,11 @@ export default function App() {
         <Switch>
           <Route
             path="/signin"
-            render={() => (loggedIn ? <Redirect to="/" /> : <Signin />)}
+            render={() => (signedIn ? <Redirect to="/" /> : <Signin />)}
           />
           <Route
             path="/signup"
-            render={() => (loggedIn ? <Redirect to="/" /> : <Signin signup />)}
+            render={() => (signedIn ? <Redirect to="/" /> : <Signin signup />)}
           />
           <ProtectedRoute exact path="/" component={WorkflowList} />
           <ProtectedRoute path="/details/:id" component={WorkflowDetails} />

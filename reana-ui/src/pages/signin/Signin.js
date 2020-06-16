@@ -8,20 +8,42 @@
   under the terms of the MIT License; see LICENSE file for more details.
 */
 
-import React from "react";
+import React, { useState } from "react";
+import { useDispatch } from "react-redux";
 import { Button, Divider, Grid, Image, Segment } from "semantic-ui-react";
-import { Link } from "react-router-dom";
+import { Link, useHistory, useLocation } from "react-router-dom";
 import PropTypes from "prop-types";
 
 import SignForm from "./components/SignForm";
 import config from "../../config";
+import { userSignup, userSignin } from "../../actions";
 import LogoImg from "../../images/logo-reana.svg";
 
 import styles from "./Signin.module.scss";
 
 export default function Signin({ signup }) {
+  const [formData, setFormData] = useState({ email: "", password: "" });
+  const dispatch = useDispatch();
+  const history = useHistory();
+  const location = useLocation();
+
   const handleClick = () => {
     window.location.href = config.api + "/oauth/login/cern";
+  };
+
+  const handleSubmit = (event, action) => {
+    const { from } = location.state || { from: { pathname: "/" } };
+    dispatch(action(formData)).then(res => {
+      if (res.ok) {
+        history.replace(from);
+      }
+    });
+    event.preventDefault();
+  };
+
+  const handleInputChange = event => {
+    const target = event.target;
+    setFormData({ ...formData, [target.name]: target.value });
   };
 
   return (
@@ -55,7 +77,11 @@ export default function Signin({ signup }) {
             {config.localUsers && (
               <SignForm
                 submitText={signup ? "Sign up" : "Sign in"}
-                handleSubmit={() => alert("signin submit")}
+                handleSubmit={e =>
+                  handleSubmit(e, signup ? userSignup : userSignin)
+                }
+                formData={formData}
+                handleInputChange={handleInputChange}
               />
             )}
           </Segment>
@@ -79,6 +105,7 @@ export default function Signin({ signup }) {
 }
 
 Signin.propTypes = {
+  /** Whether to show signup instead of signin form. */
   signup: PropTypes.bool
 };
 

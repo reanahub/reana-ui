@@ -12,12 +12,12 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { Provider } from "react-redux";
 import store from "./store";
-import { checkLoggedInStatus } from "./auth";
+import { checkSignedInStatus } from "./auth";
 import App from "./components/App";
 
 import "semantic-ui-less/semantic.less";
 
-checkLoggedInStatus(store);
+checkSignedInStatus(store);
 
 ReactDOM.render(
   <Provider store={store}>

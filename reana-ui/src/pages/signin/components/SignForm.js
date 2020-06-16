@@ -12,18 +12,35 @@ import React from "react";
 import { Button, Form } from "semantic-ui-react";
 import PropTypes from "prop-types";
 
-export default function SignForm({ submitText, handleSubmit }) {
+export default function SignForm({
+  submitText,
+  handleSubmit,
+  formData,
+  handleInputChange
+}) {
   return (
-    <Form>
+    <Form onSubmit={handleSubmit}>
       <Form.Field>
         <label>Email</label>
-        <input name="email" type="email" />
+        <input
+          type="email"
+          name="email"
+          value={formData.email}
+          onChange={handleInputChange}
+          required
+        />
       </Form.Field>
       <Form.Field>
         <label>Password</label>
-        <input name="password" type="password" />
+        <input
+          type="password"
+          name="password"
+          value={formData.password}
+          onChange={handleInputChange}
+          required
+        />
       </Form.Field>
-      <Button primary fluid onClick={handleSubmit}>
+      <Button type="submit" primary fluid>
         {submitText}
       </Button>
     </Form>
@@ -32,5 +49,7 @@ export default function SignForm({ submitText, handleSubmit }) {
 
 SignForm.propTypes = {
   submitText: PropTypes.string.isRequired,
-  handleSubmit: PropTypes.func.isRequired
+  handleSubmit: PropTypes.func.isRequired,
+  formData: PropTypes.object.isRequired,
+  handleInputChange: PropTypes.func.isRequired
 };

@@ -9,6 +9,7 @@
 */
 
 import _ from "lodash";
+
 import config from "./config";
 import { parseWorkflows, parseLogs, parseFiles } from "./util";
 import {
@@ -21,7 +22,11 @@ import {
 export const USER_FETCH = "Fetch user authentication info";
 export const USER_RECEIVED = "User info received";
 export const USER_ERROR = "User fetch error";
-export const USER_LOGOUT = "User logged out";
+export const USER_SIGNUP = "Sign user up";
+export const USER_SIGNEDUP = "User signed up";
+export const USER_SIGNIN = "Sign user in";
+export const USER_SIGNEDIN = "User signed in";
+export const USER_SIGNOUT = "User signed out";
 export const USER_REQUEST_TOKEN = "Request user token";
 export const USER_TOKEN_REQUESTED = "User token requested";
 
@@ -35,8 +40,10 @@ export const WORKFLOW_SPECIFICATION_FETCH = "Fetch workflow specification";
 export const WORKFLOW_SPECIFICATION_RECEIVED =
   "Workflow specification received";
 
-const USER_INFO_URL = `${config.api}/api/me`;
-const USER_LOGOUT_URL = `${config.api}/api/logout`;
+const USER_INFO_URL = `${config.api}/api/you`;
+const USER_SIGNUP_URL = `${config.api}/api/register`;
+const USER_SIGNIN_URL = `${config.api}/api/login`;
+const USER_SIGNOUT_URL = `${config.api}/api/logout`;
 const USER_REQUEST_TOKEN_URL = `${config.api}/api/token`;
 const WORKFLOWS_URL = `${config.api}/api/workflows`;
 const WORKFLOW_LOGS_URL = id => `${config.api}/api/workflows/${id}/logs`;
@@ -64,10 +71,44 @@ export function loadUser() {
   };
 }
 
-export function userLogout() {
+function userSignFactory(initAction, succeedAction, actionURL, body) {
   return async dispatch => {
-    dispatch({ type: USER_LOGOUT });
-    window.location.href = USER_LOGOUT_URL;
+    let resp, data;
+    try {
+      dispatch({ type: initAction });
+      resp = await fetch(actionURL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(body),
+        credentials: "include"
+      });
+    } catch (err) {
+      throw new Error(actionURL, 0, err);
+    }
+    data = await resp.json();
+    if (resp.status === 400) {
+      // TODO: Error validation and error messages in form
+      console.log(data);
+    } else if (resp.ok) {
+      dispatch({ type: succeedAction });
+      dispatch(loadUser());
+    }
+    return resp;
+  };
+}
+
+export const userSignup = formData =>
+  userSignFactory(USER_SIGNUP, USER_SIGNEDUP, USER_SIGNUP_URL, formData);
+
+export const userSignin = formData =>
+  userSignFactory(USER_SIGNIN, USER_SIGNEDIN, USER_SIGNIN_URL, formData);
+
+export function userSignout() {
+  return async dispatch => {
+    dispatch({ type: USER_SIGNOUT });
+    window.location.href = USER_SIGNOUT_URL;
   };
 }
 

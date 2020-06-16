@@ -10,6 +10,6 @@
 
 import { loadUser } from "./actions";
 
-export function checkLoggedInStatus(store) {
+export function checkSignedInStatus(store) {
   store.dispatch(loadUser());
 }

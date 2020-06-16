@@ -15,7 +15,7 @@ import { Link } from "react-router-dom";
 
 import { getUserEmail } from "../selectors";
 import LogoImg from "../images/logo-reana.svg";
-import { userLogout } from "../actions";
+import { userSignout } from "../actions";
 import config from "../config";
 
 import styles from "./TopHeader.module.scss";
@@ -23,8 +23,8 @@ import styles from "./TopHeader.module.scss";
 export default function TopHeader() {
   const dispatch = useDispatch();
   const email = useSelector(getUserEmail);
-  const logOut = () => {
-    dispatch(userLogout());
+  const signOut = () => {
+    dispatch(userSignout());
   };
 
   return (
@@ -54,7 +54,7 @@ export default function TopHeader() {
               <List.Item>
                 <Link to="/profile">Your profile</Link>
               </List.Item>
-              <List.Item as="a" onClick={logOut}>
+              <List.Item as="a" onClick={signOut}>
                 Sign out
               </List.Item>
             </List>

@@ -9,7 +9,7 @@
 */
 
 // Auth
-export const isLoggedIn = state => !!state.auth.email;
+export const isSignedIn = state => !!state.auth.email;
 export const getUserEmail = state => state.auth.email;
 export const getUserFullName = state => state.auth.fullName;
 export const getUserError = state => state.auth.error;
