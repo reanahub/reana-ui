@@ -55,7 +55,7 @@ function Workflows() {
   if (!workflows) {
     return (
       loading && (
-        <Dimmer active>
+        <Dimmer active inverted>
           <Loader>Loading workflows...</Loader>
         </Dimmer>
       )
