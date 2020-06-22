@@ -12,8 +12,9 @@ import { combineReducers } from "redux";
 import {
   USER_FETCH,
   USER_RECEIVED,
-  USER_ERROR,
+  USER_FETCH_ERROR,
   USER_SIGNEDOUT,
+  USER_SIGN_ERROR,
   USER_REQUEST_TOKEN,
   USER_TOKEN_REQUESTED,
   WORKFLOWS_FETCH,
@@ -25,6 +26,7 @@ import {
   WORKFLOW_FILES_FETCH,
   WORKFLOW_FILES_RECEIVED
 } from "./actions";
+import { USER_ERROR } from "./errors";
 
 const authInitialState = {
   email: null,
@@ -36,7 +38,7 @@ const authInitialState = {
   },
   loadingUser: false,
   announcement: null,
-  error: false
+  error: {}
 };
 
 const workflowsInitialState = {
@@ -68,14 +70,21 @@ const auth = (state = authInitialState, action) => {
         announcement: action.announcement,
         loadingUser: false
       };
-    case USER_ERROR:
+    case USER_FETCH_ERROR:
       return {
         ...state,
-        error: action.message,
+        error: { [USER_ERROR.fetch]: action.message },
         loadingUser: false
       };
     case USER_SIGNEDOUT:
       return authInitialState;
+    case USER_SIGN_ERROR:
+      return {
+        ...state,
+        error: {
+          [USER_ERROR.sign]: action.errors
+        }
+      };
     case USER_REQUEST_TOKEN:
       return { ...state, reanaToken: { ...state.reanaToken, loading: true } };
     case USER_TOKEN_REQUESTED:

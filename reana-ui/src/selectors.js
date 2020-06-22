@@ -8,11 +8,14 @@
   under the terms of the MIT License; see LICENSE file for more details.
 */
 
+import { USER_ERROR } from "./errors";
+
 // Auth
 export const isSignedIn = state => !!state.auth.email;
 export const getUserEmail = state => state.auth.email;
 export const getUserFullName = state => state.auth.fullName;
-export const getUserError = state => state.auth.error;
+export const getUserFetchError = state => state.auth.error[USER_ERROR.fetch];
+export const getUserSignErrors = state => state.auth.error[USER_ERROR.sign];
 export const loadingUser = state => state.auth.loadingUser;
 export const getReanaToken = state => state.auth.reanaToken.value;
 export const getReanaTokenStatus = state => state.auth.reanaToken.status;

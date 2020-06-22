@@ -37,6 +37,7 @@ export default function Signin({ signup }) {
       if (res.ok) {
         history.replace(from);
       }
+      setFormData({ ...formData, password: "" });
     });
     event.preventDefault();
   };

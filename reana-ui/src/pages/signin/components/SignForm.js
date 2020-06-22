@@ -9,8 +9,13 @@
 */
 
 import React from "react";
-import { Button, Form } from "semantic-ui-react";
+import { useSelector } from "react-redux";
+import { Button, Form, Input } from "semantic-ui-react";
 import PropTypes from "prop-types";
+
+import { getUserSignErrors } from "../../../selectors";
+
+import styles from "./SignForm.module.scss";
 
 export default function SignForm({
   submitText,
@@ -18,28 +23,43 @@ export default function SignForm({
   formData,
   handleInputChange
 }) {
+  const errors = useSelector(getUserSignErrors);
+
+  /**
+   * Gets Form.Field compatible error prop per field/
+   * @param {String} field Name of the field to get errors from
+   */
+  function getFieldErrors(field) {
+    const fieldErrors = errors?.filter(err => err.field === field);
+    return (
+      !!fieldErrors?.length && {
+        content: fieldErrors.map(err => <p key={err.message}>{err.message}</p>),
+        pointing: "above"
+      }
+    );
+  }
   return (
-    <Form onSubmit={handleSubmit}>
-      <Form.Field>
-        <label>Email</label>
-        <input
-          type="email"
-          name="email"
-          value={formData.email}
-          onChange={handleInputChange}
-          required
-        />
-      </Form.Field>
-      <Form.Field>
-        <label>Password</label>
-        <input
-          type="password"
-          name="password"
-          value={formData.password}
-          onChange={handleInputChange}
-          required
-        />
-      </Form.Field>
+    <Form onSubmit={handleSubmit} className={styles.form}>
+      <Form.Field
+        control={Input}
+        label="Email"
+        type="email"
+        name="email"
+        value={formData.email}
+        onChange={handleInputChange}
+        error={getFieldErrors("email")}
+        required
+      />
+      <Form.Field
+        control={Input}
+        label="Password"
+        type="password"
+        name="password"
+        value={formData.password}
+        onChange={handleInputChange}
+        error={getFieldErrors("password")}
+        required
+      />
       <Button type="submit" primary fluid>
         {submitText}
       </Button>

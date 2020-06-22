@@ -13,7 +13,7 @@ import { Redirect, BrowserRouter, Route, Switch } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { Dimmer, Loader } from "semantic-ui-react";
 
-import { getUserError, isSignedIn, loadingUser } from "../selectors";
+import { getUserFetchError, isSignedIn, loadingUser } from "../selectors";
 import Signin from "../pages/signin/Signin";
 import WorkflowList from "../pages/workflowList/WorkflowList";
 import WorkflowDetails from "../pages/workflowDetails/WorkflowDetails";
@@ -43,7 +43,7 @@ function ProtectedRoute(props) {
 export default function App() {
   const loading = useSelector(loadingUser);
   const signedIn = useSelector(isSignedIn);
-  const error = useSelector(getUserError);
+  const error = useSelector(getUserFetchError);
   if (error) {
     return <Error title="Access denied" message={error} />;
   }

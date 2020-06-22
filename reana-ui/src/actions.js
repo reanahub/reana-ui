@@ -21,12 +21,13 @@ import {
 
 export const USER_FETCH = "Fetch user authentication info";
 export const USER_RECEIVED = "User info received";
-export const USER_ERROR = "User fetch error";
+export const USER_FETCH_ERROR = "User fetch error";
 export const USER_SIGNUP = "Sign user up";
 export const USER_SIGNEDUP = "User signed up";
 export const USER_SIGNIN = "Sign user in";
 export const USER_SIGNEDIN = "User signed in";
 export const USER_SIGNOUT = "Sign user out";
+export const USER_SIGN_ERROR = "User sign in/up error";
 export const USER_SIGNEDOUT = "User signed out";
 export const USER_REQUEST_TOKEN = "Request user token";
 export const USER_TOKEN_REQUESTED = "User token requested";
@@ -63,7 +64,7 @@ export function loadUser() {
     }
     if (resp.status === 403) {
       data = await resp.json();
-      dispatch({ type: USER_ERROR, ...data });
+      dispatch({ type: USER_FETCH_ERROR, ...data });
     } else if (resp.ok) {
       data = await resp.json();
     }
@@ -90,8 +91,7 @@ function userSignFactory(initAction, succeedAction, actionURL, body) {
     }
     data = await resp.json();
     if (resp.status === 400) {
-      // TODO: Error validation and error messages in form
-      console.log(data);
+      dispatch({ type: USER_SIGN_ERROR, ...data });
     } else if (resp.ok) {
       dispatch({ type: succeedAction });
       dispatch(loadUser());
