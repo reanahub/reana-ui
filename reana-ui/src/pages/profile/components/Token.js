@@ -14,7 +14,7 @@ import { useSelector } from "react-redux";
 import { getReanaToken } from "../../../selectors";
 import { CodeSnippet } from "../../../components";
 import { WelcomeNoTokenMsg } from "../../workflowList/components/Welcome";
-import config from "../../../config";
+import { api } from "../../../config";
 
 export default function Token() {
   const reanaToken = useSelector(getReanaToken);
@@ -24,7 +24,7 @@ export default function Token() {
       In order to use your token, make sure you have reana-client installed and
       run:
       <CodeSnippet copy reveal>
-        <div>export REANA_SERVER_URL={config.api}</div>
+        <div>export REANA_SERVER_URL={api}</div>
         <div>
           export REANA_ACCESS_TOKEN=
           <span className="revealable">{reanaToken}</span>

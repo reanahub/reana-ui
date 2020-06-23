@@ -15,17 +15,19 @@ import { Button, Container, Icon } from "semantic-ui-react";
 
 import { requestToken } from "../../../actions";
 import {
+  getConfig,
   getReanaToken,
   getReanaTokenStatus,
   getReanaTokenRequestedAt,
   loadingTokenStatus
 } from "../../../selectors";
 import { CodeSnippet, Title } from "../../../components";
-import config from "../../../config";
+import { api } from "../../../config";
 
 import styles from "./Welcome.module.scss";
 
 export default function Welcome() {
+  const config = useSelector(getConfig);
   const reanaToken = useSelector(getReanaToken);
 
   const tokenContent = (
@@ -37,7 +39,7 @@ export default function Welcome() {
       <CodeSnippet reveal>
         <div>ssh lxplus.cern.ch</div>
         <div>source /afs/cern.ch/user/r/reana/public/reana/bin/activate</div>
-        <div>export REANA_SERVER_URL={config.api}</div>
+        <div>export REANA_SERVER_URL={api}</div>
         <div>
           export REANA_ACCESS_TOKEN=
           <span className="revealable">{reanaToken}</span>

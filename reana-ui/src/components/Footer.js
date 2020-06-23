@@ -9,14 +9,15 @@
 */
 
 import React from "react";
-
 import { Icon } from "semantic-ui-react";
+import { useSelector } from "react-redux";
 
-import config from "../config";
+import { getConfig } from "../selectors";
 
 import styles from "./Footer.module.scss";
 
 export default function Footer() {
+  const config = useSelector(getConfig);
   return (
     <footer className={styles["footer-bottom"]}>
       <span>Copyright © 2020 CERN</span>

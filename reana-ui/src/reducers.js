@@ -10,6 +10,8 @@
 
 import { combineReducers } from "redux";
 import {
+  CONFIG_FETCH,
+  CONFIG_RECEIVED,
   USER_FETCH,
   USER_RECEIVED,
   USER_FETCH_ERROR,
@@ -28,6 +30,17 @@ import {
 } from "./actions";
 import { USER_ERROR } from "./errors";
 
+const configInitialState = {
+  announcement: null,
+  poolingSecs: null,
+  docsURL: null,
+  forumURL: null,
+  mattermostURL: null,
+  cernSSO: false,
+  localUsers: false,
+  loading: false
+};
+
 const authInitialState = {
   email: null,
   reanaToken: {
@@ -37,7 +50,6 @@ const authInitialState = {
     loading: false
   },
   loadingUser: false,
-  announcement: null,
   error: {}
 };
 
@@ -49,6 +61,27 @@ const workflowsInitialState = {
 const detailsInitialState = {
   details: {},
   loadingDetails: false
+};
+
+const config = (state = configInitialState, action) => {
+  switch (action.type) {
+    case CONFIG_FETCH:
+      return { ...state, loading: true };
+    case CONFIG_RECEIVED:
+      return {
+        ...state,
+        announcement: action.announcement,
+        poolingSecs: action.pooling_secs,
+        docsURL: action.docs_url,
+        forumURL: action.forum_url,
+        mattermostURL: action.mattermost_url,
+        cernSSO: action.cern_sso,
+        localUsers: action.local_users,
+        loading: false
+      };
+    default:
+      return state;
+  }
 };
 
 const auth = (state = authInitialState, action) => {
@@ -67,7 +100,6 @@ const auth = (state = authInitialState, action) => {
           status: action.reana_token?.status,
           requestedAt: action.reana_token?.requested_at
         },
-        announcement: action.announcement,
         loadingUser: false
       };
     case USER_FETCH_ERROR:
@@ -162,6 +194,7 @@ const details = (state = detailsInitialState, action) => {
 };
 
 const reanaApp = combineReducers({
+  config,
   auth,
   workflows,
   details

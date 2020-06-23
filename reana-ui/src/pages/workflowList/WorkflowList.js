@@ -15,8 +15,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Dimmer, Loader } from "semantic-ui-react";
 
 import { fetchWorkflows } from "../../actions";
-import { getWorkflows, loadingWorkflows } from "../../selectors";
-import config from "../../config";
+import { getConfig, getWorkflows, loadingWorkflows } from "../../selectors";
 import BasePage from "../BasePage";
 import Welcome from "./components/Welcome";
 import WorkflowList from "./components/WorkflowList";
@@ -30,6 +29,7 @@ export default function WorkflowListPage() {
 }
 
 function Workflows() {
+  const config = useSelector(getConfig);
   const currentUTCTime = () => moment.utc().format("HH:mm:ss [UTC]");
   const [refreshedAt, setRefreshedAt] = useState(currentUTCTime());
   const dispatch = useDispatch();
@@ -50,7 +50,7 @@ function Workflows() {
     return function cleanup() {
       clearInterval(interval.current);
     };
-  }, [dispatch]);
+  }, [config.poolingSecs, dispatch]);
 
   if (!workflows) {
     return (

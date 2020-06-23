@@ -12,12 +12,17 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { Provider } from "react-redux";
 import store from "./store";
-import { checkSignedInStatus } from "./auth";
+import { loadUser, loadConfig } from "./actions";
 import App from "./components/App";
 
 import "semantic-ui-less/semantic.less";
 
-checkSignedInStatus(store);
+function fetchInitialData(store) {
+  store.dispatch(loadUser());
+  store.dispatch(loadConfig());
+}
+
+fetchInitialData(store);
 
 ReactDOM.render(
   <Provider store={store}>

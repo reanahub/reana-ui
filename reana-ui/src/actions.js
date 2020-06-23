@@ -10,7 +10,7 @@
 
 import _ from "lodash";
 
-import config from "./config";
+import { api } from "./config";
 import { parseWorkflows, parseLogs, parseFiles } from "./util";
 import {
   getWorkflow,
@@ -18,6 +18,9 @@ import {
   getWorkflowLogs,
   getWorkflowSpecification
 } from "./selectors";
+
+export const CONFIG_FETCH = "Fetch app config info";
+export const CONFIG_RECEIVED = "App config info received";
 
 export const USER_FETCH = "Fetch user authentication info";
 export const USER_RECEIVED = "User info received";
@@ -42,16 +45,34 @@ export const WORKFLOW_SPECIFICATION_FETCH = "Fetch workflow specification";
 export const WORKFLOW_SPECIFICATION_RECEIVED =
   "Workflow specification received";
 
-const USER_INFO_URL = `${config.api}/api/you`;
-const USER_SIGNUP_URL = `${config.api}/api/register`;
-const USER_SIGNIN_URL = `${config.api}/api/login`;
-const USER_SIGNOUT_URL = `${config.api}/api/logout`;
-const USER_REQUEST_TOKEN_URL = `${config.api}/api/token`;
-const WORKFLOWS_URL = `${config.api}/api/workflows`;
-const WORKFLOW_LOGS_URL = id => `${config.api}/api/workflows/${id}/logs`;
+const CONFIG_URL = `${api}/api/config`;
+const USER_INFO_URL = `${api}/api/you`;
+const USER_SIGNUP_URL = `${api}/api/register`;
+const USER_SIGNIN_URL = `${api}/api/login`;
+const USER_SIGNOUT_URL = `${api}/api/logout`;
+const USER_REQUEST_TOKEN_URL = `${api}/api/token`;
+const WORKFLOWS_URL = `${api}/api/workflows`;
+const WORKFLOW_LOGS_URL = id => `${api}/api/workflows/${id}/logs`;
 const WORKFLOW_SPECIFICATION_URL = id =>
-  `${config.api}/api/workflows/${id}/specification`;
-const WORKFLOW_FILES_URL = id => `${config.api}/api/workflows/${id}/workspace`;
+  `${api}/api/workflows/${id}/specification`;
+const WORKFLOW_FILES_URL = id => `${api}/api/workflows/${id}/workspace`;
+
+export function loadConfig() {
+  return async dispatch => {
+    let resp, data;
+    try {
+      dispatch({ type: CONFIG_FETCH });
+      resp = await fetch(CONFIG_URL, { credentials: "include" });
+    } catch (err) {
+      throw new Error(CONFIG_URL, 0, err);
+    }
+    if (resp.ok) {
+      data = await resp.json();
+    }
+    dispatch({ type: CONFIG_RECEIVED, ...data });
+    return resp;
+  };
+}
 
 export function loadUser() {
   return async dispatch => {

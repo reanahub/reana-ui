@@ -13,16 +13,16 @@ import { Image, Icon, Popup, List } from "semantic-ui-react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
-import { getUserEmail } from "../selectors";
+import { getConfig, getUserEmail } from "../selectors";
 import LogoImg from "../images/logo-reana.svg";
 import { userSignout } from "../actions";
-import config from "../config";
 
 import styles from "./TopHeader.module.scss";
 
 export default function TopHeader() {
   const dispatch = useDispatch();
   const email = useSelector(getUserEmail);
+  const config = useSelector(getConfig);
   const signOut = () => {
     dispatch(userSignout());
   };

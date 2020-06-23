@@ -12,28 +12,28 @@ import React, { useState } from "react";
 import { Icon } from "semantic-ui-react";
 import { useSelector } from "react-redux";
 
-import { getAnnouncement } from "../selectors";
+import { getConfig } from "../selectors";
 
 import styles from "./Announcement.module.scss";
 
 export default function Announcement() {
   const hiddenAnnouncement = window.localStorage.getItem("hideAnnouncement");
-  const announcement = useSelector(getAnnouncement);
+  const config = useSelector(getConfig);
   const [hidden, setHidden] = useState(
-    hiddenAnnouncement === announcement && hiddenAnnouncement
+    hiddenAnnouncement === config.announcement && hiddenAnnouncement
   );
 
   function closeAnnouncement() {
-    window.localStorage.setItem("hideAnnouncement", announcement);
+    window.localStorage.setItem("hideAnnouncement", config.announcement);
     setHidden(window.localStorage.getItem("hideAnnouncement"));
   }
 
   return (
-    announcement && (
+    config.announcement && (
       <div className={styles.bar} hidden={hidden}>
         <span className={styles.message}>
           <Icon name="warning circle" />
-          {announcement}
+          {config.announcement}
         </span>
         <Icon
           link

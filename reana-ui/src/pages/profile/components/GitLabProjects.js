@@ -13,11 +13,11 @@ import React, { useEffect, useState } from "react";
 import { Button, List, Loader, Radio, Message, Icon } from "semantic-ui-react";
 
 import axios from "axios";
-import config from "../../../config";
+import { api } from "../../../config";
 
 import styles from "./GitLabProjects.module.scss";
 
-const GITLAB_AUTH_URL = config.api + "/api/gitlab/connect";
+const GITLAB_AUTH_URL = api + "/api/gitlab/connect";
 
 export default function GitLabProjects() {
   const [projects, setProjects] = useState(null);
@@ -31,7 +31,7 @@ export default function GitLabProjects() {
       setFetchingProjects(true);
       axios({
         method: "get",
-        url: config.api + "/api/gitlab/projects",
+        url: api + "/api/gitlab/projects",
         withCredentials: true
       })
         .then(res => {
@@ -62,7 +62,7 @@ export default function GitLabProjects() {
 
     axios({
       method: method,
-      url: config.api + "/api/gitlab/webhook",
+      url: api + "/api/gitlab/webhook",
       data: data,
       withCredentials: true
     })

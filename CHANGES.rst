@@ -17,6 +17,7 @@ Version 0.6.0 (2019-12-20)
 - Improves UX in projects page.
 - Adds state management with Redux.
 - Includes SASS and CSS-modules support.
+- Loads config from server and store it in Redux state.
 
 Version 0.3.0 (2018-07-04)
 --------------------------

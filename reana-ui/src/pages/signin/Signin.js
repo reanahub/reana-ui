@@ -9,26 +9,28 @@
 */
 
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Button, Divider, Grid, Image, Segment } from "semantic-ui-react";
 import { Link, useHistory, useLocation } from "react-router-dom";
 import PropTypes from "prop-types";
 
+import { getConfig } from "../../selectors";
 import SignForm from "./components/SignForm";
-import config from "../../config";
+import { api } from "../../config";
 import { userSignup, userSignin } from "../../actions";
 import LogoImg from "../../images/logo-reana.svg";
 
 import styles from "./Signin.module.scss";
 
 export default function Signin({ signup }) {
+  const config = useSelector(getConfig);
   const [formData, setFormData] = useState({ email: "", password: "" });
   const dispatch = useDispatch();
   const history = useHistory();
   const location = useLocation();
 
   const handleClick = () => {
-    window.location.href = config.api + "/oauth/login/cern";
+    window.location.href = api + "/oauth/login/cern";
   };
 
   const handleSubmit = (event, action) => {
@@ -63,7 +65,7 @@ export default function Signin({ signup }) {
             className={styles["reana-logo"]}
           />
           <Segment>
-            {config.sso && !signup && (
+            {config.cernSSO && !signup && (
               <>
                 <Button basic fluid size="large" onClick={handleClick}>
                   Sign in with SSO

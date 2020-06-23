@@ -23,7 +23,7 @@ import {
   Message
 } from "semantic-ui-react";
 
-import config from "../../../config";
+import { api } from "../../../config";
 import { getWorkflowFiles, loadingDetails } from "../../../selectors";
 import { fetchWorkflowFiles } from "../../../actions";
 import { getMimeType } from "../../../util";
@@ -57,7 +57,7 @@ export default function WorkflowFiles({ id }) {
   }, [_files]);
 
   const getFileURL = (fileName, preview = true) =>
-    config.api +
+    api +
     "/api/workflows/" +
     id +
     "/workspace/" +
@@ -91,8 +91,9 @@ export default function WorkflowFiles({ id }) {
       const fileExt = fileName.split(".").pop();
       content = `${fileExt} files cannot be previewed. Please use download.`;
     } else if (size > SIZE_LIMIT) {
-      content = `File size is too big to be previewed (limit ${SIZE_LIMIT /
-        1024 ** 2}MB). Please use download.`;
+      content = `File size is too big to be previewed (limit ${
+        SIZE_LIMIT / 1024 ** 2
+      }MB). Please use download.`;
     }
     return content ? (
       <Message icon="info circle" content={content} info />
