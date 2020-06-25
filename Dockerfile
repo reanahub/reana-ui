@@ -1,7 +1,5 @@
 FROM node:12 as react-build
 WORKDIR /code
-COPY ./reana-ui/package.json /code/reana-ui/package.json
-RUN cd reana-ui && yarn install
 COPY . /code
 RUN cd reana-ui && \
     yarn && \
