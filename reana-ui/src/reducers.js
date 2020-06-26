@@ -35,7 +35,7 @@ const configInitialState = {
   poolingSecs: null,
   docsURL: null,
   forumURL: null,
-  mattermostURL: null,
+  chatURL: null,
   cernSSO: false,
   localUsers: false,
   loading: false
@@ -74,7 +74,7 @@ const config = (state = configInitialState, action) => {
         poolingSecs: action.pooling_secs,
         docsURL: action.docs_url,
         forumURL: action.forum_url,
-        mattermostURL: action.mattermost_url,
+        chatURL: action.chat_url,
         cernSSO: action.cern_sso,
         localUsers: action.local_users,
         loading: false

@@ -33,9 +33,11 @@ export default function TopHeader() {
         <Image src={LogoImg} size="small" />
       </Link>
       <section>
-        <a href={config.docsURL} target="_blank" rel="noopener noreferrer">
-          <Icon name="question circle outline"></Icon> Help
-        </a>
+        {config.docsURL && (
+          <a href={config.docsURL} target="_blank" rel="noopener noreferrer">
+            <Icon name="question circle outline"></Icon> Help
+          </a>
+        )}
         <Popup
           trigger={
             <Icon

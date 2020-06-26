@@ -22,19 +22,21 @@ export default function Footer() {
     <footer className={styles["footer-bottom"]}>
       <span>Copyright © 2020 CERN</span>
       <span className={styles["links"]}>
-        <a href={config.docsURL} target="_blank" rel="noopener noreferrer">
-          <Icon name="book"></Icon> Docs
-        </a>
-        <a href={config.forumURL} target="_blank" rel="noopener noreferrer">
-          <Icon name="discourse"></Icon> Forum
-        </a>
-        <a
-          href={config.mattermostURL}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Icon name="conversation"></Icon> Chat
-        </a>
+        {config.docsURL && (
+          <a href={config.docsURL} target="_blank" rel="noopener noreferrer">
+            <Icon name="book"></Icon> Docs
+          </a>
+        )}
+        {config.forumURL && (
+          <a href={config.forumURL} target="_blank" rel="noopener noreferrer">
+            <Icon name="discourse"></Icon> Forum
+          </a>
+        )}
+        {config.chatURL && (
+          <a href={config.chatURL} target="_blank" rel="noopener noreferrer">
+            <Icon name="conversation"></Icon> Chat
+          </a>
+        )}
       </span>
     </footer>
   );

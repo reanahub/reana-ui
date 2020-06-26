@@ -53,10 +53,12 @@ export default function Welcome() {
         For more information about REANA, please see{" "}
         <a href={config.docsURL}>docs.reana.io</a>
       </p>
-      <p>
-        You can contact us at{" "}
-        <a href={config.mattermostURL}>REANA Mattermost channel</a>.
-      </p>
+      {config.chatURL && (
+        <p>
+          You can contact us at{" "}
+          <a href={config.chatURL}>REANA Mattermost channel</a>.
+        </p>
+      )}
       <p>
         Thanks for flying REANA! <Icon name="rocket" />
       </p>
