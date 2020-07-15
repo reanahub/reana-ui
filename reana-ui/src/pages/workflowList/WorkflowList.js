@@ -15,7 +15,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { Dimmer, Loader } from "semantic-ui-react";
 
 import { fetchWorkflows } from "../../actions";
-import { getConfig, getWorkflows, loadingWorkflows } from "../../selectors";
+import {
+  getConfig,
+  getReanaToken,
+  getWorkflows,
+  loadingWorkflows
+} from "../../selectors";
 import BasePage from "../BasePage";
 import Welcome from "./components/Welcome";
 import WorkflowList from "./components/WorkflowList";
@@ -29,18 +34,19 @@ export default function WorkflowListPage() {
 }
 
 function Workflows() {
-  const config = useSelector(getConfig);
   const currentUTCTime = () => moment.utc().format("HH:mm:ss [UTC]");
   const [refreshedAt, setRefreshedAt] = useState(currentUTCTime());
   const dispatch = useDispatch();
+  const config = useSelector(getConfig);
   const workflows = useSelector(getWorkflows);
   const loading = useSelector(loadingWorkflows);
+  const reanaToken = useSelector(getReanaToken);
   const interval = useRef(null);
 
   useEffect(() => {
     dispatch(fetchWorkflows());
 
-    if (!interval.current) {
+    if (!interval.current && reanaToken) {
       interval.current = setInterval(() => {
         dispatch(fetchWorkflows());
         setRefreshedAt(currentUTCTime());
@@ -50,7 +56,7 @@ function Workflows() {
     return function cleanup() {
       clearInterval(interval.current);
     };
-  }, [config.poolingSecs, dispatch]);
+  }, [config.poolingSecs, dispatch, reanaToken]);
 
   if (!workflows) {
     return (
