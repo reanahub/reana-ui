@@ -29,6 +29,7 @@ export const getReanaTokenRequestedAt = state =>
 // Workflows
 export const loadingWorkflows = state => state.workflows.loadingWorkflows;
 export const getWorkflows = state => state.workflows.workflows;
+export const getWorkflowsCount = state => state.workflows.total;
 export const getWorkflow = id => state =>
   state.workflows.workflows && state.workflows.workflows[id];
 

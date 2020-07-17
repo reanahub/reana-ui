@@ -8,14 +8,14 @@
   under the terms of the MIT License; see LICENSE file for more details.
 */
 
-.reana-page {
-  min-height: 100%;
+.container {
+  flex-grow: 1;
   display: flex;
   flex-direction: column;
-  align-items: stretch;
+  align-items: center;
+  justify-content: space-between;
+}
 
-  .main {
-    flex-grow: 1;
-    display: flex;
-  }
+:global(.ui.pagination.menu).pagination {
+  margin: 2em;
 }

@@ -51,7 +51,13 @@ const USER_SIGNUP_URL = `${api}/api/register`;
 const USER_SIGNIN_URL = `${api}/api/login`;
 const USER_SIGNOUT_URL = `${api}/api/logout`;
 const USER_REQUEST_TOKEN_URL = `${api}/api/token`;
-const WORKFLOWS_URL = `${api}/api/workflows`;
+const WORKFLOWS_URL = ({ page = 1, size }) => {
+  let url = `${api}/api/workflows`;
+  if (size) {
+    url += `?page=${page}&size=${size}`;
+  }
+  return url;
+};
 const WORKFLOW_LOGS_URL = id => `${api}/api/workflows/${id}/logs`;
 const WORKFLOW_SPECIFICATION_URL = id =>
   `${api}/api/workflows/${id}/specification`;
@@ -169,19 +175,25 @@ export function requestToken() {
   };
 }
 
-export function fetchWorkflows() {
+export function fetchWorkflows(pagination) {
   return async dispatch => {
     let resp, data;
     try {
       dispatch({ type: WORKFLOWS_FETCH });
-      resp = await fetch(WORKFLOWS_URL, { credentials: "include" });
+      resp = await fetch(WORKFLOWS_URL({ ...pagination }), {
+        credentials: "include"
+      });
     } catch (err) {
       throw new Error(USER_INFO_URL, 0, err);
     }
     if (resp.ok) {
       data = await resp.json();
     }
-    dispatch({ type: WORKFLOWS_RECEIVED, workflows: parseWorkflows(data) });
+    dispatch({
+      type: WORKFLOWS_RECEIVED,
+      workflows: parseWorkflows(data.items),
+      total: data.total
+    });
     return resp;
   };
 }
