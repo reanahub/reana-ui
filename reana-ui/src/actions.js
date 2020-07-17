@@ -14,7 +14,6 @@ import { api } from "./config";
 import { parseWorkflows, parseLogs, parseFiles } from "./util";
 import {
   getWorkflow,
-  getWorkflowFiles,
   getWorkflowLogs,
   getWorkflowSpecification
 } from "./selectors";
@@ -61,7 +60,13 @@ const WORKFLOWS_URL = ({ page = 1, size }) => {
 const WORKFLOW_LOGS_URL = id => `${api}/api/workflows/${id}/logs`;
 const WORKFLOW_SPECIFICATION_URL = id =>
   `${api}/api/workflows/${id}/specification`;
-const WORKFLOW_FILES_URL = id => `${api}/api/workflows/${id}/workspace`;
+const WORKFLOW_FILES_URL = (id, { page = 1, size }) => {
+  let url = `${api}/api/workflows/${id}/workspace`;
+  if (size) {
+    url += `?page=${page}&size=${size}`;
+  }
+  return url;
+};
 
 export function loadConfig() {
   return async dispatch => {
@@ -238,18 +243,14 @@ export function fetchWorkflowLogs(id) {
   };
 }
 
-export function fetchWorkflowFiles(id) {
+export function fetchWorkflowFiles(id, pagination) {
   return async (dispatch, getStore) => {
-    const state = getStore();
-    const files = getWorkflowFiles(id)(state);
-    // Only fetch if needed
-    if (!_.isEmpty(files)) {
-      return files;
-    }
     let resp, data;
     try {
       dispatch({ type: WORKFLOW_FILES_FETCH });
-      resp = await fetch(WORKFLOW_FILES_URL(id), { credentials: "include" });
+      resp = await fetch(WORKFLOW_FILES_URL(id, pagination), {
+        credentials: "include"
+      });
     } catch (err) {
       throw new Error(USER_INFO_URL, 0, err);
     }
@@ -259,7 +260,8 @@ export function fetchWorkflowFiles(id) {
     dispatch({
       type: WORKFLOW_FILES_RECEIVED,
       id,
-      files: parseFiles(data)
+      files: parseFiles(data.items),
+      total: data.total
     });
     return resp;
   };

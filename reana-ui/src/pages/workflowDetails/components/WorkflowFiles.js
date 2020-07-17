@@ -20,11 +20,16 @@ import {
   Segment,
   Table,
   Loader,
-  Message
+  Message,
+  Pagination
 } from "semantic-ui-react";
 
 import { api } from "../../../config";
-import { getWorkflowFiles, loadingDetails } from "../../../selectors";
+import {
+  getWorkflowFiles,
+  getWorkflowFilesCount,
+  loadingDetails
+} from "../../../selectors";
 import { fetchWorkflowFiles } from "../../../actions";
 import { getMimeType } from "../../../util";
 
@@ -36,21 +41,24 @@ const PREVIEW_MIME_PREFIX_WHITELIST = {
   "application/json": { serverPreviewable: false }
 };
 const SIZE_LIMIT = 5 * 1024 ** 2; // 5MB
+const PAGE_SIZE = 5; // TODO: Move to ui-configmap?
 
 export default function WorkflowFiles({ id }) {
   const dispatch = useDispatch();
   const loading = useSelector(loadingDetails);
   const _files = useSelector(getWorkflowFiles(id));
+  const filesCount = useSelector(getWorkflowFilesCount(id));
 
   const [files, setFiles] = useState(null);
   const [modalContent, setModalContent] = useState(null);
   const [column, setColumn] = useState(null);
   const [direction, setDirection] = useState(null);
   const [isServerPreviewable, setIsServerPreviewable] = useState(false);
+  const [pagination, setPagination] = useState({ page: 1, size: PAGE_SIZE });
 
   useEffect(() => {
-    dispatch(fetchWorkflowFiles(id));
-  }, [dispatch, id]);
+    dispatch(fetchWorkflowFiles(id, pagination));
+  }, [dispatch, id, pagination]);
 
   useEffect(() => {
     setFiles(_files);
@@ -91,9 +99,8 @@ export default function WorkflowFiles({ id }) {
       const fileExt = fileName.split(".").pop();
       content = `${fileExt} files cannot be previewed. Please use download.`;
     } else if (size > SIZE_LIMIT) {
-      content = `File size is too big to be previewed (limit ${
-        SIZE_LIMIT / 1024 ** 2
-      }MB). Please use download.`;
+      content = `File size is too big to be previewed (limit ${SIZE_LIMIT /
+        1024 ** 2}MB). Please use download.`;
     }
     return content ? (
       <Message icon="info circle" content={content} info />
@@ -223,6 +230,19 @@ export default function WorkflowFiles({ id }) {
             ))}
         </Table.Body>
       </Table>
+      <div className={styles["pagination-wrapper"]}>
+        <Pagination
+          defaultActivePage={1}
+          activePage={pagination.page}
+          totalPages={Math.ceil(filesCount / PAGE_SIZE)}
+          onPageChange={(_, { activePage }) => {
+            setPagination({ ...pagination, page: activePage });
+          }}
+          size="mini"
+          secondary
+          pointing
+        />
+      </div>
     </Segment>
   );
 }

@@ -38,7 +38,9 @@ export const loadingDetails = state => state.details.loadingDetails;
 export const getWorkflowLogs = id => state =>
   (id in state.details.details && state.details.details[id].logs) || {};
 export const getWorkflowFiles = id => state =>
-  id in state.details.details && state.details.details[id].files;
+  id in state.details.details && state.details.details[id]?.files?.items;
+export const getWorkflowFilesCount = id => state =>
+  id in state.details.details && state.details.details[id]?.files?.total;
 export const getWorkflowSpecification = id => state =>
   id in state.details.details && state.details.details[id].specification;
 export const getWorkflowParameters = id => state =>

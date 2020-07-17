@@ -171,7 +171,10 @@ const details = (state = detailsInitialState, action) => {
         ...state,
         details: {
           ...state.details,
-          [action.id]: { ...state.details[action.id], files: action.files }
+          [action.id]: {
+            ...state.details[action.id],
+            files: { items: action.files, total: action.total }
+          }
         },
         loadingDetails: false
       };
