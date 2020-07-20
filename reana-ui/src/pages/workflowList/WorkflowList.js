@@ -28,7 +28,7 @@ import WorkflowList from "./components/WorkflowList";
 
 import styles from "./WorkflowList.module.scss";
 
-const PAGE_SIZE = 5; // TODO: Move to ui-configmap?
+const PAGE_SIZE = 5;
 
 export default function WorkflowListPage() {
   return (
@@ -82,18 +82,20 @@ function Workflows() {
     return (
       <div className={styles.container}>
         <WorkflowList workflows={workflowArray} refreshedAt={refreshedAt} />
-        <Pagination
-          className={styles.pagination}
-          defaultActivePage={1}
-          totalPages={Math.ceil(workflowsCount / PAGE_SIZE)}
-          onPageChange={(_, { activePage }) => {
-            clearInterval(interval.current);
-            interval.current = null;
-            setPagination({ ...pagination, page: activePage });
-          }}
-          secondary
-          pointing
-        />
+        {workflowsCount > PAGE_SIZE && (
+          <Pagination
+            className={styles.pagination}
+            defaultActivePage={1}
+            totalPages={Math.ceil(workflowsCount / PAGE_SIZE)}
+            onPageChange={(_, { activePage }) => {
+              clearInterval(interval.current);
+              interval.current = null;
+              setPagination({ ...pagination, page: activePage });
+            }}
+            secondary
+            pointing
+          />
+        )}
       </div>
     );
   }

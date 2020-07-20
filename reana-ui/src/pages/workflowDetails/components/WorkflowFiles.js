@@ -41,7 +41,7 @@ const PREVIEW_MIME_PREFIX_WHITELIST = {
   "application/json": { serverPreviewable: false }
 };
 const SIZE_LIMIT = 5 * 1024 ** 2; // 5MB
-const PAGE_SIZE = 5; // TODO: Move to ui-configmap?
+const PAGE_SIZE = 15;
 
 export default function WorkflowFiles({ id }) {
   const dispatch = useDispatch();
@@ -230,19 +230,21 @@ export default function WorkflowFiles({ id }) {
             ))}
         </Table.Body>
       </Table>
-      <div className={styles["pagination-wrapper"]}>
-        <Pagination
-          defaultActivePage={1}
-          activePage={pagination.page}
-          totalPages={Math.ceil(filesCount / PAGE_SIZE)}
-          onPageChange={(_, { activePage }) => {
-            setPagination({ ...pagination, page: activePage });
-          }}
-          size="mini"
-          secondary
-          pointing
-        />
-      </div>
+      {filesCount > PAGE_SIZE && (
+        <div className={styles["pagination-wrapper"]}>
+          <Pagination
+            defaultActivePage={1}
+            activePage={pagination.page}
+            totalPages={Math.ceil(filesCount / PAGE_SIZE)}
+            onPageChange={(_, { activePage }) => {
+              setPagination({ ...pagination, page: activePage });
+            }}
+            size="mini"
+            secondary
+            pointing
+          />
+        </div>
+      )}
     </Segment>
   );
 }
