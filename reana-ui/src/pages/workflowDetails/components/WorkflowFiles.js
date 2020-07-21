@@ -40,7 +40,7 @@ const PREVIEW_MIME_PREFIX_WHITELIST = {
   "text/": { serverPreviewable: false },
   "application/json": { serverPreviewable: false }
 };
-const SIZE_LIMIT = 5 * 1024 ** 2; // 5MB
+const FILE_SIZE_LIMIT = 5 * 1024 ** 2; // 5MB
 const PAGE_SIZE = 15;
 
 export default function WorkflowFiles({ id }) {
@@ -51,8 +51,7 @@ export default function WorkflowFiles({ id }) {
 
   const [files, setFiles] = useState(null);
   const [modalContent, setModalContent] = useState(null);
-  const [column, setColumn] = useState(null);
-  const [direction, setDirection] = useState(null);
+  const [sorting, setSorting] = useState({ column: null, direction: null });
   const [isServerPreviewable, setIsServerPreviewable] = useState(false);
   const [pagination, setPagination] = useState({ page: 1, size: PAGE_SIZE });
 
@@ -98,8 +97,8 @@ export default function WorkflowFiles({ id }) {
     if (!match) {
       const fileExt = fileName.split(".").pop();
       content = `${fileExt} files cannot be previewed. Please use download.`;
-    } else if (size > SIZE_LIMIT) {
-      content = `File size is too big to be previewed (limit ${SIZE_LIMIT /
+    } else if (size > FILE_SIZE_LIMIT) {
+      content = `File size is too big to be previewed (limit ${FILE_SIZE_LIMIT /
         1024 ** 2}MB). Please use download.`;
     }
     return content ? (
@@ -145,21 +144,27 @@ export default function WorkflowFiles({ id }) {
    * Performs the sorting when a column header is clicked
    */
   function handleSort(clickedColumn) {
-    if (column !== clickedColumn) {
-      setDirection("ascending");
+    if (sorting.column !== clickedColumn) {
       setFiles(_.sortBy(files, [clickedColumn]));
-      setColumn(clickedColumn);
+      setSorting({ direction: "ascending", column: clickedColumn });
       return;
     }
     setFiles(files.reverse());
-    setDirection(direction === "ascending" ? "descending" : "ascending");
+    setSorting({
+      ...sorting,
+      direction: sorting.direction === "ascending" ? "descending" : "ascending"
+    });
+  }
+
+  function resetSort() {
+    setSorting({ column: null, direction: null });
   }
 
   const headerIcon = col => (
     <Icon
       name={
-        column === col
-          ? direction === "ascending"
+        sorting.column === col
+          ? sorting.direction === "ascending"
             ? "sort ascending"
             : "sort descending"
           : "sort"
@@ -175,19 +180,21 @@ export default function WorkflowFiles({ id }) {
         <Table.Header className={styles["table-header"]}>
           <Table.Row>
             <Table.HeaderCell
-              sorted={column === "name" ? direction : null}
+              sorted={sorting.column === "name" ? sorting.direction : null}
               onClick={() => handleSort("name")}
             >
               Name {headerIcon("name")}
             </Table.HeaderCell>
             <Table.HeaderCell
-              sorted={column === "lastModified" ? direction : null}
+              sorted={
+                sorting.column === "lastModified" ? sorting.direction : null
+              }
               onClick={() => handleSort("lastModified")}
             >
               Modified {headerIcon("lastModified")}
             </Table.HeaderCell>
             <Table.HeaderCell
-              sorted={column === "size" ? direction : null}
+              sorted={sorting.column === "size" ? sorting.direction : null}
               onClick={() => handleSort("size")}
             >
               Size {headerIcon("size")}
@@ -238,6 +245,7 @@ export default function WorkflowFiles({ id }) {
             totalPages={Math.ceil(filesCount / PAGE_SIZE)}
             onPageChange={(_, { activePage }) => {
               setPagination({ ...pagination, page: activePage });
+              resetSort();
             }}
             size="mini"
             secondary
