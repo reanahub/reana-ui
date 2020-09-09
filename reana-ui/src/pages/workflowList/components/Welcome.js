@@ -19,7 +19,7 @@ import {
   getReanaToken,
   getReanaTokenStatus,
   getReanaTokenRequestedAt,
-  loadingTokenStatus
+  loadingTokenStatus,
 } from "../../../selectors";
 import { CodeSnippet, Title } from "../../../components";
 import { api } from "../../../config";
@@ -27,27 +27,20 @@ import { api } from "../../../config";
 import styles from "./Welcome.module.scss";
 
 export default function Welcome() {
-  const config = useSelector(getConfig);
   const reanaToken = useSelector(getReanaToken);
+  return (
+    <Container text className={styles["container"]}>
+      <Title as="h2">Welcome to REANA!</Title>
+      {reanaToken ? <WelcomeMsg /> : <WelcomeNoTokenMsg />}
+    </Container>
+  );
+}
 
-  const tokenContent = (
+function WelcomeMsg() {
+  const config = useSelector(getConfig);
+  return (
     <div>
-      <p>
-        It seems that you are using REANA for the first time. Would you like to
-        try out a small example? Please login to LXPLUS and launch:
-      </p>
-      <CodeSnippet reveal>
-        <div>ssh lxplus.cern.ch</div>
-        <div>source /afs/cern.ch/user/r/reana/public/reana/bin/activate</div>
-        <div>export REANA_SERVER_URL={api}</div>
-        <div>
-          export REANA_ACCESS_TOKEN=
-          <span className="revealable">{reanaToken}</span>
-        </div>
-        <div>git clone https://github.com/reanahub/reana-demo-root6-roofit</div>
-        <div>cd reana-demo-root6-roofit</div>
-        <div>reana-client run -w root6-roofit</div>
-      </CodeSnippet>
+      {config.cernSSO ? <WelcomeCERN /> : <WelcomeRegular />}
       <p>and come back to this web page once launched!</p>
       <p>
         For more information about REANA, please see{" "}
@@ -64,12 +57,62 @@ export default function Welcome() {
       </p>
     </div>
   );
+}
 
+function WelcomeRegular() {
   return (
-    <Container text className={styles["container"]}>
-      <Title as="h2">Welcome to REANA!</Title>
-      {reanaToken ? tokenContent : <WelcomeNoTokenMsg />}
-    </Container>
+    <>
+      <p>
+        It seems that you are using REANA for the first time. Would you like to
+        try out a small example? Please proceed as follows:
+      </p>
+      <CodeSnippet reveal>
+        <div># create new virtual environment</div>
+        <div>virtualenv ~/.virtualenvs/reana</div>
+        <div>source ~/.virtualenvs/reana/bin/activate</div>
+        <div># install reana-client</div>
+        <div>pip install reana-client</div>
+        <div># set REANA environment variables for the client</div>
+        <WelcomeEnvars />
+        <div># clone and run a simple analysis example</div>
+        <div>git clone https://github.com/reanahub/reana-demo-root6-roofit</div>
+        <div>cd reana-demo-root6-roofit</div>
+        <div>reana-client run -w root6-roofit</div>
+      </CodeSnippet>
+    </>
+  );
+}
+
+function WelcomeCERN() {
+  const config = useSelector(getConfig);
+  return (
+    <>
+      <p>
+        It seems that you are using REANA for the first time. Would you like to
+        try out a small example? Please login to LXPLUS and launch:
+      </p>
+      <CodeSnippet reveal>
+        <div>ssh lxplus.cern.ch</div>
+        <div>source {config.clientPyvenv}</div>
+        <WelcomeEnvars />
+        <div>git clone https://github.com/reanahub/reana-demo-root6-roofit</div>
+        <div>cd reana-demo-root6-roofit</div>
+        <div>reana-client run -w root6-roofit</div>
+      </CodeSnippet>
+    </>
+  );
+}
+
+function WelcomeEnvars() {
+  const reanaToken = useSelector(getReanaToken);
+  return (
+    <>
+      <div>export REANA_SERVER_URL={api}</div>
+      <div>
+        export REANA_ACCESS_TOKEN=
+        <span className="revealable">{reanaToken}</span>
+      </div>
+    </>
   );
 }
 
