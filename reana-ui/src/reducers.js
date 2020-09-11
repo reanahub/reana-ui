@@ -1,8 +1,8 @@
 /*
-	-*- coding: utf-8 -*-
+  -*- coding: utf-8 -*-
 
-	This file is part of REANA.
-	Copyright (C) 2020 CERN.
+  This file is part of REANA.
+  Copyright (C) 2020 CERN.
 
   REANA is free software; you can redistribute it and/or modify it
   under the terms of the MIT License; see LICENSE file for more details.
@@ -10,8 +10,11 @@
 
 import { combineReducers } from "redux";
 import {
+  ERROR,
+  CLEAR_ERROR,
   CONFIG_FETCH,
   CONFIG_RECEIVED,
+  CONFIG_ERROR,
   USER_FETCH,
   USER_RECEIVED,
   USER_FETCH_ERROR,
@@ -19,8 +22,10 @@ import {
   USER_SIGN_ERROR,
   USER_REQUEST_TOKEN,
   USER_TOKEN_REQUESTED,
+  USER_TOKEN_ERROR,
   WORKFLOWS_FETCH,
   WORKFLOWS_RECEIVED,
+  WORKFLOWS_FETCH_ERROR,
   WORKFLOW_LOGS_FETCH,
   WORKFLOW_LOGS_RECEIVED,
   WORKFLOW_SPECIFICATION_FETCH,
@@ -29,6 +34,8 @@ import {
   WORKFLOW_FILES_RECEIVED
 } from "./actions";
 import { USER_ERROR } from "./errors";
+
+const errorInitialState = null;
 
 const configInitialState = {
   announcement: null,
@@ -66,6 +73,18 @@ const detailsInitialState = {
   loadingDetails: false
 };
 
+const error = (state = errorInitialState, action) => {
+  const { name, status, message } = action;
+  switch (action.type) {
+    case ERROR:
+      return { ...state, name, status, message };
+    case CLEAR_ERROR:
+      return errorInitialState;
+    default:
+      return state;
+  }
+};
+
 const config = (state = configInitialState, action) => {
   switch (action.type) {
     case CONFIG_FETCH:
@@ -83,6 +102,8 @@ const config = (state = configInitialState, action) => {
         localUsers: action.local_users,
         loading: false
       };
+    case CONFIG_ERROR:
+      return { ...state, loading: false };
     default:
       return state;
   }
@@ -133,6 +154,14 @@ const auth = (state = authInitialState, action) => {
           loading: false
         }
       };
+    case USER_TOKEN_ERROR:
+      return {
+        ...state,
+        reanaToken: {
+          ...state.reanaToken,
+          loading: false
+        }
+      };
     default:
       return state;
   }
@@ -150,6 +179,8 @@ const workflows = (state = workflowsInitialState, action) => {
         total: action.total,
         loadingWorkflows: false
       };
+    case WORKFLOWS_FETCH_ERROR:
+      return { ...state, loadingWorkflows: false };
     default:
       return state;
   }
@@ -203,6 +234,7 @@ const details = (state = detailsInitialState, action) => {
 };
 
 const reanaApp = combineReducers({
+  error,
   config,
   auth,
   workflows,

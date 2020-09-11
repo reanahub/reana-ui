@@ -10,6 +10,9 @@
 
 import { USER_ERROR } from "./errors";
 
+// Error
+export const getError = state => state.error;
+
 // Config
 export const getConfig = state => state.config;
 

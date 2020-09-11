@@ -1,8 +1,8 @@
 /*
-	-*- coding: utf-8 -*-
+  -*- coding: utf-8 -*-
 
-	This file is part of REANA.
-	Copyright (C) 2020 CERN.
+  This file is part of REANA.
+  Copyright (C) 2020 CERN.
 
   REANA is free software; you can redistribute it and/or modify it
   under the terms of the MIT License; see LICENSE file for more details.
@@ -11,19 +11,18 @@
 import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
-import { Container, Dimmer, Loader, Message, Tab } from "semantic-ui-react";
+import { Container, Dimmer, Loader, Tab } from "semantic-ui-react";
 
 import { fetchWorkflow } from "../../actions";
 import { getWorkflow, loadingWorkflows, isWorkflowsFetched } from "../../selectors";
 import BasePage from "../BasePage";
+import { Notification } from "../../components";
 import {
   WorkflowInfo,
   WorkflowLogs,
   WorkflowFiles,
   WorkflowSpecification
 } from "./components";
-
-import styles from "./WorkflowDetails.module.scss";
 
 export default function WorkflowDetailsPage() {
   return (
@@ -55,14 +54,10 @@ function WorkflowDetails() {
 
   if (!workflow) {
     return (
-      <Container text className={styles.warning}>
-        <Message
-          icon="warning sign"
-          header="Sorry, this workflow either does not exist or you are not authorised to see it."
-          size="small"
-          warning
-        />
-      </Container>
+      <Notification
+        message="Sorry, this workflow either does not exist or you are not authorised to see it."
+        closable={false}
+      />
     );
   }
 

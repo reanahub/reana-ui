@@ -1,14 +1,15 @@
 /*
-	-*- coding: utf-8 -*-
+  -*- coding: utf-8 -*-
 
-	This file is part of REANA.
-	Copyright (C) 2020 CERN.
+  This file is part of REANA.
+  Copyright (C) 2020 CERN.
 
   REANA is free software; you can redistribute it and/or modify it
   under the terms of the MIT License; see LICENSE file for more details.
 */
 
 import _ from "lodash";
+import axios from "axios";
 
 import { api } from "./config";
 import { parseWorkflows, parseLogs, parseFiles } from "./util";
@@ -18,8 +19,12 @@ import {
   getWorkflowSpecification
 } from "./selectors";
 
+export const ERROR = "Error";
+export const CLEAR_ERROR = "Clear error";
+
 export const CONFIG_FETCH = "Fetch app config info";
 export const CONFIG_RECEIVED = "App config info received";
+export const CONFIG_ERROR = "Fetch app config error";
 
 export const USER_FETCH = "Fetch user authentication info";
 export const USER_RECEIVED = "User info received";
@@ -33,9 +38,11 @@ export const USER_SIGN_ERROR = "User sign in/up error";
 export const USER_SIGNEDOUT = "User signed out";
 export const USER_REQUEST_TOKEN = "Request user token";
 export const USER_TOKEN_REQUESTED = "User token requested";
+export const USER_TOKEN_ERROR = "User token error";
 
 export const WORKFLOWS_FETCH = "Fetch workflows info";
 export const WORKFLOWS_RECEIVED = "Workflows info received";
+export const WORKFLOWS_FETCH_ERROR = "Workflows fetch error";
 export const WORKFLOW_LOGS_FETCH = "Fetch workflow logs";
 export const WORKFLOW_LOGS_RECEIVED = "Workflow logs received";
 export const WORKFLOW_FILES_FETCH = "Fetch workflow files";
@@ -68,20 +75,23 @@ const WORKFLOW_FILES_URL = (id, { page = 1, size }) => {
   return url;
 };
 
+function errorActionCreator(error, name) {
+  const { status, data } = error?.response;
+  const { message } = data;
+  return { type: ERROR, name, status, message };
+};
+
+export const clearError = { type: CLEAR_ERROR };
+
 export function loadConfig() {
   return async dispatch => {
-    let resp, data;
-    try {
-      dispatch({ type: CONFIG_FETCH });
-      resp = await fetch(CONFIG_URL, { credentials: "include" });
-    } catch (err) {
-      throw new Error(CONFIG_URL, 0, err);
-    }
-    if (resp.ok) {
-      data = await resp.json();
-    }
-    dispatch({ type: CONFIG_RECEIVED, ...data });
-    return resp;
+    dispatch({ type: CONFIG_FETCH });
+    return await axios.get(CONFIG_URL, { withCredentials: true })
+      .then(resp => dispatch({ type: CONFIG_RECEIVED, ...resp.data }))
+      .catch(err => {
+        dispatch(errorActionCreator(err, CONFIG_URL));
+        dispatch({ type: CONFIG_ERROR });
+      });
   };
 }
 
@@ -159,47 +169,29 @@ export function userSignout() {
 
 export function requestToken() {
   return async dispatch => {
-    let resp, data;
-    try {
-      dispatch({ type: USER_REQUEST_TOKEN });
-      resp = await fetch(USER_REQUEST_TOKEN_URL, {
-        method: "PUT",
-        credentials: "include"
+    dispatch({ type: USER_REQUEST_TOKEN });
+    return await axios.put(USER_REQUEST_TOKEN_URL, null, { withCredentials: true })
+      .then(resp => dispatch({ type: USER_TOKEN_REQUESTED, ...resp.data }))
+      .catch(err => {
+        dispatch(errorActionCreator(err, USER_INFO_URL));
+        dispatch({ type: USER_TOKEN_ERROR });
       });
-    } catch (err) {
-      throw new Error(USER_INFO_URL, 0, err);
-    }
-    if (resp.status === 401) {
-      data = await resp.json();
-      console.log(data.message);
-    } else if (resp.ok) {
-      data = await resp.json();
-    }
-    dispatch({ type: USER_TOKEN_REQUESTED, ...data });
-    return resp;
   };
 }
 
 export function fetchWorkflows(pagination) {
   return async dispatch => {
-    let resp, data;
-    try {
-      dispatch({ type: WORKFLOWS_FETCH });
-      resp = await fetch(WORKFLOWS_URL({ ...pagination }), {
-        credentials: "include"
+    dispatch({ type: WORKFLOWS_FETCH });
+    return await axios.get(WORKFLOWS_URL({ ...pagination }), { withCredentials: true })
+      .then(resp => dispatch({
+        type: WORKFLOWS_RECEIVED,
+        workflows: parseWorkflows(resp.data.items),
+        total: resp.data.total,
+      }))
+      .catch(err => {
+        dispatch(errorActionCreator(err, USER_INFO_URL));
+        dispatch({ type: WORKFLOWS_FETCH_ERROR });
       });
-    } catch (err) {
-      throw new Error(USER_INFO_URL, 0, err);
-    }
-    if (resp.ok) {
-      data = await resp.json();
-    }
-    dispatch({
-      type: WORKFLOWS_RECEIVED,
-      workflows: parseWorkflows(data.items),
-      total: data.total
-    });
-    return resp;
   };
 }
 

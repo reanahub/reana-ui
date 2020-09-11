@@ -9,7 +9,7 @@
 */
 
 import React from "react";
-import { Announcement, Footer, TopHeader } from "../components";
+import { Announcement, Notification, Footer, TopHeader } from "../components";
 
 import styles from "./BasePage.module.scss";
 
@@ -18,6 +18,7 @@ export default function BasePage({ children }) {
     <div className={styles["reana-page"]}>
       <Announcement />
       <TopHeader />
+      <Notification />
       <div className={styles["main"]}>{children}</div>
       <Footer />
     </div>

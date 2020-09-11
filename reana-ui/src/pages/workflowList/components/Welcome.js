@@ -122,9 +122,7 @@ export function WelcomeNoTokenMsg() {
   const loading = useSelector(loadingTokenStatus);
   const dispatch = useDispatch();
 
-  const handleRequestToken = () => {
-    dispatch(requestToken());
-  };
+  const handleRequestToken = () => dispatch(requestToken());
 
   return tokenStatus === "requested" ? (
     <div>
@@ -134,7 +132,7 @@ export function WelcomeNoTokenMsg() {
       <Button content="Token requested" disabled />
       <small className={styles.requested}>
         <em>
-          {moment.utc(tokenRequestedAt).format("Do MMM YYYY HH:mm [UTC]")}
+          {moment.utc(tokenRequestedAt).format("YYYY-MM-DDThh:mm:ss")}
         </em>
       </small>
     </div>
