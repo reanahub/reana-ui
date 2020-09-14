@@ -56,6 +56,7 @@ const authInitialState = {
 
 const workflowsInitialState = {
   workflows: null,
+  workflowsFetched: false,
   loadingWorkflows: false,
   total: null
 };
@@ -145,6 +146,7 @@ const workflows = (state = workflowsInitialState, action) => {
       return {
         ...state,
         workflows: action.workflows,
+        workflowsFetched: true,
         total: action.total,
         loadingWorkflows: false
       };
