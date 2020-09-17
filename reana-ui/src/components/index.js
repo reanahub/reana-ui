@@ -12,6 +12,7 @@ export { default as Announcement } from "./Announcement";
 export { default as CodeSnippet } from "./CodeSnippet";
 export { default as Footer } from "./Footer";
 export { default as Notification } from "./Notification";
+export { default as Pagination } from "./Pagination";
 export { default as Title } from "./Title";
 export { default as TopHeader } from "./TopHeader";
 export { default as TooltipIfTruncated } from "./TooltipIfTruncated";

@@ -20,8 +20,7 @@ import {
   Segment,
   Table,
   Loader,
-  Message,
-  Pagination
+  Message
 } from "semantic-ui-react";
 
 import { api } from "../../../config";
@@ -32,6 +31,7 @@ import {
 } from "../../../selectors";
 import { fetchWorkflowFiles } from "../../../actions";
 import { getMimeType } from "../../../util";
+import { Pagination } from "../../../components";
 
 import styles from "./WorkflowFiles.module.scss";
 
@@ -240,7 +240,6 @@ export default function WorkflowFiles({ id }) {
       {filesCount > PAGE_SIZE && (
         <div className={styles["pagination-wrapper"]}>
           <Pagination
-            defaultActivePage={1}
             activePage={pagination.page}
             totalPages={Math.ceil(filesCount / PAGE_SIZE)}
             onPageChange={(_, { activePage }) => {
@@ -248,8 +247,6 @@ export default function WorkflowFiles({ id }) {
               resetSort();
             }}
             size="mini"
-            secondary
-            pointing
           />
         </div>
       )}

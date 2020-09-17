@@ -12,7 +12,7 @@ import _ from "lodash";
 import moment from "moment";
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Dimmer, Loader, Pagination } from "semantic-ui-react";
+import { Dimmer, Loader } from "semantic-ui-react";
 
 import { fetchWorkflows } from "../../actions";
 import {
@@ -25,6 +25,7 @@ import {
 import BasePage from "../BasePage";
 import Welcome from "./components/Welcome";
 import WorkflowList from "./components/WorkflowList";
+import { Pagination } from "../../components";
 
 import styles from "./WorkflowList.module.scss";
 
@@ -92,8 +93,6 @@ function Workflows() {
               interval.current = null;
               setPagination({ ...pagination, page: activePage });
             }}
-            secondary
-            pointing
           />
         )}
       </div>
