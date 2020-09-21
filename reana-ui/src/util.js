@@ -22,10 +22,10 @@ export const statusMapping = {
   stopped: {
     icon: "pause circle outline",
     color: "yellow",
-    preposition: "after"
+    preposition: "after",
   },
   queued: { icon: "hourglass outline", color: "teal" },
-  deleted: { icon: "eraser", color: "gray", preposition: "after" }
+  deleted: { icon: "eraser", color: "gray", preposition: "after" },
 };
 
 /**
@@ -105,7 +105,7 @@ export function parseLogs(logs) {
  */
 export function parseFiles(files) {
   if (!Array.isArray(files)) return [];
-  files.forEach(file => {
+  files.forEach((file) => {
     // TODO: Change on server side
     file["lastModified"] = file["last-modified"];
     delete file["last-modified"];
@@ -121,7 +121,7 @@ export function parseFiles(files) {
 export function getMimeType(fileName) {
   // Formats not considered by mime npm package
   const WHITELIST = [".py"];
-  if (WHITELIST.find(ext => fileName.endsWith(ext))) {
+  if (WHITELIST.find((ext) => fileName.endsWith(ext))) {
     return "text/plain";
   }
   return mime.getType(fileName);

@@ -32,13 +32,13 @@ export default function GitLabProjects() {
       axios({
         method: "get",
         url: api + "/api/gitlab/projects",
-        withCredentials: true
+        withCredentials: true,
       })
-        .then(res => {
+        .then((res) => {
           setProjects(res.data);
           setFetchingProjects(false);
         })
-        .catch(e => {
+        .catch((e) => {
           setProjects(null);
           setFetchingProjects(false);
         });
@@ -64,20 +64,20 @@ export default function GitLabProjects() {
       method: method,
       url: api + "/api/gitlab/webhook",
       data: data,
-      withCredentials: true
+      withCredentials: true,
     })
-      .then(res => {
+      .then((res) => {
         if (res.status === expectedStatus) {
           setProjects({
             ...projects,
             [projectId]: {
               ...projects[projectId],
-              hook_id: checked ? res.data.id : null
-            }
+              hook_id: checked ? res.data.id : null,
+            },
           });
         }
       })
-      .catch(e => {
+      .catch((e) => {
         throw new Error(e);
       });
   };

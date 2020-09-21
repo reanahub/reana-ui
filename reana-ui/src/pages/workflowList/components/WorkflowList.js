@@ -42,7 +42,7 @@ export default function WorkflowList({ workflows, refreshedAt }) {
           duration,
           completed,
           total,
-          status
+          status,
         }) => (
           <div
             key={id}
@@ -97,5 +97,5 @@ export default function WorkflowList({ workflows, refreshedAt }) {
 
 WorkflowList.propTypes = {
   workflows: PropTypes.array.isRequired,
-  refreshedAt: PropTypes.string.isRequired
+  refreshedAt: PropTypes.string.isRequired,
 };

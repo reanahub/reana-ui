@@ -45,7 +45,7 @@ export default function Notification({ icon, header, message, closable }) {
           error
         />
       </Container>
-    </Transition >
+    </Transition>
   );
 }
 
@@ -53,12 +53,12 @@ Notification.propTypes = {
   icon: PropTypes.string,
   header: PropTypes.string,
   message: PropTypes.string,
-  closable: PropTypes.bool
+  closable: PropTypes.bool,
 };
 
 Notification.defaultProps = {
   icon: "warning sign",
   header: "An error has occurred",
   message: null,
-  closable: true
+  closable: true,
 };

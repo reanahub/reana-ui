@@ -28,10 +28,10 @@ export default function Error({ message, title }) {
 
 Error.propTypes = {
   message: PropTypes.string,
-  title: PropTypes.string
+  title: PropTypes.string,
 };
 
 Error.defaultProps = {
   message: "",
-  title: "Error"
+  title: "Error",
 };

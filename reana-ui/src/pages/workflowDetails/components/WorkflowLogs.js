@@ -32,7 +32,7 @@ export default function WorkflowLogs({ id }) {
   }, [dispatch, id]);
 
   useEffect(() => {
-    const failedStepId = _.findKey(logs, log => log.status === "failed");
+    const failedStepId = _.findKey(logs, (log) => log.status === "failed");
     setSelectedStep(failedStepId ? failedStepId : Object.keys(logs)[0]);
   }, [logs]);
 
@@ -42,9 +42,9 @@ export default function WorkflowLogs({ id }) {
     icon: {
       name: "dot circle outline",
       size: "small",
-      color: statusMapping[log.status].color
+      color: statusMapping[log.status].color,
     },
-    value: id
+    value: id,
   }));
 
   const log = logs[selectedStep];
@@ -99,5 +99,5 @@ export default function WorkflowLogs({ id }) {
 }
 
 WorkflowLogs.propTypes = {
-  id: PropTypes.string.isRequired
+  id: PropTypes.string.isRequired,
 };

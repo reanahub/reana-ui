@@ -10,5 +10,5 @@
 
 export const USER_ERROR = {
   fetch: "authorizationError",
-  sign: "SignError"
+  sign: "SignError",
 };

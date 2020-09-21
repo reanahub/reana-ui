@@ -31,7 +31,7 @@ import {
   WORKFLOW_SPECIFICATION_FETCH,
   WORKFLOW_SPECIFICATION_RECEIVED,
   WORKFLOW_FILES_FETCH,
-  WORKFLOW_FILES_RECEIVED
+  WORKFLOW_FILES_RECEIVED,
 } from "./actions";
 import { USER_ERROR } from "./errors";
 
@@ -46,7 +46,7 @@ const configInitialState = {
   chatURL: null,
   cernSSO: false,
   localUsers: false,
-  loading: false
+  loading: false,
 };
 
 const authInitialState = {
@@ -55,22 +55,22 @@ const authInitialState = {
     value: null,
     status: null,
     requestedAt: null,
-    loading: false
+    loading: false,
   },
   loadingUser: false,
-  error: {}
+  error: {},
 };
 
 const workflowsInitialState = {
   workflows: null,
   workflowsFetched: false,
   loadingWorkflows: false,
-  total: null
+  total: null,
 };
 
 const detailsInitialState = {
   details: {},
-  loadingDetails: false
+  loadingDetails: false,
 };
 
 const error = (state = errorInitialState, action) => {
@@ -100,7 +100,7 @@ const config = (state = configInitialState, action) => {
         chatURL: action.chat_url,
         cernSSO: action.cern_sso,
         localUsers: action.local_users,
-        loading: false
+        loading: false,
       };
     case CONFIG_ERROR:
       return { ...state, loading: false };
@@ -123,15 +123,15 @@ const auth = (state = authInitialState, action) => {
           ...state.reanaToken,
           value: action.reana_token?.value,
           status: action.reana_token?.status,
-          requestedAt: action.reana_token?.requested_at
+          requestedAt: action.reana_token?.requested_at,
         },
-        loadingUser: false
+        loadingUser: false,
       };
     case USER_FETCH_ERROR:
       return {
         ...state,
         error: { [USER_ERROR.fetch]: action.message },
-        loadingUser: false
+        loadingUser: false,
       };
     case USER_SIGNEDOUT:
       return authInitialState;
@@ -139,8 +139,8 @@ const auth = (state = authInitialState, action) => {
       return {
         ...state,
         error: {
-          [USER_ERROR.sign]: action.errors
-        }
+          [USER_ERROR.sign]: action.errors,
+        },
       };
     case USER_REQUEST_TOKEN:
       return { ...state, reanaToken: { ...state.reanaToken, loading: true } };
@@ -151,16 +151,16 @@ const auth = (state = authInitialState, action) => {
           ...state.reanaToken,
           status: action.reana_token?.status,
           requestedAt: action.reana_token?.requested_at,
-          loading: false
-        }
+          loading: false,
+        },
       };
     case USER_TOKEN_ERROR:
       return {
         ...state,
         reanaToken: {
           ...state.reanaToken,
-          loading: false
-        }
+          loading: false,
+        },
       };
     default:
       return state;
@@ -177,7 +177,7 @@ const workflows = (state = workflowsInitialState, action) => {
         workflows: action.workflows,
         workflowsFetched: true,
         total: action.total,
-        loadingWorkflows: false
+        loadingWorkflows: false,
       };
     case WORKFLOWS_FETCH_ERROR:
       return { ...state, loadingWorkflows: false };
@@ -195,9 +195,9 @@ const details = (state = detailsInitialState, action) => {
         ...state,
         details: {
           ...state.details,
-          [action.id]: { ...state.details[action.id], logs: action.logs }
+          [action.id]: { ...state.details[action.id], logs: action.logs },
         },
-        loadingDetails: false
+        loadingDetails: false,
       };
     case WORKFLOW_FILES_FETCH:
       return { ...state, loadingDetails: true };
@@ -208,10 +208,10 @@ const details = (state = detailsInitialState, action) => {
           ...state.details,
           [action.id]: {
             ...state.details[action.id],
-            files: { items: action.files, total: action.total }
-          }
+            files: { items: action.files, total: action.total },
+          },
         },
-        loadingDetails: false
+        loadingDetails: false,
       };
     case WORKFLOW_SPECIFICATION_FETCH:
       return { ...state, loadingDetails: true };
@@ -223,10 +223,10 @@ const details = (state = detailsInitialState, action) => {
           [action.id]: {
             ...state.details[action.id],
             specification: action.specification,
-            parameters: action.parameters
-          }
+            parameters: action.parameters,
+          },
         },
-        loadingDetails: false
+        loadingDetails: false,
       };
     default:
       return state;
@@ -238,7 +238,7 @@ const reanaApp = combineReducers({
   config,
   auth,
   workflows,
-  details
+  details,
 });
 
 export default reanaApp;

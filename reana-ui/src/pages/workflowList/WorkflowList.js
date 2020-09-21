@@ -20,7 +20,7 @@ import {
   getReanaToken,
   getWorkflows,
   getWorkflowsCount,
-  loadingWorkflows
+  loadingWorkflows,
 } from "../../selectors";
 import BasePage from "../BasePage";
 import Welcome from "./components/Welcome";

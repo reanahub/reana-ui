@@ -21,7 +21,8 @@
     padding-bottom: 1em;
   }
 
-  .name, .status {
+  .name,
+  .status {
     font-weight: bold;
   }
 
@@ -29,7 +30,8 @@
     font-size: 1.3em;
   }
 
-  .status, .run {
+  .status,
+  .run {
     font-size: 1.2em;
   }
 
@@ -49,4 +51,3 @@
     }
   }
 }
-

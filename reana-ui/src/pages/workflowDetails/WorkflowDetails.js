@@ -14,14 +14,18 @@ import { useParams } from "react-router-dom";
 import { Container, Dimmer, Loader, Tab } from "semantic-ui-react";
 
 import { fetchWorkflow } from "../../actions";
-import { getWorkflow, loadingWorkflows, isWorkflowsFetched } from "../../selectors";
+import {
+  getWorkflow,
+  loadingWorkflows,
+  isWorkflowsFetched,
+} from "../../selectors";
 import BasePage from "../BasePage";
 import { Notification } from "../../components";
 import {
   WorkflowInfo,
   WorkflowLogs,
   WorkflowFiles,
-  WorkflowSpecification
+  WorkflowSpecification,
 } from "./components";
 
 export default function WorkflowDetailsPage() {
@@ -64,24 +68,24 @@ function WorkflowDetails() {
   const panes = [
     {
       menuItem: { key: "logs", icon: "terminal", content: "Logs" },
-      render: () => <WorkflowLogs id={workflow.id} />
+      render: () => <WorkflowLogs id={workflow.id} />,
     },
     {
       menuItem: {
         key: "workspace",
         icon: "folder outline",
-        content: "Workspace"
+        content: "Workspace",
       },
-      render: () => <WorkflowFiles title="Workspace" id={workflow.id} />
+      render: () => <WorkflowFiles title="Workspace" id={workflow.id} />,
     },
     {
       menuItem: {
         key: "specification",
         icon: "file code outline",
-        content: "Specification"
+        content: "Specification",
       },
-      render: () => <WorkflowSpecification id={workflow.id} />
-    }
+      render: () => <WorkflowSpecification id={workflow.id} />,
+    },
   ];
 
   return (

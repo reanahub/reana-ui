@@ -131,9 +131,7 @@ export function WelcomeNoTokenMsg() {
       </p>
       <Button content="Token requested" disabled />
       <small className={styles.requested}>
-        <em>
-          {moment.utc(tokenRequestedAt).format("YYYY-MM-DDThh:mm:ss")}
-        </em>
+        <em>{moment.utc(tokenRequestedAt).format("YYYY-MM-DDThh:mm:ss")}</em>
       </small>
     </div>
   ) : (

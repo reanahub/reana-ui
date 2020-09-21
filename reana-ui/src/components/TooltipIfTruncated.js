@@ -25,15 +25,15 @@ export default function TooltipIfTruncated({ children, tooltip }) {
 
   const child = React.Children.only(children);
   return React.cloneElement(child, {
-    onMouseEnter: event => mouseEnter(event)
+    onMouseEnter: (event) => mouseEnter(event),
   });
 }
 
 TooltipIfTruncated.propTypes = {
   children: PropTypes.any.isRequired,
-  tooltip: PropTypes.string
+  tooltip: PropTypes.string,
 };
 
 TooltipIfTruncated.defaultProps = {
-  tooltip: null
+  tooltip: null,
 };

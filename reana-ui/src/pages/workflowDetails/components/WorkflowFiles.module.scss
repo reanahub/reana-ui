@@ -11,20 +11,20 @@
 @import "../../../styles/palette";
 
 .files-row {
-    color: $raven;
-    cursor: pointer;
-    white-space: nowrap;
+  color: $raven;
+  cursor: pointer;
+  white-space: nowrap;
 }
 
 .files-row:hover {
-    background-color: $sepia;
+  background-color: $sepia;
 }
 
 :global(.ui.table thead).table-header :global(th) {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .pagination-wrapper {
-    display: flex;
-    justify-content: center;
+  display: flex;
+  justify-content: center;
 }

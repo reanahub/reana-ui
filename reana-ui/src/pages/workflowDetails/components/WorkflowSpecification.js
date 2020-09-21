@@ -17,7 +17,7 @@ import { fetchWorkflowSpecification } from "../../../actions";
 import {
   getWorkflowSpecification,
   loadingDetails,
-  getWorkflowParameters
+  getWorkflowParameters,
 } from "../../../selectors";
 import { CodeSnippet, Title } from "../../../components";
 

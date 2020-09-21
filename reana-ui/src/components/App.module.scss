@@ -8,14 +8,15 @@
   under the terms of the MIT License; see LICENSE file for more details.
 */
 
-@import '../styles/palette';
+@import "../styles/palette";
 
 :global {
   #root {
-      height: 100%;
+    height: 100%;
   }
 
-  header, footer {
+  header,
+  footer {
     a {
       color: $raven;
 

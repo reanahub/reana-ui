@@ -20,14 +20,14 @@ import {
   Segment,
   Table,
   Loader,
-  Message
+  Message,
 } from "semantic-ui-react";
 
 import { api } from "../../../config";
 import {
   getWorkflowFiles,
   getWorkflowFilesCount,
-  loadingDetails
+  loadingDetails,
 } from "../../../selectors";
 import { fetchWorkflowFiles } from "../../../actions";
 import { getMimeType } from "../../../util";
@@ -38,7 +38,7 @@ import styles from "./WorkflowFiles.module.scss";
 const PREVIEW_MIME_PREFIX_WHITELIST = {
   "image/": { serverPreviewable: true },
   "text/": { serverPreviewable: false },
-  "application/json": { serverPreviewable: false }
+  "application/json": { serverPreviewable: false },
 };
 const FILE_SIZE_LIMIT = 5 * 1024 ** 2; // 5MB
 const PAGE_SIZE = 15;
@@ -79,7 +79,7 @@ export default function WorkflowFiles({ id }) {
    */
   function matchesMimeType(list, fileName) {
     const mimeType = getMimeType(fileName);
-    return mimeType && list.find(ext => mimeType.startsWith(ext));
+    return mimeType && list.find((ext) => mimeType.startsWith(ext));
   }
 
   /**
@@ -98,8 +98,9 @@ export default function WorkflowFiles({ id }) {
       const fileExt = fileName.split(".").pop();
       content = `${fileExt} files cannot be previewed. Please use download.`;
     } else if (size > FILE_SIZE_LIMIT) {
-      content = `File size is too big to be previewed (limit ${FILE_SIZE_LIMIT /
-        1024 ** 2}MB). Please use download.`;
+      content = `File size is too big to be previewed (limit ${
+        FILE_SIZE_LIMIT / 1024 ** 2
+      }MB). Please use download.`;
     }
     return content ? (
       <Message icon="info circle" content={content} info />
@@ -129,8 +130,8 @@ export default function WorkflowFiles({ id }) {
       axios({
         method: "get",
         url: url,
-        withCredentials: true
-      }).then(res => {
+        withCredentials: true,
+      }).then((res) => {
         let result = res.data;
         if (typeof result === "object") {
           result = JSON.stringify(result);
@@ -152,7 +153,7 @@ export default function WorkflowFiles({ id }) {
     setFiles(files.reverse());
     setSorting({
       ...sorting,
-      direction: sorting.direction === "ascending" ? "descending" : "ascending"
+      direction: sorting.direction === "ascending" ? "descending" : "ascending",
     });
   }
 
@@ -160,7 +161,7 @@ export default function WorkflowFiles({ id }) {
     setSorting({ column: null, direction: null });
   }
 
-  const headerIcon = col => (
+  const headerIcon = (col) => (
     <Icon
       name={
         sorting.column === col
@@ -255,5 +256,5 @@ export default function WorkflowFiles({ id }) {
 }
 
 WorkflowFiles.propTypes = {
-  id: PropTypes.string.isRequired
+  id: PropTypes.string.isRequired,
 };

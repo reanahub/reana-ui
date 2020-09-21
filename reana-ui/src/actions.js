@@ -16,7 +16,7 @@ import { parseWorkflows, parseLogs, parseFiles } from "./util";
 import {
   getWorkflow,
   getWorkflowLogs,
-  getWorkflowSpecification
+  getWorkflowSpecification,
 } from "./selectors";
 
 export const ERROR = "Error";
@@ -64,8 +64,8 @@ const WORKFLOWS_URL = ({ page = 1, size }) => {
   }
   return url;
 };
-const WORKFLOW_LOGS_URL = id => `${api}/api/workflows/${id}/logs`;
-const WORKFLOW_SPECIFICATION_URL = id =>
+const WORKFLOW_LOGS_URL = (id) => `${api}/api/workflows/${id}/logs`;
+const WORKFLOW_SPECIFICATION_URL = (id) =>
   `${api}/api/workflows/${id}/specification`;
 const WORKFLOW_FILES_URL = (id, { page = 1, size }) => {
   let url = `${api}/api/workflows/${id}/workspace`;
@@ -79,16 +79,17 @@ function errorActionCreator(error, name) {
   const { status, data } = error?.response;
   const { message } = data;
   return { type: ERROR, name, status, message };
-};
+}
 
 export const clearError = { type: CLEAR_ERROR };
 
 export function loadConfig() {
-  return async dispatch => {
+  return async (dispatch) => {
     dispatch({ type: CONFIG_FETCH });
-    return await axios.get(CONFIG_URL, { withCredentials: true })
-      .then(resp => dispatch({ type: CONFIG_RECEIVED, ...resp.data }))
-      .catch(err => {
+    return await axios
+      .get(CONFIG_URL, { withCredentials: true })
+      .then((resp) => dispatch({ type: CONFIG_RECEIVED, ...resp.data }))
+      .catch((err) => {
         dispatch(errorActionCreator(err, CONFIG_URL));
         dispatch({ type: CONFIG_ERROR });
       });
@@ -96,7 +97,7 @@ export function loadConfig() {
 }
 
 export function loadUser() {
-  return async dispatch => {
+  return async (dispatch) => {
     let resp, data;
     try {
       dispatch({ type: USER_FETCH });
@@ -116,17 +117,17 @@ export function loadUser() {
 }
 
 function userSignFactory(initAction, succeedAction, actionURL, body) {
-  return async dispatch => {
+  return async (dispatch) => {
     let resp, data;
     try {
       dispatch({ type: initAction });
       resp = await fetch(actionURL, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(body),
-        credentials: "include"
+        credentials: "include",
       });
     } catch (err) {
       throw new Error(actionURL, 0, err);
@@ -142,20 +143,20 @@ function userSignFactory(initAction, succeedAction, actionURL, body) {
   };
 }
 
-export const userSignup = formData =>
+export const userSignup = (formData) =>
   userSignFactory(USER_SIGNUP, USER_SIGNEDUP, USER_SIGNUP_URL, formData);
 
-export const userSignin = formData =>
+export const userSignin = (formData) =>
   userSignFactory(USER_SIGNIN, USER_SIGNEDIN, USER_SIGNIN_URL, formData);
 
 export function userSignout() {
-  return async dispatch => {
+  return async (dispatch) => {
     let resp;
     try {
       dispatch({ type: USER_SIGNOUT });
       resp = await fetch(USER_SIGNOUT_URL, {
         method: "POST",
-        credentials: "include"
+        credentials: "include",
       });
     } catch (err) {
       throw new Error(USER_SIGNOUT_URL, 0, err);
@@ -168,11 +169,12 @@ export function userSignout() {
 }
 
 export function requestToken() {
-  return async dispatch => {
+  return async (dispatch) => {
     dispatch({ type: USER_REQUEST_TOKEN });
-    return await axios.put(USER_REQUEST_TOKEN_URL, null, { withCredentials: true })
-      .then(resp => dispatch({ type: USER_TOKEN_REQUESTED, ...resp.data }))
-      .catch(err => {
+    return await axios
+      .put(USER_REQUEST_TOKEN_URL, null, { withCredentials: true })
+      .then((resp) => dispatch({ type: USER_TOKEN_REQUESTED, ...resp.data }))
+      .catch((err) => {
         dispatch(errorActionCreator(err, USER_INFO_URL));
         dispatch({ type: USER_TOKEN_ERROR });
       });
@@ -180,15 +182,18 @@ export function requestToken() {
 }
 
 export function fetchWorkflows(pagination) {
-  return async dispatch => {
+  return async (dispatch) => {
     dispatch({ type: WORKFLOWS_FETCH });
-    return await axios.get(WORKFLOWS_URL({ ...pagination }), { withCredentials: true })
-      .then(resp => dispatch({
-        type: WORKFLOWS_RECEIVED,
-        workflows: parseWorkflows(resp.data.items),
-        total: resp.data.total,
-      }))
-      .catch(err => {
+    return await axios
+      .get(WORKFLOWS_URL({ ...pagination }), { withCredentials: true })
+      .then((resp) =>
+        dispatch({
+          type: WORKFLOWS_RECEIVED,
+          workflows: parseWorkflows(resp.data.items),
+          total: resp.data.total,
+        })
+      )
+      .catch((err) => {
         dispatch(errorActionCreator(err, USER_INFO_URL));
         dispatch({ type: WORKFLOWS_FETCH_ERROR });
       });
@@ -229,7 +234,7 @@ export function fetchWorkflowLogs(id) {
     dispatch({
       type: WORKFLOW_LOGS_RECEIVED,
       id,
-      logs: parseLogs(data.logs)
+      logs: parseLogs(data.logs),
     });
     return resp;
   };
@@ -241,7 +246,7 @@ export function fetchWorkflowFiles(id, pagination) {
     try {
       dispatch({ type: WORKFLOW_FILES_FETCH });
       resp = await fetch(WORKFLOW_FILES_URL(id, pagination), {
-        credentials: "include"
+        credentials: "include",
       });
     } catch (err) {
       throw new Error(USER_INFO_URL, 0, err);
@@ -253,7 +258,7 @@ export function fetchWorkflowFiles(id, pagination) {
       type: WORKFLOW_FILES_RECEIVED,
       id,
       files: parseFiles(data.items),
-      total: data.total
+      total: data.total,
     });
     return resp;
   };
@@ -271,7 +276,7 @@ export function fetchWorkflowSpecification(id) {
     try {
       dispatch({ type: WORKFLOW_SPECIFICATION_FETCH });
       resp = await fetch(WORKFLOW_SPECIFICATION_URL(id), {
-        credentials: "include"
+        credentials: "include",
       });
     } catch (err) {
       throw new Error(USER_INFO_URL, 0, err);
@@ -283,7 +288,7 @@ export function fetchWorkflowSpecification(id) {
       type: WORKFLOW_SPECIFICATION_RECEIVED,
       id,
       specification: data.specification,
-      parameters: data.parameters
+      parameters: data.parameters,
     });
     return resp;
   };

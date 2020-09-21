@@ -35,7 +35,7 @@ export default function Signin({ signup }) {
 
   const handleSubmit = (event, action) => {
     const { from } = location.state || { from: { pathname: "/" } };
-    dispatch(action(formData)).then(res => {
+    dispatch(action(formData)).then((res) => {
       if (res.ok) {
         history.replace(from);
       }
@@ -44,7 +44,7 @@ export default function Signin({ signup }) {
     event.preventDefault();
   };
 
-  const handleInputChange = event => {
+  const handleInputChange = (event) => {
     const target = event.target;
     setFormData({ ...formData, [target.name]: target.value });
   };
@@ -80,7 +80,7 @@ export default function Signin({ signup }) {
             {config.localUsers && (
               <SignForm
                 submitText={signup ? "Sign up" : "Sign in"}
-                handleSubmit={e =>
+                handleSubmit={(e) =>
                   handleSubmit(e, signup ? userSignup : userSignin)
                 }
                 formData={formData}
@@ -109,9 +109,9 @@ export default function Signin({ signup }) {
 
 Signin.propTypes = {
   /** Whether to show signup instead of signin form. */
-  signup: PropTypes.bool
+  signup: PropTypes.bool,
 };
 
 Signin.defatultProps = {
-  signup: false
+  signup: false,
 };

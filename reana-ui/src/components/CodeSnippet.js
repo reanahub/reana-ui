@@ -24,7 +24,7 @@ export default function CodeSnippet({
   copy,
   reveal,
   dollarPrefix,
-  classes
+  classes,
 }) {
   const [copied, setCopied] = useState(false);
   const [revealed, setRevealed] = useState(false);
@@ -42,9 +42,9 @@ export default function CodeSnippet({
     setRevealed(!revealed);
   };
 
-  const accessChildren = element => {
+  const accessChildren = (element) => {
     if (Array.isArray(element)) {
-      return element.map(el =>
+      return element.map((el) =>
         el.props?.children ? accessChildren(el.props.children) : el
       );
     } else {
@@ -77,7 +77,7 @@ export default function CodeSnippet({
           trigger={
             <CopyToClipboard
               text={accessChildren(children)
-                .map(line => line.join(""))
+                .map((line) => line.join(""))
                 .join("\n")}
               onCopy={handleCopied}
             >
@@ -99,7 +99,7 @@ CodeSnippet.propTypes = {
   copy: PropTypes.bool,
   reveal: PropTypes.bool,
   dollarPrefix: PropTypes.bool,
-  classes: PropTypes.string
+  classes: PropTypes.string,
 };
 
 CodeSnippet.defaultProps = {
@@ -108,5 +108,5 @@ CodeSnippet.defaultProps = {
   copy: false,
   reveal: false,
   dollarPrefix: true,
-  classes: ""
+  classes: "",
 };

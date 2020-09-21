@@ -30,5 +30,5 @@ export default function WorkflowProgress({ workflow }) {
 }
 
 WorkflowProgress.propTypes = {
-  workflow: PropTypes.object.isRequired
+  workflow: PropTypes.object.isRequired,
 };

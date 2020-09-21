@@ -32,7 +32,7 @@ export default function WorkflowInfo({ workflow }) {
     duration,
     completed,
     total,
-    status
+    status,
   } = workflow;
   return (
     <div className={styles.workflow}>
@@ -88,5 +88,5 @@ export default function WorkflowInfo({ workflow }) {
 }
 
 WorkflowInfo.propTypes = {
-  workflow: PropTypes.object.isRequired
+  workflow: PropTypes.object.isRequired,
 };

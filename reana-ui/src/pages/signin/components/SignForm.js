@@ -21,7 +21,7 @@ export default function SignForm({
   submitText,
   handleSubmit,
   formData,
-  handleInputChange
+  handleInputChange,
 }) {
   const errors = useSelector(getUserSignErrors);
 
@@ -30,11 +30,13 @@ export default function SignForm({
    * @param {String} field Name of the field to get errors from
    */
   function getFieldErrors(field) {
-    const fieldErrors = errors?.filter(err => err.field === field);
+    const fieldErrors = errors?.filter((err) => err.field === field);
     return (
       !!fieldErrors?.length && {
-        content: fieldErrors.map(err => <p key={err.message}>{err.message}</p>),
-        pointing: "above"
+        content: fieldErrors.map((err) => (
+          <p key={err.message}>{err.message}</p>
+        )),
+        pointing: "above",
       }
     );
   }
@@ -71,5 +73,5 @@ SignForm.propTypes = {
   submitText: PropTypes.string.isRequired,
   handleSubmit: PropTypes.func.isRequired,
   formData: PropTypes.object.isRequired,
-  handleInputChange: PropTypes.func.isRequired
+  handleInputChange: PropTypes.func.isRequired,
 };
