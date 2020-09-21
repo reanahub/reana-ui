@@ -8,4 +8,4 @@
   under the terms of the MIT License; see LICENSE file for more details.
 */
 
-export const api = window.location.origin;
+export const api = process.env.REACT_APP_SERVER_URL || window.location.origin;

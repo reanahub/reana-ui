@@ -46,6 +46,7 @@ Development
    $ git clone https://github.com/reanahub/reana-ui.git
    $ cd reana-ui/reana-ui
    $ npm install
+   $ npm start # make sure REANA_SERVER_URL env var is set
    $ firefox localhost:3000
 
 Useful links
