@@ -38,8 +38,9 @@ export default function Signin({ signup }) {
     dispatch(action(formData)).then((res) => {
       if (res.ok) {
         history.replace(from);
+      } else {
+        setFormData({ ...formData, password: "" });
       }
-      setFormData({ ...formData, password: "" });
     });
     event.preventDefault();
   };
