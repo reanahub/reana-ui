@@ -46,6 +46,10 @@ export const USER_REQUEST_TOKEN = "Request user token";
 export const USER_TOKEN_REQUESTED = "User token requested";
 export const USER_TOKEN_ERROR = "User token error";
 
+export const QUOTA_FETCH = "Fetch user quota info";
+export const QUOTA_RECEIVED = "User quota info received";
+export const QUOTA_FETCH_ERROR = "User quota fetch error";
+
 export const WORKFLOWS_FETCH = "Fetch workflows info";
 export const WORKFLOWS_RECEIVED = "Workflows info received";
 export const WORKFLOWS_FETCH_ERROR = "Workflows fetch error";
@@ -112,6 +116,7 @@ export function loadUser() {
     let resp, data;
     try {
       dispatch({ type: USER_FETCH });
+      dispatch({ type: QUOTA_FETCH });
       resp = await fetch(USER_INFO_URL, { credentials: "include" });
     } catch (err) {
       throw new Error(USER_INFO_URL, 0, err);
@@ -119,10 +124,12 @@ export function loadUser() {
     if (resp.status === 403) {
       data = await resp.json();
       dispatch({ type: USER_FETCH_ERROR, ...data });
+      dispatch({ type: QUOTA_FETCH_ERROR, ...data });
     } else if (resp.ok) {
       data = await resp.json();
     }
     dispatch({ type: USER_RECEIVED, ...data });
+    dispatch({ type: QUOTA_RECEIVED, ...data });
     return resp;
   };
 }

@@ -24,6 +24,9 @@ import {
   USER_REQUEST_TOKEN,
   USER_TOKEN_REQUESTED,
   USER_TOKEN_ERROR,
+  QUOTA_FETCH,
+  QUOTA_RECEIVED,
+  QUOTA_FETCH_ERROR,
   WORKFLOWS_FETCH,
   WORKFLOWS_RECEIVED,
   WORKFLOWS_FETCH_ERROR,
@@ -73,6 +76,11 @@ const workflowsInitialState = {
 const detailsInitialState = {
   details: {},
   loadingDetails: false,
+};
+
+const quotaInitialState = {
+  cpu: {},
+  disk: {},
 };
 
 const notification = (state = notificationInitialState, action) => {
@@ -244,12 +252,26 @@ const details = (state = detailsInitialState, action) => {
   }
 };
 
+const quota = (state = quotaInitialState, action) => {
+  switch (action.type) {
+    case QUOTA_FETCH:
+      return { ...state, loading: true };
+    case QUOTA_RECEIVED:
+      return { ...state, loading: false, ...action.quota };
+    case QUOTA_FETCH_ERROR:
+      return { ...state, loading: false };
+    default:
+      return state;
+  }
+};
+
 const reanaApp = combineReducers({
   notification,
   config,
   auth,
   workflows,
   details,
+  quota,
 });
 
 export default reanaApp;

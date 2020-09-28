@@ -14,6 +14,7 @@ import { Container } from "semantic-ui-react";
 import BasePage from "../BasePage";
 import GitLabProjects from "./components/GitLabProjects";
 import Token from "./components/Token";
+import Quota from "./components/Quota";
 import { Title } from "../../components";
 
 import styles from "./Profile.module.scss";
@@ -29,6 +30,10 @@ export default function Profile() {
         <div>
           <Title>Your GitLab projects</Title>
           <GitLabProjects />
+        </div>
+        <div>
+          <Title>Your quota</Title>
+          <Quota />
         </div>
       </Container>
     </BasePage>

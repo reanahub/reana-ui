@@ -16,6 +16,9 @@ export const getNotification = (state) => state.notification;
 // Config
 export const getConfig = (state) => state.config;
 
+// Quota
+export const getUserQuota = (state) => state.quota;
+
 // Auth
 export const isSignedIn = (state) => !!state.auth.email;
 export const getUserEmail = (state) => state.auth.email;
