@@ -66,6 +66,7 @@ const workflowsInitialState = {
   workflowsFetched: false,
   loadingWorkflows: false,
   total: null,
+  userHasWorkflows: false,
 };
 
 const detailsInitialState = {
@@ -177,6 +178,7 @@ const workflows = (state = workflowsInitialState, action) => {
         workflows: action.workflows,
         workflowsFetched: true,
         total: action.total,
+        userHasWorkflows: action.userHasWorkflows,
         loadingWorkflows: false,
       };
     case WORKFLOWS_FETCH_ERROR:

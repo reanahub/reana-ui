@@ -57,11 +57,13 @@ const USER_SIGNUP_URL = `${api}/api/register`;
 const USER_SIGNIN_URL = `${api}/api/login`;
 const USER_SIGNOUT_URL = `${api}/api/logout`;
 const USER_REQUEST_TOKEN_URL = `${api}/api/token`;
-const WORKFLOWS_URL = ({ page = 1, size }) => {
-  let url = `${api}/api/workflows`;
-  if (size) {
-    url += `?page=${page}&size=${size}`;
-  }
+const WORKFLOWS_URL = ({ page = 1, size, search, status, sortDir }) => {
+  //TODO: use query-string to format query params
+  let url = `${api}/api/workflows?`;
+  if (size) url += `page=${page}&size=${size}&`;
+  if (search) url += `search=${search}&`;
+  if (sortDir) url += `sort=${sortDir}&`;
+  if (!_.isEmpty(status)) url += `status=${status}`;
   return url;
 };
 const WORKFLOW_LOGS_URL = (id) => `${api}/api/workflows/${id}/logs`;
@@ -181,16 +183,19 @@ export function requestToken() {
   };
 }
 
-export function fetchWorkflows(pagination) {
+export function fetchWorkflows(pagination, search, status, sortDir) {
   return async (dispatch) => {
     dispatch({ type: WORKFLOWS_FETCH });
     return await axios
-      .get(WORKFLOWS_URL({ ...pagination }), { withCredentials: true })
+      .get(WORKFLOWS_URL({ ...pagination, search, status, sortDir }), {
+        withCredentials: true,
+      })
       .then((resp) =>
         dispatch({
           type: WORKFLOWS_RECEIVED,
           workflows: parseWorkflows(resp.data.items),
           total: resp.data.total,
+          userHasWorkflows: resp.data.user_has_workflows,
         })
       )
       .catch((err) => {

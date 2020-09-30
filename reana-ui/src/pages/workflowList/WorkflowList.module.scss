@@ -8,12 +8,26 @@
   under the terms of the MIT License; see LICENSE file for more details.
 */
 
+@import "../../styles/palette";
+
 .container {
   flex-grow: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
+  padding-top: 4em;
+}
+
+.title {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+
+  .refresh {
+    color: $light-gray;
+    font-size: 12px;
+  }
 }
 
 :global(.ui.pagination.menu).pagination {
