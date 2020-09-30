@@ -55,6 +55,8 @@ export const WORKFLOW_FILES_RECEIVED = "Workflow files received";
 export const WORKFLOW_SPECIFICATION_FETCH = "Fetch workflow specification";
 export const WORKFLOW_SPECIFICATION_RECEIVED =
   "Workflow specification received";
+export const WORKFLOW_DELETE_INIT = "Initialize workflow deletion";
+export const WORKFLOW_DELETED = "Workflow deleted";
 
 const CONFIG_URL = `${api}/api/config`;
 const USER_INFO_URL = `${api}/api/you`;
@@ -63,12 +65,15 @@ const USER_SIGNIN_URL = `${api}/api/login`;
 const USER_SIGNOUT_URL = `${api}/api/logout`;
 const USER_REQUEST_TOKEN_URL = `${api}/api/token`;
 const WORKFLOWS_URL = (params) =>
-  `${api}/api/workflows?${stringifyQueryParams(params)}`;
+  `${api}/api/workflows?verbose=true&${stringifyQueryParams(params)}`;
 const WORKFLOW_LOGS_URL = (id) => `${api}/api/workflows/${id}/logs`;
 const WORKFLOW_SPECIFICATION_URL = (id) =>
   `${api}/api/workflows/${id}/specification`;
 const WORKFLOW_FILES_URL = (id, pagination) =>
   `${api}/api/workflows/${id}/workspace?${stringifyQueryParams(pagination)}`;
+
+const WORKFLOW_SET_STATUS_URL = (id, status) =>
+  `${api}/api/workflows/${id}/status?${stringifyQueryParams(status)}`;
 
 function errorActionCreator(error, name) {
   const { status, data } = error?.response;
@@ -297,5 +302,26 @@ export function fetchWorkflowSpecification(id) {
       parameters: data.parameters,
     });
     return resp;
+  };
+}
+
+export function deleteWorkflow(id, workspace = false) {
+  return async (dispatch) => {
+    dispatch({ type: WORKFLOW_DELETE_INIT });
+    return await axios
+      .put(
+        WORKFLOW_SET_STATUS_URL(id, "deleted"),
+        { workspace },
+        { withCredentials: true }
+      )
+      .then((resp) => {
+        dispatch({ type: WORKFLOW_DELETED, ...resp.data });
+        return resp.data;
+      })
+      .catch((err) => {
+        dispatch(
+          errorActionCreator(err, WORKFLOW_SET_STATUS_URL(id, "deleted"))
+        );
+      });
   };
 }

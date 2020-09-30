@@ -26,7 +26,7 @@ export const statusMapping = {
     preposition: "after",
   },
   queued: { icon: "hourglass outline", color: "teal" },
-  deleted: { icon: "eraser", color: "gray", preposition: "after" },
+  deleted: { icon: "eraser", color: "grey", preposition: "after" },
 };
 
 /**

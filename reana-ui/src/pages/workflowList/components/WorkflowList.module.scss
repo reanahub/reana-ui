@@ -22,19 +22,41 @@
     background-color: lighten($sepia, 3%);
     border-color: darken($sepia, 10%);
     cursor: pointer;
+
+    .actions {
+      visibility: visible;
+    }
   }
 
   &.deleted {
     opacity: 0.5;
   }
 
+  .details-box {
+    flex-grow: 1;
+
+    .name {
+      font-size: 1.3em;
+    }
+
+    .run {
+      padding-left: 0.8em;
+    }
+
+    .size {
+      font-size: 0.75em;
+      padding-left: 1em;
+      color: $light-gray;
+
+      &.highlight {
+        color: $sui-red;
+      }
+    }
+  }
+
   .name,
   .status {
     font-weight: bold;
-  }
-
-  .name {
-    font-size: 1.3em;
   }
 
   .status,
@@ -46,7 +68,13 @@
     width: 210px;
   }
 
-  .run {
-    padding-left: 0.8em;
+  .actions {
+    margin: auto;
+    visibility: hidden;
+    min-width: 22px;
+
+    &:hover {
+      color: darken($sepia, 30%);
+    }
   }
 }
