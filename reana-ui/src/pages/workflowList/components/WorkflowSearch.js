@@ -11,12 +11,12 @@
 import React from "react";
 
 import { Input } from "semantic-ui-react";
-import _ from "lodash";
+import debounce from "lodash/debounce";
 
 const TYPING_DELAY = 1000;
 
 export default function WorkflowSearch({ search }) {
-  const handleChange = _.debounce(search, TYPING_DELAY);
+  const handleChange = debounce(search, TYPING_DELAY);
   return (
     <Input
       fluid

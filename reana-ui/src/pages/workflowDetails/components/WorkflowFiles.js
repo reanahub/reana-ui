@@ -12,7 +12,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import PropTypes from "prop-types";
 import axios from "axios";
-import _ from "lodash";
+import sortBy from "lodash/sortBy";
 import {
   Button,
   Icon,
@@ -146,7 +146,7 @@ export default function WorkflowFiles({ id }) {
    */
   function handleSort(clickedColumn) {
     if (sorting.column !== clickedColumn) {
-      setFiles(_.sortBy(files, [clickedColumn]));
+      setFiles(sortBy(files, [clickedColumn]));
       setSorting({ direction: "ascending", column: clickedColumn });
       return;
     }

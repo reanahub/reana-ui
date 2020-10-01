@@ -8,8 +8,8 @@
   under the terms of the MIT License; see LICENSE file for more details.
 */
 
-import _ from "lodash";
 import axios from "axios";
+import isEmpty from "lodash/isEmpty";
 
 import { api } from "./config";
 import {
@@ -216,7 +216,7 @@ export function fetchWorkflowLogs(id) {
     const state = getStore();
     const logs = getWorkflowLogs(id)(state);
     // Only fetch if needed
-    if (!_.isEmpty(logs)) {
+    if (!isEmpty(logs)) {
       return logs;
     }
     let resp, data;
@@ -267,7 +267,7 @@ export function fetchWorkflowSpecification(id) {
     const state = getStore();
     const specification = getWorkflowSpecification(id)(state);
     // Only fetch if needed
-    if (!_.isEmpty(specification)) {
+    if (!isEmpty(specification)) {
       return specification;
     }
     let resp, data;

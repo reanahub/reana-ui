@@ -8,11 +8,11 @@
   under the terms of the MIT License; see LICENSE file for more details.
 */
 
-import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { Button, List, Loader, Radio, Message, Icon } from "semantic-ui-react";
 
 import axios from "axios";
+import isEmpty from "lodash/isEmpty";
 import { api } from "../../../config";
 
 import styles from "./GitLabProjects.module.scss";
@@ -116,7 +116,7 @@ export default function GitLabProjects() {
   } else {
     return (
       <>
-        {!_.isEmpty(projects) ? (
+        {!isEmpty(projects) ? (
           <>
             <List>
               {Object.entries(projects).map(
