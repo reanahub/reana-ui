@@ -54,7 +54,7 @@ export default function WorkflowDeleteModal({
         <Button
           negative
           onClick={() => {
-            dispatch(deleteWorkflow(id, deleteWorkspace)).then((res) => {
+            dispatch(deleteWorkflow(id, deleteWorkspace)).then(() => {
               onCloseModal();
             });
           }}

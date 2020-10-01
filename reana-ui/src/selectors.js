@@ -10,8 +10,8 @@
 
 import { USER_ERROR } from "./errors";
 
-// Error
-export const getError = (state) => state.error;
+// Notification
+export const getNotification = (state) => state.notification;
 
 // Config
 export const getConfig = (state) => state.config;

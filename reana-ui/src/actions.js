@@ -25,7 +25,8 @@ import {
 } from "./selectors";
 
 export const ERROR = "Error";
-export const CLEAR_ERROR = "Clear error";
+export const NOTIFICATION = "Notification";
+export const CLEAR_NOTIFICATION = "Clear notification";
 
 export const CONFIG_FETCH = "Fetch app config info";
 export const CONFIG_RECEIVED = "App config info received";
@@ -78,10 +79,20 @@ const WORKFLOW_SET_STATUS_URL = (id, status) =>
 function errorActionCreator(error, name) {
   const { status, data } = error?.response;
   const { message } = data;
-  return { type: ERROR, name, status, message };
+  return {
+    type: ERROR,
+    name,
+    status,
+    message,
+    header: "An error has occurred",
+  };
 }
 
-export const clearError = { type: CLEAR_ERROR };
+export function triggerNotification(header, message) {
+  return { type: NOTIFICATION, header, message };
+}
+
+export const clearNotification = { type: CLEAR_NOTIFICATION };
 
 export function loadConfig() {
   return async (dispatch) => {
@@ -316,7 +327,7 @@ export function deleteWorkflow(id, workspace = false) {
       )
       .then((resp) => {
         dispatch({ type: WORKFLOW_DELETED, ...resp.data });
-        return resp.data;
+        dispatch(triggerNotification("Success!", resp.data.message));
       })
       .catch((err) => {
         dispatch(
