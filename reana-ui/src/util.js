@@ -10,6 +10,7 @@
 
 import moment from "moment";
 import mime from "mime";
+import queryString from "query-string";
 
 /**
  * Mapping between workflow statuses and colors and icons.
@@ -125,4 +126,14 @@ export function getMimeType(fileName) {
     return "text/plain";
   }
   return mime.getType(fileName);
+}
+
+/**
+ * Stringify query params.
+ */
+export function stringifyQueryParams(params) {
+  return queryString.stringify(params, {
+    arrayFormat: "comma",
+    skipNull: true,
+  });
 }

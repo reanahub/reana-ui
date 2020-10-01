@@ -12,7 +12,12 @@ import _ from "lodash";
 import axios from "axios";
 
 import { api } from "./config";
-import { parseWorkflows, parseLogs, parseFiles } from "./util";
+import {
+  parseWorkflows,
+  parseLogs,
+  parseFiles,
+  stringifyQueryParams,
+} from "./util";
 import {
   getWorkflow,
   getWorkflowLogs,
@@ -57,25 +62,13 @@ const USER_SIGNUP_URL = `${api}/api/register`;
 const USER_SIGNIN_URL = `${api}/api/login`;
 const USER_SIGNOUT_URL = `${api}/api/logout`;
 const USER_REQUEST_TOKEN_URL = `${api}/api/token`;
-const WORKFLOWS_URL = ({ page = 1, size, search, status, sortDir }) => {
-  //TODO: use query-string to format query params
-  let url = `${api}/api/workflows?`;
-  if (size) url += `page=${page}&size=${size}&`;
-  if (search) url += `search=${search}&`;
-  if (sortDir) url += `sort=${sortDir}&`;
-  if (!_.isEmpty(status)) url += `status=${status}`;
-  return url;
-};
+const WORKFLOWS_URL = (params) =>
+  `${api}/api/workflows?${stringifyQueryParams(params)}`;
 const WORKFLOW_LOGS_URL = (id) => `${api}/api/workflows/${id}/logs`;
 const WORKFLOW_SPECIFICATION_URL = (id) =>
   `${api}/api/workflows/${id}/specification`;
-const WORKFLOW_FILES_URL = (id, { page = 1, size }) => {
-  let url = `${api}/api/workflows/${id}/workspace`;
-  if (size) {
-    url += `?page=${page}&size=${size}`;
-  }
-  return url;
-};
+const WORKFLOW_FILES_URL = (id, pagination) =>
+  `${api}/api/workflows/${id}/workspace?${stringifyQueryParams(pagination)}`;
 
 function errorActionCreator(error, name) {
   const { status, data } = error?.response;
