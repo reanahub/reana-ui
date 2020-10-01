@@ -11,7 +11,8 @@
 import { combineReducers } from "redux";
 import {
   ERROR,
-  CLEAR_ERROR,
+  NOTIFICATION,
+  CLEAR_NOTIFICATION,
   CONFIG_FETCH,
   CONFIG_RECEIVED,
   CONFIG_ERROR,
@@ -35,7 +36,7 @@ import {
 } from "./actions";
 import { USER_ERROR } from "./errors";
 
-const errorInitialState = null;
+const notificationInitialState = null;
 
 export const configInitialState = {
   announcement: null,
@@ -76,13 +77,21 @@ const detailsInitialState = {
   loadingDetails: false,
 };
 
-const error = (state = errorInitialState, action) => {
-  const { name, status, message } = action;
+const notification = (state = notificationInitialState, action) => {
+  const { name, status, message, header } = action;
   switch (action.type) {
     case ERROR:
-      return { ...state, name, status, message };
-    case CLEAR_ERROR:
-      return errorInitialState;
+    case NOTIFICATION:
+      return {
+        ...state,
+        name,
+        status,
+        message,
+        header,
+        isError: action.type === ERROR,
+      };
+    case CLEAR_NOTIFICATION:
+      return notificationInitialState;
     default:
       return state;
   }
@@ -243,7 +252,7 @@ const details = (state = detailsInitialState, action) => {
 };
 
 const reanaApp = combineReducers({
-  error,
+  notification,
   config,
   auth,
   workflows,

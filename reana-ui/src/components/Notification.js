@@ -13,36 +13,44 @@ import { useDispatch, useSelector } from "react-redux";
 import { Container, Message, Transition } from "semantic-ui-react";
 import PropTypes from "prop-types";
 
-import { clearError } from "../actions";
-import { getError } from "../selectors";
+import { clearNotification } from "../actions";
+import { getNotification } from "../selectors";
 
 import styles from "./Notification.module.scss";
 
 const AUTO_CLOSE_TIMEOUT = 16000;
 
-export default function Notification({ icon, header, message, closable }) {
+export default function Notification({
+  icon,
+  header,
+  message,
+  closable,
+  error,
+  success,
+}) {
   const dispatch = useDispatch();
-  const error = useSelector(getError);
+  const notification = useSelector(getNotification);
   const timer = useRef(null);
 
-  const hide = () => dispatch(clearError);
-  const visible = message || error ? true : false;
+  const hide = () => dispatch(clearNotification);
+  const visible = message || notification ? true : false;
+  const actionIcon = notification?.isError ? "warning sign" : "info circle";
 
   if (closable && visible) {
     clearTimeout(timer.current);
     timer.current = setTimeout(() => hide(), AUTO_CLOSE_TIMEOUT);
   }
-
   return (
     <Transition visible={visible} duration={300}>
       <Container text className={styles.container}>
         <Message
-          icon={icon}
-          header={header}
-          content={message || error?.message}
+          icon={icon || actionIcon}
+          header={header || notification?.header}
+          content={message || notification?.message}
           onDismiss={closable ? hide : null}
           size="small"
-          error
+          error={error || (notification && notification.isError)}
+          success={success || (notification && !notification.isError)}
         />
       </Container>
     </Transition>
@@ -54,11 +62,15 @@ Notification.propTypes = {
   header: PropTypes.string,
   message: PropTypes.string,
   closable: PropTypes.bool,
+  error: PropTypes.bool,
+  success: PropTypes.bool,
 };
 
 Notification.defaultProps = {
-  icon: "warning sign",
-  header: "An error has occurred",
+  icon: null,
+  header: null,
   message: null,
   closable: true,
+  error: false,
+  success: false,
 };
