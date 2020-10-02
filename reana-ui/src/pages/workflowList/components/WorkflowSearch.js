@@ -9,6 +9,7 @@
 */
 
 import React from "react";
+import PropTypes from "prop-types";
 
 import { Input } from "semantic-ui-react";
 import debounce from "lodash/debounce";
@@ -22,7 +23,11 @@ export default function WorkflowSearch({ search }) {
       fluid
       icon="search"
       placeholder="Search..."
-      onChange={(event, data) => handleChange(data.value)}
+      onChange={(_, data) => handleChange(data.value)}
     />
   );
 }
+
+WorkflowSearch.propTypes = {
+  search: PropTypes.func.isRequired,
+};

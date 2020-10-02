@@ -135,5 +135,6 @@ export function stringifyQueryParams(params) {
   return queryString.stringify(params, {
     arrayFormat: "comma",
     skipNull: true,
+    skipEmptyString: true,
   });
 }

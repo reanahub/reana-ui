@@ -9,6 +9,7 @@
 */
 
 import React from "react";
+import PropTypes from "prop-types";
 import { Grid } from "semantic-ui-react";
 
 import WorkflowStatusFilter from "./WorkflowStatusFilter";
@@ -38,3 +39,10 @@ export default function WorkflowFilters({
     </div>
   );
 }
+
+WorkflowFilters.propTypes = {
+  statusFilter: PropTypes.array.isRequired,
+  setStatusFilter: PropTypes.func.isRequired,
+  sortDir: PropTypes.string.isRequired,
+  setSortDir: PropTypes.func.isRequired,
+};

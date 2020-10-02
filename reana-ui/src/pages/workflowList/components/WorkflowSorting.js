@@ -9,6 +9,7 @@
 */
 
 import React from "react";
+import PropTypes from "prop-types";
 import { Dropdown } from "semantic-ui-react";
 
 const sortOptions = [
@@ -23,8 +24,13 @@ export default function WorkflowSorting({ value, sort }) {
       fluid
       selection
       options={sortOptions}
-      onChange={(event, data) => sort(data.value)}
+      onChange={(_, data) => sort(data.value)}
       value={value}
     />
   );
 }
+
+WorkflowSorting.propTypes = {
+  value: PropTypes.string.isRequired,
+  sort: PropTypes.func.isRequired,
+};

@@ -176,11 +176,19 @@ export function requestToken() {
   };
 }
 
-export function fetchWorkflows(pagination, search, status, sortDir) {
+export function fetchWorkflows(
+  pagination,
+  search,
+  status,
+  sort,
+  showLoader = true
+) {
   return async (dispatch) => {
-    dispatch({ type: WORKFLOWS_FETCH });
+    if (showLoader) {
+      dispatch({ type: WORKFLOWS_FETCH });
+    }
     return await axios
-      .get(WORKFLOWS_URL({ ...pagination, search, status, sortDir }), {
+      .get(WORKFLOWS_URL({ ...pagination, search, status, sort }), {
         withCredentials: true,
       })
       .then((resp) =>

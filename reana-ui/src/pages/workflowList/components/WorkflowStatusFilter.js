@@ -9,6 +9,7 @@
 */
 
 import React from "react";
+import PropTypes from "prop-types";
 import { Dropdown } from "semantic-ui-react";
 
 import { statusMapping } from "../../../util";
@@ -28,8 +29,13 @@ export default function WorkflowStatusFilters({ valueList, filter }) {
       selection
       multiple
       options={statusOptions}
-      onChange={(event, data) => filter(data.value)}
+      onChange={(_, data) => filter(data.value)}
       value={valueList}
     />
   );
 }
+
+WorkflowStatusFilters.propTypes = {
+  valueList: PropTypes.array.isRequired,
+  filter: PropTypes.func.isRequired,
+};

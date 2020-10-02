@@ -66,16 +66,20 @@ function Workflows() {
 
     if (!interval.current && reanaToken) {
       interval.current = setInterval(() => {
+        const showLoader = false;
         dispatch(
-          fetchWorkflows({ ...pagination }, searchFilter, statusFilter, sortDir)
+          fetchWorkflows(
+            { ...pagination },
+            searchFilter,
+            statusFilter,
+            sortDir,
+            showLoader
+          )
         );
         setRefreshedAt(currentUTCTime());
       }, config.poolingSecs * 1000);
     }
-
-    return function cleanup() {
-      clearInterval(interval.current);
-    };
+    return cleanPolling;
   }, [
     config.poolingSecs,
     dispatch,
@@ -86,7 +90,14 @@ function Workflows() {
     sortDir,
   ]);
 
+  const cleanPolling = () => {
+    clearInterval(interval.current);
+    interval.current = null;
+  };
+
   const applyFilter = (filter) => (value) => {
+    // FIXME: refactor once implemented by default in future versions of React
+    // https://github.com/facebook/react/issues/16387#issuecomment-521623662
     unstable_batchedUpdates(() => {
       filter(value);
       setPagination({ ...pagination, page: 1 });
@@ -134,8 +145,7 @@ function Workflows() {
           activePage={pagination.page}
           totalPages={Math.ceil(workflowsCount / PAGE_SIZE)}
           onPageChange={(_, { activePage }) => {
-            clearInterval(interval.current);
-            interval.current = null;
+            cleanPolling();
             setPagination({ ...pagination, page: activePage });
           }}
         />
