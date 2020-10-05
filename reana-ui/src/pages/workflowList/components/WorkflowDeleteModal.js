@@ -9,6 +9,7 @@
 */
 
 import PropTypes from "prop-types";
+import { workflowShape } from "../../../props";
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { Button, Modal, Checkbox } from "semantic-ui-react";
@@ -35,20 +36,16 @@ export default function WorkflowDeleteModal({
     <Modal open={open} onClose={onCloseModal} closeIcon>
       <Modal.Header>Delete workflow</Modal.Header>
       <Modal.Content>
-        {
-          <>
-            <p>
-              Are you sure you want to delete workflow "{name} #{run}"?
-            </p>
-            <Checkbox
-              checked={deleteWorkspace}
-              onChange={(_, data) => {
-                setDeleteWorkspace(data.checked);
-              }}
-              label={`Delete also workflow workspace (free up ${size}) `}
-            />
-          </>
-        }
+        <>
+          <p>
+            Are you sure you want to delete workflow "{name} #{run}"?
+          </p>
+          <Checkbox
+            checked={deleteWorkspace}
+            onChange={(_, data) => setDeleteWorkspace(data.checked)}
+            label={`Delete also workflow workspace (free up ${size}) `}
+          />
+        </>
       </Modal.Content>
       <Modal.Actions>
         <Button
@@ -69,7 +66,7 @@ export default function WorkflowDeleteModal({
 
 WorkflowDeleteModal.propTypes = {
   open: PropTypes.bool.isRequired,
-  workflow: PropTypes.object.isRequired,
+  workflow: workflowShape.isRequired,
   setOpenDeleteModal: PropTypes.func.isRequired,
   setSelectedWorkflow: PropTypes.func.isRequired,
 };

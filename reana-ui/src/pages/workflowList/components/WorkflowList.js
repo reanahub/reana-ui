@@ -43,12 +43,14 @@ export default function WorkflowList({ workflows, loading }) {
           size,
           status,
         } = workflow;
+        const isDeleted = status === "deleted";
+        const isDeletedUsingWorkspace = isDeleted && size !== "0K";
         return (
           <div
             key={id}
             onClick={() => history.push(`/details/${id}`)}
             className={`${styles["workflow"]} ${
-              status === "deleted" ? styles["deleted"] : ""
+              isDeleted ? styles["deleted"] : ""
             }`}
           >
             <div className={styles["details-box"]}>
@@ -60,7 +62,7 @@ export default function WorkflowList({ workflows, loading }) {
               <span className={styles.run}>#{run}</span>
               <span
                 className={`${styles.size} ${
-                  status === "deleted" && size !== "0K" ? styles.highlight : ""
+                  isDeletedUsingWorkspace ? styles.highlight : ""
                 }`}
               >
                 <Icon name="hdd" />
@@ -91,15 +93,13 @@ export default function WorkflowList({ workflows, loading }) {
               >
                 {status}
               </span>{" "}
-              {statusMapping[status].preposition}{" "}
-              {status !== "deleted" && duration}
+              {statusMapping[status].preposition} {!isDeleted && duration}
               <div>
                 step {completed}/{total}
               </div>
             </div>
             <div className={styles.actions}>
-              {(status !== "deleted" ||
-                (status === "deleted" && size !== "0K")) && (
+              {(!isDeleted || isDeletedUsingWorkspace) && (
                 <WorkflowActionsPopup
                   workflow={workflow}
                   setOpenDeleteModal={setOpenDeleteModal}

@@ -321,7 +321,7 @@ export function deleteWorkflow(id, workspace = false) {
     dispatch({ type: WORKFLOW_DELETE_INIT });
     return await axios
       .put(
-        WORKFLOW_SET_STATUS_URL(id, "deleted"),
+        WORKFLOW_SET_STATUS_URL(id, { status: "deleted" }),
         { workspace },
         { withCredentials: true }
       )
@@ -331,7 +331,10 @@ export function deleteWorkflow(id, workspace = false) {
       })
       .catch((err) => {
         dispatch(
-          errorActionCreator(err, WORKFLOW_SET_STATUS_URL(id, "deleted"))
+          errorActionCreator(
+            err,
+            WORKFLOW_SET_STATUS_URL(id, { status: "deleted" })
+          )
         );
       });
   };

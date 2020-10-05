@@ -9,11 +9,14 @@
 */
 
 import PropTypes from "prop-types";
+import { workflowShape } from "../../../props";
 import React, { useState } from "react";
 import { Icon, Menu, Popup } from "semantic-ui-react";
 import { useDispatch } from "react-redux";
 
 import { deleteWorkflow } from "../../../actions";
+
+import styles from "./WorkflowActionsPopup.module.scss";
 
 export default function WorkflowActionsPopup({
   workflow,
@@ -52,15 +55,18 @@ export default function WorkflowActionsPopup({
   }
   return (
     <Popup
+      basic
       trigger={
         <Icon
           name="ellipsis vertical"
+          className={styles.icon}
           onClick={(e) => {
             setOpen(true);
             e.stopPropagation();
           }}
         />
       }
+      position="bottom left"
       on="click"
       open={open}
       onClose={() => setOpen(false)}
@@ -71,7 +77,7 @@ export default function WorkflowActionsPopup({
 }
 
 WorkflowActionsPopup.propTypes = {
-  workflow: PropTypes.object.isRequired,
+  workflow: workflowShape.isRequired,
   setOpenDeleteModal: PropTypes.func.isRequired,
   setSelectedWorkflow: PropTypes.func.isRequired,
 };
