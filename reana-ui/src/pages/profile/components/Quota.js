@@ -79,7 +79,7 @@ export default function Quota() {
   return (
     <Grid columns={2}>
       {renderPieChart("CPU", "ms", quota.cpu)}
-      {renderPieChart("HDD", "KiB", quota.disk)}
+      {renderPieChart("HDD", "bytes", quota.disk)}
     </Grid>
   );
 }
