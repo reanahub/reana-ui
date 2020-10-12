@@ -14,10 +14,10 @@ import findKey from "lodash/findKey";
 import { useDispatch, useSelector } from "react-redux";
 import { Icon, Dropdown, Label, Loader } from "semantic-ui-react";
 
-import { fetchWorkflowLogs } from "../../../actions";
-import { statusMapping } from "../../../util";
-import { getWorkflowLogs, loadingDetails } from "../../../selectors";
-import { CodeSnippet, TooltipIfTruncated } from "../../../components";
+import { fetchWorkflowLogs } from "~/actions";
+import { statusMapping } from "~/util";
+import { getWorkflowLogs, loadingDetails } from "~/selectors";
+import { CodeSnippet, TooltipIfTruncated } from "~/components";
 
 import styles from "./WorkflowLogs.module.scss";
 

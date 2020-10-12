@@ -13,13 +13,13 @@ import { useDispatch, useSelector } from "react-redux";
 import isEmpty from "lodash/isEmpty";
 import { Loader } from "semantic-ui-react";
 
-import { fetchWorkflowSpecification } from "../../../actions";
+import { fetchWorkflowSpecification } from "~/actions";
 import {
   getWorkflowSpecification,
   loadingDetails,
   getWorkflowParameters,
-} from "../../../selectors";
-import { CodeSnippet, Title } from "../../../components";
+} from "~/selectors";
+import { CodeSnippet, Title } from "~/components";
 
 import styles from "./WorkflowSpecification.module.scss";
 

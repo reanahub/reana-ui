@@ -14,11 +14,11 @@ import { Button, Divider, Grid, Image, Segment } from "semantic-ui-react";
 import { Link, useHistory, useLocation } from "react-router-dom";
 import PropTypes from "prop-types";
 
-import { getConfig } from "../../selectors";
+import { getConfig } from "~/selectors";
 import SignForm from "./components/SignForm";
-import { api } from "../../config";
-import { userSignup, userSignin } from "../../actions";
-import LogoImg from "../../images/logo-reana.svg";
+import { api } from "~/config";
+import { userSignup, userSignin } from "~/actions";
+import LogoImg from "~/images/logo-reana.svg";
 
 import styles from "./Signin.module.scss";
 

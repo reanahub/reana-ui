@@ -14,7 +14,7 @@ import { unstable_batchedUpdates } from "react-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Container, Dimmer, Loader } from "semantic-ui-react";
 
-import { fetchWorkflows } from "../../actions";
+import { fetchWorkflows } from "~/actions";
 import {
   getConfig,
   getReanaToken,
@@ -22,12 +22,12 @@ import {
   getWorkflowsCount,
   loadingWorkflows,
   userHasWorkflows,
-} from "../../selectors";
+} from "~/selectors";
 import BasePage from "../BasePage";
-import { Title } from "../../components";
+import { Title } from "~/components";
 import Welcome from "./components/Welcome";
 import WorkflowList from "./components/WorkflowList";
-import { Pagination } from "../../components";
+import { Pagination } from "~/components";
 
 import styles from "./WorkflowList.module.scss";
 import WorkflowFilters from "./components/WorkflowFilters";

@@ -13,11 +13,11 @@ import { Redirect, BrowserRouter, Route, Switch } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { Dimmer, Loader } from "semantic-ui-react";
 
-import { getUserFetchError, isSignedIn, loadingUser } from "../selectors";
-import Signin from "../pages/signin/Signin";
-import WorkflowList from "../pages/workflowList/WorkflowList";
-import WorkflowDetails from "../pages/workflowDetails/WorkflowDetails";
-import Profile from "../pages/profile/Profile";
+import { getUserFetchError, isSignedIn, loadingUser } from "~/selectors";
+import Signin from "~/pages/signin/Signin";
+import WorkflowList from "~/pages/workflowList/WorkflowList";
+import WorkflowDetails from "~/pages/workflowDetails/WorkflowDetails";
+import Profile from "~/pages/profile/Profile";
 import Error from "./Error";
 
 import "./App.module.scss";

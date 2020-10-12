@@ -13,8 +13,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { Container, Message, Transition } from "semantic-ui-react";
 import PropTypes from "prop-types";
 
-import { clearNotification } from "../actions";
-import { getNotification } from "../selectors";
+import { clearNotification } from "~/actions";
+import { getNotification } from "~/selectors";
 
 import styles from "./Notification.module.scss";
 

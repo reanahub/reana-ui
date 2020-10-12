@@ -12,7 +12,7 @@ import React, { useState } from "react";
 import { Icon } from "semantic-ui-react";
 import { useSelector } from "react-redux";
 
-import { getConfig } from "../selectors";
+import { getConfig } from "~/selectors";
 
 import styles from "./Announcement.module.scss";
 

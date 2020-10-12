@@ -7,7 +7,7 @@
   REANA is free software; you can redistribute it and/or modify it
   under the terms of the MIT License; see LICENSE file for more details.
 */
-import { formatBytes, formatDuration } from "./util";
+import { formatBytes, formatDuration } from "~/util";
 
 test("display friendly durations", () => {
   expect(formatDuration(0)).toBe("0s");

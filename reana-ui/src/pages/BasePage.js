@@ -9,7 +9,7 @@
 */
 
 import React from "react";
-import { Announcement, Notification, Footer, TopHeader } from "../components";
+import { Announcement, Notification, Footer, TopHeader } from "~/components";
 
 import styles from "./BasePage.module.scss";
 

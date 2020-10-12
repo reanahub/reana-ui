@@ -13,16 +13,16 @@ import moment from "moment";
 import { useDispatch, useSelector } from "react-redux";
 import { Button, Container, Icon } from "semantic-ui-react";
 
-import { requestToken } from "../../../actions";
+import { requestToken } from "~/actions";
 import {
   getConfig,
   getReanaToken,
   getReanaTokenStatus,
   getReanaTokenRequestedAt,
   loadingTokenStatus,
-} from "../../../selectors";
-import { CodeSnippet, Title } from "../../../components";
-import { api } from "../../../config";
+} from "~/selectors";
+import { CodeSnippet, Title } from "~/components";
+import { api } from "~/config";
 
 import styles from "./Welcome.module.scss";
 

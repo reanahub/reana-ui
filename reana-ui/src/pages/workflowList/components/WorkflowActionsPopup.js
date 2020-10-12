@@ -9,12 +9,12 @@
 */
 
 import PropTypes from "prop-types";
-import { workflowShape } from "../../../props";
 import React, { useState } from "react";
 import { Icon, Menu, Popup } from "semantic-ui-react";
 import { useDispatch } from "react-redux";
 
-import { deleteWorkflow } from "../../../actions";
+import { workflowShape } from "~/props";
+import { deleteWorkflow } from "~/actions";
 
 import styles from "./WorkflowActionsPopup.module.scss";
 

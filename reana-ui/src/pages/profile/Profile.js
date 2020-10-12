@@ -15,7 +15,7 @@ import BasePage from "../BasePage";
 import GitLabProjects from "./components/GitLabProjects";
 import Token from "./components/Token";
 import Quota from "./components/Quota";
-import { Title } from "../../components";
+import { Title } from "~/components";
 
 import styles from "./Profile.module.scss";
 

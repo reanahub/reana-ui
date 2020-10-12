@@ -23,15 +23,15 @@ import {
   Message,
 } from "semantic-ui-react";
 
-import { api } from "../../../config";
+import { api } from "~/config";
 import {
   getWorkflowFiles,
   getWorkflowFilesCount,
   loadingDetails,
-} from "../../../selectors";
-import { fetchWorkflowFiles } from "../../../actions";
-import { getMimeType } from "../../../util";
-import { Pagination } from "../../../components";
+} from "~/selectors";
+import { fetchWorkflowFiles } from "~/actions";
+import { getMimeType } from "~/util";
+import { Pagination } from "~/components";
 
 import styles from "./WorkflowFiles.module.scss";
 

@@ -14,7 +14,7 @@ import PropTypes from "prop-types";
 import { useHistory } from "react-router-dom";
 
 import { WorkflowDeleteModal, WorkflowActionsPopup } from "../components";
-import { statusMapping } from "../../../util";
+import { statusMapping } from "~/util";
 
 import styles from "./WorkflowList.module.scss";
 

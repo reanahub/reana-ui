@@ -11,10 +11,10 @@
 import React from "react";
 import { useSelector } from "react-redux";
 
-import { getReanaToken } from "../../../selectors";
-import { CodeSnippet } from "../../../components";
-import { WelcomeNoTokenMsg } from "../../workflowList/components/Welcome";
-import { api } from "../../../config";
+import { getReanaToken } from "~/selectors";
+import { CodeSnippet } from "~/components";
+import { WelcomeNoTokenMsg } from "~/pages/workflowList/components/Welcome";
+import { api } from "~/config";
 
 export default function Token() {
   const reanaToken = useSelector(getReanaToken);

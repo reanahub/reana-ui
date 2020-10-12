@@ -13,9 +13,9 @@ import { Image, Icon, Popup, List } from "semantic-ui-react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
-import { getConfig, getUserEmail } from "../selectors";
-import LogoImg from "../images/logo-reana.svg";
-import { userSignout } from "../actions";
+import { getConfig, getUserEmail } from "~/selectors";
+import LogoImg from "~/images/logo-reana.svg";
+import { userSignout } from "~/actions";
 
 import styles from "./TopHeader.module.scss";
 

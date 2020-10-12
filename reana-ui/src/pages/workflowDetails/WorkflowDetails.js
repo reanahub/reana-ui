@@ -13,14 +13,10 @@ import { useSelector, useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
 import { Container, Dimmer, Loader, Tab } from "semantic-ui-react";
 
-import { fetchWorkflow } from "../../actions";
-import {
-  getWorkflow,
-  loadingWorkflows,
-  isWorkflowsFetched,
-} from "../../selectors";
+import { fetchWorkflow } from "~/actions";
+import { getWorkflow, loadingWorkflows, isWorkflowsFetched } from "~/selectors";
 import BasePage from "../BasePage";
-import { Notification } from "../../components";
+import { Notification } from "~/components";
 import {
   WorkflowInfo,
   WorkflowLogs,

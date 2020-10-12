@@ -9,12 +9,12 @@
 */
 
 import PropTypes from "prop-types";
-import { workflowShape } from "../../../props";
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { Button, Modal, Checkbox } from "semantic-ui-react";
 
-import { deleteWorkflow } from "../../../actions";
+import { workflowShape } from "~/props";
+import { deleteWorkflow } from "~/actions";
 
 export default function WorkflowDeleteModal({
   open,

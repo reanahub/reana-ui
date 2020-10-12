@@ -36,7 +36,7 @@ import {
   WORKFLOW_SPECIFICATION_RECEIVED,
   WORKFLOW_FILES_FETCH,
   WORKFLOW_FILES_RECEIVED,
-} from "./actions";
+} from "~/actions";
 import { USER_ERROR } from "./errors";
 
 const notificationInitialState = null;

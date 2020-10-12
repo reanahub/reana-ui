@@ -12,7 +12,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { Icon, Popup } from "semantic-ui-react";
 
-import { statusMapping } from "../../../util";
+import { statusMapping } from "~/util";
 import { WorkflowProgress } from "../components";
 
 import styles from "./WorkflowInfo.module.scss";
