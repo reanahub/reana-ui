@@ -14,6 +14,7 @@ import { PieChart } from "react-minimal-pie-chart";
 import { Grid, Label } from "semantic-ui-react";
 
 import { getUserQuota } from "../../../selectors";
+import { formatDuration, formatBytes } from "../../../util";
 
 import styles from "./Quota.module.scss";
 
@@ -23,7 +24,7 @@ const DARK_SEPIA_COLOR = "#b68181";
 export default function Quota() {
   const quota = useSelector(getUserQuota);
 
-  function renderPieChart(title, unit, quota) {
+  function renderPieChart(title, quota, format) {
     const { usage, limit, health } = quota;
     const percentage = Math.round((usage / limit) * 100);
     const hasLimit = limit > 0;
@@ -57,10 +58,8 @@ export default function Quota() {
         />
         <div className={styles["quota-details"]}>
           <div className={styles.usage}>
-            <h3>
-              {usage} {unit}
-            </h3>
-            {hasLimit ? `out of ${limit} ${unit} ` : "used"}
+            <h3>{format(usage)}</h3>
+            {hasLimit ? `out of ${format(limit)} ` : "used"}
           </div>
           {hasLimit && (
             <Label
@@ -78,8 +77,8 @@ export default function Quota() {
   }
   return (
     <Grid columns={2}>
-      {renderPieChart("CPU", "ms", quota.cpu)}
-      {renderPieChart("HDD", "KiB", quota.disk)}
+      {renderPieChart("CPU", quota.cpu, formatDuration)}
+      {renderPieChart("HDD", quota.disk, formatBytes)}
     </Grid>
   );
 }
