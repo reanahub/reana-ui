@@ -12,7 +12,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { Dropdown } from "semantic-ui-react";
 
-import { statusMapping } from "../../../util";
+import { statusMapping } from "~/util";
 
 const statusOptions = Object.keys(statusMapping).map((status) => ({
   key: status,

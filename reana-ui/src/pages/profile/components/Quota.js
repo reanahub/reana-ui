@@ -13,8 +13,8 @@ import { useSelector } from "react-redux";
 import { PieChart } from "react-minimal-pie-chart";
 import { Grid, Label } from "semantic-ui-react";
 
-import { getUserQuota } from "../../../selectors";
-import { formatDuration, formatBytes } from "../../../util";
+import { getUserQuota } from "~/selectors";
+import { formatDuration, formatBytes } from "~/util";
 
 import styles from "./Quota.module.scss";
 

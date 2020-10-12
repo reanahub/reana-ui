@@ -13,7 +13,7 @@ import { Button, List, Loader, Radio, Message, Icon } from "semantic-ui-react";
 
 import axios from "axios";
 import isEmpty from "lodash/isEmpty";
-import { api } from "../../../config";
+import { api } from "~/config";
 
 import styles from "./GitLabProjects.module.scss";
 

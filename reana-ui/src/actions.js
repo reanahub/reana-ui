@@ -11,18 +11,18 @@
 import axios from "axios";
 import isEmpty from "lodash/isEmpty";
 
-import { api } from "./config";
+import { api } from "~/config";
 import {
   parseWorkflows,
   parseLogs,
   parseFiles,
   stringifyQueryParams,
-} from "./util";
+} from "~/util";
 import {
   getWorkflow,
   getWorkflowLogs,
   getWorkflowSpecification,
-} from "./selectors";
+} from "~/selectors";
 
 export const ERROR = "Error";
 export const NOTIFICATION = "Notification";

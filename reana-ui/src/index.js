@@ -12,7 +12,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { Provider } from "react-redux";
 import store from "./store";
-import { loadUser, loadConfig } from "./actions";
+import { loadUser, loadConfig } from "~/actions";
 import App from "./components/App";
 
 import "semantic-ui-less/semantic.less";

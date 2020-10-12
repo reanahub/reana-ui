@@ -13,7 +13,7 @@ import { useSelector } from "react-redux";
 import { Button, Form, Input } from "semantic-ui-react";
 import PropTypes from "prop-types";
 
-import { getUserSignErrors } from "../../../selectors";
+import { getUserSignErrors } from "~/selectors";
 
 import styles from "./SignForm.module.scss";
 

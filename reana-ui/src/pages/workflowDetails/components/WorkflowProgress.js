@@ -12,7 +12,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { Progress } from "semantic-ui-react";
 
-import { statusMapping } from "../../../util";
+import { statusMapping } from "~/util";
 
 export default function WorkflowProgress({ workflow }) {
   function handlePercentage(completedSteps, totalSteps) {
