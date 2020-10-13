@@ -58,13 +58,13 @@ function Workflows() {
       interval.current = setInterval(() => {
         dispatch(fetchWorkflows({ ...pagination }));
         setRefreshedAt(currentUTCTime());
-      }, config.poolingSecs * 1000);
+      }, config.pollingSecs * 1000);
     }
 
     return function cleanup() {
       clearInterval(interval.current);
     };
-  }, [config.poolingSecs, dispatch, pagination, reanaToken]);
+  }, [config.pollingSecs, dispatch, pagination, reanaToken]);
 
   if (!workflows) {
     return (
