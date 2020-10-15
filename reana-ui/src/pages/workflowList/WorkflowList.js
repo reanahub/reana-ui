@@ -22,6 +22,7 @@ import {
   getWorkflowsCount,
   loadingWorkflows,
   userHasWorkflows,
+  getWorkflowRefresh,
 } from "~/selectors";
 import BasePage from "../BasePage";
 import { Title } from "~/components";
@@ -55,16 +56,23 @@ function Workflows() {
   const workflows = useSelector(getWorkflows);
   const workflowsCount = useSelector(getWorkflowsCount);
   const hasUserWorkflows = useSelector(userHasWorkflows);
+  const workflowRefresh = useSelector(getWorkflowRefresh);
   const loading = useSelector(loadingWorkflows);
   const reanaToken = useSelector(getReanaToken);
   const interval = useRef(null);
+  const { pollingSecs } = config;
+
+  // FIXME: workflowRefresh is a temporary solution to refresh workflow list
+  // by saving random number in redux. It should be refactored in the future
+  // once websockets will be implemented
+  useEffect(() => cleanPolling(), [workflowRefresh]);
 
   useEffect(() => {
     dispatch(
       fetchWorkflows({ ...pagination }, searchFilter, statusFilter, sortDir)
     );
 
-    if (!interval.current && reanaToken) {
+    if (!interval.current && reanaToken && pollingSecs) {
       interval.current = setInterval(() => {
         const showLoader = false;
         dispatch(
@@ -77,17 +85,18 @@ function Workflows() {
           )
         );
         setRefreshedAt(currentUTCTime());
-      }, config.pollingSecs * 1000);
+      }, pollingSecs * 1000);
     }
     return cleanPolling;
   }, [
-    config.pollingSecs,
+    pollingSecs,
     dispatch,
     pagination,
     reanaToken,
     searchFilter,
     statusFilter,
     sortDir,
+    workflowRefresh,
   ]);
 
   const cleanPolling = () => {

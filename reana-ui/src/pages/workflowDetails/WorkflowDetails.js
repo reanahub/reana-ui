@@ -16,7 +16,7 @@ import { Container, Dimmer, Loader, Tab } from "semantic-ui-react";
 import { fetchWorkflow } from "~/actions";
 import { getWorkflow, loadingWorkflows, isWorkflowsFetched } from "~/selectors";
 import BasePage from "../BasePage";
-import { Notification } from "~/components";
+import { Notification, WorkflowDeleteModal } from "~/components";
 import {
   WorkflowInfo,
   WorkflowLogs,
@@ -40,6 +40,8 @@ function WorkflowDetails() {
   const loading = useSelector(loadingWorkflows);
   const workflowsFetched = useSelector(isWorkflowsFetched);
 
+  // TODO: add `workflowRefresh` dependency to trigger useEffect
+  // once user opens, closes Interactive session, deletes workflow
   useEffect(() => {
     dispatch(fetchWorkflow(workflowId));
   }, [dispatch, workflowId]);
@@ -91,6 +93,7 @@ function WorkflowDetails() {
     <Container>
       <WorkflowInfo workflow={workflow} />
       <Tab menu={{ secondary: true, pointing: true }} panes={panes} />
+      <WorkflowDeleteModal />
     </Container>
   );
 }

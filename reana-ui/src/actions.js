@@ -62,6 +62,9 @@ export const WORKFLOW_SPECIFICATION_RECEIVED =
   "Workflow specification received";
 export const WORKFLOW_DELETE_INIT = "Initialize workflow deletion";
 export const WORKFLOW_DELETED = "Workflow deleted";
+export const OPEN_DELETE_WORKFLOW_MODAL = "Open delete workflow modal";
+export const CLOSE_DELETE_WORKFLOW_MODAL = "Close delete workflow modal";
+export const WORKFLOW_LIST_REFRESH = "Refresh workflow list";
 
 const CONFIG_URL = `${api}/api/config`;
 const USER_INFO_URL = `${api}/api/you`;
@@ -79,6 +82,12 @@ const WORKFLOW_FILES_URL = (id, pagination) =>
 
 const WORKFLOW_SET_STATUS_URL = (id, status) =>
   `${api}/api/workflows/${id}/status?${stringifyQueryParams(status)}`;
+
+const INTERACTIVE_SESSIONS_OPEN_URL = (id, type = "jupyter") =>
+  `${api}/api/workflows/${id}/open/${type}`;
+
+const INTERACTIVE_SESSIONS_CLOSE_URL = (id) =>
+  `${api}/api/workflows/${id}/close/`;
 
 function errorActionCreator(error, name) {
   const { status, data } = error?.response;
@@ -334,6 +343,7 @@ export function deleteWorkflow(id, workspace = false) {
       )
       .then((resp) => {
         dispatch({ type: WORKFLOW_DELETED, ...resp.data });
+        dispatch({ type: WORKFLOW_LIST_REFRESH });
         dispatch(triggerNotification("Success!", resp.data.message));
       })
       .catch((err) => {
@@ -343,6 +353,41 @@ export function deleteWorkflow(id, workspace = false) {
             WORKFLOW_SET_STATUS_URL(id, { status: "deleted" })
           )
         );
+      });
+  };
+}
+
+export function openDeleteWorkflowModal(workflow) {
+  return { type: OPEN_DELETE_WORKFLOW_MODAL, workflow };
+}
+
+export function closeDeleteWorkflowModal() {
+  return { type: CLOSE_DELETE_WORKFLOW_MODAL };
+}
+
+export function openInteractiveSession(id) {
+  return async (dispatch) => {
+    return await axios
+      .post(INTERACTIVE_SESSIONS_OPEN_URL(id), null, { withCredentials: true })
+      .then((resp) => {
+        dispatch({ type: WORKFLOW_LIST_REFRESH });
+      })
+      .catch((err) => {
+        dispatch(errorActionCreator(err, INTERACTIVE_SESSIONS_OPEN_URL(id)));
+      });
+  };
+}
+
+export function closeInteractiveSession(id) {
+  return async (dispatch) => {
+    return await axios
+      .post(INTERACTIVE_SESSIONS_CLOSE_URL(id), null, { withCredentials: true })
+      .then((resp) => {
+        dispatch({ type: WORKFLOW_LIST_REFRESH });
+        dispatch(triggerNotification("Success!", resp.data.message));
+      })
+      .catch((err) => {
+        dispatch(errorActionCreator(err, INTERACTIVE_SESSIONS_CLOSE_URL(id)));
       });
   };
 }

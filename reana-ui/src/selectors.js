@@ -40,6 +40,11 @@ export const getWorkflowsCount = (state) => state.workflows.total;
 export const userHasWorkflows = (state) => state.workflows.userHasWorkflows;
 export const getWorkflow = (id) => (state) =>
   state.workflows.workflows && state.workflows.workflows[id];
+export const getWorkflowDeleteModalOpen = (state) =>
+  state.workflows.workflowDeleteModal.open;
+export const getWorkflowDeleteModalItem = (state) =>
+  state.workflows.workflowDeleteModal.workflow;
+export const getWorkflowRefresh = (state) => state.workflows.workflowRefresh;
 
 // Details
 export const loadingDetails = (state) => state.details.loadingDetails;

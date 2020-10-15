@@ -8,26 +8,26 @@
   under the terms of the MIT License; see LICENSE file for more details.
 */
 
-import PropTypes from "prop-types";
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Button, Modal, Checkbox } from "semantic-ui-react";
 
-import { workflowShape } from "~/props";
-import { deleteWorkflow } from "~/actions";
+import { deleteWorkflow, closeDeleteWorkflowModal } from "~/actions";
+import {
+  getWorkflowDeleteModalOpen,
+  getWorkflowDeleteModalItem,
+} from "~/selectors";
 
-export default function WorkflowDeleteModal({
-  open,
-  workflow,
-  setOpenDeleteModal,
-  setSelectedWorkflow,
-}) {
+export default function WorkflowDeleteModal() {
   const dispatch = useDispatch();
   const [deleteWorkspace, setDeleteWorkspace] = useState(true);
+  const open = useSelector(getWorkflowDeleteModalOpen);
+  const workflow = useSelector(getWorkflowDeleteModalItem);
+
+  if (!workflow) return null;
 
   const onCloseModal = () => {
-    setOpenDeleteModal(false);
-    setSelectedWorkflow({});
+    dispatch(closeDeleteWorkflowModal());
     setDeleteWorkspace(true);
   };
 
@@ -63,10 +63,3 @@ export default function WorkflowDeleteModal({
     </Modal>
   );
 }
-
-WorkflowDeleteModal.propTypes = {
-  open: PropTypes.bool.isRequired,
-  workflow: workflowShape.isRequired,
-  setOpenDeleteModal: PropTypes.func.isRequired,
-  setSelectedWorkflow: PropTypes.func.isRequired,
-};

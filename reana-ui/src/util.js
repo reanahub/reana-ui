@@ -12,6 +12,8 @@ import moment from "moment";
 import mime from "mime";
 import queryString from "query-string";
 
+import { api } from "~/config";
+
 /**
  * Mapping between workflow statuses and colors and icons.
  */
@@ -138,3 +140,10 @@ export function stringifyQueryParams(params) {
     skipEmptyString: true,
   });
 }
+
+/**
+ * Format interactive session uri.
+ */
+export const formatInteractiveSessionUri = (sessionUri, reanaToken) => {
+  return `${api}${sessionUri}?token=${reanaToken}`;
+};

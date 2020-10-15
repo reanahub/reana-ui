@@ -16,3 +16,19 @@
   justify-content: center;
   height: 100%;
 }
+
+.container {
+  cursor: pointer;
+  min-width: 22px;
+  margin-left: 2em;
+
+  &:hover {
+    color: darken($sepia, 30%);
+  }
+}
+
+.jupyter-icon {
+  width: 1.18em;
+  float: right;
+  margin: -0.2em 0em 0em 0.5em;
+}

@@ -8,20 +8,25 @@
   under the terms of the MIT License; see LICENSE file for more details.
 */
 
-import React, { useState } from "react";
+import React from "react";
+import { useSelector } from "react-redux";
 import { Icon, Popup, Loader } from "semantic-ui-react";
 import PropTypes from "prop-types";
 import { useHistory } from "react-router-dom";
 
-import { WorkflowDeleteModal, WorkflowActionsPopup } from "../components";
-import { statusMapping } from "~/util";
+import { getReanaToken } from "~/selectors";
+import {
+  JupyterNotebookIcon,
+  WorkflowActionsPopup,
+  WorkflowDeleteModal,
+} from "~/components";
+import { statusMapping, formatInteractiveSessionUri } from "~/util";
 
 import styles from "./WorkflowList.module.scss";
 
 export default function WorkflowList({ workflows, loading }) {
   const history = useHistory();
-  const [openDeleteModal, setOpenDeleteModal] = useState(false);
-  const [selectedWorkflow, setSelectedWorkflow] = useState({});
+  const reanaToken = useSelector(getReanaToken);
 
   if (loading) return <Loader active />;
   return (
@@ -42,9 +47,12 @@ export default function WorkflowList({ workflows, loading }) {
           total,
           size,
           status,
+          session_uri: sessionUri,
+          session_status: sessionStatus,
         } = workflow;
         const isDeleted = status === "deleted";
         const isDeletedUsingWorkspace = isDeleted && size !== "0K";
+        const isSessionOpen = sessionStatus === "created";
         return (
           <div
             key={id}
@@ -68,6 +76,17 @@ export default function WorkflowList({ workflows, loading }) {
                 <Icon name="hdd" />
                 {size}
               </span>
+              {isSessionOpen && (
+                <a
+                  href={formatInteractiveSessionUri(sessionUri, reanaToken)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={(e) => e.stopPropagation()}
+                  className={styles.notebook}
+                >
+                  <JupyterNotebookIcon />
+                </a>
+              )}
               <Popup
                 trigger={
                   <div>
@@ -98,25 +117,15 @@ export default function WorkflowList({ workflows, loading }) {
                 step {completed}/{total}
               </div>
             </div>
-            <div className={styles.actions}>
-              {(!isDeleted || isDeletedUsingWorkspace) && (
-                <WorkflowActionsPopup
-                  workflow={workflow}
-                  setOpenDeleteModal={setOpenDeleteModal}
-                  setSelectedWorkflow={setSelectedWorkflow}
-                />
-              )}
-            </div>
+            <WorkflowActionsPopup
+              workflow={workflow}
+              className={styles.actions}
+            />
           </div>
         );
       })}
 
-      <WorkflowDeleteModal
-        open={openDeleteModal}
-        workflow={selectedWorkflow}
-        setOpenDeleteModal={setOpenDeleteModal}
-        setSelectedWorkflow={setSelectedWorkflow}
-      />
+      <WorkflowDeleteModal />
     </>
   );
 }

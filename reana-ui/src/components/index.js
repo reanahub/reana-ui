@@ -16,3 +16,6 @@ export { default as Pagination } from "./Pagination";
 export { default as Title } from "./Title";
 export { default as TopHeader } from "./TopHeader";
 export { default as TooltipIfTruncated } from "./TooltipIfTruncated";
+export { default as JupyterNotebookIcon } from "./JupyterNotebookIcon";
+export { default as WorkflowDeleteModal } from "./WorkflowDeleteModal";
+export { default as WorkflowActionsPopup } from "./WorkflowActionsPopup";

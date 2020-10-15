@@ -30,12 +30,15 @@ import {
   WORKFLOWS_FETCH,
   WORKFLOWS_RECEIVED,
   WORKFLOWS_FETCH_ERROR,
+  WORKFLOW_LIST_REFRESH,
   WORKFLOW_LOGS_FETCH,
   WORKFLOW_LOGS_RECEIVED,
   WORKFLOW_SPECIFICATION_FETCH,
   WORKFLOW_SPECIFICATION_RECEIVED,
   WORKFLOW_FILES_FETCH,
   WORKFLOW_FILES_RECEIVED,
+  OPEN_DELETE_WORKFLOW_MODAL,
+  CLOSE_DELETE_WORKFLOW_MODAL,
 } from "~/actions";
 import { USER_ERROR } from "./errors";
 
@@ -71,6 +74,8 @@ const workflowsInitialState = {
   loadingWorkflows: false,
   total: null,
   userHasWorkflows: false,
+  workflowDeleteModal: { open: false, workflow: null },
+  workflowRefresh: null,
 };
 
 const detailsInitialState = {
@@ -200,6 +205,16 @@ const workflows = (state = workflowsInitialState, action) => {
       };
     case WORKFLOWS_FETCH_ERROR:
       return { ...state, loadingWorkflows: false };
+    case OPEN_DELETE_WORKFLOW_MODAL:
+      return {
+        ...state,
+        workflowDeleteModal: { open: true, workflow: action.workflow },
+      };
+    case CLOSE_DELETE_WORKFLOW_MODAL:
+      return { ...state, workflowDeleteModal: { open: false, workflow: null } };
+    case WORKFLOW_LIST_REFRESH:
+      return { ...state, workflowRefresh: Math.random() };
+
     default:
       return state;
   }

@@ -9,12 +9,14 @@
 */
 
 import React from "react";
+import { useSelector } from "react-redux";
 import PropTypes from "prop-types";
 import { Icon, Popup } from "semantic-ui-react";
 
-import { statusMapping } from "~/util";
+import { getReanaToken } from "~/selectors";
+import { statusMapping, formatInteractiveSessionUri } from "~/util";
 import { WorkflowProgress } from "../components";
-
+import { JupyterNotebookIcon, WorkflowActionsPopup } from "~/components";
 import styles from "./WorkflowInfo.module.scss";
 
 const NON_FINISHED_STATUSES = ["created", "queued", "running"];
@@ -33,7 +35,11 @@ export default function WorkflowInfo({ workflow }) {
     completed,
     total,
     status,
+    session_uri: sessionUri,
+    session_status: sessionStatus,
   } = workflow;
+  const reanaToken = useSelector(getReanaToken);
+  const isSessionOpen = sessionStatus === "created";
   return (
     <div className={styles.workflow}>
       <section className={styles.info}>
@@ -44,6 +50,17 @@ export default function WorkflowInfo({ workflow }) {
           />{" "}
           <span className={styles["name"]}>{name}</span>
           <span className={styles["run"]}>#{run}</span>
+          {isSessionOpen && (
+            <a
+              href={formatInteractiveSessionUri(sessionUri, reanaToken)}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => e.stopPropagation()}
+              className={styles.notebook}
+            >
+              <JupyterNotebookIcon />
+            </a>
+          )}
           <Popup
             trigger={
               <div>
@@ -63,23 +80,27 @@ export default function WorkflowInfo({ workflow }) {
             }
           />
         </div>
-        <div>
-          <span
-            className={`${styles["status"]} sui-${statusMapping[status].color}`}
-          >
-            {status}
-          </span>{" "}
-          {statusMapping[status].preposition} {status !== "deleted" && duration}
-          {NON_FINISHED_STATUSES.includes(status) && (
-            <Icon
-              name="refresh"
-              className={styles.refresh}
-              onClick={() => window.location.reload()}
-            />
-          )}
+        <div className={styles.info}>
           <div>
-            step {completed}/{total}
+            <span
+              className={`${styles["status"]} sui-${statusMapping[status].color}`}
+            >
+              {status}
+            </span>{" "}
+            {statusMapping[status].preposition}{" "}
+            {status !== "deleted" && duration}
+            {NON_FINISHED_STATUSES.includes(status) && (
+              <Icon
+                name="refresh"
+                className={styles.refresh}
+                onClick={() => window.location.reload()}
+              />
+            )}
+            <div>
+              step {completed}/{total}
+            </div>
           </div>
+          <WorkflowActionsPopup workflow={workflow} />
         </div>
       </section>
       <WorkflowProgress workflow={workflow} />
