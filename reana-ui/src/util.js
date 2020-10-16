@@ -94,41 +94,6 @@ function parseWorkflowDates(workflow) {
 }
 
 /**
- * Formats duration in milliseconds in a friendly manner.
- * @param {Integer} ms Amount in millisecons to format
- */
-export function formatDuration(ms) {
-  let res = "";
-  const duration = moment.duration(ms);
-  if (duration.hours() >= 1) {
-    res += `${duration.hours()}h `;
-  }
-  if (duration.minutes() >= 1) {
-    res += `${duration.minutes()}m `;
-  }
-  if (!res || duration.seconds() >= 1) {
-    res += `${duration.seconds()}s`;
-  }
-  return res.trim();
-}
-
-/**
- * Formats size in bytes in a friendly manner.
- * @param {Integer} bytes Amount in bytes to format
- */
-export function formatBytes(bytes, decimals = 2) {
-  if (bytes === 0) return "0 Bytes";
-
-  const k = 1024;
-  const dm = decimals < 0 ? 0 : decimals;
-  const sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
-
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-
-  return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
-}
-
-/**
  * Parses workflow logs.
  */
 export function parseLogs(logs) {

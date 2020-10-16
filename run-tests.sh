@@ -14,5 +14,5 @@ set -o nounset
 
 sphinx-build -qnN docs docs/_build/html
 prettier reana-ui --check
-cd reana-ui && yarn && yarn test --ci && cd ..
+cd reana-ui && yarn && yarn test --ci --passWithNoTests && cd ..
 docker build -t reanahub/reana-ui .
