@@ -43,7 +43,7 @@ const notificationInitialState = null;
 
 const configInitialState = {
   announcement: null,
-  poolingSecs: null,
+  pollingSecs: null,
   docsURL: null,
   clientPyvenv: null,
   forumURL: null,
@@ -111,7 +111,7 @@ const config = (state = configInitialState, action) => {
       return {
         ...state,
         announcement: action.announcement,
-        poolingSecs: action.pooling_secs,
+        pollingSecs: action.polling_secs,
         docsURL: action.docs_url,
         clientPyvenv: action.client_pyvenv,
         forumURL: action.forum_url,

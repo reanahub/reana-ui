@@ -77,11 +77,11 @@ function Workflows() {
           )
         );
         setRefreshedAt(currentUTCTime());
-      }, config.poolingSecs * 1000);
+      }, config.pollingSecs * 1000);
     }
     return cleanPolling;
   }, [
-    config.poolingSecs,
+    config.pollingSecs,
     dispatch,
     pagination,
     reanaToken,
