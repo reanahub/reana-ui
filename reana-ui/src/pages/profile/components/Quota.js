@@ -47,7 +47,7 @@ export default function Quota() {
             ]}
             lineWidth={30}
             background={SEPIA_COLOR}
-            totalValue={limit.raw}
+            totalValue={limit?.raw}
             startAngle={270}
             style={{ height: "150px", flexBasis: "200px" }}
             label={() => title}

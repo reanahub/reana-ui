@@ -51,7 +51,8 @@ export default function WorkflowList({ workflows, loading }) {
           session_status: sessionStatus,
         } = workflow;
         const isDeleted = status === "deleted";
-        const isDeletedUsingWorkspace = isDeleted && size !== "0K";
+        const hasDiskUsage = size.raw > 0;
+        const isDeletedUsingWorkspace = isDeleted && hasDiskUsage;
         const isSessionOpen = sessionStatus === "created";
         return (
           <div
@@ -72,10 +73,12 @@ export default function WorkflowList({ workflows, loading }) {
                 className={`${styles.size} ${
                   isDeletedUsingWorkspace ? styles.highlight : ""
                 }`}
-              >
-                <Icon name="hdd" />
-                {size}
-              </span>
+              ></span>
+              {hasDiskUsage && (
+                <span>
+                  <Icon name="hdd" /> {size.human_readable}
+                </span>
+              )}
               {isSessionOpen && (
                 <a
                   href={formatInteractiveSessionUri(sessionUri, reanaToken)}

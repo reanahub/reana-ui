@@ -208,7 +208,7 @@ export default function WorkflowFiles({ id }) {
             files.map(({ name, lastModified, size }) => (
               <Modal
                 key={name}
-                onOpen={() => getFile(name, size)}
+                onOpen={() => getFile(name, size.raw)}
                 closeIcon
                 trigger={
                   <Table.Row className={styles["files-row"]}>
@@ -217,7 +217,7 @@ export default function WorkflowFiles({ id }) {
                       {name}
                     </Table.Cell>
                     <Table.Cell>{lastModified}</Table.Cell>
-                    <Table.Cell>{size}</Table.Cell>
+                    <Table.Cell>{size.raw}</Table.Cell>
                   </Table.Row>
                 }
               >

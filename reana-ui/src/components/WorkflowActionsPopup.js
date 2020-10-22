@@ -33,7 +33,7 @@ export default function WorkflowActionsPopup({ workflow, className }) {
   const [open, setOpen] = useState(false);
   const { id, size, status, session_status: sessionStatus } = workflow;
   const isDeleted = status === "deleted";
-  const isDeletedUsingWorkspace = isDeleted && size !== "0K";
+  const isDeletedUsingWorkspace = isDeleted && size.raw;
   const isSessionOpen = sessionStatus === "created";
 
   let menuItems = [];
