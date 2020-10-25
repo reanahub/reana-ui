@@ -1,11 +1,30 @@
 Changes
 =======
 
-Version master (UNRELEASED)
+Version 0.7.0 (2020-10-20)
 ---------------------------
 
-- Adds local users forms for sign in and sign up functionalites.
-
+- Adds user profile page.
+- Adds local user forms for sign-in and sign-up functionalities.
+- Adds home page suitable for standalone vs CERN deployments.
+- Adds page refresh button to workflow detailed page.
+- Adds favicon to the web interface pages.
+- Adds basic theme scaffolding.
+- Adds announcement configuration to easily display messages on the web interface.
+- Adds pagination on the workflow list and workflow detailed pages.
+- Fixes loading workflow indicator.
+- Fixes displaying of non-existing workflows.
+- Fixes file preview functionality experience to allow/disallow certain file formats.
+- Fixes workflow specification display to show runtime parameters.
+- Fixes display of footer links in case they are not set during deployment.
+- Changes configuration to dynamically detect URL.
+- Changes main loader of the web interface.
+- Changes workflow list page and all the code base to use hooks everywhere.
+- Changes pre-requisites to node version 12 and latest npm dependencies.
+- Changes polling to improve performance.
+- Changes default font to Open Sans.
+- Changes code formatting to respect updated ``prettier`` version coding style.
+- Changes documentation to single-page layout.
 
 Version 0.6.0 (2019-12-20)
 --------------------------

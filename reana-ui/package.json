@@ -1,6 +1,6 @@
 {
   "name": "reana-ui",
-  "version": "0.7.0-alpha.2",
+  "version": "0.8.0a0",
   "private": true,
   "dependencies": {
     "axios": "latest",
