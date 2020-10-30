@@ -12,7 +12,47 @@ set -o errexit
 # Quit on unbound symbols
 set -o nounset
 
-sphinx-build -qnN docs docs/_build/html
-prettier reana-ui --check
-cd reana-ui && yarn && yarn test --ci --passWithNoTests && cd ..
-docker build -t reanahub/reana-ui .
+check_script () {
+    shellcheck run-tests.sh
+}
+
+check_sphinx () {
+    sphinx-build -qnNW docs docs/_build/html
+}
+
+check_prettier () {
+    prettier reana-ui --check
+}
+
+check_js_tests () {
+    cd reana-ui && yarn && yarn test --ci --passWithNoTests && cd ..
+}
+
+check_docker_build () {
+    docker build -t reanahub/reana-ui .
+}
+
+check_all () {
+    check_script
+    check_sphinx
+    check_prettier
+    check_js_tests
+    check_docker_build
+}
+
+if [ $# -eq 0 ]; then
+    check_all
+    exit 0
+fi
+
+for arg in "$@"
+do
+    case $arg in
+        --check-shellscript) check_script;;
+        --check-sphinx) check_sphinx;;
+        --check-prettier) check_prettier;;
+        --check-js-tests) check_js_tests;;
+        --check-docker-build) check_docker_build;;
+        *)
+    esac
+done
