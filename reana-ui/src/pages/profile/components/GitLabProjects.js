@@ -8,7 +8,7 @@
   under the terms of the MIT License; see LICENSE file for more details.
 */
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Button, List, Loader, Radio, Message, Icon } from "semantic-ui-react";
 
 import axios from "axios";

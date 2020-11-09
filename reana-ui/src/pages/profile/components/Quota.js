@@ -8,7 +8,6 @@
   under the terms of the MIT License; see LICENSE file for more details.
 */
 
-import React from "react";
 import { useSelector } from "react-redux";
 import { PieChart } from "react-minimal-pie-chart";
 import { Grid, Label } from "semantic-ui-react";

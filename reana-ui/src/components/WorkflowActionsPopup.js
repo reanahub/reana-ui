@@ -8,7 +8,7 @@
   under the terms of the MIT License; see LICENSE file for more details.
 */
 
-import React, { useState } from "react";
+import { useState } from "react";
 import PropTypes from "prop-types";
 import { Icon, Menu, Popup } from "semantic-ui-react";
 import { useDispatch } from "react-redux";

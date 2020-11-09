@@ -8,7 +8,6 @@
   under the terms of the MIT License; see LICENSE file for more details.
 */
 
-import React from "react";
 import isEmpty from "lodash/isEmpty";
 import { Redirect, BrowserRouter, Route, Switch } from "react-router-dom";
 import { useSelector } from "react-redux";

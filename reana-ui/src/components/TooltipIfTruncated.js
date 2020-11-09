@@ -8,7 +8,7 @@
   under the terms of the MIT License; see LICENSE file for more details.
 */
 
-import React from "react";
+import { Children, cloneElement } from "react";
 import PropTypes from "prop-types";
 
 export default function TooltipIfTruncated({ children, tooltip }) {
@@ -23,8 +23,8 @@ export default function TooltipIfTruncated({ children, tooltip }) {
     }
   }
 
-  const child = React.Children.only(children);
-  return React.cloneElement(child, {
+  const child = Children.only(children);
+  return cloneElement(child, {
     onMouseEnter: (event) => mouseEnter(event),
   });
 }

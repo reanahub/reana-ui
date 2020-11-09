@@ -8,7 +8,6 @@
   under the terms of the MIT License; see LICENSE file for more details.
 */
 
-import React from "react";
 import { useSelector } from "react-redux";
 import { Button, Form, Input } from "semantic-ui-react";
 import PropTypes from "prop-types";

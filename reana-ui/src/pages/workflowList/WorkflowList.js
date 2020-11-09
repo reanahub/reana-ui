@@ -9,7 +9,7 @@
 */
 
 import moment from "moment";
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { unstable_batchedUpdates } from "react-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Container, Dimmer, Loader } from "semantic-ui-react";

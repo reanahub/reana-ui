@@ -8,7 +8,6 @@
   under the terms of the MIT License; see LICENSE file for more details.
 */
 
-import React from "react";
 import { Icon, Pagination } from "semantic-ui-react";
 
 export default function PaginationWrapper({ ...props }) {

@@ -8,7 +8,6 @@
   under the terms of the MIT License; see LICENSE file for more details.
 */
 
-import React from "react";
 import { Container, Table, Divider } from "semantic-ui-react";
 
 import { Title } from "../../components";

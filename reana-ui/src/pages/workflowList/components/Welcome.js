@@ -8,7 +8,6 @@
   under the terms of the MIT License; see LICENSE file for more details.
 */
 
-import React from "react";
 import moment from "moment";
 import { useDispatch, useSelector } from "react-redux";
 import { Button, Container, Icon } from "semantic-ui-react";

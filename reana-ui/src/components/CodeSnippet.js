@@ -8,7 +8,7 @@
   under the terms of the MIT License; see LICENSE file for more details.
 */
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { Icon, Popup } from "semantic-ui-react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import PropTypes from "prop-types";
