@@ -1,6 +1,10 @@
 Changes
 =======
 
+Version 0.8.0 (UNRELEASED)
+
+- Adds user quota usage pie charts in Profile page.
+
 Version 0.7.0 (2020-10-20)
 ---------------------------
 

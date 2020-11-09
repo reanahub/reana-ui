@@ -10,7 +10,9 @@
 
 import React from "react";
 import { Container } from "semantic-ui-react";
+import { useSelector } from "react-redux";
 
+import { getReanaToken } from "~/selectors";
 import BasePage from "../BasePage";
 import GitLabProjects from "./components/GitLabProjects";
 import Token from "./components/Token";
@@ -20,6 +22,7 @@ import { Title } from "~/components";
 import styles from "./Profile.module.scss";
 
 export default function Profile() {
+  const reanaToken = useSelector(getReanaToken);
   return (
     <BasePage>
       <Container text className={styles["container"]}>
@@ -27,14 +30,18 @@ export default function Profile() {
           <Title>Your REANA token</Title>
           <Token />
         </div>
-        <div>
-          <Title>Your GitLab projects</Title>
-          <GitLabProjects />
-        </div>
-        <div>
-          <Title>Your quota</Title>
-          <Quota />
-        </div>
+        {reanaToken && (
+          <>
+            <div>
+              <Title>Your GitLab projects</Title>
+              <GitLabProjects />
+            </div>
+            <div>
+              <Title>Your quota</Title>
+              <Quota />
+            </div>
+          </>
+        )}
       </Container>
     </BasePage>
   );
