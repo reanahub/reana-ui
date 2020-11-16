@@ -36,10 +36,10 @@ export default function Signin({ signup }) {
   const handleSubmit = (event, action) => {
     const { from } = location.state || { from: { pathname: "/" } };
     dispatch(action(formData)).then((res) => {
-      if (res.ok) {
-        history.replace(from);
-      } else {
+      if (res.isAxiosError ?? false) {
         setFormData({ ...formData, password: "" });
+      } else {
+        history.replace(from);
       }
     });
     event.preventDefault();

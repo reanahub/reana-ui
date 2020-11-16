@@ -20,6 +20,7 @@ import {
   getReanaToken,
   getWorkflows,
   getWorkflowsCount,
+  isConfigLoaded,
   loadingWorkflows,
 } from "../../selectors";
 import BasePage from "../BasePage";
@@ -49,12 +50,14 @@ function Workflows() {
   const workflowsCount = useSelector(getWorkflowsCount);
   const loading = useSelector(loadingWorkflows);
   const reanaToken = useSelector(getReanaToken);
+  const configLoaded = useSelector(isConfigLoaded);
   const interval = useRef(null);
+  const hideWelcomePage = !workflows || !configLoaded;
 
   useEffect(() => {
     dispatch(fetchWorkflows({ ...pagination }));
 
-    if (!interval.current && reanaToken) {
+    if (!interval.current && reanaToken && config.pollingSecs) {
       interval.current = setInterval(() => {
         dispatch(fetchWorkflows({ ...pagination }));
         setRefreshedAt(currentUTCTime());
@@ -66,7 +69,7 @@ function Workflows() {
     };
   }, [config.pollingSecs, dispatch, pagination, reanaToken]);
 
-  if (!workflows) {
+  if (hideWelcomePage) {
     return (
       loading && (
         <Dimmer active inverted>

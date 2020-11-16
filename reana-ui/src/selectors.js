@@ -15,6 +15,7 @@ export const getError = (state) => state.error;
 
 // Config
 export const getConfig = (state) => state.config;
+export const isConfigLoaded = (state) => state.config.isLoaded;
 
 // Auth
 export const isSignedIn = (state) => !!state.auth.email;
