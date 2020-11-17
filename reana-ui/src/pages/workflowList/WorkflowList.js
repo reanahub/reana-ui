@@ -20,6 +20,7 @@ import {
   getReanaToken,
   getWorkflows,
   getWorkflowsCount,
+  isConfigLoaded,
   loadingWorkflows,
   userHasWorkflows,
   getWorkflowRefresh,
@@ -59,7 +60,9 @@ function Workflows() {
   const workflowRefresh = useSelector(getWorkflowRefresh);
   const loading = useSelector(loadingWorkflows);
   const reanaToken = useSelector(getReanaToken);
+  const configLoaded = useSelector(isConfigLoaded);
   const interval = useRef(null);
+  const hideWelcomePage = !workflows || !configLoaded;
   const { pollingSecs } = config;
 
   // FIXME: workflowRefresh is a temporary solution to refresh workflow list
@@ -113,7 +116,7 @@ function Workflows() {
     });
   };
 
-  if (!workflows) {
+  if (hideWelcomePage) {
     return (
       loading && (
         <Dimmer active inverted>

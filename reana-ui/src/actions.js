@@ -122,51 +122,45 @@ export function loadConfig() {
 
 export function loadUser() {
   return async (dispatch) => {
-    let resp, data;
-    try {
-      dispatch({ type: USER_FETCH });
-      dispatch({ type: QUOTA_FETCH });
-      resp = await fetch(USER_INFO_URL, { credentials: "include" });
-    } catch (err) {
-      throw new Error(USER_INFO_URL, 0, err);
-    }
-    if (resp.status === 403) {
-      data = await resp.json();
-      dispatch({ type: USER_FETCH_ERROR, ...data });
-      dispatch({ type: QUOTA_FETCH_ERROR, ...data });
-    } else if (resp.ok) {
-      data = await resp.json();
-    }
-    dispatch({ type: USER_RECEIVED, ...data });
-    dispatch({ type: QUOTA_RECEIVED, ...data });
-    return resp;
+    dispatch({ type: USER_FETCH });
+    dispatch({ type: QUOTA_FETCH });
+    return await axios
+      .get(USER_INFO_URL, { withCredentials: true })
+      .then((resp) => {
+        dispatch({ type: USER_RECEIVED, ...resp.data });
+        dispatch({ type: QUOTA_RECEIVED, ...resp.data });
+      })
+      .catch((err) => {
+        // 403 Forbidden, user token was revoked.
+        // 401 Unauthorized, user did not sign in, we fail silently.
+        let errorData;
+        if (err.response.status !== 401) {
+          errorData = err.response.data;
+          dispatch(errorActionCreator(err, USER_INFO_URL));
+        }
+        dispatch({ type: USER_FETCH_ERROR, ...errorData });
+        dispatch({ type: QUOTA_FETCH_ERROR, ...errorData });
+      });
   };
 }
 
 function userSignFactory(initAction, succeedAction, actionURL, body) {
   return async (dispatch) => {
-    let resp, data;
-    try {
-      dispatch({ type: initAction });
-      resp = await fetch(actionURL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(body),
-        credentials: "include",
+    dispatch({ type: initAction });
+    return await axios
+      .post(actionURL, body, {
+        withCredentials: true,
+        headers: { "Content-Type": "application/json" },
+      })
+      .then((resp) => {
+        dispatch({ type: succeedAction });
+        dispatch(loadUser());
+        return resp;
+      })
+      .catch((err) => {
+        dispatch({ type: USER_SIGN_ERROR, ...err.response.data });
+        return err;
       });
-    } catch (err) {
-      throw new Error(actionURL, 0, err);
-    }
-    data = await resp.json();
-    if (resp.status === 400) {
-      dispatch({ type: USER_SIGN_ERROR, ...data });
-    } else if (resp.ok) {
-      dispatch({ type: succeedAction });
-      dispatch(loadUser());
-    }
-    return resp;
   };
 }
 
@@ -178,20 +172,17 @@ export const userSignin = (formData) =>
 
 export function userSignout() {
   return async (dispatch) => {
-    let resp;
-    try {
-      dispatch({ type: USER_SIGNOUT });
-      resp = await fetch(USER_SIGNOUT_URL, {
-        method: "POST",
-        credentials: "include",
+    dispatch({ type: USER_SIGNOUT });
+    return await axios
+      .post(USER_SIGNOUT_URL, null, {
+        withCredentials: true,
+      })
+      .then((resp) => {
+        dispatch({ type: USER_SIGNEDOUT });
+      })
+      .catch((err) => {
+        dispatch(errorActionCreator(err, USER_SIGNOUT_URL));
       });
-    } catch (err) {
-      throw new Error(USER_SIGNOUT_URL, 0, err);
-    }
-    if (resp.ok) {
-      dispatch({ type: USER_SIGNEDOUT });
-    }
-    return resp;
   };
 }
 
@@ -259,46 +250,38 @@ export function fetchWorkflowLogs(id) {
     if (!isEmpty(logs)) {
       return logs;
     }
-    let resp, data;
-    try {
-      dispatch({ type: WORKFLOW_LOGS_FETCH });
-      resp = await fetch(WORKFLOW_LOGS_URL(id), { credentials: "include" });
-    } catch (err) {
-      throw new Error(USER_INFO_URL, 0, err);
-    }
-    if (resp.ok) {
-      data = await resp.json();
-    }
-    dispatch({
-      type: WORKFLOW_LOGS_RECEIVED,
-      id,
-      logs: parseLogs(data.logs),
-    });
-    return resp;
+    dispatch({ type: WORKFLOW_LOGS_FETCH });
+    return await axios
+      .get(WORKFLOW_LOGS_URL(id), { withCredentials: true })
+      .then((resp) =>
+        dispatch({
+          type: WORKFLOW_LOGS_RECEIVED,
+          id,
+          logs: parseLogs(resp.data.logs),
+        })
+      )
+      .catch((err) => {
+        dispatch(errorActionCreator(err, WORKFLOW_LOGS_URL(id)));
+      });
   };
 }
 
 export function fetchWorkflowFiles(id, pagination) {
-  return async (dispatch, getStore) => {
-    let resp, data;
-    try {
-      dispatch({ type: WORKFLOW_FILES_FETCH });
-      resp = await fetch(WORKFLOW_FILES_URL(id, pagination), {
-        credentials: "include",
+  return async (dispatch) => {
+    dispatch({ type: WORKFLOW_FILES_FETCH });
+    return await axios
+      .get(WORKFLOW_FILES_URL(id, pagination), { withCredentials: true })
+      .then((resp) =>
+        dispatch({
+          type: WORKFLOW_FILES_RECEIVED,
+          id,
+          files: parseFiles(resp.data.items),
+          total: resp.data.total,
+        })
+      )
+      .catch((err) => {
+        dispatch(errorActionCreator(err, WORKFLOW_FILES_URL(id, pagination)));
       });
-    } catch (err) {
-      throw new Error(USER_INFO_URL, 0, err);
-    }
-    if (resp.ok) {
-      data = await resp.json();
-    }
-    dispatch({
-      type: WORKFLOW_FILES_RECEIVED,
-      id,
-      files: parseFiles(data.items),
-      total: data.total,
-    });
-    return resp;
   };
 }
 
@@ -310,25 +293,23 @@ export function fetchWorkflowSpecification(id) {
     if (!isEmpty(specification)) {
       return specification;
     }
-    let resp, data;
-    try {
-      dispatch({ type: WORKFLOW_SPECIFICATION_FETCH });
-      resp = await fetch(WORKFLOW_SPECIFICATION_URL(id), {
-        credentials: "include",
+
+    dispatch({ type: WORKFLOW_SPECIFICATION_FETCH });
+    return await axios
+      .get(WORKFLOW_SPECIFICATION_URL(id), {
+        withCredentials: true,
+      })
+      .then((resp) =>
+        dispatch({
+          type: WORKFLOW_SPECIFICATION_RECEIVED,
+          id,
+          specification: resp.data.specification,
+          parameters: resp.data.parameters,
+        })
+      )
+      .catch((err) => {
+        dispatch(errorActionCreator(err, WORKFLOW_SPECIFICATION_URL(id)));
       });
-    } catch (err) {
-      throw new Error(USER_INFO_URL, 0, err);
-    }
-    if (resp.ok) {
-      data = await resp.json();
-    }
-    dispatch({
-      type: WORKFLOW_SPECIFICATION_RECEIVED,
-      id,
-      specification: data.specification,
-      parameters: data.parameters,
-    });
-    return resp;
   };
 }
 

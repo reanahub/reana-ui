@@ -44,7 +44,7 @@ import { USER_ERROR } from "./errors";
 
 const notificationInitialState = null;
 
-const configInitialState = {
+export const configInitialState = {
   announcement: null,
   pollingSecs: null,
   docsURL: null,
@@ -53,6 +53,7 @@ const configInitialState = {
   chatURL: null,
   cernSSO: false,
   localUsers: false,
+  isLoaded: false,
   loading: false,
 };
 
@@ -123,10 +124,11 @@ const config = (state = configInitialState, action) => {
         chatURL: action.chat_url,
         cernSSO: action.cern_sso,
         localUsers: action.local_users,
+        isLoaded: true,
         loading: false,
       };
     case CONFIG_ERROR:
-      return { ...state, loading: false };
+      return { ...state, isLoaded: false, loading: false };
     default:
       return state;
   }
