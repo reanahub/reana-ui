@@ -28,6 +28,10 @@ check_js_tests () {
     cd reana-ui && yarn && yarn test --ci --passWithNoTests && cd ..
 }
 
+check_dockerfile () {
+    docker run -i --rm hadolint/hadolint < Dockerfile
+}
+
 check_docker_build () {
     docker build -t reanahub/reana-ui .
 }
@@ -37,6 +41,7 @@ check_all () {
     check_sphinx
     check_prettier
     check_js_tests
+    check_dockerfile
     check_docker_build
 }
 
@@ -52,6 +57,7 @@ do
         --check-sphinx) check_sphinx;;
         --check-prettier) check_prettier;;
         --check-js-tests) check_js_tests;;
+        --check-dockerfile) check_dockerfile;;
         --check-docker-build) check_docker_build;;
         *)
     esac
