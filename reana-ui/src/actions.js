@@ -135,7 +135,11 @@ export function loadUser() {
         // 401 Unauthorized, user did not sign in, we fail silently.
         let errorData;
         if (err.response.status !== 401) {
-          errorData = err.response.data;
+          const {
+            statusText,
+            data: { message },
+          } = err.response;
+          errorData = { statusText, message };
           dispatch(errorActionCreator(err, USER_INFO_URL));
         }
         dispatch({ type: USER_FETCH_ERROR, ...errorData });
