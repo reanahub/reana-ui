@@ -103,8 +103,18 @@ export function loadUser() {
       .get(USER_INFO_URL, { withCredentials: true })
       .then((resp) => dispatch({ type: USER_RECEIVED, ...resp.data }))
       .catch((err) => {
-        dispatch(errorActionCreator(err, USER_INFO_URL));
-        dispatch({ type: USER_FETCH_ERROR });
+        // 403 Forbidden, user token was revoked.
+        // 401 Unauthorized, user did not sign in, we fail silently.
+        let errorData;
+        if (err.response.status !== 401) {
+          const {
+            statusText,
+            data: { message },
+          } = err.response;
+          errorData = { statusText, message };
+          dispatch(errorActionCreator(err, USER_INFO_URL));
+        }
+        dispatch({ type: USER_FETCH_ERROR, ...errorData });
       });
   };
 }

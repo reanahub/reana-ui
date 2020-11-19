@@ -130,9 +130,12 @@ const auth = (state = authInitialState, action) => {
         loadingUser: false,
       };
     case USER_FETCH_ERROR:
+      const { type, ...errorData } = action;
       return {
         ...state,
-        error: { [USER_ERROR.fetch]: action.message },
+        error: {
+          [USER_ERROR.fetch]: errorData,
+        },
         loadingUser: false,
       };
     case USER_SIGNEDOUT:
