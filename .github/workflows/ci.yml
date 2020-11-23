@@ -10,7 +10,7 @@ on: [push, pull_request]
 
 jobs:
   lint-shellcheck:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -21,7 +21,7 @@ jobs:
           ./run-tests.sh --check-shellscript
 
   docs-sphinx:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -43,7 +43,7 @@ jobs:
         run: ./run-tests.sh --check-sphinx
 
   format-prettier:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -60,7 +60,7 @@ jobs:
         run: ./run-tests.sh --check-prettier
 
   js-tests:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -76,11 +76,20 @@ jobs:
       - name: Run javascript tests
         run: ./run-tests.sh --check-js-tests
 
-  docker-build:
-    runs-on: ubuntu-latest
+  lint-dockerfile:
+    runs-on: ubuntu-20.04
     steps:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Build docker image
+      - name: Check Dockerfile compliance
+        run: ./run-tests.sh --check-dockerfile
+
+  docker-build:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Build Docker image
         run: ./run-tests.sh --check-docker-build
