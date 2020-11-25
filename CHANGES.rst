@@ -5,6 +5,11 @@ Version 0.8.0 (UNRELEASED)
 ---------------------------
 
 - Adds user quota usage pie charts in Profile page.
+- Adds a more generic notifications system.
+- Adds a way to open, list and closes interactive sessions.
+- Adds the possibility of deleting workflows to save disk space.
+- Adds filtering by status and search by name in workflow list page.
+- Adds import aliases.
 
 Version 0.7.1 (2020-11-24)
 ---------------------------
