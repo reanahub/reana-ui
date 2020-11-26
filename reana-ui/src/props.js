@@ -15,7 +15,10 @@ export const workflowShape = PropTypes.shape({
   created: PropTypes.string,
   name: PropTypes.string,
   progress: PropTypes.object,
-  size: PropTypes.string,
+  size: PropTypes.shape({
+    raw: PropTypes.number,
+    human_readable: PropTypes.string,
+  }),
   status: PropTypes.string,
   user: PropTypes.string,
   run: PropTypes.string,

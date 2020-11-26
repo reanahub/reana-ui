@@ -73,12 +73,13 @@ export default function WorkflowList({ workflows, loading }) {
                 className={`${styles.size} ${
                   isDeletedUsingWorkspace ? styles.highlight : ""
                 }`}
-              ></span>
-              {hasDiskUsage && (
-                <span>
-                  <Icon name="hdd" /> {size.human_readable}
-                </span>
-              )}
+              >
+                {hasDiskUsage && (
+                  <>
+                    <Icon name="hdd" /> {size.human_readable}
+                  </>
+                )}
+              </span>
               {isSessionOpen && (
                 <a
                   href={formatInteractiveSessionUri(sessionUri, reanaToken)}
