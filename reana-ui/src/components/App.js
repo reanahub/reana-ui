@@ -15,6 +15,7 @@ import { Dimmer, Loader } from "semantic-ui-react";
 
 import { getUserFetchError, isSignedIn, loadingUser } from "../selectors";
 import Signin from "../pages/signin/Signin";
+import Signup from "../pages/signin/Signup";
 import WorkflowList from "../pages/workflowList/WorkflowList";
 import WorkflowDetails from "../pages/workflowDetails/WorkflowDetails";
 import Profile from "../pages/profile/Profile";
@@ -62,7 +63,7 @@ export default function App() {
           />
           <Route
             path="/signup"
-            render={() => (signedIn ? <Redirect to="/" /> : <Signin signup />)}
+            render={() => (signedIn ? <Redirect to="/" /> : <Signup />)}
           />
           <ProtectedRoute exact path="/" component={WorkflowList} />
           <ProtectedRoute path="/details/:id" component={WorkflowDetails} />

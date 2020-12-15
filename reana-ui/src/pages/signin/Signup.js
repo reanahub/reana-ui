@@ -10,24 +10,19 @@
 
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
-import { Button, Divider, Segment } from "semantic-ui-react";
+import { Segment } from "semantic-ui-react";
 import { Link } from "react-router-dom";
 
 import SignForm from "./components/SignForm";
 import SignContainer from "./components/SignContainer";
-import { api } from "../../config";
 import { getConfig } from "../../selectors";
-import { userSignin } from "../../actions";
+import { userSignup } from "../../actions";
 import { useSubmit } from "../../hooks";
 
-export default function Signin() {
-  const handleSubmit = useSubmit(userSignin);
+export default function Signup() {
+  const handleSubmit = useSubmit(userSignup);
   const config = useSelector(getConfig);
   const [formData, setFormData] = useState({ email: "", password: "" });
-
-  const handleClick = () => {
-    window.location.href = api + "/oauth/login/cern";
-  };
 
   const handleInputChange = (event) => {
     const { target } = event;
@@ -37,21 +32,9 @@ export default function Signin() {
   return (
     <SignContainer>
       <Segment>
-        {config.cernSSO && (
-          <>
-            <Button basic fluid size="large" onClick={handleClick}>
-              Sign in with SSO
-            </Button>
-            {config.localUsers && (
-              <Divider section horizontal>
-                or
-              </Divider>
-            )}
-          </>
-        )}
         {config.localUsers && (
           <SignForm
-            submitText="Sign in"
+            submitText="Sign up"
             handleSubmit={(e) => handleSubmit(e, formData, setFormData)}
             formData={formData}
             handleInputChange={handleInputChange}
@@ -60,8 +43,7 @@ export default function Signin() {
       </Segment>
       {config.localUsers && (
         <p>
-          If you do not have an account yet, please
-          <Link to="/signup"> Sign up</Link> here
+          Already signed up? Go to <Link to="/signin">Sign In</Link>
         </p>
       )}
     </SignContainer>
