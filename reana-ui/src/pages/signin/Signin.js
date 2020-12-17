@@ -58,7 +58,13 @@ export default function Signin() {
           />
         )}
       </Segment>
-      {config.localUsers && (
+      {config.hideSignup && (
+        <p>
+          If you do not have an account yet, please contact
+          <a href={`mailto:${config.adminEmail}`}> REANA administrators</a>
+        </p>
+      )}
+      {!config.hideSignup && config.localUsers && (
         <p>
           If you do not have an account yet, please
           <Link to="/signup"> Sign up</Link> here

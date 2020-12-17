@@ -43,7 +43,7 @@ export default function Signup() {
       </Segment>
       {config.localUsers && (
         <p>
-          Already signed up? Go to <Link to="/signin">Sign In</Link>
+          Already signed up? Go to <Link to="/signin">Sign in</Link>
         </p>
       )}
     </SignContainer>

@@ -45,7 +45,9 @@ export const configInitialState = {
   forumURL: null,
   chatURL: null,
   cernSSO: false,
+  adminEmail: null,
   localUsers: false,
+  hideSignup: false,
   isLoaded: false,
   loading: false,
 };
@@ -100,7 +102,9 @@ const config = (state = configInitialState, action) => {
         forumURL: action.forum_url,
         chatURL: action.chat_url,
         cernSSO: action.cern_sso,
+        adminEmail: action.admin_email,
         localUsers: action.local_users,
+        hideSignup: action.hide_signup,
         isLoaded: true,
         loading: false,
       };
