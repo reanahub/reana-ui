@@ -141,10 +141,23 @@ function userSignFactory(initAction, succeedAction, actionURL, body) {
       .then((resp) => {
         dispatch({ type: succeedAction });
         dispatch(loadUser());
+        if (initAction === USER_SIGNUP) {
+          dispatch(
+            triggerNotification(
+              "Success!",
+              "User registered. Please confirm your email by clicking on the link we sent you."
+            )
+          );
+        }
         return resp;
       })
       .catch((err) => {
-        dispatch({ type: USER_SIGN_ERROR, ...err.response.data });
+        // validation errors
+        if (err.response.data.errors) {
+          dispatch({ type: USER_SIGN_ERROR, ...err.response.data });
+        } else {
+          dispatch(errorActionCreator(err, USER_SIGN_ERROR));
+        }
         return err;
       });
   };

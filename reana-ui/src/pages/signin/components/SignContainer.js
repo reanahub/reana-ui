@@ -12,6 +12,8 @@ import React from "react";
 import { Grid, Image } from "semantic-ui-react";
 import PropTypes from "prop-types";
 
+import Notification from "../../../components/Notification";
+
 import LogoImg from "../../../images/logo-reana.svg";
 
 import styles from "./SignContainer.module.scss";
@@ -19,6 +21,7 @@ import styles from "./SignContainer.module.scss";
 export default function SignContainer({ children }) {
   return (
     <div className={styles["signin-form"]}>
+      <Notification />
       <Grid
         textAlign="center"
         verticalAlign="middle"
