@@ -21,6 +21,7 @@ import {
   loadingUser,
   loadingConfig,
 } from "../selectors";
+import Confirm from "../pages/signin/Confirm";
 import Signin from "../pages/signin/Signin";
 import Signup from "../pages/signin/Signup";
 import WorkflowList from "../pages/workflowList/WorkflowList";
@@ -76,6 +77,7 @@ export default function App() {
               signedIn || signupHidden ? <Redirect to="/" /> : <Signup />
             }
           />
+          <Route path="/confirm/:token" component={Confirm} />
           <ProtectedRoute exact path="/" component={WorkflowList} />
           <ProtectedRoute path="/details/:id" component={WorkflowDetails} />
           <ProtectedRoute path="/profile" component={Profile} />

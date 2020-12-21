@@ -40,6 +40,9 @@ export const USER_SIGNEDOUT = "User signed out";
 export const USER_REQUEST_TOKEN = "Request user token";
 export const USER_TOKEN_REQUESTED = "User token requested";
 export const USER_TOKEN_ERROR = "User token error";
+export const USER_EMAIL_CONFIRMATION = "User request email confirmation";
+export const USER_EMAIL_CONFIRMED = "User email confirmed";
+export const USER_EMAIL_CONFIRMATION_ERROR = "User email confirmation error";
 
 export const WORKFLOWS_FETCH = "Fetch workflows info";
 export const WORKFLOWS_RECEIVED = "Workflows info received";
@@ -58,6 +61,7 @@ const USER_SIGNUP_URL = `${api}/api/register`;
 const USER_SIGNIN_URL = `${api}/api/login`;
 const USER_SIGNOUT_URL = `${api}/api/logout`;
 const USER_REQUEST_TOKEN_URL = `${api}/api/token`;
+const USER_CONFIRM_EMAIL_URL = `${api}/api/confirm-email`;
 const WORKFLOWS_URL = ({ page = 1, size }) => {
   let url = `${api}/api/workflows`;
   if (size) {
@@ -194,6 +198,37 @@ export function requestToken() {
       .catch((err) => {
         dispatch(errorActionCreator(err, USER_INFO_URL));
         dispatch({ type: USER_TOKEN_ERROR });
+      });
+  };
+}
+
+export function confirmUserEmail(token) {
+  return async (dispatch) => {
+    dispatch({ type: USER_EMAIL_CONFIRMATION });
+    return await axios
+      .post(
+        USER_CONFIRM_EMAIL_URL,
+        { token: token },
+        {
+          withCredentials: true,
+          headers: { "Content-Type": "application/json" },
+        }
+      )
+      .then((resp) => {
+        dispatch({ type: USER_EMAIL_CONFIRMED });
+        dispatch(
+          triggerNotification(
+            "Success!",
+            "User email confirmed. You can sign in now."
+          )
+        );
+        return resp;
+      })
+      .catch((err) => {
+        // adapt error format (remove array)
+        err.response.data.message = err.response.data.message[0];
+        dispatch(errorActionCreator(err, USER_EMAIL_CONFIRMATION_ERROR));
+        return err;
       });
   };
 }
