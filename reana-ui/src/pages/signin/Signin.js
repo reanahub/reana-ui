@@ -9,7 +9,7 @@
 */
 
 import React, { useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Button, Divider, Segment } from "semantic-ui-react";
 import { Link } from "react-router-dom";
 
@@ -17,16 +17,26 @@ import SignForm from "./components/SignForm";
 import SignContainer from "./components/SignContainer";
 import { api } from "../../config";
 import { getConfig } from "../../selectors";
-import { userSignin } from "../../actions";
+import { triggerNotification, userSignin } from "../../actions";
 import { useSubmit } from "../../hooks";
 
 export default function Signin() {
   const handleSubmit = useSubmit(userSignin);
   const config = useSelector(getConfig);
+  const dispatch = useDispatch();
   const [formData, setFormData] = useState({ email: "", password: "" });
 
   const handleClick = () => {
     window.location.href = api + "/oauth/login/cern";
+    // FIXME: We assume that the sign-up went successfully but we actually don't know.
+    // We should upgrade Invenio-OAuthClient to latest version that supports REST apps
+    // and adapt the whole workflow.
+    dispatch(
+      triggerNotification(
+        "Success!",
+        "User registered. Please confirm your email by clicking on the link we sent you."
+      )
+    );
   };
 
   const handleInputChange = (event) => {
