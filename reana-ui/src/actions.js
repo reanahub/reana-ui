@@ -143,6 +143,7 @@ function userSignFactory(initAction, succeedAction, actionURL, body) {
         headers: { "Content-Type": "application/json" },
       })
       .then((resp) => {
+        dispatch(clearNotification);
         dispatch({ type: succeedAction });
         dispatch(loadUser());
         if (initAction === USER_SIGNUP) {
