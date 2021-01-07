@@ -216,19 +216,14 @@ export function confirmUserEmail(token) {
       )
       .then((resp) => {
         dispatch({ type: USER_EMAIL_CONFIRMED });
-        dispatch(
-          triggerNotification(
-            "Success!",
-            "User email confirmed. You can sign in now."
-          )
-        );
-        return resp;
+        dispatch(triggerNotification("Success!", resp.data?.message));
       })
       .catch((err) => {
-        // adapt error format (remove array)
-        err.response.data.message = err.response.data.message[0];
+        // adapt error format coming from invenio-accounts (remove array)
+        if (Array.isArray(err.response?.data?.message)) {
+          err.response.data.message = err.response?.data?.message[0];
+        }
         dispatch(errorActionCreator(err, USER_EMAIL_CONFIRMATION_ERROR));
-        return err;
       });
   };
 }
