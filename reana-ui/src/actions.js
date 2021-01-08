@@ -14,6 +14,7 @@ import axios from "axios";
 import { api } from "./config";
 import { parseWorkflows, parseLogs, parseFiles } from "./util";
 import {
+  getConfig,
   getWorkflow,
   getWorkflowLogs,
   getWorkflowSpecification,
@@ -135,7 +136,10 @@ export function loadUser() {
 }
 
 function userSignFactory(initAction, succeedAction, actionURL, body) {
-  return async (dispatch) => {
+  return async (dispatch, getStore) => {
+    const state = getStore();
+    const { userConfirmation } = getConfig(state);
+
     dispatch({ type: initAction });
     return await axios
       .post(actionURL, body, {
@@ -150,7 +154,11 @@ function userSignFactory(initAction, succeedAction, actionURL, body) {
           dispatch(
             triggerNotification(
               "Success!",
-              "User registered. Please confirm your email by clicking on the link we sent you."
+              `User registered. ${
+                userConfirmation
+                  ? "Please confirm your email by clicking on the link we sent you."
+                  : ""
+              }`
             )
           );
         }

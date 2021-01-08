@@ -50,6 +50,7 @@ export const configInitialState = {
   localUsers: false,
   hideSignup: false,
   isLoaded: false,
+  userConfirmation: true,
   loading: false,
 };
 
@@ -114,6 +115,7 @@ const config = (state = configInitialState, action) => {
         adminEmail: action.admin_email,
         localUsers: action.local_users,
         hideSignup: action.hide_signup,
+        userConfirmation: action.user_confirmation,
         isLoaded: true,
         loading: false,
       };

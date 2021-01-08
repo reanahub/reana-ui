@@ -34,7 +34,11 @@ export default function Signin() {
     dispatch(
       triggerNotification(
         "Success!",
-        "User registered. Please confirm your email by clicking on the link we sent you."
+        `User registered. ${
+          config.userConfirmation
+            ? "Please confirm your email by clicking on the link we sent you."
+            : ""
+        }`
       )
     );
   };
