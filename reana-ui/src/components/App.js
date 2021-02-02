@@ -26,6 +26,7 @@ import Signin from "../pages/signin/Signin";
 import Signup from "../pages/signin/Signup";
 import WorkflowList from "../pages/workflowList/WorkflowList";
 import WorkflowDetails from "../pages/workflowDetails/WorkflowDetails";
+import PrivacyNotice from "../pages/privacyNotice/PrivacyNotice";
 import Profile from "../pages/profile/Profile";
 import Error from "./Error";
 
@@ -78,6 +79,7 @@ export default function App() {
             }
           />
           <Route path="/confirm/:token" component={Confirm} />
+          <Route path="/privacy-notice" component={PrivacyNotice} />
           <ProtectedRoute exact path="/" component={WorkflowList} />
           <ProtectedRoute path="/details/:id" component={WorkflowDetails} />
           <ProtectedRoute path="/profile" component={Profile} />
