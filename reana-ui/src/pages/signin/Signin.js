@@ -31,16 +31,14 @@ export default function Signin() {
     // FIXME: We assume that the sign-up went successfully but we actually don't know.
     // We should upgrade Invenio-OAuthClient to latest version that supports REST apps
     // and adapt the whole workflow.
-    dispatch(
-      triggerNotification(
-        "Success!",
-        `User registered. ${
-          config.userConfirmation
-            ? "Please confirm your email by clicking on the link we sent you."
-            : ""
-        }`
-      )
-    );
+    if (config.userConfirmation) {
+      dispatch(
+        triggerNotification(
+          "Success!",
+          "User registered. Please confirm your email by clicking on the link we sent you."
+        )
+      );
+    }
   };
 
   const handleInputChange = (event) => {
