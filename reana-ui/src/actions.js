@@ -19,6 +19,7 @@ import {
   stringifyQueryParams,
 } from "~/util";
 import {
+  getConfig,
   getWorkflow,
   getWorkflowLogs,
   getWorkflowSpecification,
@@ -45,6 +46,9 @@ export const USER_SIGNEDOUT = "User signed out";
 export const USER_REQUEST_TOKEN = "Request user token";
 export const USER_TOKEN_REQUESTED = "User token requested";
 export const USER_TOKEN_ERROR = "User token error";
+export const USER_EMAIL_CONFIRMATION = "User request email confirmation";
+export const USER_EMAIL_CONFIRMED = "User email confirmed";
+export const USER_EMAIL_CONFIRMATION_ERROR = "User email confirmation error";
 
 export const QUOTA_FETCH = "Fetch user quota info";
 export const QUOTA_RECEIVED = "User quota info received";
@@ -72,6 +76,7 @@ const USER_SIGNUP_URL = `${api}/api/register`;
 const USER_SIGNIN_URL = `${api}/api/login`;
 const USER_SIGNOUT_URL = `${api}/api/logout`;
 const USER_REQUEST_TOKEN_URL = `${api}/api/token`;
+const USER_CONFIRM_EMAIL_URL = `${api}/api/confirm-email`;
 const WORKFLOWS_URL = (params) =>
   `${api}/api/workflows?verbose=true&${stringifyQueryParams(params)}`;
 const WORKFLOW_LOGS_URL = (id) => `${api}/api/workflows/${id}/logs`;
@@ -149,7 +154,10 @@ export function loadUser() {
 }
 
 function userSignFactory(initAction, succeedAction, actionURL, body) {
-  return async (dispatch) => {
+  return async (dispatch, getStore) => {
+    const state = getStore();
+    const { userConfirmation } = getConfig(state);
+
     dispatch({ type: initAction });
     return await axios
       .post(actionURL, body, {
@@ -157,12 +165,30 @@ function userSignFactory(initAction, succeedAction, actionURL, body) {
         headers: { "Content-Type": "application/json" },
       })
       .then((resp) => {
+        dispatch(clearNotification);
         dispatch({ type: succeedAction });
         dispatch(loadUser());
+        if (initAction === USER_SIGNUP) {
+          dispatch(
+            triggerNotification(
+              "Success!",
+              `User registered. ${
+                userConfirmation
+                  ? "Please confirm your email by clicking on the link we sent you."
+                  : ""
+              }`
+            )
+          );
+        }
         return resp;
       })
       .catch((err) => {
-        dispatch({ type: USER_SIGN_ERROR, ...err.response.data });
+        // validation errors
+        if (err.response.data.errors) {
+          dispatch({ type: USER_SIGN_ERROR, ...err.response.data });
+        } else {
+          dispatch(errorActionCreator(err, USER_SIGN_ERROR));
+        }
         return err;
       });
   };
@@ -199,6 +225,32 @@ export function requestToken() {
       .catch((err) => {
         dispatch(errorActionCreator(err, USER_INFO_URL));
         dispatch({ type: USER_TOKEN_ERROR });
+      });
+  };
+}
+
+export function confirmUserEmail(token) {
+  return async (dispatch) => {
+    dispatch({ type: USER_EMAIL_CONFIRMATION });
+    return await axios
+      .post(
+        USER_CONFIRM_EMAIL_URL,
+        { token: token },
+        {
+          withCredentials: true,
+          headers: { "Content-Type": "application/json" },
+        }
+      )
+      .then((resp) => {
+        dispatch({ type: USER_EMAIL_CONFIRMED });
+        dispatch(triggerNotification("Success!", resp.data?.message));
+      })
+      .catch((err) => {
+        // adapt error format coming from invenio-accounts (remove array)
+        if (Array.isArray(err.response?.data?.message)) {
+          err.response.data.message = err.response?.data?.message[0];
+        }
+        dispatch(errorActionCreator(err, USER_EMAIL_CONFIRMATION_ERROR));
       });
   };
 }

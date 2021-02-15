@@ -14,11 +14,20 @@ import { Redirect, BrowserRouter, Route, Switch } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { Dimmer, Loader } from "semantic-ui-react";
 
-import { getUserFetchError, isSignedIn, loadingUser } from "~/selectors";
+import {
+  getUserFetchError,
+  isSignedIn,
+  isSignupHidden,
+  loadingUser,
+  loadingConfig,
+} from "~/selectors";
+import Confirm from "~/pages/signin/Confirm";
 import Signin from "~/pages/signin/Signin";
+import Signup from "~/pages/signin/Signup";
 import WorkflowList from "~/pages/workflowList/WorkflowList";
 import WorkflowDetails from "~/pages/workflowDetails/WorkflowDetails";
 import Profile from "~/pages/profile/Profile";
+import PrivacyNotice from "~/pages/privacyNotice/PrivacyNotice";
 import Error from "./Error";
 
 import "./App.module.scss";
@@ -42,13 +51,15 @@ function ProtectedRoute(props) {
 }
 
 export default function App() {
-  const loading = useSelector(loadingUser);
+  const userLoading = useSelector(loadingUser);
+  const configLoading = useSelector(loadingConfig);
+  const loading = userLoading || configLoading;
   const signedIn = useSelector(isSignedIn);
+  const signupHidden = useSelector(isSignupHidden);
   const error = useSelector(getUserFetchError);
   if (!isEmpty(error)) {
     return <Error title={error.statusText} message={error.message} />;
   }
-
   return (
     <BrowserRouter>
       {loading ? (
@@ -63,8 +74,12 @@ export default function App() {
           />
           <Route
             path="/signup"
-            render={() => (signedIn ? <Redirect to="/" /> : <Signin signup />)}
+            render={() =>
+              signedIn || signupHidden ? <Redirect to="/" /> : <Signup />
+            }
           />
+          <Route path="/confirm/:token" component={Confirm} />
+          <Route path="/privacy-notice" component={PrivacyNotice} />
           <ProtectedRoute exact path="/" component={WorkflowList} />
           <ProtectedRoute path="/details/:id" component={WorkflowDetails} />
           <ProtectedRoute path="/profile" component={Profile} />

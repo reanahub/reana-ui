@@ -16,6 +16,8 @@ export const getNotification = (state) => state.notification;
 // Config
 export const getConfig = (state) => state.config;
 export const isConfigLoaded = (state) => state.config.isLoaded;
+export const isSignupHidden = (state) => state.config.hideSignup;
+export const loadingConfig = (state) => state.config.loading;
 
 // Quota
 export const getUserQuota = (state) => state.quota;

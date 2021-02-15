@@ -11,6 +11,13 @@ Version 0.8.0 (UNRELEASED)
 - Adds filtering by status and search by name in workflow list page.
 - Adds import aliases.
 
+Version 0.7.2 (2021-02-04)
+--------------------------
+
+- Adds option to require user email confirmation after sign-up.
+- Adds option to display CERN Privacy Notice for CERN installations.
+- Changes notification system to improve sign-in and sign-up messages.
+
 Version 0.7.1 (2020-11-24)
 ---------------------------
 

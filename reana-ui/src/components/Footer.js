@@ -9,8 +9,9 @@
 */
 
 import React from "react";
-import { Icon } from "semantic-ui-react";
 import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
+import { Icon } from "semantic-ui-react";
 
 import { getConfig } from "~/selectors";
 
@@ -22,6 +23,11 @@ export default function Footer() {
     <footer className={styles["footer-bottom"]}>
       <span>Copyright © 2020 CERN</span>
       <span className={styles["links"]}>
+        {config.cernRopo && (
+          <Link to="/privacy-notice">
+            <Icon name="privacy"></Icon> Privacy Notice
+          </Link>
+        )}
         {config.docsURL && (
           <a href={config.docsURL} target="_blank" rel="noopener noreferrer">
             <Icon name="book"></Icon> Docs
