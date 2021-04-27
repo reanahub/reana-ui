@@ -19,7 +19,7 @@ import { WorkflowProgress } from "../components";
 import { JupyterNotebookIcon, WorkflowActionsPopup } from "~/components";
 import styles from "./WorkflowInfo.module.scss";
 
-const NON_FINISHED_STATUSES = ["created", "queued", "running"];
+const NON_FINISHED_STATUSES = ["created", "queued", "pending", "running"];
 
 export default function WorkflowInfo({ workflow }) {
   const {

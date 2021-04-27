@@ -28,6 +28,7 @@ export const statusMapping = {
     preposition: "after",
   },
   queued: { icon: "hourglass outline", color: "teal" },
+  pending: { icon: "hourglass half", color: "teal" },
   deleted: { icon: "eraser", color: "grey" },
 };
 
