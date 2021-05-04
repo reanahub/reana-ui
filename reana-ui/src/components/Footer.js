@@ -21,13 +21,14 @@ export default function Footer() {
   const config = useSelector(getConfig);
   return (
     <footer className={styles["footer-bottom"]}>
-      <span>Copyright © 2020 CERN</span>
-      <span className={styles["links"]}>
+      <span>
         {config.cernRopo && (
           <Link to="/privacy-notice">
             <Icon name="privacy"></Icon> Privacy Notice
           </Link>
         )}
+      </span>
+      <span className={styles["links"]}>
         {config.docsURL && (
           <a href={config.docsURL} target="_blank" rel="noopener noreferrer">
             <Icon name="book"></Icon> Docs
