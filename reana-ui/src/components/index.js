@@ -19,3 +19,4 @@ export { default as TooltipIfTruncated } from "./TooltipIfTruncated";
 export { default as JupyterNotebookIcon } from "./JupyterNotebookIcon";
 export { default as WorkflowDeleteModal } from "./WorkflowDeleteModal";
 export { default as WorkflowActionsPopup } from "./WorkflowActionsPopup";
+export { default as PieChart } from "./PieChart";

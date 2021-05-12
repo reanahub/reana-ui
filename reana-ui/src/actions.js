@@ -94,7 +94,7 @@ const INTERACTIVE_SESSIONS_OPEN_URL = (id, type = "jupyter") =>
 const INTERACTIVE_SESSIONS_CLOSE_URL = (id) =>
   `${api}/api/workflows/${id}/close/`;
 
-function errorActionCreator(error, name) {
+export function errorActionCreator(error, name) {
   const { status, data } = error?.response;
   const { message } = data;
   return {

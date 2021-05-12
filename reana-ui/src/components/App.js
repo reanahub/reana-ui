@@ -27,6 +27,7 @@ import WorkflowList from "~/pages/workflowList/WorkflowList";
 import WorkflowDetails from "~/pages/workflowDetails/WorkflowDetails";
 import Profile from "~/pages/profile/Profile";
 import PrivacyNotice from "~/pages/privacyNotice/PrivacyNotice";
+import Status from "~/pages/status/Status";
 import Error from "./Error";
 
 import "./App.module.scss";
@@ -82,6 +83,7 @@ export default function App() {
           <ProtectedRoute exact path="/" component={WorkflowList} />
           <ProtectedRoute path="/details/:id" component={WorkflowDetails} />
           <ProtectedRoute path="/profile" component={Profile} />
+          <ProtectedRoute path="/status" component={Status} />
         </Switch>
       )}
     </BrowserRouter>

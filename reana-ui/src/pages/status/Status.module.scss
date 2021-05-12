@@ -1,0 +1,33 @@
+/*
+  -*- coding: utf-8 -*-
+
+  This file is part of REANA.
+  Copyright (C) 2021 CERN.
+
+  REANA is free software; you can redistribute it and/or modify it
+  under the terms of the MIT License; see LICENSE file for more details.
+*/
+
+@import "@palette";
+
+:global(.ui.grid > .column:not(.row)).column {
+  display: flex;
+  align-items: center;
+  padding-top: 2em;
+}
+
+.container {
+  margin-top: 5em;
+
+  .status-details {
+    color: $raven;
+
+    :global(.ui.label).percentage {
+      margin-top: 1em;
+    }
+
+    .usage {
+      font-size: 0.8em;
+    }
+  }
+}

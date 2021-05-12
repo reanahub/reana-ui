@@ -33,6 +33,15 @@ export const statusMapping = {
 };
 
 /**
+ * Mapping between health statuses and Semantic-UI colors.
+ */
+export const healthMapping = {
+  healthy: "green",
+  warning: "orange",
+  critical: "red",
+};
+
+/**
  * Parses API data into displayable data
  */
 export function parseWorkflows(workflows) {

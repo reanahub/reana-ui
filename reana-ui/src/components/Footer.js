@@ -43,6 +43,9 @@ export default function Footer() {
             <Icon name="conversation"></Icon> Chat
           </a>
         )}
+        <Link to="/status">
+          <Icon name="heartbeat"></Icon>Cluster Health
+        </Link>
       </span>
     </footer>
   );

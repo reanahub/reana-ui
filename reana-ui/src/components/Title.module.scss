@@ -15,4 +15,9 @@
   padding-bottom: 0.25em;
   margin-bottom: 1em;
   border-bottom: 5px solid $sepia;
+  display: flex;
+
+  :global(.icon) {
+    font-size: 1em;
+  }
 }
