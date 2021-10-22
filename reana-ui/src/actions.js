@@ -266,10 +266,19 @@ export function fetchWorkflows(
     if (showLoader) {
       dispatch({ type: WORKFLOWS_FETCH });
     }
+    const nameSearch = search ? JSON.stringify({ name: [search] }) : search;
     return await axios
-      .get(WORKFLOWS_URL({ ...pagination, search, status, sort }), {
-        withCredentials: true,
-      })
+      .get(
+        WORKFLOWS_URL({
+          ...pagination,
+          search: nameSearch,
+          status,
+          sort,
+        }),
+        {
+          withCredentials: true,
+        }
+      )
       .then((resp) =>
         dispatch({
           type: WORKFLOWS_RECEIVED,
