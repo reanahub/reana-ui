@@ -2,7 +2,7 @@
   -*- coding: utf-8 -*-
 
   This file is part of REANA.
-  Copyright (C) 2020 CERN.
+  Copyright (C) 2020, 2021 CERN.
 
   REANA is free software; you can redistribute it and/or modify it
   under the terms of the MIT License; see LICENSE file for more details.
@@ -11,7 +11,7 @@
 import { useSelector } from "react-redux";
 import { Icon, Popup, Loader } from "semantic-ui-react";
 import PropTypes from "prop-types";
-import { useHistory } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 import { getReanaToken } from "~/selectors";
 import {
@@ -24,7 +24,6 @@ import { statusMapping, formatInteractiveSessionUri } from "~/util";
 import styles from "./WorkflowListItem.module.scss";
 
 export default function WorkflowListItem({ workflows, loading }) {
-  const history = useHistory();
   const reanaToken = useSelector(getReanaToken);
 
   if (loading) return <Loader active />;
@@ -54,9 +53,9 @@ export default function WorkflowListItem({ workflows, loading }) {
         const isDeletedUsingWorkspace = isDeleted && hasDiskUsage;
         const isSessionOpen = sessionStatus === "created";
         return (
-          <div
+          <Link
             key={id}
-            onClick={() => history.push(`/details/${id}`)}
+            to={`/details/${id}`}
             className={`${styles["workflow"]} ${
               isDeleted ? styles["deleted"] : ""
             }`}
@@ -124,10 +123,9 @@ export default function WorkflowListItem({ workflows, loading }) {
               workflow={workflow}
               className={styles.actions}
             />
-          </div>
+          </Link>
         );
       })}
-
       <WorkflowDeleteModal />
     </>
   );
