@@ -21,9 +21,9 @@ import {
 } from "~/components";
 import { statusMapping, formatInteractiveSessionUri } from "~/util";
 
-import styles from "./WorkflowList.module.scss";
+import styles from "./WorkflowListItem.module.scss";
 
-export default function WorkflowList({ workflows, loading }) {
+export default function WorkflowListItem({ workflows, loading }) {
   const history = useHistory();
   const reanaToken = useSelector(getReanaToken);
 
@@ -133,7 +133,7 @@ export default function WorkflowList({ workflows, loading }) {
   );
 }
 
-WorkflowList.propTypes = {
+WorkflowListItem.propTypes = {
   workflows: PropTypes.array.isRequired,
   loading: PropTypes.bool.isRequired,
 };
