@@ -9,7 +9,7 @@
 */
 
 import { useSelector } from "react-redux";
-import { Icon, Popup, Loader } from "semantic-ui-react";
+import { Icon, Loader, Message, Popup } from "semantic-ui-react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 
@@ -27,6 +27,9 @@ export default function WorkflowList({ workflows, loading }) {
   const reanaToken = useSelector(getReanaToken);
 
   if (loading) return <Loader active />;
+  if (!workflows.length) {
+    return <Message info icon="info circle" content="No workflows found." />;
+  }
   return (
     <>
       {workflows.map((workflow) => {
