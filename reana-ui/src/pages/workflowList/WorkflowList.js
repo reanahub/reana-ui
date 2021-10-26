@@ -28,7 +28,7 @@ import {
 import BasePage from "../BasePage";
 import { Title } from "~/components";
 import Welcome from "./components/Welcome";
-import WorkflowListItem from "./components/WorkflowListItem";
+import WorkflowList from "./components/WorkflowList";
 import { Pagination } from "~/components";
 
 import styles from "./WorkflowList.module.scss";
@@ -149,7 +149,7 @@ function Workflows() {
           sortDir={sortDir}
           setSortDir={applyFilter(setSortDir)}
         />
-        <WorkflowListItem workflows={workflowArray} loading={loading} />
+        <WorkflowList workflows={workflowArray} loading={loading} />
       </Container>
       {workflowsCount > PAGE_SIZE && !loading && (
         <Pagination
