@@ -65,51 +65,56 @@ export default function WorkflowList({ workflows, loading }) {
           >
             <div className={styles["details-box"]}>
               <Icon
+                className={styles["status-icon"]}
                 name={statusMapping[status].icon}
                 color={statusMapping[status].color}
-              />{" "}
-              <span className={styles.name}>{name}</span>
-              <span className={styles.run}>#{run}</span>
-              <span
-                className={`${styles.size} ${
-                  isDeletedUsingWorkspace ? styles.highlight : ""
-                }`}
-              >
-                {hasDiskUsage && (
-                  <>
-                    <Icon name="hdd" /> {size.human_readable}
-                  </>
-                )}
-              </span>
-              {isSessionOpen && (
-                <a
-                  href={formatInteractiveSessionUri(sessionUri, reanaToken)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={(e) => e.stopPropagation()}
-                  className={styles.notebook}
-                >
-                  <JupyterNotebookIcon />
-                </a>
-              )}
-              <Popup
-                trigger={
-                  <div>
-                    {friendlyFinished
-                      ? `Finished ${friendlyFinished}`
-                      : friendlyStarted
-                      ? `Started ${friendlyStarted}`
-                      : `Created ${friendlyCreated}`}
-                  </div>
-                }
-                content={
-                  friendlyFinished
-                    ? finishedDate
-                    : friendlyStarted
-                    ? startedDate
-                    : createdDate
-                }
               />
+              <div>
+                <span className={styles.name}>{name}</span>
+                <span className={styles.run}>#{run}</span>
+                <div>
+                  <span
+                    className={`${styles.size} ${
+                      isDeletedUsingWorkspace ? styles.highlight : ""
+                    }`}
+                  >
+                    {hasDiskUsage && (
+                      <>
+                        <Icon name="hdd" /> {size.human_readable}
+                      </>
+                    )}
+                  </span>
+                  {isSessionOpen && (
+                    <a
+                      href={formatInteractiveSessionUri(sessionUri, reanaToken)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={(e) => e.stopPropagation()}
+                      className={styles.notebook}
+                    >
+                      <JupyterNotebookIcon />
+                    </a>
+                  )}
+                </div>
+                <Popup
+                  trigger={
+                    <div>
+                      {friendlyFinished
+                        ? `Finished ${friendlyFinished}`
+                        : friendlyStarted
+                        ? `Started ${friendlyStarted}`
+                        : `Created ${friendlyCreated}`}
+                    </div>
+                  }
+                  content={
+                    friendlyFinished
+                      ? finishedDate
+                      : friendlyStarted
+                      ? startedDate
+                      : createdDate
+                  }
+                />
+              </div>
             </div>
             <div className={styles["status-box"]}>
               <span

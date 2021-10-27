@@ -34,7 +34,13 @@
   }
 
   .details-box {
+    display: flex;
+    align-items: baseline;
     flex-grow: 1;
+
+    .status-icon {
+      padding-right: 20px;
+    }
 
     .name {
       font-size: 1.3em;
@@ -46,7 +52,6 @@
 
     .size {
       font-size: 0.75em;
-      padding-left: 1em;
       color: $light-gray;
 
       &.highlight {
