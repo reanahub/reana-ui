@@ -11,7 +11,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import PropTypes from "prop-types";
-import axios from "axios";
 import sortBy from "lodash/sortBy";
 import {
   Button,
@@ -23,7 +22,6 @@ import {
   Message,
 } from "semantic-ui-react";
 
-import { api } from "~/config";
 import {
   getWorkflowFiles,
   getWorkflowFilesCount,
@@ -34,6 +32,7 @@ import { getMimeType } from "~/util";
 import { Pagination } from "~/components";
 
 import styles from "./WorkflowFiles.module.scss";
+import client, { WORKFLOW_FILE_URL } from "~/client";
 
 const PREVIEW_MIME_PREFIX_WHITELIST = {
   "image/": { serverPreviewable: true },
@@ -64,12 +63,7 @@ export default function WorkflowFiles({ id }) {
   }, [_files]);
 
   const getFileURL = (fileName, preview = true) =>
-    api +
-    "/api/workflows/" +
-    id +
-    "/workspace/" +
-    fileName +
-    (preview ? "?preview" : "");
+    WORKFLOW_FILE_URL(id, fileName, preview);
 
   /**
    * Check if the given file name matches any given mime-type
@@ -117,21 +111,16 @@ export default function WorkflowFiles({ id }) {
       setIsServerPreviewable(false);
       return;
     }
-    const url = getFileURL(fileName);
     const mimeType = matchesMimeType(
       Object.keys(PREVIEW_MIME_PREFIX_WHITELIST),
       fileName
     );
     const serverPreviewable =
       PREVIEW_MIME_PREFIX_WHITELIST[mimeType].serverPreviewable;
-    setModalContent(url);
+    setModalContent(getFileURL(fileName));
     setIsServerPreviewable(serverPreviewable);
     if (!serverPreviewable) {
-      axios({
-        method: "get",
-        url: url,
-        withCredentials: true,
-      }).then((res) => {
+      client.getWorkflowFile(id, fileName).then((res) => {
         let result = res.data;
         if (typeof result === "object") {
           result = JSON.stringify(result);

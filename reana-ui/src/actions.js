@@ -2,22 +2,26 @@
   -*- coding: utf-8 -*-
 
   This file is part of REANA.
-  Copyright (C) 2020 CERN.
+  Copyright (C) 2020, 2021 CERN.
 
   REANA is free software; you can redistribute it and/or modify it
   under the terms of the MIT License; see LICENSE file for more details.
 */
 
-import axios from "axios";
 import isEmpty from "lodash/isEmpty";
 
-import { api } from "~/config";
-import {
-  parseWorkflows,
-  parseLogs,
-  parseFiles,
-  stringifyQueryParams,
-} from "~/util";
+import client, {
+  CONFIG_URL,
+  USER_INFO_URL,
+  USER_SIGNOUT_URL,
+  WORKFLOW_LOGS_URL,
+  WORKFLOW_SPECIFICATION_URL,
+  WORKFLOW_FILES_URL,
+  WORKFLOW_SET_STATUS_URL,
+  INTERACTIVE_SESSIONS_OPEN_URL,
+  INTERACTIVE_SESSIONS_CLOSE_URL,
+} from "~/client";
+import { parseWorkflows, parseLogs, parseFiles } from "~/util";
 import {
   getConfig,
   getWorkflow,
@@ -70,30 +74,6 @@ export const OPEN_DELETE_WORKFLOW_MODAL = "Open delete workflow modal";
 export const CLOSE_DELETE_WORKFLOW_MODAL = "Close delete workflow modal";
 export const WORKFLOW_LIST_REFRESH = "Refresh workflow list";
 
-const CONFIG_URL = `${api}/api/config`;
-const USER_INFO_URL = `${api}/api/you`;
-const USER_SIGNUP_URL = `${api}/api/register`;
-const USER_SIGNIN_URL = `${api}/api/login`;
-const USER_SIGNOUT_URL = `${api}/api/logout`;
-const USER_REQUEST_TOKEN_URL = `${api}/api/token`;
-const USER_CONFIRM_EMAIL_URL = `${api}/api/confirm-email`;
-const WORKFLOWS_URL = (params) =>
-  `${api}/api/workflows?verbose=true&${stringifyQueryParams(params)}`;
-const WORKFLOW_LOGS_URL = (id) => `${api}/api/workflows/${id}/logs`;
-const WORKFLOW_SPECIFICATION_URL = (id) =>
-  `${api}/api/workflows/${id}/specification`;
-const WORKFLOW_FILES_URL = (id, pagination) =>
-  `${api}/api/workflows/${id}/workspace?${stringifyQueryParams(pagination)}`;
-
-const WORKFLOW_SET_STATUS_URL = (id, status) =>
-  `${api}/api/workflows/${id}/status?${stringifyQueryParams(status)}`;
-
-const INTERACTIVE_SESSIONS_OPEN_URL = (id, type = "jupyter") =>
-  `${api}/api/workflows/${id}/open/${type}`;
-
-const INTERACTIVE_SESSIONS_CLOSE_URL = (id) =>
-  `${api}/api/workflows/${id}/close/`;
-
 export function errorActionCreator(error, name) {
   const { status, data } = error?.response;
   const { message } = data;
@@ -115,8 +95,8 @@ export const clearNotification = { type: CLEAR_NOTIFICATION };
 export function loadConfig() {
   return async (dispatch) => {
     dispatch({ type: CONFIG_FETCH });
-    return await axios
-      .get(CONFIG_URL, { withCredentials: true })
+    return await client
+      .getConfig()
       .then((resp) => dispatch({ type: CONFIG_RECEIVED, ...resp.data }))
       .catch((err) => {
         dispatch(errorActionCreator(err, CONFIG_URL));
@@ -129,8 +109,8 @@ export function loadUser() {
   return async (dispatch) => {
     dispatch({ type: USER_FETCH });
     dispatch({ type: QUOTA_FETCH });
-    return await axios
-      .get(USER_INFO_URL, { withCredentials: true })
+    return await client
+      .getUser()
       .then((resp) => {
         dispatch({ type: USER_RECEIVED, ...resp.data });
         dispatch({ type: QUOTA_RECEIVED, ...resp.data });
@@ -153,17 +133,13 @@ export function loadUser() {
   };
 }
 
-function userSignFactory(initAction, succeedAction, actionURL, body) {
+function userSignFactory(initAction, succeedAction, request, body) {
   return async (dispatch, getStore) => {
     const state = getStore();
     const { userConfirmation } = getConfig(state);
 
     dispatch({ type: initAction });
-    return await axios
-      .post(actionURL, body, {
-        withCredentials: true,
-        headers: { "Content-Type": "application/json" },
-      })
+    return await request(body)
       .then((resp) => {
         dispatch(clearNotification);
         dispatch({ type: succeedAction });
@@ -195,18 +171,26 @@ function userSignFactory(initAction, succeedAction, actionURL, body) {
 }
 
 export const userSignup = (formData) =>
-  userSignFactory(USER_SIGNUP, USER_SIGNEDUP, USER_SIGNUP_URL, formData);
+  userSignFactory(
+    USER_SIGNUP,
+    USER_SIGNEDUP,
+    client.signUp.bind(client),
+    formData
+  );
 
 export const userSignin = (formData) =>
-  userSignFactory(USER_SIGNIN, USER_SIGNEDIN, USER_SIGNIN_URL, formData);
+  userSignFactory(
+    USER_SIGNIN,
+    USER_SIGNEDIN,
+    client.signIn.bind(client),
+    formData
+  );
 
 export function userSignout() {
   return async (dispatch) => {
     dispatch({ type: USER_SIGNOUT });
-    return await axios
-      .post(USER_SIGNOUT_URL, null, {
-        withCredentials: true,
-      })
+    return await client
+      .signOut()
       .then((resp) => {
         dispatch({ type: USER_SIGNEDOUT });
       })
@@ -219,8 +203,8 @@ export function userSignout() {
 export function requestToken() {
   return async (dispatch) => {
     dispatch({ type: USER_REQUEST_TOKEN });
-    return await axios
-      .put(USER_REQUEST_TOKEN_URL, null, { withCredentials: true })
+    return await client
+      .requestToken()
       .then((resp) => dispatch({ type: USER_TOKEN_REQUESTED, ...resp.data }))
       .catch((err) => {
         dispatch(errorActionCreator(err, USER_INFO_URL));
@@ -232,15 +216,8 @@ export function requestToken() {
 export function confirmUserEmail(token) {
   return async (dispatch) => {
     dispatch({ type: USER_EMAIL_CONFIRMATION });
-    return await axios
-      .post(
-        USER_CONFIRM_EMAIL_URL,
-        { token: token },
-        {
-          withCredentials: true,
-          headers: { "Content-Type": "application/json" },
-        }
-      )
+    return await client
+      .confirmEmail({ token })
       .then((resp) => {
         dispatch({ type: USER_EMAIL_CONFIRMED });
         dispatch(triggerNotification("Success!", resp.data?.message));
@@ -267,18 +244,8 @@ export function fetchWorkflows(
       dispatch({ type: WORKFLOWS_FETCH });
     }
     const nameSearch = search ? JSON.stringify({ name: [search] }) : search;
-    return await axios
-      .get(
-        WORKFLOWS_URL({
-          ...pagination,
-          search: nameSearch,
-          status,
-          sort,
-        }),
-        {
-          withCredentials: true,
-        }
-      )
+    return await client
+      .getWorkflows(pagination, nameSearch, status, sort)
       .then((resp) =>
         dispatch({
           type: WORKFLOWS_RECEIVED,
@@ -316,8 +283,8 @@ export function fetchWorkflowLogs(id) {
       return logs;
     }
     dispatch({ type: WORKFLOW_LOGS_FETCH });
-    return await axios
-      .get(WORKFLOW_LOGS_URL(id), { withCredentials: true })
+    return await client
+      .getWorkflowLogs(id)
       .then((resp) =>
         dispatch({
           type: WORKFLOW_LOGS_RECEIVED,
@@ -334,8 +301,8 @@ export function fetchWorkflowLogs(id) {
 export function fetchWorkflowFiles(id, pagination) {
   return async (dispatch) => {
     dispatch({ type: WORKFLOW_FILES_FETCH });
-    return await axios
-      .get(WORKFLOW_FILES_URL(id, pagination), { withCredentials: true })
+    return await client
+      .getWorkflowFiles(id, pagination)
       .then((resp) =>
         dispatch({
           type: WORKFLOW_FILES_RECEIVED,
@@ -360,10 +327,8 @@ export function fetchWorkflowSpecification(id) {
     }
 
     dispatch({ type: WORKFLOW_SPECIFICATION_FETCH });
-    return await axios
-      .get(WORKFLOW_SPECIFICATION_URL(id), {
-        withCredentials: true,
-      })
+    return await client
+      .getWorkflowSpec(id)
       .then((resp) =>
         dispatch({
           type: WORKFLOW_SPECIFICATION_RECEIVED,
@@ -381,12 +346,8 @@ export function fetchWorkflowSpecification(id) {
 export function deleteWorkflow(id, workspace = false) {
   return async (dispatch) => {
     dispatch({ type: WORKFLOW_DELETE_INIT });
-    return await axios
-      .put(
-        WORKFLOW_SET_STATUS_URL(id, { status: "deleted" }),
-        { workspace },
-        { withCredentials: true }
-      )
+    return await client
+      .deleteWorkflow(id, { workspace })
       .then((resp) => {
         dispatch({ type: WORKFLOW_DELETED, ...resp.data });
         dispatch({ type: WORKFLOW_LIST_REFRESH });
@@ -413,8 +374,8 @@ export function closeDeleteWorkflowModal() {
 
 export function openInteractiveSession(id) {
   return async (dispatch) => {
-    return await axios
-      .post(INTERACTIVE_SESSIONS_OPEN_URL(id), null, { withCredentials: true })
+    return await client
+      .openInteractiveSession(id)
       .then((resp) => {
         dispatch({ type: WORKFLOW_LIST_REFRESH });
       })
@@ -426,8 +387,8 @@ export function openInteractiveSession(id) {
 
 export function closeInteractiveSession(id) {
   return async (dispatch) => {
-    return await axios
-      .post(INTERACTIVE_SESSIONS_CLOSE_URL(id), null, { withCredentials: true })
+    return await client
+      .closeInteractiveSession(id)
       .then((resp) => {
         dispatch({ type: WORKFLOW_LIST_REFRESH });
         dispatch(triggerNotification("Success!", resp.data.message));

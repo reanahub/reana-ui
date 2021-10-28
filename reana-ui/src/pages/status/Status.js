@@ -11,12 +11,11 @@
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { Container, Grid, Icon, Label, Loader } from "semantic-ui-react";
-import axios from "axios";
 
 import BasePage from "../BasePage";
 import { errorActionCreator } from "~/actions";
+import client from "~/client";
 import { Title, PieChart } from "~/components";
-import { api } from "~/config";
 import { healthMapping } from "~/util";
 
 import styles from "./Status.module.scss";
@@ -29,11 +28,8 @@ export default function Status() {
   useEffect(() => {
     const getClusterStatus = () => {
       setLoading(true);
-      axios({
-        method: "get",
-        url: api + "/api/status",
-        withCredentials: true,
-      })
+      client
+        .getClusterStatus()
         .then((res) => {
           setStatus(res.data);
           setLoading(false);

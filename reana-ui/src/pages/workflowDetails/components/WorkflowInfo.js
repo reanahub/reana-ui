@@ -12,8 +12,9 @@ import { useSelector } from "react-redux";
 import PropTypes from "prop-types";
 import { Icon, Popup } from "semantic-ui-react";
 
+import { INTERACTIVE_SESSION_URL } from "~/client";
 import { getReanaToken } from "~/selectors";
-import { statusMapping, formatInteractiveSessionUri } from "~/util";
+import { statusMapping } from "~/util";
 import { WorkflowProgress } from "../components";
 import { JupyterNotebookIcon, WorkflowActionsPopup } from "~/components";
 import styles from "./WorkflowInfo.module.scss";
@@ -51,7 +52,7 @@ export default function WorkflowInfo({ workflow }) {
           <span className={styles["run"]}>#{run}</span>
           {isSessionOpen && (
             <a
-              href={formatInteractiveSessionUri(sessionUri, reanaToken)}
+              href={INTERACTIVE_SESSION_URL(sessionUri, reanaToken)}
               target="_blank"
               rel="noopener noreferrer"
               onClick={(e) => e.stopPropagation()}

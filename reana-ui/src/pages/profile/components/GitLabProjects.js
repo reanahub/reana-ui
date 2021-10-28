@@ -8,16 +8,13 @@
   under the terms of the MIT License; see LICENSE file for more details.
 */
 
+import isEmpty from "lodash/isEmpty";
 import { useEffect, useState } from "react";
 import { Button, List, Loader, Radio, Message, Icon } from "semantic-ui-react";
 
-import axios from "axios";
-import isEmpty from "lodash/isEmpty";
-import { api } from "~/config";
+import client, { GITLAB_AUTH_URL } from "~/client";
 
 import styles from "./GitLabProjects.module.scss";
-
-const GITLAB_AUTH_URL = api + "/api/gitlab/connect";
 
 export default function GitLabProjects() {
   const [projects, setProjects] = useState(null);
@@ -29,11 +26,8 @@ export default function GitLabProjects() {
      */
     const getProjects = () => {
       setFetchingProjects(true);
-      axios({
-        method: "get",
-        url: api + "/api/gitlab/projects",
-        withCredentials: true,
-      })
+      client
+        .getGitlabProjects()
         .then((res) => {
           setProjects(res.data);
           setFetchingProjects(false);
@@ -60,12 +54,8 @@ export default function GitLabProjects() {
       expectedStatus = 204;
     }
 
-    axios({
-      method: method,
-      url: api + "/api/gitlab/webhook",
-      data: data,
-      withCredentials: true,
-    })
+    client
+      .toggleGitlabProject(method, data)
       .then((res) => {
         if (res.status === expectedStatus) {
           setProjects({

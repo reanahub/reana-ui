@@ -16,7 +16,7 @@ import { Link } from "react-router-dom";
 import { getConfig } from "~/selectors";
 import SignForm from "./components/SignForm";
 import SignContainer from "./components/SignContainer";
-import { api } from "~/config";
+import { USER_OAUTH_SIGNIN_URL } from "~/client";
 import { triggerNotification, userSignin } from "~/actions";
 import { useSubmit } from "~/hooks";
 
@@ -27,7 +27,7 @@ export default function Signin() {
   const [formData, setFormData] = useState({ email: "", password: "" });
 
   const handleClick = () => {
-    window.location.href = api + "/oauth/login/cern";
+    window.location.href = USER_OAUTH_SIGNIN_URL;
     // FIXME: We assume that the sign-up went successfully but we actually don't know.
     // We should upgrade Invenio-OAuthClient to latest version that supports REST apps
     // and adapt the whole workflow.

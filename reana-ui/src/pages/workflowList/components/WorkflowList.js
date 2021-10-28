@@ -13,13 +13,14 @@ import { Icon, Loader, Message, Popup } from "semantic-ui-react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 
+import { INTERACTIVE_SESSION_URL } from "~/client";
 import { getReanaToken } from "~/selectors";
 import {
   JupyterNotebookIcon,
   WorkflowActionsPopup,
   WorkflowDeleteModal,
 } from "~/components";
-import { statusMapping, formatInteractiveSessionUri } from "~/util";
+import { statusMapping } from "~/util";
 
 import styles from "./WorkflowList.module.scss";
 
@@ -86,7 +87,7 @@ export default function WorkflowList({ workflows, loading }) {
                   </span>
                   {isSessionOpen && (
                     <a
-                      href={formatInteractiveSessionUri(sessionUri, reanaToken)}
+                      href={INTERACTIVE_SESSION_URL(sessionUri, reanaToken)}
                       target="_blank"
                       rel="noopener noreferrer"
                       onClick={(e) => e.stopPropagation()}
