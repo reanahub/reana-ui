@@ -132,6 +132,7 @@ const config = (state = configInitialState, action) => {
         localUsers: action.local_users,
         hideSignup: action.hide_signup,
         userConfirmation: action.user_confirmation,
+        quotaEnabled: action.quota_enabled,
         isLoaded: true,
         loading: false,
       };

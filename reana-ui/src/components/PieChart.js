@@ -48,7 +48,7 @@ export default function PieChart({
 PieChart.propTypes = {
   title: PropTypes.string,
   value: PropTypes.number,
-  totalValue: PropTypes.number.isRequired,
+  totalValue: PropTypes.number,
   fillColor: PropTypes.string,
   backgroundColor: PropTypes.string,
 };
@@ -56,6 +56,7 @@ PieChart.propTypes = {
 PieChart.defaultProps = {
   title: null,
   value: 0,
+  totalValue: null,
   fillColor: DARK_SEPIA_COLOR,
   backgroundColor: SEPIA_COLOR,
 };
