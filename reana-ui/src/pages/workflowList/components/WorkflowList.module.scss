@@ -51,8 +51,9 @@
     }
 
     .size {
-      font-size: 0.75em;
       color: $light-gray;
+      font-size: 0.75em;
+      margin-right: 0.75em;
 
       &.highlight {
         color: $sui-red;
@@ -85,7 +86,5 @@
 
   .notebook {
     font-size: 0.85em;
-    margin-left: 1em;
-    margin: 0.7em;
   }
 }

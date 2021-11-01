@@ -74,17 +74,15 @@ export default function WorkflowList({ workflows, loading }) {
                 <span className={styles.name}>{name}</span>
                 <span className={styles.run}>#{run}</span>
                 <div>
-                  <span
-                    className={`${styles.size} ${
-                      isDeletedUsingWorkspace ? styles.highlight : ""
-                    }`}
-                  >
-                    {hasDiskUsage && (
-                      <>
-                        <Icon name="hdd" /> {size.human_readable}
-                      </>
-                    )}
-                  </span>
+                  {hasDiskUsage && (
+                    <span
+                      className={`${styles.size} ${
+                        isDeletedUsingWorkspace ? styles.highlight : ""
+                      }`}
+                    >
+                      <Icon name="hdd" /> {size.human_readable}
+                    </span>
+                  )}
                   {isSessionOpen && (
                     <a
                       href={INTERACTIVE_SESSION_URL(sessionUri, reanaToken)}

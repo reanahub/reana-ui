@@ -43,7 +43,9 @@ export default function WorkflowDeleteModal() {
           <Checkbox
             checked={deleteWorkspace}
             onChange={(_, data) => setDeleteWorkspace(data.checked)}
-            label={`Delete also workflow workspace (free up ${size.human_readable}) `}
+            label={`Delete also workflow workspace ${
+              size.human_readable ? `(free up ${size.human_readable})` : ""
+            } `}
           />
         </>
       </Modal.Content>
