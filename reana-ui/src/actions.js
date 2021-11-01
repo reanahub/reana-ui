@@ -345,7 +345,17 @@ export function fetchWorkflowFiles(id, pagination) {
         })
       )
       .catch((err) => {
-        dispatch(errorActionCreator(err, WORKFLOW_FILES_URL(id, pagination)));
+        // 404 Not Found, workspace was deleted.
+        if (err.response.status === 404) {
+          dispatch({
+            type: WORKFLOW_FILES_RECEIVED,
+            id,
+            files: null,
+            total: 0,
+          });
+        } else {
+          dispatch(errorActionCreator(err, WORKFLOW_FILES_URL(id, pagination)));
+        }
       });
   };
 }
