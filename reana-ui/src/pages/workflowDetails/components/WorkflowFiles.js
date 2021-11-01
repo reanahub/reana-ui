@@ -48,7 +48,7 @@ export default function WorkflowFiles({ id }) {
   const _files = useSelector(getWorkflowFiles(id));
   const filesCount = useSelector(getWorkflowFilesCount(id));
 
-  const [files, setFiles] = useState(null);
+  const [files, setFiles] = useState();
   const [modalContent, setModalContent] = useState(null);
   const [sorting, setSorting] = useState({ column: null, direction: null });
   const [isServerPreviewable, setIsServerPreviewable] = useState(false);
@@ -162,8 +162,16 @@ export default function WorkflowFiles({ id }) {
     />
   );
 
-  return loading ? (
-    <Loader active inline="centered" />
+  if (loading) {
+    return <Loader active inline="centered" />;
+  }
+
+  return !files ? (
+    <Message
+      icon="info circle"
+      content="The workflow workspace was deleted."
+      info
+    />
   ) : (
     <Segment>
       <Table fixed compact basic="very">
