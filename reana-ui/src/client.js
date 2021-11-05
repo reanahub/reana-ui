@@ -17,7 +17,7 @@ import { stringifyQueryParams } from "~/util";
 export const CONFIG_URL = `${api}/api/config`;
 export const USER_INFO_URL = `${api}/api/you`;
 export const USER_SIGNUP_URL = `${api}/api/register`;
-export const USER_OAUTH_SIGNIN_URL = `${api}/oauth/login/cern"`;
+export const USER_OAUTH_SIGNIN_URL = `${api}/oauth/login/cern`;
 export const USER_SIGNIN_URL = `${api}/api/login`;
 export const USER_SIGNOUT_URL = `${api}/api/logout`;
 export const USER_REQUEST_TOKEN_URL = `${api}/api/token`;
