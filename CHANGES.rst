@@ -10,6 +10,7 @@ Version 0.8.0 (UNRELEASED)
 - Adds the possibility of deleting workflows to save disk space.
 - Adds filtering by status and search by name in workflow list page.
 - Adds import aliases.
+- Adds cluster health status page.
 
 Version 0.7.2 (2021-02-04)
 --------------------------
