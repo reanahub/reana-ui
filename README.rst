@@ -2,8 +2,8 @@
 REANA-UI
 ########
 
-.. image:: https://img.shields.io/travis/reanahub/reana-ui.svg
-   :target: https://travis-ci.org/reanahub/reana-ui
+.. image:: https://github.com/reanahub/reana-ui/workflows/CI/badge.svg
+   :target: https://github.com/reanahub/reana-ui/actions
 
 .. image:: https://readthedocs.org/projects/reana-ui/badge/?version=latest
    :target: https://reana-ui.readthedocs.io/en/latest/?badge=latest
