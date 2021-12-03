@@ -16,6 +16,7 @@ const DARK_SEPIA_COLOR = "#b68181";
 
 export default function PieChart({
   title,
+  data,
   value,
   totalValue,
   fillColor,
@@ -23,13 +24,15 @@ export default function PieChart({
 }) {
   return (
     <ReactMinimalPieChart
-      data={[
-        {
-          title: title,
-          value: value,
-          color: fillColor,
-        },
-      ]}
+      data={
+        data || [
+          {
+            title: title,
+            value: value,
+            color: fillColor,
+          },
+        ]
+      }
       lineWidth={30}
       background={backgroundColor}
       totalValue={totalValue}
@@ -47,6 +50,7 @@ export default function PieChart({
 
 PieChart.propTypes = {
   title: PropTypes.string,
+  data: PropTypes.arrayOf(PropTypes.object),
   value: PropTypes.number,
   totalValue: PropTypes.number,
   fillColor: PropTypes.string,
@@ -56,6 +60,7 @@ PieChart.propTypes = {
 PieChart.defaultProps = {
   title: null,
   value: 0,
+  data: null,
   totalValue: null,
   fillColor: DARK_SEPIA_COLOR,
   backgroundColor: SEPIA_COLOR,

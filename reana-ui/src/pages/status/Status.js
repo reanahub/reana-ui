@@ -20,6 +20,20 @@ import { healthMapping } from "~/util";
 
 import styles from "./Status.module.scss";
 
+const statusColorMapping = {
+  available: "#76c99b", // light green
+  running: "#36a165", // green
+  pending: "#e5975e", // orange
+  unschedulable: "#e55e5e", // red
+};
+
+const getDataSeries = (values) =>
+  Object.entries(values).map(([title, value]) => ({
+    title,
+    value,
+    color: statusColorMapping[title],
+  }));
+
 export default function Status() {
   const [status, setStatus] = useState();
   const [loading, setLoading] = useState(false);
@@ -48,16 +62,28 @@ export default function Status() {
     node: ({ available, unschedulable, ...rest }) => ({
       title: "Nodes",
       details: [`${available} available`, `${unschedulable} unschedulable`],
+      data: getDataSeries({ unschedulable, available }),
       ...rest,
     }),
-    workflow: ({ running, queued, pending, ...rest }) => ({
+    workflow: ({ running, pending, queued, available, ...rest }) => ({
       title: "Workflows",
-      details: [`${running} running`, `${pending} pending`, `${queued} queued`],
+      details: [
+        `${running} running`,
+        `${pending} pending`,
+        `${queued} queued`,
+        `${available} available`,
+      ],
+      data: getDataSeries({ running, pending, available }),
       ...rest,
     }),
-    job: ({ running, pending, ...rest }) => ({
+    job: ({ running, pending, available, ...rest }) => ({
       title: "Jobs",
-      details: [`${running} running`, `${pending} pending`],
+      details: [
+        `${running} running`,
+        `${pending} pending`,
+        `${available} available`,
+      ],
+      data: getDataSeries({ running, pending, available }),
       ...rest,
     }),
     session: ({ active, ...rest }) => ({
@@ -67,20 +93,21 @@ export default function Status() {
     }),
   };
 
-  const pieChartHealthMapping = {
-    healthy: "#dbbf2b", // yellow
-    warning: "#e5975e", // orange
-    critical: "#e55e5e", // red
-  };
-
-  const renderPieChart = ({ title, details, percentage, health }) => {
+  const renderPieChart = ({
+    title,
+    details,
+    data,
+    total,
+    percentage,
+    health,
+  }) => {
     return (
       <Grid.Column className={styles.column} key={title}>
         <PieChart
+          data={data}
           value={percentage}
-          totalValue={100}
-          fillColor={pieChartHealthMapping[health]}
-          backgroundColor="mediumseagreen"
+          totalValue={total || 100}
+          backgroundColor="#76c99b"
         />
         <div className={styles["status-details"]}>
           <div className={styles.usage}>
