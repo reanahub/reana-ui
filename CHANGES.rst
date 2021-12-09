@@ -1,6 +1,11 @@
 Changes
 =======
 
+Version 0.8.1 (UNRELEASED)
+---------------------------
+
+- Changes cluster health status page to represent availability instead of usage.
+
 Version 0.8.0 (2021-11-22)
 ---------------------------
 

@@ -21,7 +21,7 @@ import { healthMapping } from "~/util";
 import styles from "./Status.module.scss";
 
 const statusColorMapping = {
-  available: "#76c99b", // light green
+  available: "#9dd9b8", // light green
   running: "#36a165", // green
   pending: "#e5975e", // orange
   unschedulable: "#e55e5e", // red
@@ -59,19 +59,27 @@ export default function Status() {
   }, [dispatch]);
 
   const serialize = {
-    node: ({ available, unschedulable, ...rest }) => ({
-      title: "Nodes",
-      details: [`${available} available`, `${unschedulable} unschedulable`],
-      data: getDataSeries({ unschedulable, available }),
-      ...rest,
-    }),
+    node: ({ available, unschedulable, ...rest }) => {
+      return {
+        title: "Nodes",
+        details: [`${available} available`, `${unschedulable} unschedulable`],
+        data: getDataSeries({
+          unschedulable,
+          // display as running color if there are workflows running
+          [!!status.workflow.running ? "running" : "queued"]: available,
+        }),
+        ...rest,
+      };
+    },
     workflow: ({ running, pending, queued, available, ...rest }) => ({
       title: "Workflows",
       details: [
         `${running} running`,
         `${pending} pending`,
-        `${queued} queued`,
         `${available} available`,
+        <span
+          className={queued > 0 ? styles.highlight : ""}
+        >{`${queued} queued`}</span>,
       ],
       data: getDataSeries({ running, pending, available }),
       ...rest,
@@ -89,6 +97,8 @@ export default function Status() {
     session: ({ active, ...rest }) => ({
       title: "Notebooks",
       details: [`${active} active`],
+      data: [{ value: active, color: statusColorMapping["running"] }],
+      total: active,
       ...rest,
     }),
   };
@@ -107,7 +117,7 @@ export default function Status() {
           data={data}
           value={percentage}
           totalValue={total || 100}
-          backgroundColor="#76c99b"
+          backgroundColor={statusColorMapping.available}
         />
         <div className={styles["status-details"]}>
           <div className={styles.usage}>

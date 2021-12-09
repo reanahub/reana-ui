@@ -28,6 +28,11 @@
 
     .usage {
       font-size: 0.8em;
+
+      .highlight {
+        color: teal;
+        font-weight: bold;
+      }
     }
   }
 }
