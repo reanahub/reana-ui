@@ -35,10 +35,45 @@ import styles from "./WorkflowFiles.module.scss";
 import client, { WORKFLOW_FILE_URL } from "~/client";
 
 const PREVIEW_MIME_PREFIX_WHITELIST = {
-  "image/": { serverPreviewable: true },
-  "text/": { serverPreviewable: false },
-  "application/json": { serverPreviewable: false },
+  "image/": {
+    serverPreviewable: true,
+    display: (content, alt) => <img src={content} alt={alt} />,
+  },
+  "text/html": {
+    serverPreviewable: true,
+    display: (content) => {
+      return (
+        <Message
+          icon="info circle"
+          info
+          content={
+            <div className={styles["html-message"]}>
+              <span>Visualise this HTML file in a different tab.</span>
+              <Button
+                icon="external"
+                as="a"
+                href={content}
+                target="_blank"
+                rel="noopener noreferrer"
+                content="Open"
+                primary
+              />
+            </div>
+          }
+        />
+      );
+    },
+  },
+  "text/": {
+    serverPreviewable: false,
+    display: (content) => content,
+  },
+  "application/json": {
+    serverPreviewable: false,
+    display: (content) => content,
+  },
 };
+
 const FILE_SIZE_LIMIT = 5 * 1024 ** 2; // 5MB
 const PAGE_SIZE = 15;
 
@@ -51,7 +86,7 @@ export default function WorkflowFiles({ id }) {
   const [files, setFiles] = useState();
   const [modalContent, setModalContent] = useState(null);
   const [sorting, setSorting] = useState({ column: null, direction: null });
-  const [isServerPreviewable, setIsServerPreviewable] = useState(false);
+  const [displayContent, setDisplayContent] = useState(() => () => null);
   const [pagination, setPagination] = useState({ page: 1, size: PAGE_SIZE });
 
   useEffect(() => {
@@ -63,7 +98,7 @@ export default function WorkflowFiles({ id }) {
   }, [_files]);
 
   const getFileURL = (fileName, preview = true) =>
-    WORKFLOW_FILE_URL(id, fileName, preview);
+    WORKFLOW_FILE_URL(id, fileName, { preview });
 
   /**
    * Check if the given file name matches any given mime-type
@@ -108,17 +143,17 @@ export default function WorkflowFiles({ id }) {
     const message = checkConstraints(fileName, size);
     if (message) {
       setModalContent(message);
-      setIsServerPreviewable(false);
+      setDisplayContent(() => (content) => content);
       return;
     }
     const mimeType = matchesMimeType(
       Object.keys(PREVIEW_MIME_PREFIX_WHITELIST),
       fileName
     );
-    const serverPreviewable =
-      PREVIEW_MIME_PREFIX_WHITELIST[mimeType].serverPreviewable;
+    const { serverPreviewable, display } =
+      PREVIEW_MIME_PREFIX_WHITELIST[mimeType];
     setModalContent(getFileURL(fileName));
-    setIsServerPreviewable(serverPreviewable);
+    setDisplayContent(() => display);
     if (!serverPreviewable) {
       client.getWorkflowFile(id, fileName).then((res) => {
         let result = res.data;
@@ -220,11 +255,9 @@ export default function WorkflowFiles({ id }) {
               >
                 <Modal.Header>{name}</Modal.Header>
                 <Modal.Content scrolling>
-                  {isServerPreviewable ? (
-                    <img src={modalContent} alt={name} />
-                  ) : (
-                    modalContent
-                  )}
+                  {displayContent &&
+                    modalContent &&
+                    displayContent(modalContent, name)}
                 </Modal.Content>
                 <Modal.Actions>
                   <Button primary as="a" href={getFileURL(name, false)}>
