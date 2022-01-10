@@ -131,7 +131,6 @@ export function parseFiles(files) {
  */
 export function getMimeType(fileName) {
   // Formats not considered by mime npm package
-  // TODO: Add tests
   const WHITELIST = [".py", "Snakefile"];
   if (WHITELIST.find((ext) => fileName.endsWith(ext))) {
     return "text/plain";
