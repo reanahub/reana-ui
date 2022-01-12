@@ -2,7 +2,7 @@
 	-*- coding: utf-8 -*-
 
 	This file is part of REANA.
-	Copyright (C) 2020 CERN.
+	Copyright (C) 2020, 2021, 2022 CERN.
 
   REANA is free software; you can redistribute it and/or modify it
   under the terms of the MIT License; see LICENSE file for more details.
@@ -28,11 +28,15 @@ import {
   loadingDetails,
 } from "~/selectors";
 import { fetchWorkflowFiles } from "~/actions";
+import client, { WORKFLOW_FILE_URL } from "~/client";
 import { getMimeType } from "~/util";
-import { Pagination } from "~/components";
+import { Pagination, Search } from "~/components";
+import { applyFilter } from "~/components/Search";
 
 import styles from "./WorkflowFiles.module.scss";
-import client, { WORKFLOW_FILE_URL } from "~/client";
+
+const FILE_SIZE_LIMIT = 5 * 1024 ** 2; // 5MB
+const PAGE_SIZE = 15;
 
 const PREVIEW_MIME_PREFIX_WHITELIST = {
   "image/": {
@@ -74,9 +78,6 @@ const PREVIEW_MIME_PREFIX_WHITELIST = {
   },
 };
 
-const FILE_SIZE_LIMIT = 5 * 1024 ** 2; // 5MB
-const PAGE_SIZE = 15;
-
 export default function WorkflowFiles({ id }) {
   const dispatch = useDispatch();
   const loading = useSelector(loadingDetails);
@@ -88,10 +89,11 @@ export default function WorkflowFiles({ id }) {
   const [sorting, setSorting] = useState({ column: null, direction: null });
   const [displayContent, setDisplayContent] = useState(() => () => null);
   const [pagination, setPagination] = useState({ page: 1, size: PAGE_SIZE });
+  const [searchFilter, setSearchFilter] = useState();
 
   useEffect(() => {
-    dispatch(fetchWorkflowFiles(id, pagination));
-  }, [dispatch, id, pagination]);
+    dispatch(fetchWorkflowFiles(id, pagination, searchFilter));
+  }, [dispatch, id, pagination, searchFilter]);
 
   useEffect(() => {
     setFiles(_files);
@@ -197,10 +199,6 @@ export default function WorkflowFiles({ id }) {
     />
   );
 
-  if (loading) {
-    return <Loader active inline="centered" />;
-  }
-
   return !files ? (
     <Message
       icon="info circle"
@@ -208,80 +206,89 @@ export default function WorkflowFiles({ id }) {
       info
     />
   ) : (
-    <Segment>
-      <Table fixed compact basic="very">
-        <Table.Header className={styles["table-header"]}>
-          <Table.Row>
-            <Table.HeaderCell
-              sorted={sorting.column === "name" ? sorting.direction : null}
-              onClick={() => handleSort("name")}
-            >
-              Name {headerIcon("name")}
-            </Table.HeaderCell>
-            <Table.HeaderCell
-              sorted={
-                sorting.column === "lastModified" ? sorting.direction : null
-              }
-              onClick={() => handleSort("lastModified")}
-            >
-              Modified {headerIcon("lastModified")}
-            </Table.HeaderCell>
-            <Table.HeaderCell
-              sorted={sorting.column === "size" ? sorting.direction : null}
-              onClick={() => handleSort("size")}
-            >
-              Size {headerIcon("size")}
-            </Table.HeaderCell>
-          </Table.Row>
-        </Table.Header>
+    <>
+      <Search
+        search={applyFilter(setSearchFilter, pagination, setPagination)}
+      />
+      {loading ? (
+        <Loader active inline="centered" />
+      ) : (
+        <Segment>
+          <Table fixed compact basic="very">
+            <Table.Header className={styles["table-header"]}>
+              <Table.Row>
+                <Table.HeaderCell
+                  sorted={sorting.column === "name" ? sorting.direction : null}
+                  onClick={() => handleSort("name")}
+                >
+                  Name {headerIcon("name")}
+                </Table.HeaderCell>
+                <Table.HeaderCell
+                  sorted={
+                    sorting.column === "lastModified" ? sorting.direction : null
+                  }
+                  onClick={() => handleSort("lastModified")}
+                >
+                  Modified {headerIcon("lastModified")}
+                </Table.HeaderCell>
+                <Table.HeaderCell
+                  sorted={sorting.column === "size" ? sorting.direction : null}
+                  onClick={() => handleSort("size")}
+                >
+                  Size {headerIcon("size")}
+                </Table.HeaderCell>
+              </Table.Row>
+            </Table.Header>
 
-        <Table.Body>
-          {files &&
-            files.map(({ name, lastModified, size }) => (
-              <Modal
-                key={name}
-                onOpen={() => getFile(name, size.raw)}
-                closeIcon
-                trigger={
-                  <Table.Row className={styles["files-row"]}>
-                    <Table.Cell>
-                      <Icon name="file" />
-                      {name}
-                    </Table.Cell>
-                    <Table.Cell>{lastModified}</Table.Cell>
-                    <Table.Cell>{size.raw}</Table.Cell>
-                  </Table.Row>
-                }
-              >
-                <Modal.Header>{name}</Modal.Header>
-                <Modal.Content scrolling>
-                  {displayContent &&
-                    modalContent &&
-                    displayContent(modalContent, name)}
-                </Modal.Content>
-                <Modal.Actions>
-                  <Button primary as="a" href={getFileURL(name, false)}>
-                    <Icon name="download" /> Download
-                  </Button>
-                </Modal.Actions>
-              </Modal>
-            ))}
-        </Table.Body>
-      </Table>
-      {filesCount > PAGE_SIZE && (
-        <div className={styles["pagination-wrapper"]}>
-          <Pagination
-            activePage={pagination.page}
-            totalPages={Math.ceil(filesCount / PAGE_SIZE)}
-            onPageChange={(_, { activePage }) => {
-              setPagination({ ...pagination, page: activePage });
-              resetSort();
-            }}
-            size="mini"
-          />
-        </div>
+            <Table.Body>
+              {files &&
+                files.map(({ name, lastModified, size }) => (
+                  <Modal
+                    key={name}
+                    onOpen={() => getFile(name, size.raw)}
+                    closeIcon
+                    trigger={
+                      <Table.Row className={styles["files-row"]}>
+                        <Table.Cell>
+                          <Icon name="file" />
+                          {name}
+                        </Table.Cell>
+                        <Table.Cell>{lastModified}</Table.Cell>
+                        <Table.Cell>{size.raw}</Table.Cell>
+                      </Table.Row>
+                    }
+                  >
+                    <Modal.Header>{name}</Modal.Header>
+                    <Modal.Content scrolling>
+                      {displayContent &&
+                        modalContent &&
+                        displayContent(modalContent, name)}
+                    </Modal.Content>
+                    <Modal.Actions>
+                      <Button primary as="a" href={getFileURL(name, false)}>
+                        <Icon name="download" /> Download
+                      </Button>
+                    </Modal.Actions>
+                  </Modal>
+                ))}
+            </Table.Body>
+          </Table>
+          {filesCount > PAGE_SIZE && (
+            <div className={styles["pagination-wrapper"]}>
+              <Pagination
+                activePage={pagination.page}
+                totalPages={Math.ceil(filesCount / PAGE_SIZE)}
+                onPageChange={(_, { activePage }) => {
+                  setPagination({ ...pagination, page: activePage });
+                  resetSort();
+                }}
+                size="mini"
+              />
+            </div>
+          )}
+        </Segment>
       )}
-    </Segment>
+    </>
   );
 }
 

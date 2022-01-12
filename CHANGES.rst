@@ -4,6 +4,8 @@ Changes
 Version 0.8.1 (UNRELEASED)
 ---------------------------
 
+- Adds support for HTML preview of workspace files.
+- Adds search by name in workflow file list page.
 - Changes cluster health status page to represent availability instead of usage.
 
 Version 0.8.0 (2021-11-22)

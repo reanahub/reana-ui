@@ -2,7 +2,7 @@
   -*- coding: utf-8 -*-
 
   This file is part of REANA.
-  Copyright (C) 2020, 2021 CERN.
+  Copyright (C) 2020, 2021, 2022 CERN.
 
   REANA is free software; you can redistribute it and/or modify it
   under the terms of the MIT License; see LICENSE file for more details.
@@ -21,7 +21,7 @@ import client, {
   INTERACTIVE_SESSIONS_OPEN_URL,
   INTERACTIVE_SESSIONS_CLOSE_URL,
 } from "~/client";
-import { parseWorkflows, parseLogs, parseFiles } from "~/util";
+import { parseWorkflows, parseLogs, parseFiles, formatSearch } from "~/util";
 import {
   getConfig,
   getWorkflow,
@@ -243,9 +243,8 @@ export function fetchWorkflows(
     if (showLoader) {
       dispatch({ type: WORKFLOWS_FETCH });
     }
-    const nameSearch = search ? JSON.stringify({ name: [search] }) : search;
     return await client
-      .getWorkflows(pagination, nameSearch, status, sort)
+      .getWorkflows(pagination, formatSearch(search), status, sort)
       .then((resp) =>
         dispatch({
           type: WORKFLOWS_RECEIVED,
@@ -298,11 +297,11 @@ export function fetchWorkflowLogs(id) {
   };
 }
 
-export function fetchWorkflowFiles(id, pagination) {
+export function fetchWorkflowFiles(id, pagination, search) {
   return async (dispatch) => {
     dispatch({ type: WORKFLOW_FILES_FETCH });
     return await client
-      .getWorkflowFiles(id, pagination)
+      .getWorkflowFiles(id, pagination, formatSearch(search))
       .then((resp) =>
         dispatch({
           type: WORKFLOW_FILES_RECEIVED,

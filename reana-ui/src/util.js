@@ -126,6 +126,15 @@ export function parseFiles(files) {
 }
 
 /**
+ * Formats search input term.
+ * @param {String} term Search term
+ * @returns term format expected by the API.
+ */
+export function formatSearch(term) {
+  return term ? JSON.stringify({ name: [term] }) : term;
+}
+
+/**
  * Returns mime-type of a given file name.
  * @param {String} fileName File name
  */

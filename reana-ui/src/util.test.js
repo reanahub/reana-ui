@@ -1,4 +1,4 @@
-import { getMimeType } from "~/util";
+import { getMimeType, formatSearch } from "~/util";
 
 test.each([
   ["path/to/test.txt", "text/plain"],
@@ -16,4 +16,11 @@ test.each([
   ["data.root", null],
 ])("getMimeType(%p) === %p", (fileName, mimeType) => {
   expect(getMimeType(fileName)).toBe(mimeType);
+});
+
+test.each([
+  ["Snakefile", '{"name":["Snakefile"]}'],
+  [null, null],
+])("formatSearch(%p) === %p", (term, formattedTerm) => {
+  expect(formatSearch(term)).toEqual(formattedTerm);
 });

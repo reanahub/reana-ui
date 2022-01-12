@@ -2,7 +2,7 @@
   -*- coding: utf-8 -*-
 
   This file is part of REANA.
-  Copyright (C) 2021 CERN.
+  Copyright (C) 2021, 2022 CERN.
 
   REANA is free software; you can redistribute it and/or modify it
   under the terms of the MIT License; see LICENSE file for more details.
@@ -31,8 +31,8 @@ export const WORKFLOWS_URL = (params) =>
 export const WORKFLOW_LOGS_URL = (id) => `${api}/api/workflows/${id}/logs`;
 export const WORKFLOW_SPECIFICATION_URL = (id) =>
   `${api}/api/workflows/${id}/specification`;
-export const WORKFLOW_FILES_URL = (id, pagination) =>
-  `${api}/api/workflows/${id}/workspace?${stringifyQueryParams(pagination)}`;
+export const WORKFLOW_FILES_URL = (id, params) =>
+  `${api}/api/workflows/${id}/workspace?${stringifyQueryParams(params)}`;
 export const WORKFLOW_FILE_URL = (id, filename, preview = true) =>
   `${api}/api/workflows/${id}/workspace/${filename}?${stringifyQueryParams(
     preview
@@ -126,8 +126,8 @@ class Client {
     return this._request(WORKFLOW_LOGS_URL(id));
   }
 
-  getWorkflowFiles(id, pagination) {
-    return this._request(WORKFLOW_FILES_URL(id, pagination));
+  getWorkflowFiles(id, pagination, search) {
+    return this._request(WORKFLOW_FILES_URL(id, { ...pagination, search }));
   }
 
   getWorkflowFile(id, filename) {
