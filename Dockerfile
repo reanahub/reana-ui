@@ -1,4 +1,4 @@
-FROM node:12 as react-build
+FROM node:16 as react-build
 WORKDIR /code
 COPY . /code
 # hadolint ignore=DL3003
