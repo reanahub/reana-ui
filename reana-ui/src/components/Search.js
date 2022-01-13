@@ -13,6 +13,8 @@ import { unstable_batchedUpdates } from "react-dom";
 import { Input } from "semantic-ui-react";
 import debounce from "lodash/debounce";
 
+import styles from "./Search.module.scss";
+
 const TYPING_DELAY = 1000;
 
 export default function Search({ search }) {
@@ -22,6 +24,7 @@ export default function Search({ search }) {
       fluid
       icon="search"
       placeholder="Search..."
+      className={styles.input}
       onChange={(_, data) => handleChange(data.value)}
     />
   );
