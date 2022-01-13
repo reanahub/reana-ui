@@ -27,9 +27,9 @@ to review production and historical workflows.
 Features
 ========
 
-- profile page containing REANA access token
-- list of personal workflows
-- workflow details page containing logs, files, specification
+- Profile page containing REANA access token
+- List of personal workflows
+- Workflow details page containing logs, files, specification
 - GitLab integration to load your workflow repositories
 
 Usage
@@ -45,14 +45,14 @@ Development
 
    $ git clone https://github.com/reanahub/reana-ui.git
    $ cd reana-ui/reana-ui
-   $ npm install
-   $ npm start # make sure REANA_SERVER_URL env var is set
+   $ yarn install
+   $ yarn start # make sure REANA_SERVER_URL env var is set
    $ firefox localhost:3000
 
 Useful links
 ============
 
-- `REANA project home page <http://www.reana.io/>`_
+- `REANA project home page <https://www.reana.io/>`_
 - `REANA user documentation <https://docs.reana.io>`_
 - `REANA user support forum <https://forum.reana.io>`_
 
