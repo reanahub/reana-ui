@@ -6,7 +6,9 @@ Version 0.8.1 (UNRELEASED)
 
 - Adds support for HTML preview of workspace files.
 - Adds search by name in workflow file list page.
+- Adds support for Create React App v5.
 - Changes cluster health status page to represent availability instead of usage.
+- Changes Docker image Node version from 12 to 16.
 
 Version 0.8.0 (2021-11-22)
 ---------------------------
