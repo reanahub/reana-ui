@@ -1,7 +1,7 @@
 #!/bin/sh
 #
 # This file is part of REANA.
-# Copyright (C) 2018, 2019, 2020, 2021 CERN.
+# Copyright (C) 2018, 2019, 2020, 2021, 2022 CERN.
 #
 # REANA is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -20,12 +20,16 @@ check_sphinx () {
     sphinx-build -qnNW docs docs/_build/html
 }
 
+check_lint () {
+    (cd reana-ui && yarn lint)
+}
+
 check_prettier () {
-    prettier reana-ui --check
+    (cd reana-ui && yarn prettier)
 }
 
 check_js_tests () {
-    cd reana-ui && yarn && yarn test --ci --passWithNoTests && cd ..
+    (cd reana-ui && yarn && yarn test --ci --passWithNoTests)
 }
 
 check_dockerfile () {
@@ -39,6 +43,7 @@ check_docker_build () {
 check_all () {
     check_script
     check_sphinx
+    check_lint
     check_prettier
     check_js_tests
     check_dockerfile
@@ -55,6 +60,7 @@ do
     case $arg in
         --check-shellscript) check_script;;
         --check-sphinx) check_sphinx;;
+        --check-lint) check_lint;;
         --check-prettier) check_prettier;;
         --check-js-tests) check_js_tests;;
         --check-dockerfile) check_dockerfile;;
