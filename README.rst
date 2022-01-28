@@ -31,6 +31,7 @@ Features
 - List of personal workflows
 - Workflow details page containing logs, files, specification
 - GitLab integration to load your workflow repositories
+- Cluster health status page
 
 Usage
 =====
@@ -45,9 +46,20 @@ Development
 
    $ git clone https://github.com/reanahub/reana-ui.git
    $ cd reana-ui/reana-ui
-   $ yarn install
+   $ yarn
    $ yarn start # make sure REANA_SERVER_URL env var is set
    $ firefox localhost:3000
+
+Yarn scripts
+============
+
+- ``start``: start a development server with live reload
+- ``build``: build a production-ready bundle in the ``build`` folder
+- ``test``: run unit tests
+- ``lint``: run linter
+- ``prettier``: check code formatting with ``prettier``
+- ``fmt``: fix formatting problems with ``prettier``
+- ``ci``: run both linter and format checkers, useful before committing changes
 
 Useful links
 ============
