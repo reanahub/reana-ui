@@ -1,7 +1,7 @@
 Changes
 =======
 
-Version 0.8.1 (UNRELEASED)
+Version 0.8.1 (2022-02-02)
 ---------------------------
 
 - Adds support for HTML preview of workspace files.
