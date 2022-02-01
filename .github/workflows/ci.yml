@@ -1,5 +1,5 @@
 # This file is part of REANA.
-# Copyright (C) 2020 CERN.
+# Copyright (C) 2020, 2022 CERN.
 #
 # REANA is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -51,10 +51,10 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v1
         with:
-          node-version: "14"
+          node-version: "16"
 
-      - name: Install project dependences
-        run: npm install -g prettier
+      - name: Install project dependencies
+        run: yarn global add prettier
 
       - name: Run prettier code formatter
         run: ./run-tests.sh --check-prettier
@@ -68,12 +68,12 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v1
         with:
-          node-version: "14"
+          node-version: "16"
 
-      - name: Install project dependences
-        run: npm install
+      - name: Install project dependencies
+        run: yarn
 
-      - name: Run javascript tests
+      - name: Run JavaScript tests
         run: ./run-tests.sh --check-js-tests
 
   lint-dockerfile:
