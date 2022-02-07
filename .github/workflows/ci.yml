@@ -59,6 +59,23 @@ jobs:
       - name: Run prettier code formatter
         run: ./run-tests.sh --check-prettier
 
+  lint-js:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup node
+        uses: actions/setup-node@v1
+        with:
+          node-version: "16"
+
+      - name: Install project dependencies
+        run: yarn global add eslint
+
+      - name: Run prettier code formatter
+        run: ./run-tests.sh --check-lint
+
   js-tests:
     runs-on: ubuntu-20.04
     steps:

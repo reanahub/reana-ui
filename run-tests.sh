@@ -21,11 +21,11 @@ check_sphinx () {
 }
 
 check_lint () {
-    (cd reana-ui && yarn lint)
+    (cd reana-ui && yarn && yarn lint)
 }
 
 check_prettier () {
-    (cd reana-ui && yarn prettier)
+    (cd reana-ui && yarn && yarn prettier)
 }
 
 check_js_tests () {
