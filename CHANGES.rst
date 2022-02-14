@@ -1,6 +1,10 @@
 Changes
 =======
 
+Version 0.8.2 (UNRELEASED)
+---------------------------
+- Changes ``node-sass`` dependency to version 7.
+
 Version 0.8.1 (2022-02-02)
 ---------------------------
 
