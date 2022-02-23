@@ -1,6 +1,11 @@
 Changes
 =======
 
+Version 0.9.0 (UNRELEASED)
+---------------------------
+
+- Adds Launch on REANA page allowing the submission of workflows via badge-clicking.
+
 Version 0.8.2 (2022-02-15)
 ---------------------------
 

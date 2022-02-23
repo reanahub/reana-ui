@@ -45,6 +45,7 @@ export const INTERACTIVE_SESSIONS_CLOSE_URL = (id) =>
   `${api}/api/workflows/${id}/close/`;
 export const INTERACTIVE_SESSION_URL = (sessionUri, reanaToken) =>
   `${api}${sessionUri}?token=${reanaToken}`;
+export const LAUNCH_ON_REANA_URL = `${api}/api/launch`;
 
 class Client {
   /**
@@ -165,6 +166,13 @@ class Client {
 
   getClusterStatus() {
     return this._request(CLUSTER_STATUS_URL);
+  }
+
+  launchWorkflow(data) {
+    return this._request(LAUNCH_ON_REANA_URL, {
+      data,
+      method: "post",
+    });
   }
 }
 

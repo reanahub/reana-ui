@@ -2,7 +2,7 @@
 	-*- coding: utf-8 -*-
 
 	This file is part of REANA.
-	Copyright (C) 2020 CERN.
+	Copyright (C) 2020, 2022 CERN.
 
   REANA is free software; you can redistribute it and/or modify it
   under the terms of the MIT License; see LICENSE file for more details.
@@ -28,6 +28,7 @@ import WorkflowDetails from "~/pages/workflowDetails/WorkflowDetails";
 import Profile from "~/pages/profile/Profile";
 import PrivacyNotice from "~/pages/privacyNotice/PrivacyNotice";
 import Status from "~/pages/status/Status";
+import LaunchOnReana from "~/pages/launchOnReana/LaunchOnReana";
 import Error from "./Error";
 
 import "./App.module.scss";
@@ -84,6 +85,7 @@ export default function App() {
           <ProtectedRoute path="/details/:id" component={WorkflowDetails} />
           <ProtectedRoute path="/profile" component={Profile} />
           <ProtectedRoute path="/status" component={Status} />
+          <ProtectedRoute exact path="/launch" component={LaunchOnReana} />
         </Switch>
       )}
     </BrowserRouter>
