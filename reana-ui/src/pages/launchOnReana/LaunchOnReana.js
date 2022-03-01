@@ -68,7 +68,7 @@ export default function LaunchOnReana() {
           onClick={handleLaunch}
           disabled={loading}
         />
-        <Loader active={loading} content="Executing workflow..." />
+        {loading && <Loader content="Executing workflow..." />}
       </Container>
     </BasePage>
   );
