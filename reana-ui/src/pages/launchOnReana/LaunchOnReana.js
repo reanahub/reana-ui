@@ -9,7 +9,7 @@
 import { useState } from "react";
 import { useHistory } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { Button, Container, Loader } from "semantic-ui-react";
+import { Button, Container, Loader, Message } from "semantic-ui-react";
 
 import BasePage from "../BasePage";
 import { Title } from "~/components";
@@ -40,12 +40,39 @@ export default function LaunchOnReana() {
       .finally(() => setLoading(false));
   }
 
+  /**
+   * Filter out parameters not required by Launch on REANA logic.
+   * @param {URLSearchParams} query Standard URLSearchParams object.
+   */
   function filterParams(query) {
     for (const qsParamsKey of query.keys()) {
-      if (!LAUNCH_ON_REANA_PARAMS_WHITELIST.includes(qsParamsKey)) {
+      if (
+        !Object.keys(LAUNCH_ON_REANA_PARAMS_WHITELIST).includes(qsParamsKey)
+      ) {
         query.delete(qsParamsKey);
       }
     }
+  }
+
+  /**
+   * Filter out non-required Launch on REANA qs params.
+   * @returns {Array} List of required qs params.
+   */
+  function getRequiredQsParams() {
+    return Object.entries(LAUNCH_ON_REANA_PARAMS_WHITELIST)
+      .filter(([_, { required }]) => required)
+      .map(([param, _]) => param);
+  }
+
+  /**
+   *
+   * @param {URLSearchParams} query Search query string.
+   * @returns {boolean} Whether the search query string includes all the required parameters.
+   */
+  function isMissingRequiredParams(query) {
+    const requiredParams = getRequiredQsParams();
+    const qsKeys = [...query.keys()];
+    return !requiredParams.every((param) => qsKeys.includes(param));
   }
 
   return (
@@ -54,19 +81,28 @@ export default function LaunchOnReana() {
         <div>
           <Title>Launch on REANA</Title>
         </div>
-        <ul>
-          {[...query].map(([k, v]) => (
-            <li key={k}>
-              {k}: {v}
-            </li>
-          ))}
-        </ul>
+        {isMissingRequiredParams(query) ? (
+          <Message
+            icon="warning circle"
+            header="Missing required query string fields."
+            content={`The required fields: ${getRequiredQsParams()}`}
+            warning
+          />
+        ) : (
+          <ul>
+            {[...query].map(([k, v]) => (
+              <li key={k}>
+                {k}: {v}
+              </li>
+            ))}
+          </ul>
+        )}
         <Button
           primary
           icon="rocket"
           content="Launch"
           onClick={handleLaunch}
-          disabled={loading}
+          disabled={loading || isMissingRequiredParams(query)}
         />
         {loading && <Loader content="Executing workflow..." />}
       </Container>

@@ -13,4 +13,8 @@ export const api = process.env.REACT_APP_SERVER_URL || window.location.origin;
 /**
  * Valid Launch-on-REANA querystring parameter keys.
  */
-export const LAUNCH_ON_REANA_PARAMS_WHITELIST = ["url", "name", "parameters"];
+export const LAUNCH_ON_REANA_PARAMS_WHITELIST = {
+  url: { required: true },
+  name: { required: false },
+  parameters: { required: false },
+};
