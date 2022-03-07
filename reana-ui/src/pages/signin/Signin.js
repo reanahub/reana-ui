@@ -2,7 +2,7 @@
   -*- coding: utf-8 -*-
 
   This file is part of REANA.
-  Copyright (C) 2020 CERN.
+  Copyright (C) 2020, 2022 CERN.
 
   REANA is free software; you can redistribute it and/or modify it
   under the terms of the MIT License; see LICENSE file for more details.
@@ -11,7 +11,7 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Button, Divider, Segment } from "semantic-ui-react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 import { getConfig } from "~/selectors";
 import SignForm from "./components/SignForm";
@@ -25,9 +25,16 @@ export default function Signin() {
   const config = useSelector(getConfig);
   const dispatch = useDispatch();
   const [formData, setFormData] = useState({ email: "", password: "" });
+  const location = useLocation();
 
   const handleClick = () => {
-    window.location.href = USER_OAUTH_SIGNIN_URL;
+    const from = location.state?.from || {
+      pathname: "/",
+      search: "",
+      hash: "",
+    };
+    const next = `${from.pathname}${from.search}${from.hash}`;
+    window.location.href = USER_OAUTH_SIGNIN_URL(next);
     // FIXME: We assume that the sign-up went successfully but we actually don't know.
     // We should upgrade Invenio-OAuthClient to latest version that supports REST apps
     // and adapt the whole workflow.

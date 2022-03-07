@@ -5,6 +5,7 @@ Version 0.9.0 (UNRELEASED)
 ---------------------------
 
 - Adds Launch on REANA page allowing the submission of workflows via badge-clicking.
+- Fixes redirection chain for non-signed-in CERN SSO users to access the desired target page after sign-in.
 
 Version 0.8.2 (2022-02-15)
 ---------------------------
