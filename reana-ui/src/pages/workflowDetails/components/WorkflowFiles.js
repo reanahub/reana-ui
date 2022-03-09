@@ -199,7 +199,7 @@ export default function WorkflowFiles({ id }) {
     />
   );
 
-  return !files ? (
+  return files === null ? (
     <Message
       icon="info circle"
       content="The workflow workspace was deleted."
@@ -211,7 +211,7 @@ export default function WorkflowFiles({ id }) {
         search={applyFilter(setSearchFilter, pagination, setPagination)}
       />
       {loading ? (
-        <Loader active inline="centered" />
+        <Loader active inline="centered" className={styles["loader"]} />
       ) : (
         <Segment>
           <Table fixed compact basic="very">
