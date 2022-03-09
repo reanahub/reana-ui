@@ -59,7 +59,7 @@ export default function Signin() {
         {config.cernSSO && (
           <>
             <Button basic fluid size="large" onClick={handleClick}>
-              Sign in with SSO
+              Sign in with CERN Single Sign-On
             </Button>
             {config.localUsers && (
               <Divider section horizontal>
@@ -77,7 +77,13 @@ export default function Signin() {
           />
         )}
       </Segment>
-      {config.hideSignup && (
+      {config.hideSignup && !config.localUsers && config.cernSSO && (
+        <p>
+          Note that you need to hold an official CERN account in order to use
+          <Link to="/"> {window.location.hostname}</Link> service.
+        </p>
+      )}
+      {config.hideSignup && config.localUsers && (
         <p>
           If you do not have an account yet, please contact
           <a href={`mailto:${config.adminEmail}`}> REANA administrators</a>
