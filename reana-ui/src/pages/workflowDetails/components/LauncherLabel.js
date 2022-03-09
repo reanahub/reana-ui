@@ -7,7 +7,7 @@
 */
 
 import PropTypes from "prop-types";
-import { Label } from "semantic-ui-react";
+import { Label, Popup } from "semantic-ui-react";
 
 export default function LauncherLabel({ url }) {
   /**
@@ -28,15 +28,22 @@ export default function LauncherLabel({ url }) {
 
   return (
     !!url && (
-      <Label
-        size="tiny"
-        color="grey"
-        as="a"
-        href={url}
-        target="_blank"
-        rel="noopener noreferrer"
-        {...getProps(url)}
-        basic
+      <Popup
+        trigger={
+          <Label
+            size="tiny"
+            color="grey"
+            as="a"
+            href={url}
+            target="_blank"
+            rel="noopener noreferrer"
+            {...getProps(url)}
+            basic
+          />
+        }
+        content={url}
+        size="small"
+        wide="very"
       />
     )
   );

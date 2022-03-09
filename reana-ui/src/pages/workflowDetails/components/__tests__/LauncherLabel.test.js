@@ -6,34 +6,37 @@
   under the terms of the MIT License; see LICENSE file for more details.
 */
 
-import { render, getByText } from "@testing-library/react";
+import { render, getByText, fireEvent } from "@testing-library/react";
 
 import { LauncherLabel } from "..";
 
-test("displays Zenodo launcher label", async () => {
-  render(
-    <LauncherLabel url="https://zenodo.org/record/5752285/files/circular-health-data-processing-master.zip?download=1" />
-  );
-  const container = document.querySelector(".label");
-  expect(getByText(container, "Zenodo"));
-});
+describe("LauncherLabel", () => {
+  test.each([
+    {
+      label: "Zenodo",
+      url: "https://zenodo.org/record/5752285/files/circular-health-data-processing-master.zip?download=1",
+    },
+    {
+      label: "GitHub",
+      url: "https://github.com/reanahub/reana-demo-helloworld.git",
+    },
+    {
+      label: "URL",
+      url: "https://example.org/reana.yaml",
+    },
+  ])("displays $label launcher label", async ({ label, url }) => {
+    const baseDom = render(<LauncherLabel url={url} />);
+    const container = document.querySelector(".label");
+    expect(getByText(container, label));
 
-test("displays GitHub launcher label", async () => {
-  render(
-    <LauncherLabel url="https://github.com/reanahub/reana-demo-helloworld.git" />
-  );
-  const container = document.querySelector(".label");
-  expect(getByText(container, "GitHub"));
-});
+    expect(baseDom.queryByText(url)).toBeNull();
+    fireEvent.mouseOver(container);
+    expect(await baseDom.findByText(url)).toBeInTheDocument();
+  });
 
-test("displays generic launcher label", async () => {
-  render(<LauncherLabel url="https://example.org/reana.yaml" />);
-  const container = document.querySelector(".label");
-  expect(getByText(container, "URL"));
-});
-
-test("displays no label when no launcher source", async () => {
-  render(<LauncherLabel />);
-  const container = document.querySelector(".label");
-  expect(container).toBeNull();
+  test("displays no label when no launcher source", async () => {
+    render(<LauncherLabel />);
+    const container = document.querySelector(".label");
+    expect(container).toBeNull();
+  });
 });
