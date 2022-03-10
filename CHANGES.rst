@@ -6,6 +6,7 @@ Version 0.9.0 (UNRELEASED)
 
 - Adds a label link to the workflow launcher URL remote origin on the workflow details page.
 - Adds Launch on REANA page allowing the submission of workflows via badge-clicking.
+- Adds 404 Not Found error page.
 - Fixes redirection chain for non-signed-in CERN SSO users to access the desired target page after sign-in.
 
 Version 0.8.2 (2022-02-15)
