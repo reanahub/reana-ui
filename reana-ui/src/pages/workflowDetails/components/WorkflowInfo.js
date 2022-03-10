@@ -96,14 +96,14 @@ export default function WorkflowInfo({ workflow }) {
               </span>{" "}
               {statusMapping[status].preposition}{" "}
               {status !== "deleted" && duration}
+              {NON_FINISHED_STATUSES.includes(status) && (
+                <Icon
+                  name="refresh"
+                  className={styles.refresh}
+                  onClick={() => window.location.reload()}
+                />
+              )}
             </div>
-            {NON_FINISHED_STATUSES.includes(status) && (
-              <Icon
-                name="refresh"
-                className={styles.refresh}
-                onClick={() => window.location.reload()}
-              />
-            )}
             <div>
               step {completed}/{total}
             </div>
