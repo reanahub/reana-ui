@@ -71,20 +71,25 @@ function Workflows() {
 
   useEffect(() => {
     dispatch(
-      fetchWorkflows({ ...pagination }, searchFilter, statusFilter, sortDir)
+      fetchWorkflows({
+        pagination: { ...pagination },
+        search: searchFilter,
+        status: statusFilter,
+        sort: sortDir,
+      })
     );
 
     if (!interval.current && reanaToken && pollingSecs) {
       interval.current = setInterval(() => {
         const showLoader = false;
         dispatch(
-          fetchWorkflows(
-            { ...pagination },
-            searchFilter,
-            statusFilter,
-            sortDir,
-            showLoader
-          )
+          fetchWorkflows({
+            pagination: { ...pagination },
+            search: searchFilter,
+            status: statusFilter,
+            sort: sortDir,
+            showLoader,
+          })
         );
         setRefreshedAt(currentUTCTime());
       }, pollingSecs * 1000);

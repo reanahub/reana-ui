@@ -113,10 +113,11 @@ class Client {
     });
   }
 
-  getWorkflows(pagination, search, status, sort) {
+  getWorkflows(pagination, search, status, sort, workflowId) {
     return this._request(
       WORKFLOWS_URL({
         ...pagination,
+        ...workflowId,
         search,
         status,
         sort,

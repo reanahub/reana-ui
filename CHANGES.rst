@@ -8,6 +8,7 @@ Version 0.9.0 (UNRELEASED)
 - Adds Launch on REANA page allowing the submission of workflows via badge-clicking.
 - Adds 404 Not Found error page.
 - Fixes redirection chain for non-signed-in CERN SSO users to access the desired target page after sign-in.
+- Fixes ``fetchWorkflow`` action to fetch a specific workflow instead of the entire user workflow list.
 
 Version 0.8.2 (2022-02-15)
 ---------------------------

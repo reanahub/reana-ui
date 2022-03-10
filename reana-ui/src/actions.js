@@ -232,19 +232,20 @@ export function confirmUserEmail(token) {
   };
 }
 
-export function fetchWorkflows(
+export function fetchWorkflows({
   pagination,
   search,
   status,
   sort,
-  showLoader = true
-) {
+  showLoader = true,
+  workflowId,
+}) {
   return async (dispatch) => {
     if (showLoader) {
       dispatch({ type: WORKFLOWS_FETCH });
     }
     return await client
-      .getWorkflows(pagination, formatSearch(search), status, sort)
+      .getWorkflows(pagination, formatSearch(search), status, sort, workflowId)
       .then((resp) =>
         dispatch({
           type: WORKFLOWS_RECEIVED,
@@ -268,7 +269,13 @@ export function fetchWorkflow(id) {
     if (workflow) {
       return workflow;
     } else {
-      dispatch(fetchWorkflows());
+      dispatch(
+        fetchWorkflows({
+          workflowId: {
+            workflow_id_or_name: id,
+          },
+        })
+      );
     }
   };
 }
