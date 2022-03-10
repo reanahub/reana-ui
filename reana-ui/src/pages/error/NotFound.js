@@ -19,10 +19,10 @@ export default function NotFound() {
       <div className={styles.container}>
         <main>
           <h1 className={styles.code}>404</h1>
-          <h2>Page Not Found</h2>
+          <h2>Page not found</h2>
           <p>The page you are looking for could not be found.</p>
           <Link to="/">
-            <Button primary>Go to Home</Button>
+            <Button primary>Go to home page</Button>
           </Link>
         </main>
       </div>
