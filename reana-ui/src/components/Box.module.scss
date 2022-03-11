@@ -1,0 +1,22 @@
+/*
+  This file is part of REANA.
+  Copyright (C) 2022 CERN.
+
+  REANA is free software; you can redistribute it and/or modify it
+  under the terms of the MIT License; see LICENSE file for more details.
+*/
+
+@import "@palette";
+
+.box {
+  display: flex;
+  justify-content: space-between;
+  color: $raven;
+  border: 5px solid $sepia;
+  margin: 1rem 0;
+  padding: 1em 1em;
+
+  &.wrap {
+    flex-wrap: wrap;
+  }
+}

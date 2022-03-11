@@ -11,13 +11,6 @@
 @import "@palette";
 
 .workflow {
-  display: flex;
-  justify-content: space-between;
-  color: $raven;
-  border: 5px solid $sepia;
-  margin: 1rem 0;
-  padding: 1em 1em;
-
   &:hover {
     background-color: lighten($sepia, 3%);
     border-color: darken($sepia, 10%);

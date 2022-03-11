@@ -86,8 +86,8 @@ export function errorActionCreator(error, name) {
   };
 }
 
-export function triggerNotification(header, message) {
-  return { type: NOTIFICATION, header, message };
+export function triggerNotification(header, message, { error = false }) {
+  return { type: error ? ERROR : NOTIFICATION, header, message };
 }
 
 export const clearNotification = { type: CLEAR_NOTIFICATION };

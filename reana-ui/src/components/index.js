@@ -21,3 +21,4 @@ export { default as WorkflowDeleteModal } from "./WorkflowDeleteModal";
 export { default as WorkflowActionsPopup } from "./WorkflowActionsPopup";
 export { default as PieChart } from "./PieChart";
 export { default as Search } from "./Search";
+export { default as Box } from "./Box";

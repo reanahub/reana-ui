@@ -6,19 +6,25 @@
   under the terms of the MIT License; see LICENSE file for more details.
 */
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useHistory } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { Button, Container, Loader, Message } from "semantic-ui-react";
+import { Button, Container, Icon, Loader, Message } from "semantic-ui-react";
 
 import BasePage from "../BasePage";
-import { Title } from "~/components";
-import { clearNotification, errorActionCreator } from "~/actions";
+import { Box, Title } from "~/components";
+import {
+  clearNotification,
+  errorActionCreator,
+  triggerNotification,
+} from "~/actions";
 import client from "~/client";
 import { useQuery } from "~/hooks";
 import { LAUNCH_ON_REANA_PARAMS_WHITELIST } from "~/config";
 
 import styles from "./LaunchOnReana.module.scss";
+
+const DEFAULT_WORKFLOW_NAME = "workflow";
 
 export default function LaunchOnReana() {
   const [loading, setLoading] = useState(false);
@@ -66,7 +72,7 @@ export default function LaunchOnReana() {
   }
 
   /**
-   *
+   * Check if the search query string includes all the required parameters.
    * @param {URLSearchParams} query Search query string.
    * @returns {boolean} Whether the search query string includes all the required parameters.
    */
@@ -75,6 +81,37 @@ export default function LaunchOnReana() {
     const qsKeys = [...query.keys()];
     return !requiredParams.every((param) => qsKeys.includes(param));
   }
+
+  /**
+   * Memoised function to get workflow parameters.
+   * Since this function is called twice and its return value should not
+   * change unless the query string parameters change, memoising it improves
+   * performace, avoiding extra calls.
+   */
+  const getWorkflowParameters = useCallback(() => {
+    /**
+     * Parses workflow parameters. Triggers notification error if invalid.
+     * @param {URLSearchParams} query Standard URLSearchParams object.
+     * @returns {Object | null} Returns object with workflow parameters or `null` if invalid.
+     */
+    function fn(query) {
+      try {
+        return JSON.parse(query.get("parameters"));
+      } catch (error) {
+        dispatch(
+          triggerNotification(
+            "An error has occurred",
+            `Invalid JSON workflow parameters provided: ${query.get(
+              "parameters"
+            )}`,
+            { error: true }
+          )
+        );
+      }
+      return null;
+    }
+    return fn(query);
+  }, [dispatch, query]);
 
   return (
     <BasePage>
@@ -90,21 +127,44 @@ export default function LaunchOnReana() {
             warning
           />
         ) : (
-          <ul>
-            {[...query].map(([k, v]) => (
-              <li key={k}>
-                {k}: {v}
-              </li>
-            ))}
-          </ul>
+          <Box className={styles.box}>
+            <section className={styles.details}>
+              <span className={styles.icon}>
+                <Icon name="hourglass half" />
+              </span>
+              <div>
+                <div className={styles.name}>
+                  {query.get("name") ?? DEFAULT_WORKFLOW_NAME}
+                </div>
+                <a className={styles.url} href={query.get("url")}>
+                  {query.get("url")}
+                </a>
+                {query.get("parameters") && getWorkflowParameters() && (
+                  <div className={styles.parameters}>
+                    Parameters:
+                    <ul>
+                      {Object.entries(getWorkflowParameters()).map(([k, v]) => (
+                        <li key={k}>
+                          {k}: {v}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            </section>
+            <section className={styles.actions}>
+              <Button
+                primary
+                icon="rocket"
+                content="Launch"
+                onClick={handleLaunch}
+                disabled={loading || isMissingRequiredParams(query)}
+              />
+            </section>
+          </Box>
         )}
-        <Button
-          primary
-          icon="rocket"
-          content="Launch"
-          onClick={handleLaunch}
-          disabled={loading || isMissingRequiredParams(query)}
-        />
+        {/* TODO: Add badge img and md/html snippet */}
         {loading && <Loader content="Executing workflow..." />}
       </Container>
     </BasePage>

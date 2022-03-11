@@ -8,4 +8,34 @@
 
 .container {
   margin-top: 5em;
+
+  .box {
+    align-items: center;
+
+    .details {
+      display: flex;
+    }
+  }
+
+  .icon {
+    margin-top: 4px;
+    margin-right: 4px;
+  }
+
+  .name,
+  .url {
+    font-weight: bold;
+  }
+
+  .name {
+    font-size: 1.3em;
+  }
+
+  .parameters {
+    margin-top: 1em;
+
+    ul {
+      margin: 0;
+    }
+  }
 }

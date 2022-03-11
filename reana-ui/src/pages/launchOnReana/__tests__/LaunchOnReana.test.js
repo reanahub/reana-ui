@@ -34,9 +34,13 @@ test("loads and displays launch on reana page", async () => {
 
   expect(screen.getByRole("heading")).toHaveTextContent("Launch on REANA");
   expect(screen.getByRole("button")).not.toBeDisabled();
-  expect(screen.getByText("url: https://example.org/reana.yaml"));
-  const invalidQsParams = screen.queryByText("foo: bar");
-  expect(invalidQsParams).toBeNull();
+  expect(screen.getByText("https://example.org/reana.yaml"));
+  // const invalidQsParams = screen.queryByText("foo: bar");
+  // expect(invalidQsParams).toBeNull();
+  /* TODO: Enrich tests:
+   * Check Workflow name and default workflow name presence
+   * Verify that invalid JSON `parameters` qs param are not displayed
+   */
 
   const loadingSpinner = screen.queryByText("Executing workflow...");
   expect(loadingSpinner).toBeNull();
