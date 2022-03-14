@@ -2,7 +2,7 @@
   -*- coding: utf-8 -*-
 
   This file is part of REANA.
-  Copyright (C) 2020 CERN.
+  Copyright (C) 2020, 2022 CERN.
 
   REANA is free software; you can redistribute it and/or modify it
   under the terms of the MIT License; see LICENSE file for more details.
@@ -48,7 +48,7 @@ export default function CodeSnippet({
         el.props?.children ? accessChildren(el.props.children) : el
       );
     } else {
-      return element;
+      return element?.props?.children ? [element?.props.children] : element;
     }
   };
 
@@ -77,7 +77,9 @@ export default function CodeSnippet({
           trigger={
             <CopyToClipboard
               text={accessChildren(children)
-                .map((line) => line.join(""))
+                .map((line) => {
+                  return Array.isArray(line) ? line.join("") : line;
+                })
                 .join("\n")}
               onCopy={handleCopied}
             >
