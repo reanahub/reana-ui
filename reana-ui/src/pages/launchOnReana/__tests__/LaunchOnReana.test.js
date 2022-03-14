@@ -9,41 +9,77 @@
 import { render, screen, waitFor, fireEvent } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 
-import LaunchOnReana from "../LaunchOnReana";
+import client from "~/client";
+import LaunchOnReana, { DEFAULT_WORKFLOW_NAME } from "../LaunchOnReana";
 
 jest.mock("react-redux", () => ({
   useDispatch: () => jest.fn(),
 }));
 jest.mock("../../BasePage", () => ({ children }) => <>{children}</>);
 
+const component = (searchParams) => (
+  <MemoryRouter
+    initialEntries={[
+      {
+        pathname: "/launch",
+        search: `?${new URLSearchParams(searchParams).toString()}`,
+      },
+    ]}
+  >
+    <LaunchOnReana />
+  </MemoryRouter>
+);
+
+beforeAll(() => {
+  client.launchWorkflow = () => Promise.resolve({ data: { workflow_id: 111 } });
+});
+
 test("loads and displays launch on reana page", async () => {
   render(
-    <MemoryRouter
-      initialEntries={[
-        {
-          pathname: "/launch",
-          search: "?url=https://example.org/reana.yaml&foo=bar",
-        },
-      ]}
-    >
-      <LaunchOnReana />
-    </MemoryRouter>
+    component({
+      url: "https://example.org/reana.yaml",
+      foo: "bar",
+      name: "roofit",
+      parameters: JSON.stringify({ events: 1000, script: "run.C" }),
+    })
   );
-
   await waitFor(() => screen.getByRole("heading"));
 
   expect(screen.getByRole("heading")).toHaveTextContent("Launch on REANA");
   expect(screen.getByRole("button")).not.toBeDisabled();
   expect(screen.getByText("https://example.org/reana.yaml"));
-  // const invalidQsParams = screen.queryByText("foo: bar");
-  // expect(invalidQsParams).toBeNull();
-  /* TODO: Enrich tests:
-   * Check Workflow name and default workflow name presence
-   * Verify that invalid JSON `parameters` qs param are not displayed
-   */
 
-  const loadingSpinner = screen.queryByText("Executing workflow...");
-  expect(loadingSpinner).toBeNull();
+  expect(screen.getByText("roofit"));
+  expect(screen.queryByText("Executing workflow...")).toBeNull();
+
+  expect(screen.getByText("Parameters:"));
+  expect(screen.getByRole("heading")).toHaveTextContent("Launch on REANA");
+  expect(screen.getByText(/events: 1000/));
+  expect(screen.getByText(/script: run.C/));
+
   fireEvent.click(screen.getByText("Launch"));
-  expect(screen.getByText("Executing workflow..."));
+  await waitFor(() => expect(screen.getByText("Executing workflow...")));
+});
+
+test("displays default workflow name when no name is provided", async () => {
+  render(
+    component({
+      url: "https://zenodo.org/reana/specs/reana-cwl.yaml",
+      foo: "bar",
+    })
+  );
+  await waitFor(() => screen.getByRole("heading"));
+  expect(screen.getByText(DEFAULT_WORKFLOW_NAME));
+});
+
+test("invalid workflow parameters are not displayed", async () => {
+  render(
+    component({
+      url: "https://example.org/reana.yaml",
+      parameters: "{foo, bar}",
+    })
+  );
+  await waitFor(() => screen.getByRole("heading"));
+  expect(screen.getByRole("heading")).toHaveTextContent("Launch on REANA");
+  expect(screen.queryByText("Parameters")).toBeNull();
 });

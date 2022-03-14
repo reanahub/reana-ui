@@ -34,7 +34,7 @@ import {
 
 import styles from "./LaunchOnReana.module.scss";
 
-const DEFAULT_WORKFLOW_NAME = "workflow";
+export const DEFAULT_WORKFLOW_NAME = "workflow";
 
 export default function LaunchOnReana() {
   const [loading, setLoading] = useState(false);
