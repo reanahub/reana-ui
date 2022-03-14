@@ -6,6 +6,8 @@
   under the terms of the MIT License; see LICENSE file for more details.
 */
 
+@import "@palette";
+
 .container {
   margin-top: 5em;
 
@@ -31,11 +33,25 @@
     font-size: 1.3em;
   }
 
+  .url {
+    width: 500px;
+    display: block;
+  }
+
   .parameters {
     margin-top: 1em;
 
     ul {
       margin: 0;
     }
+  }
+
+  .badge {
+    border: 1px solid $light-gray;
+    padding: 1em;
+    border-radius: 7px;
+    margin-top: 1em;
+    font-size: 0.8em;
+    width: 100%;
   }
 }

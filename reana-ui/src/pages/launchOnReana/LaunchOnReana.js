@@ -9,10 +9,17 @@
 import { useState, useCallback } from "react";
 import { useHistory } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { Button, Container, Icon, Loader, Message } from "semantic-ui-react";
+import {
+  Button,
+  Container,
+  Icon,
+  Image,
+  Loader,
+  Message,
+} from "semantic-ui-react";
 
 import BasePage from "../BasePage";
-import { Box, Title } from "~/components";
+import { Box, CodeSnippet, Title } from "~/components";
 import {
   clearNotification,
   errorActionCreator,
@@ -20,7 +27,10 @@ import {
 } from "~/actions";
 import client from "~/client";
 import { useQuery } from "~/hooks";
-import { LAUNCH_ON_REANA_PARAMS_WHITELIST } from "~/config";
+import {
+  LAUNCH_ON_REANA_PARAMS_WHITELIST,
+  LAUNCH_ON_REANA_BADGE_URL,
+} from "~/config";
 
 import styles from "./LaunchOnReana.module.scss";
 
@@ -127,7 +137,7 @@ export default function LaunchOnReana() {
             warning
           />
         ) : (
-          <Box className={styles.box}>
+          <Box className={styles.box} wrap>
             <section className={styles.details}>
               <span className={styles.icon}>
                 <Icon name="hourglass half" />
@@ -162,11 +172,27 @@ export default function LaunchOnReana() {
                 disabled={loading || isMissingRequiredParams(query)}
               />
             </section>
+            <BadgeEmbed />
           </Box>
         )}
-        {/* TODO: Add badge img and md/html snippet */}
         {loading && <Loader content="Executing workflow..." />}
       </Container>
     </BasePage>
   );
 }
+
+const BadgeEmbed = () => (
+  <details className={styles.badge}>
+    <summary>
+      Expand to see the text below, paste it into your README to show a REANA
+      badge:{" "}
+      <Image src={LAUNCH_ON_REANA_BADGE_URL} href={window.location.href} />
+    </summary>
+    <CodeSnippet dollarPrefix={false} copy>
+      <div>
+        [![Launch on REANA]({LAUNCH_ON_REANA_BADGE_URL})]($
+        {window.location.href})
+      </div>
+    </CodeSnippet>
+  </details>
+);

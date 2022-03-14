@@ -19,3 +19,9 @@ export const LAUNCH_ON_REANA_PARAMS_WHITELIST = {
   parameters: { required: false },
   spec: { required: false },
 };
+
+/**
+ * Launch on REANA badge image URL.
+ */
+export const LAUNCH_ON_REANA_BADGE_URL =
+  "https://www.reana.io/static/img/badges/launch-on-reana.svg";
