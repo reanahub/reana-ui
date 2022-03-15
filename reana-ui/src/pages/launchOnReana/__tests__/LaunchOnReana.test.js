@@ -14,6 +14,7 @@ import LaunchOnReana, { DEFAULT_WORKFLOW_NAME } from "../LaunchOnReana";
 
 jest.mock("react-redux", () => ({
   useDispatch: () => jest.fn(),
+  useSelector: () => jest.fn(),
 }));
 jest.mock("../../BasePage", () => ({ children }) => <>{children}</>);
 

@@ -9,16 +9,10 @@
 import { useState, useCallback } from "react";
 import { useHistory } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import {
-  Button,
-  Container,
-  Icon,
-  Image,
-  Loader,
-  Message,
-} from "semantic-ui-react";
+import { Button, Container, Icon, Image, Loader } from "semantic-ui-react";
 
 import BasePage from "../BasePage";
+import Welcome from "./Welcome";
 import { Box, CodeSnippet, Title } from "~/components";
 import {
   clearNotification,
@@ -130,12 +124,7 @@ export default function LaunchOnReana() {
           <Title>Launch on REANA</Title>
         </div>
         {isMissingRequiredParams(query) ? (
-          <Message
-            icon="warning circle"
-            header="Missing required query string fields."
-            content={`The required fields: ${getRequiredQsParams()}`}
-            warning
-          />
+          <Welcome />
         ) : (
           <Box className={styles.box} wrap>
             <section className={styles.details}>
