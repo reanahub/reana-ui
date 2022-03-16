@@ -29,6 +29,7 @@ import {
 import styles from "./LaunchOnReana.module.scss";
 
 export const DEFAULT_WORKFLOW_NAME = "workflow";
+export const DEFAULT_SPEC_FILENAME = "reana.yaml";
 
 export default function LaunchOnReana() {
   const [loading, setLoading] = useState(false);
@@ -138,6 +139,10 @@ export default function LaunchOnReana() {
                 <a className={styles.url} href={query.get("url")}>
                   {query.get("url")}
                 </a>
+                <div>
+                  <Icon name="file code outline" />
+                  {query.get("spec") ?? DEFAULT_SPEC_FILENAME}
+                </div>
                 {query.get("parameters") && getWorkflowParameters() && (
                   <div className={styles.parameters}>
                     Parameters:
