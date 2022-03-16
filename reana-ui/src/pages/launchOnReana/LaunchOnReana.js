@@ -13,7 +13,7 @@ import { Button, Container, Loader, Message } from "semantic-ui-react";
 
 import BasePage from "../BasePage";
 import { Title } from "~/components";
-import { errorActionCreator } from "~/actions";
+import { clearNotification, errorActionCreator } from "~/actions";
 import client from "~/client";
 import { useQuery } from "~/hooks";
 import { LAUNCH_ON_REANA_PARAMS_WHITELIST } from "~/config";
@@ -32,6 +32,7 @@ export default function LaunchOnReana() {
     client
       .launchWorkflow(Object.fromEntries(query))
       .then(({ data: { workflow_id: workflowId } }) => {
+        dispatch(clearNotification);
         history.push(`/details/${workflowId}`);
       })
       .catch((err) => {
