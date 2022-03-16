@@ -161,7 +161,8 @@ export default function LaunchOnReana() {
                 disabled={loading || isMissingRequiredParams(query)}
               />
             </section>
-            <BadgeEmbed />
+            {/* FIXME: Hide the badge markdown snippet temporarily until implementing R/W */}
+            {/* <BadgeEmbed /> */}
           </Box>
         )}
         {loading && <Loader content="Executing workflow..." />}
