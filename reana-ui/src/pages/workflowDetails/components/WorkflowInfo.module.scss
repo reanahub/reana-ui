@@ -44,14 +44,14 @@
   }
 
   .refresh {
-    color: $light-gray;
+    color: $gray;
     cursor: pointer;
     margin-left: 1em;
     position: relative;
     top: 10px;
 
     &:hover {
-      color: $gray;
+      color: $dark-gray;
     }
   }
 
