@@ -13,7 +13,7 @@ import { useSelector } from "react-redux";
 import { getConfig } from "~/selectors";
 import exampleRootImg from "~/images/example-root.png";
 import exampleAtlasRecastImg from "~/images/example-atlas-recast.png";
-import exampleCmsHttImg from "~/images/example-cms-htt.png";
+import exampleCmsHiggsTauTauImg from "~/images/example-cms-htt.png";
 
 import styles from "./Welcome.module.scss";
 
@@ -29,9 +29,9 @@ const DEMOS = [
     image: exampleAtlasRecastImg,
   },
   {
-    name: "CMS HTauTau",
+    name: "CMS HiggsTauTau",
     url: "https://github.com/cms-opendata-analyses/HiggsTauTauNanoAODOutreachAnalysis",
-    image: exampleCmsHttImg,
+    image: exampleCmsHiggsTauTauImg,
   },
 ];
 
@@ -58,7 +58,7 @@ export default function Welcome() {
         If your analysis is hosted on an external site such as GitLab, GitHub or
         Zenodo, please provide a <code>url</code> parameter that would point to
         where your analysis is hosted. See the{" "}
-        <a href={`${docsURL}/running-workflows/launch-with-badge/`}>
+        <a href={`${docsURL}/running-workflows/launching-workflows/`}>
           launcher docs
         </a>{" "}
         for more details.
@@ -68,11 +68,8 @@ export default function Welcome() {
 }
 
 function DemoCard({ url, image, name }) {
-  return (
-    <div className={styles["demo-card"]}>
-      <div className={styles["img-wrapper"]}>
-        <Image src={image} alt={`${name} demo example illustration.`} />
-      </div>
+  function DemoLink({ children }) {
+    return (
       <Link
         to={{
           pathname: window.location.pathname,
@@ -83,12 +80,25 @@ function DemoCard({ url, image, name }) {
           }).toString(),
         }}
       >
+        {children}
+      </Link>
+    );
+  }
+
+  return (
+    <div className={styles["demo-card"]}>
+      <div className={styles["img-wrapper"]}>
+        <DemoLink>
+          <Image src={image} alt={`${name} demo example illustration.`} />
+        </DemoLink>
+      </div>
+      <DemoLink>
         <Button
           content={`Try ${name} demo`}
-          size="small"
+          size="tiny"
           className={styles.btn}
         />
-      </Link>
+      </DemoLink>
     </div>
   );
 }

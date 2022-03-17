@@ -6,7 +6,7 @@
   under the terms of the MIT License; see LICENSE file for more details.
 */
 
-import { useState, useCallback } from "react";
+import { useState, useMemo } from "react";
 import { useHistory } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { Button, Container, Icon, Image, Loader } from "semantic-ui-react";
@@ -88,12 +88,12 @@ export default function LaunchOnReana() {
   }
 
   /**
-   * Memoised function to get workflow parameters.
-   * Since this function is called twice and its return value should not
-   * change unless the query string parameters change, memoising it improves
-   * performace, avoiding extra calls.
+   * Memoised variable containing workflow parameters.
+   * Since this variable is used twice and its value should not
+   * change unless the query string parameters change, memoising
+   * it improves performace, avoiding extra calls.
    */
-  const getWorkflowParameters = useCallback(() => {
+  const workflowParameters = useMemo(() => {
     /**
      * Parses workflow parameters. Triggers notification error if invalid.
      * @param {URLSearchParams} query Standard URLSearchParams object.
@@ -112,6 +112,7 @@ export default function LaunchOnReana() {
             { error: true }
           )
         );
+        query.delete("parameters");
       }
       return null;
     }
@@ -136,18 +137,24 @@ export default function LaunchOnReana() {
                 <div className={styles.name}>
                   {query.get("name") ?? DEFAULT_WORKFLOW_NAME}
                 </div>
-                <a className={styles.url} href={query.get("url")}>
+                <a
+                  className={styles.url}
+                  href={query.get("url")}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   {query.get("url")}
                 </a>
                 <div>
                   <Icon name="file code outline" />
                   {query.get("spec") ?? DEFAULT_SPEC_FILENAME}
                 </div>
-                {query.get("parameters") && getWorkflowParameters() && (
+                {query.get("parameters") && workflowParameters && (
                   <div className={styles.parameters}>
+                    <Icon name="sliders horizontal" />
                     Parameters:
                     <ul>
-                      {Object.entries(getWorkflowParameters()).map(([k, v]) => (
+                      {Object.entries(workflowParameters).map(([k, v]) => (
                         <li key={k}>
                           {k}: {v}
                         </li>

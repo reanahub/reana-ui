@@ -13,7 +13,7 @@
 }
 
 .demo-card {
-  .img-wrapper {
+  .img-wrapper > a {
     height: 200px;
     display: flex;
     justify-content: center;

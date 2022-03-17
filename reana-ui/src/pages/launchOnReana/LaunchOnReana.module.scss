@@ -25,6 +25,12 @@
   }
 
   .name,
+  .url,
+  .parameters {
+    padding-bottom: 5px;
+  }
+
+  .name,
   .url {
     font-weight: bold;
   }
@@ -39,8 +45,6 @@
   }
 
   .parameters {
-    margin-top: 1em;
-
     ul {
       margin: 0;
     }
