@@ -44,12 +44,12 @@ export default function WorkflowInfo({ workflow }) {
   return (
     <div className={styles.workflow}>
       <section className={styles.info}>
-        <div>
-          <div className={styles["first-row"]}>
-            <Icon
-              name={statusMapping[status].icon}
-              color={statusMapping[status].color}
-            />{" "}
+        <div className={styles["details-box"]}>
+          <Icon
+            name={statusMapping[status].icon}
+            color={statusMapping[status].color}
+          />
+          <div>
             <span className={styles["name"]}>{name}</span>
             <span className={styles["run"]}>#{run}</span>
             {isSessionOpen && (
@@ -66,25 +66,25 @@ export default function WorkflowInfo({ workflow }) {
             <span className={styles["launcher-label"]}>
               <LauncherLabel url={launcherURL} />
             </span>
-          </div>
-          <Popup
-            trigger={
-              <div>
-                {friendlyFinished
-                  ? `Finished ${friendlyFinished}`
+            <Popup
+              trigger={
+                <div>
+                  {friendlyFinished
+                    ? `Finished ${friendlyFinished}`
+                    : friendlyStarted
+                    ? `Started ${friendlyStarted}`
+                    : `Created ${friendlyCreated}`}
+                </div>
+              }
+              content={
+                friendlyFinished
+                  ? finishedDate
                   : friendlyStarted
-                  ? `Started ${friendlyStarted}`
-                  : `Created ${friendlyCreated}`}
-              </div>
-            }
-            content={
-              friendlyFinished
-                ? finishedDate
-                : friendlyStarted
-                ? startedDate
-                : createdDate
-            }
-          />
+                  ? startedDate
+                  : createdDate
+              }
+            />
+          </div>
         </div>
         <div className={styles.info}>
           <div>
