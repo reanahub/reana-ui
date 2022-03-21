@@ -2,7 +2,7 @@
   -*- coding: utf-8 -*-
 
   This file is part of REANA.
-  Copyright (C) 2020 CERN.
+  Copyright (C) 2020, 2022 CERN.
 
   REANA is free software; you can redistribute it and/or modify it
   under the terms of the MIT License; see LICENSE file for more details.
@@ -25,8 +25,16 @@
   align-items: baseline;
 
   .refresh {
-    color: $light-gray;
+    color: $gray;
     font-size: 12px;
+
+    .icon {
+      cursor: pointer;
+
+      &:hover {
+        color: $dark-gray;
+      }
+    }
   }
 }
 

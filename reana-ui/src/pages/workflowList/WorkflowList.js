@@ -11,7 +11,7 @@
 import moment from "moment";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Container, Dimmer, Loader } from "semantic-ui-react";
+import { Container, Dimmer, Icon, Loader } from "semantic-ui-react";
 
 import { fetchWorkflows } from "~/actions";
 import {
@@ -135,7 +135,14 @@ function Workflows() {
       <Container text>
         <Title className={styles.title}>
           <span>Your workflows</span>
-          <span className={styles.refresh}>Refreshed at {refreshedAt}</span>
+          <span className={styles.refresh}>
+            <Icon
+              name="refresh"
+              className={styles.icon}
+              onClick={() => window.location.reload()}
+            />
+            Refreshed at {refreshedAt}
+          </span>
         </Title>
         <Search
           search={applyFilter(setSearchFilter, pagination, setPagination)}
