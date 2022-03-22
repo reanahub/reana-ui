@@ -17,7 +17,7 @@ export const LAUNCH_ON_REANA_PARAMS_WHITELIST = {
   url: { required: true },
   name: { required: false },
   parameters: { required: false },
-  spec: { required: false },
+  specification: { required: false },
 };
 
 /**

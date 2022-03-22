@@ -147,7 +147,7 @@ export default function LaunchOnReana() {
                 </a>
                 <div>
                   <Icon name="file code outline" />
-                  {query.get("spec") ?? DEFAULT_SPEC_FILENAME}
+                  {query.get("specification") ?? DEFAULT_SPEC_FILENAME}
                 </div>
                 {query.get("parameters") && workflowParameters && (
                   <div className={styles.parameters}>

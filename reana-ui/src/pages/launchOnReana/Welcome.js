@@ -76,7 +76,7 @@ function DemoCard({ url, image, name }) {
           search: new URLSearchParams({
             url: url,
             name: `my-${name.toLowerCase().replace(" ", "-")}-analysis`,
-            spec: "reana.yaml",
+            specification: "reana.yaml",
           }).toString(),
         }}
       >
