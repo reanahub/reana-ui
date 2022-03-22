@@ -51,7 +51,7 @@ test("loads and displays launch on reana page", async () => {
   expect(screen.getByText("https://example.org/reana.yaml"));
 
   expect(screen.getByText("roofit"));
-  expect(screen.queryByText("Executing workflow...")).toBeNull();
+  expect(screen.queryByText("Executing workflow...")).not.toHaveClass("active");
 
   expect(screen.getByText("Parameters:"));
   expect(screen.getByRole("heading")).toHaveTextContent("Launch on REANA");
@@ -59,7 +59,9 @@ test("loads and displays launch on reana page", async () => {
   expect(screen.getByText(/script: run.C/));
 
   fireEvent.click(screen.getByText("Launch"));
-  await waitFor(() => expect(screen.getByText("Executing workflow...")));
+  await waitFor(() =>
+    expect(screen.getByText("Executing workflow...")).toHaveClass("active")
+  );
 });
 
 test("displays default workflow name when no name is provided", async () => {

@@ -177,7 +177,7 @@ export default function LaunchOnReana() {
             {/* <BadgeEmbed /> */}
           </Box>
         )}
-        {loading && <Loader content="Executing workflow..." />}
+        <Loader active={loading} content="Executing workflow..." />
       </Container>
     </BasePage>
   );
