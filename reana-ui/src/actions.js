@@ -105,10 +105,10 @@ export function loadConfig() {
   };
 }
 
-export function loadUser() {
+export function loadUser({ loader = true } = {}) {
   return async (dispatch) => {
-    dispatch({ type: USER_FETCH });
-    dispatch({ type: QUOTA_FETCH });
+    dispatch({ type: USER_FETCH, loader });
+    dispatch({ type: QUOTA_FETCH, loader });
     return await client
       .getUser()
       .then((resp) => {

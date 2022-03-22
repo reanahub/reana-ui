@@ -2,7 +2,7 @@
   -*- coding: utf-8 -*-
 
   This file is part of REANA.
-  Copyright (C) 2020 CERN.
+  Copyright (C) 2020, 2022 CERN.
 
   REANA is free software; you can redistribute it and/or modify it
   under the terms of the MIT License; see LICENSE file for more details.
@@ -146,7 +146,7 @@ const config = (state = configInitialState, action) => {
 const auth = (state = authInitialState, action) => {
   switch (action.type) {
     case USER_FETCH:
-      return { ...state, loadingUser: true };
+      return { ...state, loadingUser: action.loader };
     case USER_RECEIVED:
       return {
         ...state,
@@ -284,7 +284,7 @@ const details = (state = detailsInitialState, action) => {
 const quota = (state = quotaInitialState, action) => {
   switch (action.type) {
     case QUOTA_FETCH:
-      return { ...state, loading: true };
+      return { ...state, loading: action.loader };
     case QUOTA_RECEIVED:
       return { ...state, loading: false, ...action.quota };
     case QUOTA_FETCH_ERROR:
