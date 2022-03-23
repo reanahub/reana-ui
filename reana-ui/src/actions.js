@@ -261,12 +261,12 @@ export function fetchWorkflows({
   };
 }
 
-export function fetchWorkflow(id) {
+export function fetchWorkflow(id, { refetch = false, showLoader = true } = {}) {
   return async (dispatch, getStore) => {
     const state = getStore();
     const workflow = getWorkflow(id)(state);
     // Only fetch if needed
-    if (workflow) {
+    if (workflow && !refetch) {
       return workflow;
     } else {
       dispatch(
@@ -274,21 +274,27 @@ export function fetchWorkflow(id) {
           workflowId: {
             workflow_id_or_name: id,
           },
+          showLoader,
         })
       );
     }
   };
 }
 
-export function fetchWorkflowLogs(id) {
+export function fetchWorkflowLogs(
+  id,
+  { refetch = false, showLoader = true } = {}
+) {
   return async (dispatch, getStore) => {
     const state = getStore();
     const logs = getWorkflowLogs(id)(state);
     // Only fetch if needed
-    if (!isEmpty(logs)) {
+    if (!isEmpty(logs) && !refetch) {
       return logs;
     }
-    dispatch({ type: WORKFLOW_LOGS_FETCH });
+    if (showLoader) {
+      dispatch({ type: WORKFLOW_LOGS_FETCH });
+    }
     return await client
       .getWorkflowLogs(id)
       .then((resp) =>
