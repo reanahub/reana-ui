@@ -2,7 +2,7 @@
 	-*- coding: utf-8 -*-
 
 	This file is part of REANA.
-	Copyright (C) 2020 CERN.
+	Copyright (C) 2020, 2022 CERN.
 
   REANA is free software; you can redistribute it and/or modify it
   under the terms of the MIT License; see LICENSE file for more details.
@@ -75,13 +75,13 @@ export default function WorkflowLogs({ id }) {
               {log.compute_backend}
             </Label>
             <TooltipIfTruncated tooltip={log.docker_img}>
-              <Label className={styles.ellipsized}>
+              <Label className={styles.label}>
                 <Icon name="docker" />
                 {log.docker_img}
               </Label>
             </TooltipIfTruncated>
             <TooltipIfTruncated tooltip={log.cmd}>
-              <Label className={styles.ellipsized}>
+              <Label className={styles.label}>
                 <Icon name="dollar" />
                 {log.cmd}
               </Label>
