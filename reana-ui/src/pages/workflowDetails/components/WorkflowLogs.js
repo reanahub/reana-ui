@@ -33,7 +33,13 @@ export default function WorkflowLogs({ id }) {
 
   useEffect(() => {
     const failedStepId = findKey(logs, (log) => log.status === "failed");
-    setSelectedStep(failedStepId ? failedStepId : Object.keys(logs)[0]);
+    if (failedStepId) return setSelectedStep(failedStepId);
+
+    const runningStepId = findKey(logs, (log) => log.status === "running");
+    if (runningStepId) return setSelectedStep(runningStepId);
+
+    const logKeys = Object.keys(logs);
+    setSelectedStep(logKeys[logKeys.length - 1]);
   }, [logs]);
 
   const steps = Object.entries(logs).map(([id, log]) => ({
