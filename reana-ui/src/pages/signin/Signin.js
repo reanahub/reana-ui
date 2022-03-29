@@ -80,7 +80,7 @@ export default function Signin() {
       {config.hideSignup && !config.localUsers && config.cernSSO && (
         <p>
           Note that you need to hold an official CERN account in order to use
-          <Link to="/"> {window.location.hostname}</Link> service.
+          this service.
         </p>
       )}
       {config.hideSignup && config.localUsers && (
