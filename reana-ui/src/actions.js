@@ -86,7 +86,7 @@ export function errorActionCreator(error, name) {
   };
 }
 
-export function triggerNotification(header, message, { error = false }) {
+export function triggerNotification(header, message, { error = false } = {}) {
   return { type: error ? ERROR : NOTIFICATION, header, message };
 }
 
