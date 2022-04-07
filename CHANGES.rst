@@ -10,6 +10,7 @@ Version 0.9.0 (UNRELEASED)
 - Adds periodic refresh of the workflow details page.
 - Fixes redirection chain for non-signed-in CERN SSO users to access the desired target page after sign-in.
 - Fixes ``fetchWorkflow`` action to fetch a specific workflow instead of the entire user workflow list.
+- Changes OAuth configuration to enable the new CERN SSO.
 
 Version 0.8.2 (2022-02-15)
 ---------------------------
