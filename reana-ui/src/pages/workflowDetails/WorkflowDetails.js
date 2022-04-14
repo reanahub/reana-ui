@@ -8,7 +8,7 @@
   under the terms of the MIT License; see LICENSE file for more details.
 */
 
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
 import { Container, Dimmer, Loader, Tab } from "semantic-ui-react";
@@ -16,6 +16,7 @@ import { Container, Dimmer, Loader, Tab } from "semantic-ui-react";
 import { fetchWorkflow, fetchWorkflowLogs } from "~/actions";
 import {
   getWorkflow,
+  getWorkflowRefresh,
   loadingWorkflows,
   isWorkflowsFetched,
   getConfig,
@@ -48,23 +49,26 @@ function WorkflowDetails() {
   const workflowsFetched = useSelector(isWorkflowsFetched);
   const { pollingSecs } = useSelector(getConfig);
   const interval = useRef(null);
+  const workflowRefresh = useSelector(getWorkflowRefresh);
 
-  // TODO: add `workflowRefresh` dependency to trigger useEffect
-  // once user opens, closes Interactive session, deletes workflow
+  const refetchWorkflow = useCallback(() => {
+    const options = { refetch: true, showLoader: false };
+    dispatch(fetchWorkflow(workflowId, options));
+    dispatch(fetchWorkflowLogs(workflowId, options));
+  }, [dispatch, workflowId]);
+
   useEffect(() => {
     dispatch(fetchWorkflow(workflowId));
     if (!interval.current && pollingSecs) {
-      interval.current = setInterval(() => {
-        dispatch(
-          fetchWorkflow(workflowId, { refetch: true, showLoader: false })
-        );
-        dispatch(
-          fetchWorkflowLogs(workflowId, { refetch: true, showLoader: false })
-        );
-      }, pollingSecs * 1000);
+      interval.current = setInterval(refetchWorkflow, pollingSecs * 1000);
     }
     return cleanPolling;
-  }, [dispatch, workflowId, pollingSecs]);
+  }, [dispatch, refetchWorkflow, workflowId, pollingSecs]);
+
+  // FIXME: workflowRefresh is a temporary solution to refresh the workflow
+  // by saving random number in redux. It should be refactored in the future
+  // once websockets will be implemented
+  useEffect(refetchWorkflow, [dispatch, refetchWorkflow, workflowRefresh]);
 
   useEffect(() => {
     if (workflow && FINISHED_STATUSES.includes(workflow.status)) {
