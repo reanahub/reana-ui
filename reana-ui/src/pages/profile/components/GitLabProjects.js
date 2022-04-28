@@ -2,7 +2,7 @@
 	-*- coding: utf-8 -*-
 
   This file is part of REANA.
-  Copyright (C) 2020 CERN.
+  Copyright (C) 2020, 2021, 2022 CERN.
 
   REANA is free software; you can redistribute it and/or modify it
   under the terms of the MIT License; see LICENSE file for more details.
@@ -29,7 +29,11 @@ export default function GitLabProjects() {
       client
         .getGitlabProjects()
         .then((res) => {
-          setProjects(res.data);
+          let newProjects = {};
+          for (const [id, details] of Object.entries(res.data)) {
+            newProjects[id] = { ...details, toggling: false };
+          }
+          setProjects(newProjects);
           setFetchingProjects(false);
         })
         .catch((e) => {
@@ -41,7 +45,19 @@ export default function GitLabProjects() {
     getProjects();
   }, []);
 
+  const setToggling = (projectId, toggling) => {
+    setProjects((currentProjects) => ({
+      ...currentProjects,
+      [projectId]: {
+        ...currentProjects[projectId],
+        toggling,
+      },
+    }));
+  };
+
   const onToggleProject = (_, { value: projectId, checked }) => {
+    setToggling(projectId, true);
+
     let data = { project_id: projectId };
     let method, expectedStatus;
 
@@ -58,17 +74,20 @@ export default function GitLabProjects() {
       .toggleGitlabProject(method, data)
       .then((res) => {
         if (res.status === expectedStatus) {
-          setProjects({
-            ...projects,
+          setProjects((currentProjects) => ({
+            ...currentProjects,
             [projectId]: {
-              ...projects[projectId],
+              ...currentProjects[projectId],
               hook_id: checked ? res.data.id : null,
             },
-          });
+          }));
         }
       })
       .catch((e) => {
         throw new Error(e);
+      })
+      .finally(() => {
+        setToggling(projectId, false);
       });
   };
 
@@ -110,7 +129,7 @@ export default function GitLabProjects() {
           <>
             <List>
               {Object.entries(projects).map(
-                ([id, { name, hook_id: hookId, path, url }]) => {
+                ([id, { name, hook_id: hookId, path, url, toggling }]) => {
                   return (
                     <List.Item key={id} className={styles["list-item"]}>
                       <List.Icon
@@ -126,6 +145,7 @@ export default function GitLabProjects() {
                       </List.Content>
                       <Radio
                         toggle
+                        disabled={toggling}
                         value={id}
                         checked={hookId !== null}
                         onChange={onToggleProject}
