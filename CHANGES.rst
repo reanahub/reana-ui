@@ -12,6 +12,7 @@ Version 0.9.0 (UNRELEASED)
 - Fixes ``fetchWorkflow`` action to fetch a specific workflow instead of the entire user workflow list.
 - Changes OAuth configuration to enable the new CERN SSO.
 - Changes the workflow-details page to refresh after the deletion of a workflow.
+- Changes the workflow-details page to show the logs of the workflow engine.
 
 Version 0.8.2 (2022-02-15)
 ---------------------------

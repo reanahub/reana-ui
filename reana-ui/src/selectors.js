@@ -2,7 +2,7 @@
 	-*- coding: utf-8 -*-
 
 	This file is part of REANA.
-	Copyright (C) 2020 CERN.
+	Copyright (C) 2020, 2021, 2022 CERN.
 
   REANA is free software; you can redistribute it and/or modify it
   under the terms of the MIT License; see LICENSE file for more details.
@@ -52,7 +52,10 @@ export const getWorkflowRefresh = (state) => state.workflows.workflowRefresh;
 // Details
 export const loadingDetails = (state) => state.details.loadingDetails;
 export const getWorkflowLogs = (id) => (state) =>
-  (id in state.details.details && state.details.details[id].logs) || {};
+  (id in state.details.details && state.details.details[id].logs) || {
+    jobLogs: {},
+    engineLogs: "",
+  };
 export const getWorkflowFiles = (id) => (state) =>
   id in state.details.details && state.details.details[id]?.files?.items;
 export const getWorkflowFilesCount = (id) => (state) =>

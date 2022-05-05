@@ -109,7 +109,10 @@ function parseWorkflowDates(workflow) {
  */
 export function parseLogs(logs) {
   const parsedLogs = JSON.parse(logs);
-  return parsedLogs.job_logs;
+  return {
+    jobLogs: parsedLogs.job_logs,
+    engineLogs: parsedLogs.workflow_logs,
+  };
 }
 
 /**

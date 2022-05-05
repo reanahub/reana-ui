@@ -12,24 +12,42 @@ import { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import findKey from "lodash/findKey";
 import { useDispatch, useSelector } from "react-redux";
-import { Icon, Dropdown, Label, Loader } from "semantic-ui-react";
+import { Icon, Dropdown, Label, Loader, Message } from "semantic-ui-react";
 
 import { fetchWorkflowLogs } from "~/actions";
+import { NON_FINISHED_STATUSES } from "~/config";
 import { statusMapping } from "~/util";
 import { getWorkflowLogs, loadingDetails } from "~/selectors";
 import { CodeSnippet, TooltipIfTruncated } from "~/components";
 
 import styles from "./WorkflowLogs.module.scss";
 
-export default function WorkflowLogs({ id }) {
-  const dispatch = useDispatch();
-  const loading = useSelector(loadingDetails);
-  const logs = useSelector(getWorkflowLogs(id));
-  const [selectedStep, setSelectedStep] = useState();
+function EngineLogs({ logs, workflowStatus }) {
+  const isExecuting = NON_FINISHED_STATUSES.includes(workflowStatus);
+  return logs ? (
+    <CodeSnippet dollarPrefix={false} classes={styles.logs}>
+      {logs}
+    </CodeSnippet>
+  ) : (
+    <Message
+      icon="info circle"
+      content={
+        isExecuting
+          ? "The workflow engine logs will be available after the workflow run finishes."
+          : "There are no workflow engine logs for this execution run."
+      }
+      info
+    />
+  );
+}
 
-  useEffect(() => {
-    dispatch(fetchWorkflowLogs(id));
-  }, [dispatch, id]);
+EngineLogs.propTypes = {
+  logs: PropTypes.string.isRequired,
+  workflowStatus: PropTypes.string.isRequired,
+};
+
+function JobLogs({ logs }) {
+  const [selectedStep, setSelectedStep] = useState();
 
   useEffect(() => {
     const failedStepId = findKey(logs, (log) => log.status === "failed");
@@ -54,9 +72,7 @@ export default function WorkflowLogs({ id }) {
   }));
 
   const log = logs[selectedStep];
-  return loading ? (
-    <Loader active inline="centered" />
-  ) : (
+  return (
     <>
       <section className={styles["step-info"]}>
         <div>
@@ -104,6 +120,29 @@ export default function WorkflowLogs({ id }) {
   );
 }
 
+JobLogs.propTypes = {
+  logs: PropTypes.object.isRequired,
+};
+
+export default function WorkflowLogs({ workflow, engine = false }) {
+  const dispatch = useDispatch();
+  const loading = useSelector(loadingDetails);
+  const { engineLogs, jobLogs } = useSelector(getWorkflowLogs(workflow.id));
+
+  useEffect(() => {
+    dispatch(fetchWorkflowLogs(workflow.id));
+  }, [dispatch, workflow]);
+
+  return loading ? (
+    <Loader active inline="centered" />
+  ) : engine ? (
+    <EngineLogs workflowStatus={workflow.status} logs={engineLogs} />
+  ) : (
+    <JobLogs logs={jobLogs} />
+  );
+}
+
 WorkflowLogs.propTypes = {
-  id: PropTypes.string.isRequired,
+  workflow: PropTypes.object.isRequired,
+  engine: PropTypes.bool,
 };

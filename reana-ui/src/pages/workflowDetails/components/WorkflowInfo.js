@@ -13,13 +13,12 @@ import PropTypes from "prop-types";
 import { Icon, Popup } from "semantic-ui-react";
 
 import { INTERACTIVE_SESSION_URL } from "~/client";
+import { NON_FINISHED_STATUSES } from "~/config";
 import { getReanaToken } from "~/selectors";
 import { statusMapping } from "~/util";
 import { LauncherLabel, WorkflowProgress } from "../components";
 import { JupyterNotebookIcon, WorkflowActionsPopup } from "~/components";
 import styles from "./WorkflowInfo.module.scss";
-
-const NON_FINISHED_STATUSES = ["created", "queued", "pending", "running"];
 
 export default function WorkflowInfo({ workflow }) {
   const {

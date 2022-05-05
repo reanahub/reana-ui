@@ -103,8 +103,16 @@ function WorkflowDetails() {
 
   const panes = [
     {
-      menuItem: { key: "logs", icon: "terminal", content: "Logs" },
-      render: () => <WorkflowLogs id={workflow.id} />,
+      menuItem: { key: "job-logs", icon: "terminal", content: "Job logs" },
+      render: () => <WorkflowLogs workflow={workflow} />,
+    },
+    {
+      menuItem: {
+        key: "engine-logs",
+        icon: "cogs",
+        content: "Engine logs",
+      },
+      render: () => <WorkflowLogs engine workflow={workflow} />,
     },
     {
       menuItem: {

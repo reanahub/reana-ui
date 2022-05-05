@@ -25,3 +25,13 @@ export const LAUNCH_ON_REANA_PARAMS_WHITELIST = {
  */
 export const LAUNCH_ON_REANA_BADGE_URL =
   "https://www.reana.io/static/img/badges/launch-on-reana.svg";
+
+/**
+ * Statuses of workflows still waiting or in execution.
+ */
+export const NON_FINISHED_STATUSES = [
+  "created",
+  "queued",
+  "pending",
+  "running",
+];
