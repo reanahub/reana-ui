@@ -89,8 +89,7 @@ export default function App() {
           <ProtectedRoute path="/profile" component={Profile} />
           <ProtectedRoute path="/status" component={Status} />
           <ProtectedRoute exact path="/launch" component={LaunchOnReana} />
-          <ProtectedRoute path="/404" component={NotFound} />
-          <Redirect to="/404" />
+          <ProtectedRoute path="/" component={NotFound} />
         </Switch>
       )}
     </BrowserRouter>
