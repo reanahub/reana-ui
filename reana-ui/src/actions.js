@@ -403,6 +403,7 @@ export function openInteractiveSession(id) {
       })
       .catch((err) => {
         dispatch(errorActionCreator(err, INTERACTIVE_SESSIONS_OPEN_URL(id)));
+        throw err;
       });
   };
 }
@@ -417,6 +418,7 @@ export function closeInteractiveSession(id) {
       })
       .catch((err) => {
         dispatch(errorActionCreator(err, INTERACTIVE_SESSIONS_CLOSE_URL(id)));
+        throw err;
       });
   };
 }

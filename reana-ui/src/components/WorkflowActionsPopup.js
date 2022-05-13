@@ -2,7 +2,7 @@
   -*- coding: utf-8 -*-
 
   This file is part of REANA.
-  Copyright (C) 2020, 2021 CERN.
+  Copyright (C) 2020, 2021, 2022 CERN.
 
   REANA is free software; you can redistribute it and/or modify it
   under the terms of the MIT License; see LICENSE file for more details.
@@ -48,7 +48,9 @@ export default function WorkflowActionsPopup({ workflow, className }) {
           dispatch(
             triggerNotification(
               "Success!",
-              "The interactive session has been created. However, it could take several minutes to start the Jupyter Notebook."
+              "The interactive session has been created. " +
+                "However, it could take several minutes to start the Jupyter Notebook. " +
+                "Click on the Jupyter logo to access it."
             )
           );
         });
