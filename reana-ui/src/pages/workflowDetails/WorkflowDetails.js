@@ -103,16 +103,16 @@ function WorkflowDetails() {
 
   const panes = [
     {
-      menuItem: { key: "job-logs", icon: "terminal", content: "Job logs" },
-      render: () => <WorkflowLogs workflow={workflow} />,
-    },
-    {
       menuItem: {
         key: "engine-logs",
         icon: "cogs",
         content: "Engine logs",
       },
       render: () => <WorkflowLogs engine workflow={workflow} />,
+    },
+    {
+      menuItem: { key: "job-logs", icon: "terminal", content: "Job logs" },
+      render: () => <WorkflowLogs workflow={workflow} />,
     },
     {
       menuItem: {
@@ -132,10 +132,22 @@ function WorkflowDetails() {
     },
   ];
 
+  // If the workflow has finished and it did not fail, then engine logs are shown.
+  // Otherwise, job logs are displayed.
+  const hasFinished = FINISHED_STATUSES.includes(workflow.status);
+  let defaultActiveIndex = 1; // job logs
+  if (hasFinished && workflow.status !== "failed") {
+    defaultActiveIndex = 0; // engine logs
+  }
+
   return (
     <Container>
       <WorkflowInfo workflow={workflow} />
-      <Tab menu={{ secondary: true, pointing: true }} panes={panes} />
+      <Tab
+        menu={{ secondary: true, pointing: true }}
+        panes={panes}
+        defaultActiveIndex={defaultActiveIndex}
+      />
       <WorkflowDeleteModal />
     </Container>
   );
