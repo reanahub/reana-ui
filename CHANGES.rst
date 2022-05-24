@@ -8,6 +8,7 @@ Version 0.9.0 (UNRELEASED)
 - Adds Launch on REANA page allowing the submission of workflows via badge-clicking.
 - Adds 404 Not Found error page.
 - Adds periodic refresh of the workflow details page.
+- Adds new options to the workflow list page to sort workflows by most used disk and cpu quota.
 - Fixes redirection chain for non-signed-in CERN SSO users to access the desired target page after sign-in.
 - Fixes ``fetchWorkflow`` action to fetch a specific workflow instead of the entire user workflow list.
 - Changes OAuth configuration to enable the new CERN SSO.

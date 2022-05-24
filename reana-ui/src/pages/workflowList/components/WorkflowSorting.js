@@ -2,7 +2,7 @@
   -*- coding: utf-8 -*-
 
   This file is part of REANA.
-  Copyright (C) 2020 CERN.
+  Copyright (C) 2020, 2022 CERN.
 
   REANA is free software; you can redistribute it and/or modify it
   under the terms of the MIT License; see LICENSE file for more details.
@@ -14,6 +14,8 @@ import { Dropdown } from "semantic-ui-react";
 const sortOptions = [
   { key: 1, text: "Newest", value: "desc" },
   { key: 2, text: "Oldest", value: "asc" },
+  { key: 3, text: "Most disk quota used", value: "disk-desc" },
+  { key: 4, text: "Most cpu quota used", value: "cpu-desc" },
 ];
 
 export default function WorkflowSorting({ value, sort }) {
