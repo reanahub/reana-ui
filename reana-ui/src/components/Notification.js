@@ -2,7 +2,7 @@
   -*- coding: utf-8 -*-
 
   This file is part of REANA.
-  Copyright (C) 2020 CERN.
+  Copyright (C) 2020, 2022 CERN.
 
   REANA is free software; you can redistribute it and/or modify it
   under the terms of the MIT License; see LICENSE file for more details.
@@ -27,6 +27,7 @@ export default function Notification({
   closable,
   error,
   success,
+  warning,
 }) {
   const dispatch = useDispatch();
   const notification = useSelector(getNotification);
@@ -51,6 +52,7 @@ export default function Notification({
           size="small"
           error={error || (notification && notification.isError)}
           success={success || (notification && !notification.isError)}
+          warning={warning}
         />
       </Container>
     </Transition>
@@ -60,10 +62,11 @@ export default function Notification({
 Notification.propTypes = {
   icon: PropTypes.string,
   header: PropTypes.string,
-  message: PropTypes.string,
+  message: PropTypes.oneOfType([PropTypes.string, PropTypes.element]),
   closable: PropTypes.bool,
   error: PropTypes.bool,
   success: PropTypes.bool,
+  warning: PropTypes.bool,
 };
 
 Notification.defaultProps = {
@@ -73,4 +76,5 @@ Notification.defaultProps = {
   closable: true,
   error: false,
   success: false,
+  warning: false,
 };

@@ -4,6 +4,7 @@ Changes
 Version 0.9.0 (UNRELEASED)
 ---------------------------
 
+- Adds notification icon to the header to inform users when critical levels of quota usage is reached.
 - Adds a label link to the workflow launcher URL remote origin on the workflow details page.
 - Adds Launch on REANA page allowing the submission of workflows via badge-clicking.
 - Adds 404 Not Found error page.

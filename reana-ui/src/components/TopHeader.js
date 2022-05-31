@@ -2,7 +2,7 @@
 	-*- coding: utf-8 -*-
 
 	This file is part of REANA.
-	Copyright (C) 2020 CERN.
+	Copyright (C) 2020, 2022 CERN.
 
   REANA is free software; you can redistribute it and/or modify it
   under the terms of the MIT License; see LICENSE file for more details.
@@ -12,19 +12,17 @@ import { Image, Icon, Popup, List } from "semantic-ui-react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
-import { getConfig, getUserEmail } from "~/selectors";
+import { getUserEmail } from "~/selectors";
 import LogoImg from "~/images/logo-reana.svg";
 import { userSignout } from "~/actions";
+import NotificationBell from "./NotificationBell";
 
 import styles from "./TopHeader.module.scss";
 
 export default function TopHeader() {
   const dispatch = useDispatch();
   const email = useSelector(getUserEmail);
-  const config = useSelector(getConfig);
-  const signOut = () => {
-    dispatch(userSignout());
-  };
+  const signOut = () => dispatch(userSignout());
 
   return (
     <header className={styles["top-header"]}>
@@ -32,11 +30,7 @@ export default function TopHeader() {
         <Image src={LogoImg} size="small" />
       </Link>
       <section>
-        {config.docsURL && (
-          <a href={config.docsURL} target="_blank" rel="noopener noreferrer">
-            <Icon name="question circle outline"></Icon> Help
-          </a>
-        )}
+        <NotificationBell />
         <Popup
           trigger={
             <Icon

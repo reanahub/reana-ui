@@ -35,7 +35,7 @@ export const statusMapping = {
  */
 export const healthMapping = {
   healthy: "green",
-  warning: "orange",
+  warning: "brown",
   critical: "red",
 };
 

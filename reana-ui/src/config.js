@@ -41,6 +41,12 @@ export const WORKFLOW_STATUSES = [
 ];
 
 /**
+ * REANA quotas docs URL.
+ */
+export const REANA_QUOTAS_DOCS_URL =
+  "https://docs.reana.io/advanced-usage/user-quotas";
+
+/**
  * Statuses of workflows still waiting or in execution.
  */
 export const NON_FINISHED_STATUSES = [
