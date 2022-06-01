@@ -232,10 +232,12 @@ export default function WorkflowFiles({ id }) {
                   Modified {headerIcon("lastModified")}
                 </Table.HeaderCell>
                 <Table.HeaderCell
-                  sorted={sorting.column === "size" ? sorting.direction : null}
-                  onClick={() => handleSort("size")}
+                  sorted={
+                    sorting.column === "size.raw" ? sorting.direction : null
+                  }
+                  onClick={() => handleSort("size.raw")}
                 >
-                  Size {headerIcon("size")}
+                  Size {headerIcon("size.raw")}
                 </Table.HeaderCell>
               </Table.Row>
             </Table.Header>
