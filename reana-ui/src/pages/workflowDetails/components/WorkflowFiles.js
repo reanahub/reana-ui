@@ -256,7 +256,9 @@ export default function WorkflowFiles({ id }) {
                           {name}
                         </Table.Cell>
                         <Table.Cell>{lastModified}</Table.Cell>
-                        <Table.Cell>{size.raw}</Table.Cell>
+                        <Table.Cell>
+                          {size.human_readable || size.raw}
+                        </Table.Cell>
                       </Table.Row>
                     }
                   >
