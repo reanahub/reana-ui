@@ -2,7 +2,7 @@
   -*- coding: utf-8 -*-
 
   This file is part of REANA.
-  Copyright (C) 2020 CERN.
+  Copyright (C) 2020, 2022 CERN.
 
   REANA is free software; you can redistribute it and/or modify it
   under the terms of the MIT License; see LICENSE file for more details.
@@ -24,14 +24,12 @@ export default function WorkflowFilters({
 }) {
   return (
     <div className={styles.container}>
-      <Grid>
-        <Grid.Column floated="left" width={10}>
-          <WorkflowStatusFilter
-            valueList={statusFilter}
-            filter={setStatusFilter}
-          />
-        </Grid.Column>
-        <Grid.Column floated="right" width={6}>
+      <Grid verticalAlign="middle">
+        <WorkflowStatusFilter
+          statusFilter={statusFilter}
+          filter={setStatusFilter}
+        />
+        <Grid.Column floated="right" width={4}>
           <WorkflowSorting value={sortDir} sort={setSortDir} />
         </Grid.Column>
       </Grid>

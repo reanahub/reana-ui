@@ -1,0 +1,4 @@
+/* Toggle Checkbox */
+@toggleLaneBackground: rgba(0, 0, 0, .1);
+@toggleOnLaneColor: darken(@sepia, 10%);
+@toggleOnFocusLaneColor: darken(@sepia, 20%);

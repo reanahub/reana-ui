@@ -24,6 +24,7 @@ import {
   userHasWorkflows,
   getWorkflowRefresh,
 } from "~/selectors";
+import { NON_DELETED_STATUSES } from "~/config";
 import { Title } from "~/components";
 import { Pagination, Search } from "~/components";
 import { applyFilter } from "~/components/Search";
@@ -48,7 +49,7 @@ function Workflows() {
   const currentUTCTime = () => moment.utc().format("HH:mm:ss [UTC]");
   const [refreshedAt, setRefreshedAt] = useState(currentUTCTime());
   const [pagination, setPagination] = useState({ page: 1, size: PAGE_SIZE });
-  const [statusFilter, setStatusFilter] = useState([]);
+  const [statusFilter, setStatusFilter] = useState(NON_DELETED_STATUSES);
   const [searchFilter, setSearchFilter] = useState();
   const [sortDir, setSortDir] = useState("desc");
   const dispatch = useDispatch();

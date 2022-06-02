@@ -27,6 +27,20 @@ export const LAUNCH_ON_REANA_BADGE_URL =
   "https://www.reana.io/static/img/badges/launch-on-reana.svg";
 
 /**
+ * List of possible statuses of a workflow.
+ */
+export const WORKFLOW_STATUSES = [
+  "created",
+  "deleted",
+  "failed",
+  "finished",
+  "pending",
+  "queued",
+  "running",
+  "stopped",
+];
+
+/**
  * Statuses of workflows still waiting or in execution.
  */
 export const NON_FINISHED_STATUSES = [
@@ -35,3 +49,10 @@ export const NON_FINISHED_STATUSES = [
   "pending",
   "running",
 ];
+
+/**
+ * List of possible statuses of a workflow, except for `deleted`.
+ */
+export const NON_DELETED_STATUSES = WORKFLOW_STATUSES.filter(
+  (status) => status !== "deleted"
+);
