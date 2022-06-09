@@ -101,7 +101,7 @@ export default function WorkflowActionsPopup({ workflow, className }) {
 
   return (
     <div className={className || styles.container}>
-      {(!isDeleted || isDeletedUsingWorkspace) && (
+      {menuItems.length > 0 && (
         <Popup
           basic
           trigger={
