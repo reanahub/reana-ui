@@ -121,7 +121,7 @@ export default function WorkflowList({ workflows, loading }) {
                 >
                   {status}
                 </span>{" "}
-                {statusMapping[status].preposition} {!isDeleted && duration}
+                {statusMapping[status].preposition} {duration}
                 <div>
                   step {completed}/{total}
                 </div>

@@ -34,7 +34,7 @@ export default function WorkflowDeleteModal() {
       <Modal.Header>Delete workflow</Modal.Header>
       <Modal.Content>
         <Message icon warning>
-          <Icon name="warning sign" />
+          <Icon name="warning circle" />
           <Message.Content>
             <Message.Header>Workspace deletion!</Message.Header>
             This action will delete also the workflow's workspace

@@ -93,8 +93,7 @@ export default function WorkflowInfo({ workflow }) {
               >
                 {status}
               </span>{" "}
-              {statusMapping[status].preposition}{" "}
-              {status !== "deleted" && duration}
+              {statusMapping[status].preposition} {duration}
               {NON_FINISHED_STATUSES.includes(status) && (
                 <Icon
                   name="refresh"
