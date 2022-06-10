@@ -92,7 +92,7 @@ export default function WorkflowActionsPopup({ workflow, className }) {
       content: "Free up disk",
       icon: "hdd",
       onClick: (e) => {
-        dispatch(deleteWorkflow(id, true));
+        dispatch(deleteWorkflow(id));
         setOpen(false);
         e.stopPropagation();
       },

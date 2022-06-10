@@ -365,7 +365,7 @@ export function fetchWorkflowSpecification(id) {
   };
 }
 
-export function deleteWorkflow(id, workspace = false) {
+export function deleteWorkflow(id, workspace = true) {
   return async (dispatch) => {
     dispatch({ type: WORKFLOW_DELETE_INIT });
     return await client

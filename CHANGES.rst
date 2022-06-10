@@ -17,6 +17,7 @@ Version 0.9.0 (UNRELEASED)
 - Changes the workflow-details page to refresh after the deletion of a workflow.
 - Changes the workflow-details page to show the logs of the workflow engine.
 - Changes the workflow-details page to show file sizes in a human-readable format.
+- Changes the deletion of a workflow to always clean up the workspace.
 
 Version 0.8.2 (2022-02-15)
 ---------------------------
