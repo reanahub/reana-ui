@@ -30,6 +30,7 @@ import {
 import { fetchWorkflowFiles } from "~/actions";
 import client, { WORKFLOW_FILE_URL } from "~/client";
 import { getMimeType } from "~/util";
+import { WorkflowRetentionRules } from ".";
 import { Pagination, Search } from "~/components";
 import { applyFilter } from "~/components/Search";
 
@@ -207,6 +208,7 @@ export default function WorkflowFiles({ id }) {
     />
   ) : (
     <>
+      <WorkflowRetentionRules id={id} />
       <Search
         search={applyFilter(setSearchFilter, pagination, setPagination)}
       />

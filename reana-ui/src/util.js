@@ -7,9 +7,9 @@
   REANA is free software; you can redistribute it and/or modify it
   under the terms of the MIT License; see LICENSE file for more details.
 */
-
-import moment from "moment";
+import { sortBy } from "lodash";
 import mime from "mime";
+import moment from "moment";
 import queryString from "query-string";
 
 /**
@@ -55,12 +55,64 @@ export function parseWorkflows(workflows) {
     workflow.total = total.total;
     workflow.launcherURL = workflow.launcher_url;
     workflow = parseWorkflowDates(workflow);
+    workflow = parseWorkflowRetentionRules(workflow);
 
     obj[workflow.id] = workflow;
     return obj;
   }, {});
 
   return workflows;
+}
+
+/**
+ * Parses workflow's retention rules.
+ */
+function parseWorkflowRetentionRules(workflow) {
+  const getTimeBeforeExecution = (applyOn, currentTime) => {
+    const diff = moment.duration(applyOn.diff(currentTime));
+    if (diff.asDays() < 1) {
+      return "soon";
+    }
+    // change rounding so that we always show a conservative (rounded down) estimate
+    // of how much time is remaining before the execution of the rule
+    let prevRounding = moment.relativeTimeRounding();
+    moment.relativeTimeRounding(Math.floor);
+    const thresholds = { d: 7, w: 5, M: 12 };
+    const timeBeforeExecution = diff.humanize(true, thresholds);
+    // restore rounding behaviour
+    moment.relativeTimeRounding(prevRounding);
+    return timeBeforeExecution;
+  };
+
+  const retentionRules = workflow.retention_rules;
+  if (!retentionRules) {
+    return workflow;
+  }
+  delete workflow.retention_rules;
+  const currentTime = moment.now();
+  workflow.retentionRules = sortBy(
+    retentionRules.map(
+      ({ apply_on, retention_days, status, workspace_files }) => {
+        const applyOn = apply_on ? moment(apply_on) : null;
+        const timeBeforeExecution = applyOn
+          ? getTimeBeforeExecution(applyOn, currentTime)
+          : null;
+        return {
+          applyOn: applyOn ? applyOn.format("Do MMM YYYY HH:mm") : null,
+          timeBeforeExecution,
+          retentionDays: retention_days,
+          workspaceFiles: workspace_files,
+          status,
+          created: status === "created",
+          active: status === "active",
+          inactive: status === "inactive",
+          applied: status === "applied",
+        };
+      }
+    ),
+    [({ retentionDays }) => retentionDays]
+  );
+  return workflow;
 }
 
 /**
