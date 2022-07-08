@@ -7,8 +7,8 @@
 */
 
 import { useState, useMemo } from "react";
-import { useHistory } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { Redirect, useHistory } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import { Button, Container, Icon, Image, Loader } from "semantic-ui-react";
 
 import BasePage from "../BasePage";
@@ -25,6 +25,7 @@ import {
   LAUNCH_ON_REANA_PARAMS_WHITELIST,
   LAUNCH_ON_REANA_BADGE_URL,
 } from "~/config";
+import { getReanaToken } from "~/selectors";
 
 import styles from "./LaunchOnReana.module.scss";
 
@@ -32,6 +33,7 @@ export const DEFAULT_WORKFLOW_NAME = "workflow";
 export const DEFAULT_SPEC_FILENAME = "reana.yaml";
 
 export default function LaunchOnReana() {
+  const reanaToken = useSelector(getReanaToken);
   const [loading, setLoading] = useState(false);
   const history = useHistory();
   const query = useQuery();
@@ -118,6 +120,10 @@ export default function LaunchOnReana() {
     }
     return fn(query);
   }, [dispatch, query]);
+
+  if (!reanaToken) {
+    return <Redirect to="/" />;
+  }
 
   return (
     <BasePage>
