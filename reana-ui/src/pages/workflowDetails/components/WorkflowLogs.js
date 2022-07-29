@@ -75,7 +75,7 @@ function JobLogs({ logs }) {
   return (
     <>
       <section className={styles["step-info"]}>
-        <div>
+        <div className={styles["step-dropdown"]}>
           <Label size="large" className={styles["step-label"]}>
             Step
           </Label>
@@ -91,19 +91,27 @@ function JobLogs({ logs }) {
         </div>
         {log && (
           <div className={styles["step-tags"]}>
-            <Label color={statusMapping[log.status].color}>{log.status}</Label>
+            <Label color={statusMapping[log.status].color}>
+              {log.status}
+              {log.duration && (
+                <span className={styles["step-duration"]}>
+                  {" "}
+                  {statusMapping[log.status].preposition} {log.duration}
+                </span>
+              )}
+            </Label>
             <Label>
               <Icon name="cloud" />
               {log.compute_backend}
             </Label>
             <TooltipIfTruncated tooltip={log.docker_img}>
-              <Label className={styles.label}>
+              <Label className={styles.long}>
                 <Icon name="docker" />
                 {log.docker_img}
               </Label>
             </TooltipIfTruncated>
             <TooltipIfTruncated tooltip={log.cmd}>
-              <Label className={styles.label}>
+              <Label className={styles.long}>
                 <Icon name="dollar" />
                 {log.cmd}
               </Label>

@@ -42,14 +42,26 @@
 .step-info {
   display: flex;
   align-items: center;
+  gap: 1em;
+}
+
+.step-dropdown {
+  flex-shrink: 0;
 }
 
 .step-tags {
   display: flex;
-  margin: 1em;
 
-  .label {
+  > .long {
     max-width: 270px;
     @include ellipsized;
+  }
+
+  > :not(.long) {
+    flex-shrink: 0;
+  }
+
+  .step-duration {
+    font-weight: normal;
   }
 }

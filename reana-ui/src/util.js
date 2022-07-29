@@ -116,6 +116,42 @@ function parseWorkflowRetentionRules(workflow) {
 }
 
 /**
+ * Format a given time duration.
+ */
+export function formatDuration(duration) {
+  const durationMoment = moment.duration(duration);
+  if (!durationMoment.isValid()) {
+    return null;
+  }
+  let format;
+  if (durationMoment.hours()) {
+    format = "H[h] m[m] s[s]";
+  } else if (durationMoment.minutes()) {
+    format = "m [min] s [sec]";
+  } else {
+    format = "s [seconds]";
+  }
+  return moment.utc(durationMoment.valueOf()).format(format);
+}
+
+/**
+ * Calculate the time delta between the start and the end of an event.
+ * If the end time is not a valid date (e.g. null), the duration is calculated from the
+ * beginning of the event up to the current time.
+ */
+export function getDuration(start, end) {
+  const startMoment = moment.utc(start);
+  if (startMoment.isValid()) {
+    let endMoment = moment.utc(end);
+    if (!endMoment.isValid()) {
+      endMoment = moment.utc();
+    }
+    return moment.duration(endMoment.diff(startMoment));
+  }
+  return null;
+}
+
+/**
  * Parses workflows date info in a friendly way.
  */
 function parseWorkflowDates(workflow) {
@@ -128,30 +164,19 @@ function parseWorkflowDates(workflow) {
   workflow.friendlyCreated = moment
     .duration(-moment().diff(createdMoment))
     .humanize(true);
-  let duration;
   if (startedMoment.isValid()) {
     workflow.friendlyStarted = moment
       .duration(-moment().diff(startedMoment))
       .humanize(true);
     if (finishedMoment.isValid()) {
-      duration = finishedMoment.diff(startedMoment);
       workflow.friendlyFinished = moment
         .duration(-moment().diff(finishedMoment))
         .humanize(true);
-    } else if (startedMoment.isValid()) {
-      duration = moment().diff(startedMoment);
     }
 
-    const durationMoment = moment.duration(duration);
-    let format;
-    if (durationMoment.hours()) {
-      format = "H[h] m[m] s[s]";
-    } else if (durationMoment.minutes()) {
-      format = "m [min] s [sec]";
-    } else {
-      format = "s [seconds]";
-    }
-    workflow.duration = moment.utc(duration).format(format);
+    workflow.duration = formatDuration(
+      getDuration(startedMoment, finishedMoment)
+    );
   }
   return workflow;
 }
@@ -161,6 +186,11 @@ function parseWorkflowDates(workflow) {
  */
 export function parseLogs(logs) {
   const parsedLogs = JSON.parse(logs);
+
+  for (let job of Object.values(parsedLogs.job_logs)) {
+    job.duration = formatDuration(getDuration(job.started_at, job.finished_at));
+  }
+
   return {
     jobLogs: parsedLogs.job_logs,
     engineLogs: parsedLogs.workflow_logs,
