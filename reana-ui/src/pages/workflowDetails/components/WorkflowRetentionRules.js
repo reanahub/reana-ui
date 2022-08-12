@@ -48,9 +48,11 @@ export default function WorkflowRetentionRules({ id }) {
     if (!nextRule) {
       return "Retention rules";
     }
-    const { workspaceFiles, retentionDays, timeBeforeExecution } = nextRule;
-    const when =
-      timeBeforeExecution || `${retentionDays} days after workflow finishes`;
+    const { workspaceFiles, retentionDays, applyOn, timeBeforeExecution } =
+      nextRule;
+    const when = applyOn
+      ? `after ${applyOn} (${timeBeforeExecution})`
+      : `${retentionDays} days after workflow finishes`;
     return (
       <>
         Note: files matching the pattern{" "}
@@ -82,15 +84,13 @@ export default function WorkflowRetentionRules({ id }) {
                 </Table.Cell>
                 <Table.Cell>{rule.retentionDays}</Table.Cell>
                 <Table.Cell>
-                  {rule.applied ? (
-                    "already applied"
-                  ) : rule.inactive ? (
-                    "inactive rule"
-                  ) : rule.active ? (
-                    <span title={rule.applyOn}>{rule.timeBeforeExecution}</span>
-                  ) : (
-                    "-"
-                  )}
+                  {rule.applied
+                    ? "already applied"
+                    : rule.inactive
+                    ? "inactive rule"
+                    : rule.active
+                    ? `after ${rule.applyOn} (${rule.timeBeforeExecution})`
+                    : "-"}
                 </Table.Cell>
               </Table.Row>
             ))}
