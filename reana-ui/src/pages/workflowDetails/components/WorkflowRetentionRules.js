@@ -50,7 +50,7 @@ export default function WorkflowRetentionRules({ id }) {
     }
     const { workspaceFiles, retentionDays, timeBeforeExecution } = nextRule;
     const when =
-      timeBeforeExecution || `${retentionDays} days after the workflow's end`;
+      timeBeforeExecution || `${retentionDays} days after workflow finishes`;
     return (
       <>
         Note: files matching the pattern{" "}
