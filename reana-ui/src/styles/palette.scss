@@ -2,7 +2,7 @@
   -*- coding: utf-8 -*-
 
   This file is part of REANA.
-  Copyright (C) 2020 CERN.
+  Copyright (C) 2020, 2022 CERN.
 
   REANA is free software; you can redistribute it and/or modify it
   under the terms of the MIT License; see LICENSE file for more details.
@@ -24,3 +24,10 @@ $sui-violet: #6435c9;
 $sui-yellow: #fbbd08;
 $sui-teal: #009c95;
 $sui-gray: #767676;
+
+// Semantic UI info colors
+$info-color: #31ccec;
+$info-background-color: #f8ffff;
+$info-border-color: #a9d5de;
+$info-header-color: #0e566c;
+$info-text-color: #276f86;

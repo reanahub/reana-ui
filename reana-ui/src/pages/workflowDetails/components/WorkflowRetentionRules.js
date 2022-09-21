@@ -68,7 +68,7 @@ export default function WorkflowRetentionRules({ id }) {
         {generateTitle(nextRule)}
       </Accordion.Title>
       <Accordion.Content index={0} active={showRules}>
-        <Table compact>
+        <Table compact basic="very" className={styles["rules-table"]}>
           <Table.Header>
             <Table.Row>
               <Table.HeaderCell>Workspace files</Table.HeaderCell>
