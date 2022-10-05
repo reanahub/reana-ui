@@ -106,6 +106,7 @@ function parseWorkflowRetentionRules(workflow) {
           created: status === "created",
           active: status === "active",
           inactive: status === "inactive",
+          pending: status === "pending",
           applied: status === "applied",
         };
       }
