@@ -1,4 +1,4 @@
-import { getMimeType, formatSearch } from "~/util";
+import { formatDuration, formatSearch, getDuration, getMimeType } from "~/util";
 
 test.each([
   ["path/to/test.txt", "text/plain"],
@@ -24,3 +24,16 @@ test.each([
 ])("formatSearch(%p) === %p", (term, formattedTerm) => {
   expect(formatSearch(term)).toEqual(formattedTerm);
 });
+
+test.each([
+  [null, null, null],
+  [null, "2022-10-07T08:30:00", null],
+  ["2022-10-07T08:30:00", "2022-10-07T08:30:30", "30 seconds"],
+  ["2022-10-07T08:30:00", "2022-10-07T08:31:30", "1 min 30 sec"],
+  ["2022-10-07T08:30:00", "2022-10-07T09:31:30", "1h 1m 30s"],
+])(
+  "formatDuration(getDuration(%p, %p) === %p",
+  (start, end, formattedDuration) => {
+    expect(formatDuration(getDuration(start, end))).toEqual(formattedDuration);
+  }
+);

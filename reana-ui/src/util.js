@@ -120,6 +120,11 @@ function parseWorkflowRetentionRules(workflow) {
  * Format a given time duration.
  */
 export function formatDuration(duration) {
+  if (duration == null) {
+    // the function accepts nullish values so that the result of `getDuration`
+    // can be passed directly to `formatDuration`
+    return null;
+  }
   const durationMoment = moment.duration(duration);
   if (!durationMoment.isValid()) {
     return null;
