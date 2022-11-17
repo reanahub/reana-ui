@@ -10,6 +10,7 @@ Version 0.9.0 (UNRELEASED)
 - Adds 404 Not Found error page.
 - Adds periodic refresh of the workflow details page.
 - Adds new options to the workflow list page to sort workflows by most used disk and cpu quota.
+- Adds tab titles to all the pages.
 - Fixes redirection chain for non-signed-in CERN SSO users to access the desired target page after sign-in.
 - Fixes ``fetchWorkflow`` action to fetch a specific workflow instead of the entire user workflow list.
 - Fixes the ordering by size of the files showed in the ``Workspace`` tab of the workflow-details page.

@@ -30,7 +30,7 @@ export default function Profile() {
   useEffect(() => dispatch(loadUser({ loader: false })), [dispatch]);
 
   return (
-    <BasePage>
+    <BasePage title="Your profile">
       <Container text className={styles["container"]}>
         <div>
           <Title>Your REANA token</Title>

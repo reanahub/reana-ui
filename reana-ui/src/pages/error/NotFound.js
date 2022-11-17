@@ -15,7 +15,7 @@ import styles from "./NotFound.module.scss";
 
 export default function NotFound() {
   return (
-    <BasePage>
+    <BasePage title="Page not found">
       <div className={styles.container}>
         <main>
           <h1 className={styles.code}>404</h1>

@@ -39,7 +39,7 @@ const PAGE_SIZE = 5;
 
 export default function WorkflowListPage() {
   return (
-    <BasePage>
+    <BasePage title="Your workflows">
       <Workflows />
     </BasePage>
   );

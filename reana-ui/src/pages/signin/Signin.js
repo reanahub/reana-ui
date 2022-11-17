@@ -18,9 +18,10 @@ import SignForm from "./components/SignForm";
 import SignContainer from "./components/SignContainer";
 import { USER_OAUTH_SIGNIN_URL } from "~/client";
 import { triggerNotification, userSignin } from "~/actions";
-import { useSubmit } from "~/hooks";
+import { useSubmit, useDocumentTitle } from "~/hooks";
 
 export default function Signin() {
+  useDocumentTitle("Sign in");
   const handleSubmit = useSubmit(userSignin);
   const config = useSelector(getConfig);
   const dispatch = useDispatch();

@@ -125,8 +125,11 @@ export default function LaunchOnReana() {
     return <Redirect to="/" />;
   }
 
+  const pageTitle =
+    "Launch on REANA" + (query.get("name") ? `: ${query.get("name")}` : "");
+
   return (
-    <BasePage>
+    <BasePage title={pageTitle}>
       <Container text className={styles["container"]}>
         <div>
           <Title>Launch on REANA</Title>

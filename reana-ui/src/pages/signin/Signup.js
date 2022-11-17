@@ -2,7 +2,7 @@
   -*- coding: utf-8 -*-
 
   This file is part of REANA.
-  Copyright (C) 2020 CERN.
+  Copyright (C) 2020, 2022 CERN.
 
   REANA is free software; you can redistribute it and/or modify it
   under the terms of the MIT License; see LICENSE file for more details.
@@ -17,9 +17,10 @@ import SignForm from "./components/SignForm";
 import SignContainer from "./components/SignContainer";
 import { getConfig } from "../../selectors";
 import { userSignup } from "../../actions";
-import { useSubmit } from "../../hooks";
+import { useSubmit, useDocumentTitle } from "../../hooks";
 
 export default function Signup() {
+  useDocumentTitle("Sign up");
   const handleSubmit = useSubmit(userSignup);
   const config = useSelector(getConfig);
   const [formData, setFormData] = useState({ email: "", password: "" });

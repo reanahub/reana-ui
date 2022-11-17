@@ -30,17 +30,9 @@ import {
   WorkflowSpecification,
 } from "./components";
 
-export default function WorkflowDetailsPage() {
-  return (
-    <BasePage>
-      <WorkflowDetails />
-    </BasePage>
-  );
-}
-
 const FINISHED_STATUSES = ["finished", "failed", "stopped", "deleted"];
 
-function WorkflowDetails() {
+export default function WorkflowDetails() {
   const { id: workflowId } = useParams();
 
   const dispatch = useDispatch();
@@ -140,15 +132,19 @@ function WorkflowDetails() {
     defaultActiveIndex = 0; // engine logs
   }
 
+  const pageTitle = `${workflow.name} #${workflow.run}`;
+
   return (
-    <Container>
-      <WorkflowInfo workflow={workflow} />
-      <Tab
-        menu={{ secondary: true, pointing: true }}
-        panes={panes}
-        defaultActiveIndex={defaultActiveIndex}
-      />
-      <WorkflowDeleteModal />
-    </Container>
+    <BasePage title={pageTitle}>
+      <Container>
+        <WorkflowInfo workflow={workflow} />
+        <Tab
+          menu={{ secondary: true, pointing: true }}
+          panes={panes}
+          defaultActiveIndex={defaultActiveIndex}
+        />
+        <WorkflowDeleteModal />
+      </Container>
+    </BasePage>
   );
 }

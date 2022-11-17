@@ -8,7 +8,7 @@
   under the terms of the MIT License; see LICENSE file for more details.
 */
 
-import React from "react";
+import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 
@@ -39,4 +39,13 @@ export function useSubmit(action) {
 export function useQuery() {
   const { search } = useLocation();
   return React.useMemo(() => new URLSearchParams(search), [search]);
+}
+
+/**
+ * React Hook to update the document title.
+ */
+export function useDocumentTitle(title = "") {
+  useEffect(() => {
+    document.title = (title ? `${title} - ` : "") + window.location.hostname;
+  }, [title]);
 }
