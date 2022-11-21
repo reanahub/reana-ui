@@ -98,7 +98,7 @@ function parseWorkflowRetentionRules(workflow) {
           ? getTimeBeforeExecution(applyOn, currentTime)
           : null;
         return {
-          applyOn: applyOn ? applyOn.format("YYYY-MM-DDThh:mm:ss") : null,
+          applyOn: applyOn ? applyOn.format("YYYY-MM-DDTHH:mm:ss") : null,
           timeBeforeExecution,
           retentionDays: retention_days,
           workspaceFiles: workspace_files,
