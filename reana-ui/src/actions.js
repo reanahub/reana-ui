@@ -16,12 +16,19 @@ import client, {
   USER_SIGNOUT_URL,
   WORKFLOW_LOGS_URL,
   WORKFLOW_SPECIFICATION_URL,
+  WORKFLOW_RETENTION_RULES_URL,
   WORKFLOW_FILES_URL,
   WORKFLOW_SET_STATUS_URL,
   INTERACTIVE_SESSIONS_OPEN_URL,
   INTERACTIVE_SESSIONS_CLOSE_URL,
 } from "~/client";
-import { parseWorkflows, parseLogs, parseFiles, formatSearch } from "~/util";
+import {
+  parseWorkflows,
+  parseWorkflowRetentionRules,
+  parseLogs,
+  parseFiles,
+  formatSearch,
+} from "~/util";
 import {
   getConfig,
   getWorkflow,
@@ -68,6 +75,8 @@ export const WORKFLOW_FILES_RECEIVED = "Workflow files received";
 export const WORKFLOW_SPECIFICATION_FETCH = "Fetch workflow specification";
 export const WORKFLOW_SPECIFICATION_RECEIVED =
   "Workflow specification received";
+export const WORKFLOW_RETENTION_RULES_RECEIVED =
+  "Workflow retention rules received";
 export const WORKFLOW_DELETE_INIT = "Initialize workflow deletion";
 export const WORKFLOW_DELETED = "Workflow deleted";
 export const OPEN_DELETE_WORKFLOW_MODAL = "Open delete workflow modal";
@@ -361,6 +370,25 @@ export function fetchWorkflowSpecification(id) {
       )
       .catch((err) => {
         dispatch(errorActionCreator(err, WORKFLOW_SPECIFICATION_URL(id)));
+      });
+  };
+}
+
+export function fetchWorkflowRetentionRules(id) {
+  return async (dispatch) => {
+    return await client
+      .getWorkflowRetentionRules(id)
+      .then((resp) =>
+        dispatch({
+          type: WORKFLOW_RETENTION_RULES_RECEIVED,
+          id,
+          retentionRules: parseWorkflowRetentionRules(
+            resp.data.retention_rules
+          ),
+        })
+      )
+      .catch((err) => {
+        dispatch(errorActionCreator(err, WORKFLOW_RETENTION_RULES_URL(id)));
       });
   };
 }

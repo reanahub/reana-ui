@@ -13,8 +13,8 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Accordion, Icon, Label, Table } from "semantic-ui-react";
 
-import { fetchWorkflow } from "~/actions";
-import { getWorkflow } from "~/selectors";
+import { fetchWorkflowRetentionRules } from "~/actions";
+import { getWorkflowRetentionRules } from "~/selectors";
 
 import styles from "./WorkflowRetentionRules.module.scss";
 
@@ -24,22 +24,18 @@ function LabelRule({ workspaceFiles }) {
 
 export default function WorkflowRetentionRules({ id }) {
   const dispatch = useDispatch();
-  const workflow = useSelector(getWorkflow(id));
-
   const [showRules, setShowRules] = useState(false);
 
   useEffect(() => {
-    dispatch(fetchWorkflow(id));
+    dispatch(fetchWorkflowRetentionRules(id));
   }, [dispatch, id]);
 
   const handleClick = () => {
     setShowRules((showRules) => !showRules);
   };
 
-  const rules = workflow.retentionRules || [];
-  if (rules.length === 0) {
-    return null;
-  }
+  const rules = useSelector(getWorkflowRetentionRules(id)) || [];
+  if (!rules.length) return null;
 
   // First rule that still needs to be applied
   const nextRule = rules.find(({ active, created }) => active || created);

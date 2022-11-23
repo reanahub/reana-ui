@@ -55,7 +55,6 @@ export function parseWorkflows(workflows) {
     workflow.total = total.total;
     workflow.launcherURL = workflow.launcher_url;
     workflow = parseWorkflowDates(workflow);
-    workflow = parseWorkflowRetentionRules(workflow);
 
     obj[workflow.id] = workflow;
     return obj;
@@ -67,7 +66,7 @@ export function parseWorkflows(workflows) {
 /**
  * Parses workflow's retention rules.
  */
-function parseWorkflowRetentionRules(workflow) {
+export function parseWorkflowRetentionRules(retentionRules) {
   const getTimeBeforeExecution = (applyOn, currentTime) => {
     const diff = moment.duration(applyOn.diff(currentTime));
     if (diff.asDays() < 1) {
@@ -84,13 +83,9 @@ function parseWorkflowRetentionRules(workflow) {
     return timeBeforeExecution;
   };
 
-  const retentionRules = workflow.retention_rules;
-  if (!retentionRules) {
-    return workflow;
-  }
-  delete workflow.retention_rules;
+  if (!Array.isArray(retentionRules)) return [];
   const currentTime = moment.now();
-  workflow.retentionRules = sortBy(
+  return sortBy(
     retentionRules.map(
       ({ apply_on, retention_days, status, workspace_files }) => {
         const applyOn = apply_on ? moment(apply_on) : null;
@@ -113,7 +108,6 @@ function parseWorkflowRetentionRules(workflow) {
     ),
     [({ retentionDays }) => retentionDays]
   );
-  return workflow;
 }
 
 /**

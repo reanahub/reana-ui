@@ -37,6 +37,7 @@ import {
   WORKFLOW_SPECIFICATION_RECEIVED,
   WORKFLOW_FILES_FETCH,
   WORKFLOW_FILES_RECEIVED,
+  WORKFLOW_RETENTION_RULES_RECEIVED,
   OPEN_DELETE_WORKFLOW_MODAL,
   CLOSE_DELETE_WORKFLOW_MODAL,
 } from "~/actions";
@@ -275,6 +276,17 @@ const details = (state = detailsInitialState, action) => {
           },
         },
         loadingDetails: false,
+      };
+    case WORKFLOW_RETENTION_RULES_RECEIVED:
+      return {
+        ...state,
+        details: {
+          ...state.details,
+          [action.id]: {
+            ...state.details[action.id],
+            retentionRules: action.retentionRules,
+          },
+        },
       };
     default:
       return state;

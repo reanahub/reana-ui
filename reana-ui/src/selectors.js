@@ -64,3 +64,5 @@ export const getWorkflowSpecification = (id) => (state) =>
   id in state.details.details && state.details.details[id].specification;
 export const getWorkflowParameters = (id) => (state) =>
   id in state.details.details && state.details.details[id].parameters;
+export const getWorkflowRetentionRules = (id) => (state) =>
+  id in state.details.details && state.details.details[id].retentionRules;
