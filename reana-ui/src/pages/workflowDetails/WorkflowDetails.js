@@ -50,7 +50,6 @@ export default function WorkflowDetails() {
   }, [dispatch, workflowId]);
 
   useEffect(() => {
-    dispatch(fetchWorkflow(workflowId));
     if (!interval.current && pollingSecs) {
       interval.current = setInterval(refetchWorkflow, pollingSecs * 1000);
     }
