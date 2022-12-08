@@ -21,6 +21,7 @@ Version 0.9.0 (UNRELEASED)
 - Changes the workflow-details page to show the workspace's retention rules.
 - Changes the workflow-details page to show the duration of the workflow's jobs.
 - Changes the deletion of a workflow to always clean up the workspace.
+- Changes the announcements to support limited HTML markup.
 
 Version 0.8.2 (2022-02-15)
 ---------------------------

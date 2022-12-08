@@ -62,3 +62,8 @@ export const NON_FINISHED_STATUSES = [
 export const NON_DELETED_STATUSES = WORKFLOW_STATUSES.filter(
   (status) => status !== "deleted"
 );
+
+/**
+ * List of HTML tags that can be present in an announcement.
+ */
+export const ALLOWED_HTML_TAGS_ANNOUNCEMENT = ["a", "b", "em", "i", "strong"];

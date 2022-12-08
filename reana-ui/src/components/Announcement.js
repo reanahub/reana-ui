@@ -2,16 +2,18 @@
   -*- coding: utf-8 -*-
 
   This file is part of REANA.
-  Copyright (C) 2020 CERN.
+  Copyright (C) 2020, 2022 CERN.
 
   REANA is free software; you can redistribute it and/or modify it
   under the terms of the MIT License; see LICENSE file for more details.
 */
 
+import DOMPurify from "dompurify";
 import { useState } from "react";
 import { Icon } from "semantic-ui-react";
 import { useSelector } from "react-redux";
 
+import { ALLOWED_HTML_TAGS_ANNOUNCEMENT } from "~/config";
 import { getConfig } from "~/selectors";
 
 import styles from "./Announcement.module.scss";
@@ -33,7 +35,13 @@ export default function Announcement() {
       <div className={styles.bar} hidden={hidden}>
         <span className={styles.message}>
           <Icon name="warning circle" />
-          {config.announcement}
+          <span
+            dangerouslySetInnerHTML={{
+              __html: DOMPurify.sanitize(config.announcement, {
+                ALLOWED_TAGS: ALLOWED_HTML_TAGS_ANNOUNCEMENT,
+              }),
+            }}
+          />
         </span>
         <Icon
           link
