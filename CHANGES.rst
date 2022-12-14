@@ -1,35 +1,36 @@
 Changes
 =======
 
-Version 0.9.0 (UNRELEASED)
----------------------------
+Version 0.9.0 (2023-01-19)
+--------------------------
 
-- Adds notification icon to the header to inform users when critical levels of quota usage is reached.
-- Adds a label link to the workflow launcher URL remote origin on the workflow details page.
 - Adds Launch on REANA page allowing the submission of workflows via badge-clicking.
+- Adds notifications to inform users when critical levels of quota usage is reached.
 - Adds 404 Not Found error page.
-- Adds periodic refresh of the workflow details page.
-- Adds new options to the workflow list page to sort workflows by most used disk and cpu quota.
 - Adds tab titles to all the pages.
-- Fixes redirection chain for non-signed-in CERN SSO users to access the desired target page after sign-in.
-- Fixes ``fetchWorkflow`` action to fetch a specific workflow instead of the entire user workflow list.
-- Fixes the ordering by size of the files showed in the ``Workspace`` tab of the workflow-details page.
 - Changes OAuth configuration to enable the new CERN SSO.
-- Changes the workflow-details page to refresh after the deletion of a workflow.
 - Changes the workflow-details page to show the logs of the workflow engine.
 - Changes the workflow-details page to show file sizes in a human-readable format.
 - Changes the workflow-details page to show the workspace's retention rules.
 - Changes the workflow-details page to show the duration of the workflow's jobs.
+- Changes the workflow-details page to display a label of the workflow launcher URL remote origin.
+- Changes the workflow-details page to periodically refresh the content of the page.
+- Changes the workflow-details page to refresh after the deletion of a workflow.
+- Changes the workflow-list page to add a way to hide deleted workflows.
+- Changes the workflow-list page to add new workflows sorting options by most used disk and cpu quota.
 - Changes the deletion of a workflow to always clean up the workspace.
 - Changes the announcements to support limited HTML markup.
+- Fixes redirection chain for non-signed-in CERN SSO users to access the desired target page after sign-in.
+- Fixes ``fetchWorkflow`` action to fetch a specific workflow instead of the entire user workflow list.
+- Fixes the ordering by size of the files showed in the ``Workspace`` tab of the workflow-details page.
 
 Version 0.8.2 (2022-02-15)
----------------------------
+--------------------------
 
 - Changes ``node-sass`` dependency to version 7.
 
 Version 0.8.1 (2022-02-02)
----------------------------
+--------------------------
 
 - Adds support for HTML preview of workspace files.
 - Adds search by name in workflow file list page.
@@ -38,7 +39,7 @@ Version 0.8.1 (2022-02-02)
 - Changes Docker image Node version from 12 to 16.
 
 Version 0.8.0 (2021-11-22)
----------------------------
+--------------------------
 
 - Adds user quota usage pie charts in Profile page.
 - Adds a more generic notifications system.
@@ -56,12 +57,12 @@ Version 0.7.2 (2021-02-04)
 - Changes notification system to improve sign-in and sign-up messages.
 
 Version 0.7.1 (2020-11-24)
----------------------------
+--------------------------
 
 - Fixes error handling behaviour for several server-side exceptions.
 
 Version 0.7.0 (2020-10-20)
----------------------------
+--------------------------
 
 - Adds user profile page.
 - Adds local user forms for sign-in and sign-up functionalities.
