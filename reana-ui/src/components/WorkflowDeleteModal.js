@@ -2,7 +2,7 @@
   -*- coding: utf-8 -*-
 
   This file is part of REANA.
-  Copyright (C) 2020, 2022 CERN.
+  Copyright (C) 2020, 2022, 2023 CERN.
 
   REANA is free software; you can redistribute it and/or modify it
   under the terms of the MIT License; see LICENSE file for more details.
@@ -36,11 +36,13 @@ export default function WorkflowDeleteModal() {
         <Message icon warning>
           <Icon name="warning circle" />
           <Message.Content>
-            <Message.Header>Workspace deletion!</Message.Header>
+            <Message.Header>
+              Deletion of workspace and interactive sessions!
+            </Message.Header>
             This action will delete also the workflow's workspace
-            {size.human_readable ? ` (${size.human_readable})` : ""}. Please
-            make sure to download all the files you want to keep before
-            proceeding.
+            {size.human_readable ? ` (${size.human_readable})` : ""} and any
+            open interactive session attached to it. Please make sure to
+            download all the files you want to keep before proceeding.
           </Message.Content>
         </Message>
         <p>
