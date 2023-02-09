@@ -53,6 +53,7 @@ export const configInitialState = {
   forumURL: null,
   chatURL: null,
   cernSSO: false,
+  loginProviderConfig: null,
   cernRopo: false,
   adminEmail: null,
   maxInteractiveSessionInactivityPeriod: null,
@@ -129,6 +130,7 @@ const config = (state = configInitialState, action) => {
         forumURL: action.forum_url,
         chatURL: action.chat_url,
         cernSSO: action.cern_sso,
+        loginProviderConfig: action.login_provider_config,
         cernRopo: action.cern_ropo,
         adminEmail: action.admin_email,
         maxInteractiveSessionInactivityPeriod:

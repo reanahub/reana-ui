@@ -28,14 +28,14 @@ export default function Signin() {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const location = useLocation();
 
-  const handleClick = () => {
+  const handleClick = (ssoProvider) => {
     const from = location.state?.from || {
       pathname: "/",
       search: "",
       hash: "",
     };
     const next = `${from.pathname}${from.search}${from.hash}`;
-    window.location.href = USER_OAUTH_SIGNIN_URL(next);
+    window.location.href = USER_OAUTH_SIGNIN_URL(next, ssoProvider);
     // FIXME: We assume that the sign-up went successfully but we actually don't know.
     // We should upgrade Invenio-OAuthClient to latest version that supports REST apps
     // and adapt the whole workflow.
@@ -59,16 +59,37 @@ export default function Signin() {
       <Segment>
         {config.cernSSO && (
           <>
-            <Button basic fluid size="large" onClick={handleClick}>
+            <Button
+              basic
+              style={{ marginBottom: "5px" }}
+              fluid
+              size="large"
+              onClick={() => handleClick("cern_openid")}
+            >
               Sign in with CERN Single Sign-On
             </Button>
-            {config.localUsers && (
-              <Divider section horizontal>
-                or
-              </Divider>
-            )}
           </>
         )}
+        {config.loginProviderConfig.length > 0 && (
+          <>
+            <Button
+              basic
+              style={{ marginBottom: "5px" }}
+              fluid
+              size="large"
+              onClick={() => handleClick("keycloak")}
+            >
+              Sign in with {config.loginProviderConfig[0]["config"]["title"]}{" "}
+              Single Sign-On
+            </Button>
+          </>
+        )}
+        {(config.loginProviderConfig.length > 0 || config.cernSSO) &&
+          config.localUsers && (
+            <Divider section horizontal>
+              or
+            </Divider>
+          )}
         {config.localUsers && (
           <SignForm
             submitText="Sign in"
