@@ -11,9 +11,10 @@
 import { useState } from "react";
 import PropTypes from "prop-types";
 import { Icon, Menu, Popup } from "semantic-ui-react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import { workflowShape } from "~/props";
+import { getConfig } from "~/selectors";
 import {
   deleteWorkflow,
   openInteractiveSession,
@@ -30,6 +31,7 @@ const JupyterIcon = <JupyterNotebookIcon className={styles["jupyter-icon"]} />;
 
 export default function WorkflowActionsPopup({ workflow, className }) {
   const dispatch = useDispatch();
+  const config = useSelector(getConfig);
   const [open, setOpen] = useState(false);
   const { id, size, status, session_status: sessionStatus } = workflow;
   const isDeleted = status === "deleted";
@@ -45,12 +47,17 @@ export default function WorkflowActionsPopup({ workflow, className }) {
       icon: JupyterIcon,
       onClick: (e) => {
         dispatch(openInteractiveSession(id)).then(() => {
+          const interactiveSessionInactivityWarning =
+            config.maxInteractiveSessionInactivityPeriod
+              ? `Please note that it will be automatically closed after ${config.maxInteractiveSessionInactivityPeriod} days of inactivity.`
+              : "";
           dispatch(
             triggerNotification(
               "Success!",
               "The interactive session has been created. " +
                 "However, it could take several minutes to start the Jupyter Notebook. " +
-                "Click on the Jupyter logo to access it."
+                "Click on the Jupyter logo to access it. " +
+                `${interactiveSessionInactivityWarning}`
             )
           );
         });

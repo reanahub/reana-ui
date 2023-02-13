@@ -55,6 +55,7 @@ export const configInitialState = {
   cernSSO: false,
   cernRopo: false,
   adminEmail: null,
+  maxInteractiveSessionInactivityPeriod: null,
   localUsers: false,
   hideSignup: false,
   isLoaded: false,
@@ -130,6 +131,8 @@ const config = (state = configInitialState, action) => {
         cernSSO: action.cern_sso,
         cernRopo: action.cern_ropo,
         adminEmail: action.admin_email,
+        maxInteractiveSessionInactivityPeriod:
+          action.maximum_interactive_session_inactivity_period,
         localUsers: action.local_users,
         hideSignup: action.hide_signup,
         userConfirmation: action.user_confirmation,

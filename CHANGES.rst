@@ -1,6 +1,11 @@
 Changes
 =======
 
+Version 0.9.1 (UNRELEASED)
+--------------------------
+
+- Changes the interactive session notification by adding a message stating that the session will be closed after a specified number of days inactivity.
+
 Version 0.9.0 (2023-01-19)
 --------------------------
 
