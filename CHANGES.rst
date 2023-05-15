@@ -7,6 +7,7 @@ Version 0.9.1 (UNRELEASED)
 - Changes the interactive session notification by adding a message stating that the session will be closed after a specified number of days inactivity.
 - Adds an extra button for login with custom third-party Keycloak SSO authentication services.
 - Changes the workflow-details page to make it possible to scroll through the list of workflow steps in the job logs section.
+- Changes the workflow-details page to show the workflow's workspace size.
 
 Version 0.9.0 (2023-01-19)
 --------------------------
