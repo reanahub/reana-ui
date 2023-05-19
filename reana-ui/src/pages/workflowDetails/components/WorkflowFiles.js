@@ -77,6 +77,12 @@ const PREVIEW_MIME_PREFIX_WHITELIST = {
     serverPreviewable: false,
     display: (content) => content,
   },
+  "application/pdf": {
+    serverPreviewable: true,
+    display: (content) => {
+      return <object data={content} className={styles["pdf-object"]} />;
+    },
+  },
 };
 
 export default function WorkflowFiles({ id }) {

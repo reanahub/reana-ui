@@ -35,6 +35,11 @@
   align-items: center;
 }
 
+.pdf-object {
+  height: calc(80vh - 14em);
+  width: 100%;
+}
+
 :global(.ui.inline.loader.active).loader {
   margin-top: 1em;
 }
