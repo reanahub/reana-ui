@@ -2,7 +2,7 @@
   -*- coding: utf-8 -*-
 
   This file is part of REANA.
-  Copyright (C) 2020, 2022 CERN.
+  Copyright (C) 2020, 2022, 2023 CERN.
 
   REANA is free software; you can redistribute it and/or modify it
   under the terms of the MIT License; see LICENSE file for more details.
@@ -229,6 +229,11 @@ export function getMimeType(fileName) {
   const WHITELIST = [".py", "Snakefile"];
   if (WHITELIST.find((ext) => fileName.endsWith(ext))) {
     return "text/plain";
+  }
+  if (fileName.endsWith(".root")) {
+    // ROOT does not have a registered MIME-type yet
+    // See https://github.com/root-project/root/issues/6771
+    return "application/x-root";
   }
   return mime.getType(fileName);
 }

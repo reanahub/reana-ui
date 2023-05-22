@@ -12,8 +12,9 @@ test.each([
   ["script.js", "application/javascript"],
   ["plot.png", "image/png"],
   ["pie.jpg", "image/jpeg"],
+  ["data.root", "application/x-root"],
+  ["plot.pdf", "application/pdf"],
   ["foo", null],
-  ["data.root", null],
 ])("getMimeType(%p) === %p", (fileName, mimeType) => {
   expect(getMimeType(fileName)).toBe(mimeType);
 });

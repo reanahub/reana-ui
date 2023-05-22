@@ -2,37 +2,39 @@
 	-*- coding: utf-8 -*-
 
 	This file is part of REANA.
-	Copyright (C) 2020, 2021, 2022 CERN.
+	Copyright (C) 2020, 2021, 2022, 2023 CERN.
 
   REANA is free software; you can redistribute it and/or modify it
   under the terms of the MIT License; see LICENSE file for more details.
 */
 
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import PropTypes from "prop-types";
+import { buildGUI } from "jsroot";
+import { uniqueId } from "lodash";
 import sortBy from "lodash/sortBy";
+import PropTypes from "prop-types";
+import { useEffect, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import {
   Button,
   Icon,
+  Loader,
+  Message,
   Modal,
   Segment,
   Table,
-  Loader,
-  Message,
 } from "semantic-ui-react";
 
+import { fetchWorkflowFiles } from "~/actions";
+import client, { WORKFLOW_FILE_URL } from "~/client";
+import { Pagination, Search } from "~/components";
+import { applyFilter } from "~/components/Search";
 import {
   getWorkflowFiles,
   getWorkflowFilesCount,
   loadingDetails,
 } from "~/selectors";
-import { fetchWorkflowFiles } from "~/actions";
-import client, { WORKFLOW_FILE_URL } from "~/client";
 import { getMimeType } from "~/util";
 import { WorkflowRetentionRules } from ".";
-import { Pagination, Search } from "~/components";
-import { applyFilter } from "~/components/Search";
 
 import styles from "./WorkflowFiles.module.scss";
 
@@ -79,11 +81,60 @@ const PREVIEW_MIME_PREFIX_WHITELIST = {
   },
   "application/pdf": {
     serverPreviewable: true,
-    display: (content) => {
-      return <object data={content} className={styles["pdf-object"]} />;
-    },
+    display: (content, name) => (
+      <object data={content} className={styles["pdf-object"]}>
+        <Message icon info>
+          <Icon name="info circle" />
+          <Message.Content>
+            Click{" "}
+            <a href={content} target="_blank" rel="noopener noreferrer">
+              {name}
+            </a>{" "}
+            to open the PDF file, or use the download button.
+          </Message.Content>
+        </Message>
+      </object>
+    ),
+  },
+  "application/x-root": {
+    serverPreviewable: true,
+    display: (content) => <RootBrowser file={content} />,
   },
 };
+
+function RootBrowser({ file }) {
+  // Ref used to check whether the div is ready to be modified by jsroot
+  const divRef = useRef(null);
+  const [id] = useState(uniqueId("RootBrowser-"));
+  const [filebuffer, setFilebuffer] = useState(null);
+
+  // Download the file and save it as an ArrayBuffer
+  useEffect(() => {
+    // TODO: do not use _request
+    client
+      ._request(file, { responseType: "arraybuffer" })
+      .then((res) => setFilebuffer(res.data));
+  }, [file]);
+
+  // Open the ROOT file after the download, when the div is ready
+  useEffect(() => {
+    if (divRef.current === null || filebuffer === null) {
+      return;
+    }
+    buildGUI(divRef.current.id).then((rootGUI) => {
+      rootGUI.openRootFile(filebuffer);
+    });
+  });
+
+  return (
+    <div
+      className={styles["root-browser"]}
+      id={id}
+      noselect="true"
+      ref={divRef}
+    />
+  );
+}
 
 export default function WorkflowFiles({ id }) {
   const dispatch = useDispatch();
