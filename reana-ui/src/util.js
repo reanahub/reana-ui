@@ -8,7 +8,9 @@
   under the terms of the MIT License; see LICENSE file for more details.
 */
 import { sortBy } from "lodash";
-import mime from "mime";
+import Mime from "mime/Mime";
+import otherMimeTypes from "mime/types/other";
+import standardMimeTypes from "mime/types/standard";
 import moment from "moment";
 import queryString from "query-string";
 
@@ -221,21 +223,31 @@ export function formatSearch(term) {
 }
 
 /**
+ * Custom mapping between MIME types and file extensions.
+ *
+ * A local instance of `Mime` is initialized in the same way as the global `mime` mapping,
+ * adding some additional custom MIME types needed by REANA.
+ *
+ * `mime.define(...)` is not used in order to avoid modifying the global `mime` variable.
+ */
+const customMime = new Mime(standardMimeTypes, otherMimeTypes, {
+  // ROOT does not have a registered MIME-type yet
+  // See https://github.com/root-project/root/issues/6771
+  "application/x-root": ["root"],
+  "text/x-python": ["py"],
+});
+
+/**
  * Returns mime-type of a given file name.
  * @param {String} fileName File name
  */
 export function getMimeType(fileName) {
-  // Formats not considered by mime npm package
-  const WHITELIST = [".py", "Snakefile"];
-  if (WHITELIST.find((ext) => fileName.endsWith(ext))) {
+  // `Snakefile` does not have any extension,
+  // so it needs to be handled manually
+  if (fileName.endsWith("Snakefile")) {
     return "text/plain";
   }
-  if (fileName.endsWith(".root")) {
-    // ROOT does not have a registered MIME-type yet
-    // See https://github.com/root-project/root/issues/6771
-    return "application/x-root";
-  }
-  return mime.getType(fileName);
+  return customMime.getType(fileName);
 }
 
 /**

@@ -8,24 +8,13 @@
   under the terms of the MIT License; see LICENSE file for more details.
 */
 
-import { buildGUI } from "jsroot";
-import { uniqueId } from "lodash";
 import sortBy from "lodash/sortBy";
 import PropTypes from "prop-types";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  Button,
-  Icon,
-  Loader,
-  Message,
-  Modal,
-  Segment,
-  Table,
-} from "semantic-ui-react";
+import { Icon, Loader, Message, Segment, Table } from "semantic-ui-react";
 
 import { fetchWorkflowFiles } from "~/actions";
-import client, { WORKFLOW_FILE_URL } from "~/client";
 import { Pagination, Search } from "~/components";
 import { applyFilter } from "~/components/Search";
 import {
@@ -33,108 +22,13 @@ import {
   getWorkflowFilesCount,
   loadingDetails,
 } from "~/selectors";
-import { getMimeType } from "~/util";
 import { WorkflowRetentionRules } from ".";
 
 import styles from "./WorkflowFiles.module.scss";
 
-const FILE_SIZE_LIMIT = 5 * 1024 ** 2; // 5MB
+import FilePreview from "./FilePreview";
+
 const PAGE_SIZE = 15;
-
-const PREVIEW_MIME_PREFIX_WHITELIST = {
-  "image/": {
-    serverPreviewable: true,
-    display: (content, alt) => <img src={content} alt={alt} />,
-  },
-  "text/html": {
-    serverPreviewable: true,
-    display: (content) => {
-      return (
-        <Message
-          icon="info circle"
-          info
-          content={
-            <div className={styles["html-message"]}>
-              <span>Visualise this HTML file in a different tab.</span>
-              <Button
-                icon="external"
-                as="a"
-                href={content}
-                target="_blank"
-                rel="noopener noreferrer"
-                content="Open"
-                primary
-              />
-            </div>
-          }
-        />
-      );
-    },
-  },
-  "text/": {
-    serverPreviewable: false,
-    display: (content) => content,
-  },
-  "application/json": {
-    serverPreviewable: false,
-    display: (content) => content,
-  },
-  "application/pdf": {
-    serverPreviewable: true,
-    display: (content, name) => (
-      <object data={content} className={styles["pdf-object"]}>
-        <Message icon info>
-          <Icon name="info circle" />
-          <Message.Content>
-            Click{" "}
-            <a href={content} target="_blank" rel="noopener noreferrer">
-              {name}
-            </a>{" "}
-            to open the PDF file, or use the download button.
-          </Message.Content>
-        </Message>
-      </object>
-    ),
-  },
-  "application/x-root": {
-    serverPreviewable: true,
-    display: (content) => <RootBrowser file={content} />,
-  },
-};
-
-function RootBrowser({ file }) {
-  // Ref used to check whether the div is ready to be modified by jsroot
-  const divRef = useRef(null);
-  const [id] = useState(uniqueId("RootBrowser-"));
-  const [filebuffer, setFilebuffer] = useState(null);
-
-  // Download the file and save it as an ArrayBuffer
-  useEffect(() => {
-    // TODO: do not use _request
-    client
-      ._request(file, { responseType: "arraybuffer" })
-      .then((res) => setFilebuffer(res.data));
-  }, [file]);
-
-  // Open the ROOT file after the download, when the div is ready
-  useEffect(() => {
-    if (divRef.current === null || filebuffer === null) {
-      return;
-    }
-    buildGUI(divRef.current.id).then((rootGUI) => {
-      rootGUI.openRootFile(filebuffer);
-    });
-  });
-
-  return (
-    <div
-      className={styles["root-browser"]}
-      id={id}
-      noselect="true"
-      ref={divRef}
-    />
-  );
-}
 
 export default function WorkflowFiles({ id }) {
   const dispatch = useDispatch();
@@ -143,11 +37,10 @@ export default function WorkflowFiles({ id }) {
   const filesCount = useSelector(getWorkflowFilesCount(id));
 
   const [files, setFiles] = useState();
-  const [modalContent, setModalContent] = useState(null);
   const [sorting, setSorting] = useState({ column: null, direction: null });
-  const [displayContent, setDisplayContent] = useState(() => () => null);
   const [pagination, setPagination] = useState({ page: 1, size: PAGE_SIZE });
   const [searchFilter, setSearchFilter] = useState();
+  const [filePreview, setFilePreview] = useState(null);
 
   useEffect(() => {
     dispatch(fetchWorkflowFiles(id, pagination, searchFilter));
@@ -156,74 +49,6 @@ export default function WorkflowFiles({ id }) {
   useEffect(() => {
     setFiles(_files);
   }, [_files]);
-
-  const getFileURL = (fileName, preview = true) =>
-    WORKFLOW_FILE_URL(id, fileName, { preview });
-
-  /**
-   * Check if the given file name matches any given mime-type
-   * @param {Array} list Array of mime-types to check against
-   * @param {String} fileName File name to check
-   * @return {Boolean} Extension that matches the file name
-   */
-  function matchesMimeType(list, fileName) {
-    const mimeType = getMimeType(fileName);
-    return mimeType && list.find((ext) => mimeType.startsWith(ext));
-  }
-
-  /**
-   * Verify if file overpasses size limit or has a blacklisted mime-type.
-   * @param {String} fileName File name
-   * @param {Integer} size File size
-   * @return {component.Message|null} Component displaying reason or null
-   */
-  function checkConstraints(fileName, size) {
-    let content;
-    const match = matchesMimeType(
-      Object.keys(PREVIEW_MIME_PREFIX_WHITELIST),
-      fileName
-    );
-    if (!match) {
-      const fileExt = fileName.split(".").pop();
-      content = `${fileExt} files cannot be previewed. Please use download.`;
-    } else if (size > FILE_SIZE_LIMIT) {
-      content = `File size is too big to be previewed (limit ${
-        FILE_SIZE_LIMIT / 1024 ** 2
-      }MB). Please use download.`;
-    }
-    return content ? (
-      <Message icon="info circle" content={content} info />
-    ) : null;
-  }
-
-  /**
-   * Gets the file from the API
-   */
-  function getFile(fileName, size) {
-    const message = checkConstraints(fileName, size);
-    if (message) {
-      setModalContent(message);
-      setDisplayContent(() => (content) => content);
-      return;
-    }
-    const mimeType = matchesMimeType(
-      Object.keys(PREVIEW_MIME_PREFIX_WHITELIST),
-      fileName
-    );
-    const { serverPreviewable, display } =
-      PREVIEW_MIME_PREFIX_WHITELIST[mimeType];
-    setModalContent(getFileURL(fileName));
-    setDisplayContent(() => display);
-    if (!serverPreviewable) {
-      client.getWorkflowFile(id, fileName).then((res) => {
-        let result = res.data;
-        if (typeof result === "object") {
-          result = JSON.stringify(result);
-        }
-        setModalContent(<pre>{result}</pre>);
-      });
-    }
-  }
 
   /**
    * Performs the sorting when a column header is clicked
@@ -304,38 +129,35 @@ export default function WorkflowFiles({ id }) {
             <Table.Body>
               {files &&
                 files.map(({ name, lastModified, size }) => (
-                  <Modal
+                  <Table.Row
                     key={name}
-                    onOpen={() => getFile(name, size.raw)}
-                    closeIcon
-                    trigger={
-                      <Table.Row className={styles["files-row"]}>
-                        <Table.Cell>
-                          <Icon name="file" />
-                          {name}
-                        </Table.Cell>
-                        <Table.Cell>{lastModified}</Table.Cell>
-                        <Table.Cell>
-                          {size.human_readable || size.raw}
-                        </Table.Cell>
-                      </Table.Row>
+                    className={styles["files-row"]}
+                    onClick={() =>
+                      setFilePreview({
+                        workflow: id,
+                        fileName: name,
+                        size: size.raw,
+                      })
                     }
                   >
-                    <Modal.Header>{name}</Modal.Header>
-                    <Modal.Content scrolling>
-                      {displayContent &&
-                        modalContent &&
-                        displayContent(modalContent, name)}
-                    </Modal.Content>
-                    <Modal.Actions>
-                      <Button primary as="a" href={getFileURL(name, false)}>
-                        <Icon name="download" /> Download
-                      </Button>
-                    </Modal.Actions>
-                  </Modal>
+                    <Table.Cell>
+                      <Icon name="file" />
+                      {name}
+                    </Table.Cell>
+                    <Table.Cell>{lastModified}</Table.Cell>
+                    <Table.Cell>{size.human_readable || size.raw}</Table.Cell>
+                  </Table.Row>
                 ))}
             </Table.Body>
           </Table>
+
+          {filePreview && (
+            <FilePreview
+              {...filePreview}
+              onClose={() => setFilePreview(null)}
+            />
+          )}
+
           {filesCount > PAGE_SIZE && (
             <div className={styles["pagination-wrapper"]}>
               <Pagination

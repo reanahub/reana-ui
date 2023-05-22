@@ -1,0 +1,36 @@
+/*
+  -*- coding: utf-8 -*-
+
+  This file is part of REANA.
+  Copyright (C) 2023 CERN.
+
+  REANA is free software; you can redistribute it and/or modify it
+  under the terms of the MIT License; see LICENSE file for more details.
+*/
+
+:global(.ui.modal > .content).fill-modal {
+  padding: 0;
+
+  &.root-modal {
+    // change background color and add some padding for ROOT browser
+    background: #e6e6fa;
+    padding-left: 1em;
+  }
+
+  > :first-child {
+    height: calc(80vh - 10em);
+    width: 100%;
+  }
+}
+
+.html-message {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.root-browser {
+  // needed because internal components of jsroot's browser
+  // use `position: absolute`
+  position: relative;
+}

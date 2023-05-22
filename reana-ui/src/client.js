@@ -2,7 +2,7 @@
   -*- coding: utf-8 -*-
 
   This file is part of REANA.
-  Copyright (C) 2021, 2022 CERN.
+  Copyright (C) 2021, 2022, 2023 CERN.
 
   REANA is free software; you can redistribute it and/or modify it
   under the terms of the MIT License; see LICENSE file for more details.
@@ -135,8 +135,12 @@ class Client {
     return this._request(WORKFLOW_FILES_URL(id, { ...pagination, search }));
   }
 
-  getWorkflowFile(id, filename) {
-    return this._request(WORKFLOW_FILE_URL(id, filename));
+  getWorkflowFile(id, filename, { responseType } = {}) {
+    let options = {};
+    if (responseType) {
+      options = { responseType };
+    }
+    return this._request(WORKFLOW_FILE_URL(id, filename), options);
   }
 
   getWorkflowSpec(id) {

@@ -29,24 +29,6 @@
   justify-content: center;
 }
 
-.html-message {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.pdf-object {
-  height: calc(80vh - 14em);
-  width: 100%;
-}
-
-.root-browser {
-  // needed because internal components of jsroot's browser
-  // use `position: absolute`
-  position: relative;
-  height: calc(80vh - 14em);
-}
-
 :global(.ui.inline.loader.active).loader {
   margin-top: 1em;
 }

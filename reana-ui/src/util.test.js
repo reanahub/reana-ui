@@ -5,7 +5,7 @@ test.each([
   ["workflow.log", "text/plain"],
   ["foo/bar/Snakefile", "text/plain"],
   ["reana.yaml", "text/yaml"],
-  ["script.py", "text/plain"],
+  ["script.py", "text/x-python"],
   ["gendata.c", "text/x-c"],
   ["report.html", "text/html"],
   ["data.json", "application/json"],
