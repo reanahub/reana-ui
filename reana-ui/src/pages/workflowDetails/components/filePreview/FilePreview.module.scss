@@ -34,3 +34,15 @@
   // use `position: absolute`
   position: relative;
 }
+
+// Workaround to display a `Loader` inside a `Modal`
+// See https://github.com/Semantic-Org/Semantic-UI-React/issues/3133#issuecomment-418766748
+:global(.ui.dimmer) :global(.ui.loader).dark-loader {
+  &:before {
+    border-color: rgba(0, 0, 0, 0.1);
+  }
+  &:after {
+    border-color: #767676 transparent transparent;
+  }
+  color: rgba(0, 0, 0, 0.87);
+}

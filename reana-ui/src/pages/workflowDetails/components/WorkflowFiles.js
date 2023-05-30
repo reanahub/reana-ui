@@ -23,10 +23,9 @@ import {
   loadingDetails,
 } from "~/selectors";
 import { WorkflowRetentionRules } from ".";
+import FilePreview from "./filePreview/FilePreview";
 
 import styles from "./WorkflowFiles.module.scss";
-
-import FilePreview from "./FilePreview";
 
 const PAGE_SIZE = 15;
 

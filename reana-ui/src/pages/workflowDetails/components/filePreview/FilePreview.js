@@ -9,17 +9,18 @@
 */
 
 import sortBy from "lodash/sortBy";
-import uniqueId from "lodash/uniqueId";
 import PropTypes from "prop-types";
-import { useEffect, useRef, useState } from "react";
-import { Button, Icon, Message, Modal } from "semantic-ui-react";
+import { Suspense, lazy, useEffect, useState } from "react";
+import { Button, Icon, Loader, Message, Modal } from "semantic-ui-react";
 
 import client, { WORKFLOW_FILE_URL } from "~/client";
 import { getMimeType } from "~/util";
 
 import styles from "./FilePreview.module.scss";
 
-import { buildGUI } from "jsroot";
+// ROOTPreview is lazily loaded to enable code splitting, so that jsroot is not part of
+// the main application bundle
+const ROOTPreview = lazy(() => import("./ROOTPreview.js"));
 
 /**
  * Preview of image files.
@@ -101,46 +102,6 @@ function PDFPreview({ fileName, url }) {
           </Message.Content>
         </Message>
       </object>
-    </Modal.Content>
-  );
-}
-
-/**
- * Preview of ROOT files.
- */
-function ROOTPreview({ workflow, fileName }) {
-  // Ref used to check whether the div is ready to be modified by jsroot
-  const divRef = useRef(null);
-  const [id] = useState(uniqueId("RootBrowser-"));
-  const [filebuffer, setFilebuffer] = useState(null);
-
-  // Download the file and save it as an ArrayBuffer
-  useEffect(() => {
-    client
-      .getWorkflowFile(workflow, fileName, { responseType: "arraybuffer" })
-      .then((res) => setFilebuffer(res.data));
-  }, [workflow, fileName]);
-
-  // Open the ROOT file after the download, when the div is ready
-  useEffect(() => {
-    if (divRef.current === null || filebuffer === null) {
-      return;
-    }
-    buildGUI(divRef.current.id).then((rootGUI) => {
-      rootGUI.openRootFile(filebuffer);
-    });
-  });
-
-  return (
-    <Modal.Content
-      className={`${styles["fill-modal"]} ${styles["root-modal"]}`}
-    >
-      <div
-        className={styles["root-browser"]}
-        id={id}
-        noselect="true"
-        ref={divRef}
-      />
     </Modal.Content>
   );
 }
@@ -230,7 +191,20 @@ export default function FilePreview({ workflow, fileName, size, onClose }) {
   return (
     <Modal open closeIcon onClose={onClose ? onClose : () => {}}>
       <Modal.Header>{fileName}</Modal.Header>
-      {preview}
+      <Suspense
+        fallback={
+          <Modal.Content>
+            <Loader
+              active
+              className={styles["dark-loader"]}
+              inline="centered"
+              content="Loading file preview..."
+            />
+          </Modal.Content>
+        }
+      >
+        {preview}
+      </Suspense>
       <Modal.Actions>
         <Button primary as="a" href={getFileURL(workflow, fileName, false)}>
           <Icon name="download" /> Download
