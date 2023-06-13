@@ -2,7 +2,7 @@
   -*- coding: utf-8 -*-
 
   This file is part of REANA.
-  Copyright (C) 2020, 2022 CERN.
+  Copyright (C) 2020, 2022, 2023 CERN.
 
   REANA is free software; you can redistribute it and/or modify it
   under the terms of the MIT License; see LICENSE file for more details.
@@ -26,7 +26,7 @@ export default function PrivacyNoticePage() {
 function PrivacyNotice() {
   return (
     <Container className={styles["container"]}>
-      <Title as="h2">CERN Privacy Notice PN00915</Title>
+      <Title as="h2">Privacy notice</Title>
 
       <Title as="h3">How is your data used</Title>
       <p>
@@ -312,7 +312,17 @@ function PrivacyNotice() {
       </p>
       <p>This Privacy Notice is subject to revision.</p>
       <p>
-        <em>Last revision: 2020-10-09 18:04:55</em>
+        <em>
+          CERN Privacy Notice:{" "}
+          <a
+            href="https://cern.service-now.com/service-portal?id=privacy_policy&se=open-science-infrastructure&notice=reana"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            REANA (PN00915)
+          </a>
+          . Last revision: 2020-10-09 18:04:55
+        </em>
       </p>
       <Divider />
       <p>

@@ -2,7 +2,7 @@
   -*- coding: utf-8 -*-
 
   This file is part of REANA.
-  Copyright (C) 2021, 2022 CERN.
+  Copyright (C) 2021, 2022, 2023 CERN.
 
   REANA is free software; you can redistribute it and/or modify it
   under the terms of the MIT License; see LICENSE file for more details.
@@ -10,7 +10,7 @@
 
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { Container, Grid, Icon, Label, Loader } from "semantic-ui-react";
+import { Container, Grid, Label, Loader } from "semantic-ui-react";
 
 import BasePage from "../BasePage";
 import { errorActionCreator } from "~/actions";
@@ -145,10 +145,7 @@ export default function Status() {
   return (
     <BasePage title="Cluster health">
       <Container text className={styles.container}>
-        <Title>
-          Cluster Health
-          <Icon name="heartbeat" />
-        </Title>
+        <Title>Cluster health</Title>
         {loading || !status ? (
           <Loader active inline="centered">
             Loading cluster status...
