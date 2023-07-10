@@ -2,7 +2,7 @@
   -*- coding: utf-8 -*-
 
   This file is part of REANA.
-  Copyright (C) 2020, 2021, 2022 CERN.
+  Copyright (C) 2020, 2021, 2022, 2023 CERN.
 
   REANA is free software; you can redistribute it and/or modify it
   under the terms of the MIT License; see LICENSE file for more details.
@@ -81,6 +81,10 @@ export const WORKFLOW_DELETE_INIT = "Initialize workflow deletion";
 export const WORKFLOW_DELETED = "Workflow deleted";
 export const OPEN_DELETE_WORKFLOW_MODAL = "Open delete workflow modal";
 export const CLOSE_DELETE_WORKFLOW_MODAL = "Close delete workflow modal";
+export const WORKFLOW_STOP_INIT = "Initialize workflow stopping";
+export const WORKFLOW_STOPPED = "Workflow stopped";
+export const OPEN_STOP_WORKFLOW_MODAL = "Open stop workflow modal";
+export const CLOSE_STOP_WORKFLOW_MODAL = "Close stop workflow modal";
 export const WORKFLOW_LIST_REFRESH = "Refresh workflow list";
 
 export function errorActionCreator(error, name) {
@@ -420,6 +424,35 @@ export function openDeleteWorkflowModal(workflow) {
 
 export function closeDeleteWorkflowModal() {
   return { type: CLOSE_DELETE_WORKFLOW_MODAL };
+}
+
+export function stopWorkflow(id) {
+  return async (dispatch) => {
+    dispatch({ type: WORKFLOW_STOP_INIT });
+    return await client
+      .stopWorkflow(id)
+      .then((resp) => {
+        dispatch({ type: WORKFLOW_STOPPED, ...resp.data });
+        dispatch({ type: WORKFLOW_LIST_REFRESH });
+        dispatch(triggerNotification("Success!", resp.data.message));
+      })
+      .catch((err) => {
+        dispatch(
+          errorActionCreator(
+            err,
+            WORKFLOW_SET_STATUS_URL(id, { status: "stop" })
+          )
+        );
+      });
+  };
+}
+
+export function openStopWorkflowModal(workflow) {
+  return { type: OPEN_STOP_WORKFLOW_MODAL, workflow };
+}
+
+export function closeStopWorkflowModal() {
+  return { type: CLOSE_STOP_WORKFLOW_MODAL };
 }
 
 export function openInteractiveSession(id) {

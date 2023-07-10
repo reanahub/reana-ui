@@ -158,6 +158,12 @@ class Client {
     });
   }
 
+  stopWorkflow(id) {
+    return this._request(WORKFLOW_SET_STATUS_URL(id, { status: "stop" }), {
+      method: "put",
+    });
+  }
+
   openInteractiveSession(id) {
     return this._request(INTERACTIVE_SESSIONS_OPEN_URL(id), { method: "post" });
   }

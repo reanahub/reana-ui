@@ -23,7 +23,7 @@ export const statusMapping = {
   failed: { icon: "delete", color: "red", preposition: "after" },
   created: { icon: "file outline", color: "violet" },
   stopped: {
-    icon: "pause circle outline",
+    icon: "stop circle outline",
     color: "yellow",
     preposition: "after",
   },

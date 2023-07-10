@@ -2,7 +2,7 @@
   -*- coding: utf-8 -*-
 
   This file is part of REANA.
-  Copyright (C) 2020, 2021, 2022 CERN.
+  Copyright (C) 2020, 2021, 2022, 2023 CERN.
 
   REANA is free software; you can redistribute it and/or modify it
   under the terms of the MIT License; see LICENSE file for more details.
@@ -20,6 +20,7 @@ import {
   openInteractiveSession,
   closeInteractiveSession,
   openDeleteWorkflowModal,
+  openStopWorkflowModal,
   triggerNotification,
 } from "~/actions";
 
@@ -36,6 +37,7 @@ export default function WorkflowActionsPopup({ workflow, className }) {
   const { id, size, status, session_status: sessionStatus } = workflow;
   const isDeleted = status === "deleted";
   const isDeletedUsingWorkspace = isDeleted && size.raw > 0;
+  const isRunning = status === "running";
   const isSessionOpen = sessionStatus === "created";
 
   let menuItems = [];
@@ -80,7 +82,20 @@ export default function WorkflowActionsPopup({ workflow, className }) {
     });
   }
 
-  if (!isDeleted) {
+  if (isRunning) {
+    menuItems.push({
+      key: "stop",
+      content: "Stop workflow",
+      icon: "stop",
+      onClick: (e) => {
+        dispatch(openStopWorkflowModal(workflow));
+        setOpen(false);
+        e.stopPropagation();
+      },
+    });
+  }
+
+  if (!isDeleted && !isRunning) {
     menuItems.push({
       key: "delete",
       content: "Delete workflow",

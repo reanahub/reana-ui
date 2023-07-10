@@ -2,7 +2,7 @@
   -*- coding: utf-8 -*-
 
   This file is part of REANA.
-  Copyright (C) 2020, 2022 CERN.
+  Copyright (C) 2020, 2022, 2023 CERN.
 
   REANA is free software; you can redistribute it and/or modify it
   under the terms of the MIT License; see LICENSE file for more details.
@@ -40,6 +40,8 @@ import {
   WORKFLOW_RETENTION_RULES_RECEIVED,
   OPEN_DELETE_WORKFLOW_MODAL,
   CLOSE_DELETE_WORKFLOW_MODAL,
+  OPEN_STOP_WORKFLOW_MODAL,
+  CLOSE_STOP_WORKFLOW_MODAL,
 } from "~/actions";
 import { USER_ERROR } from "./errors";
 
@@ -83,6 +85,7 @@ const workflowsInitialState = {
   total: null,
   userHasWorkflows: false,
   workflowDeleteModal: { open: false, workflow: null },
+  workflowStopModal: { open: false, workflow: null },
   workflowRefresh: null,
 };
 
@@ -232,6 +235,13 @@ const workflows = (state = workflowsInitialState, action) => {
       };
     case CLOSE_DELETE_WORKFLOW_MODAL:
       return { ...state, workflowDeleteModal: { open: false, workflow: null } };
+    case OPEN_STOP_WORKFLOW_MODAL:
+      return {
+        ...state,
+        workflowStopModal: { open: true, workflow: action.workflow },
+      };
+    case CLOSE_STOP_WORKFLOW_MODAL:
+      return { ...state, workflowStopModal: { open: false, workflow: null } };
     case WORKFLOW_LIST_REFRESH:
       return { ...state, workflowRefresh: Math.random() };
 

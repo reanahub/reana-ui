@@ -2,7 +2,7 @@
   -*- coding: utf-8 -*-
 
   This file is part of REANA.
-  Copyright (C) 2020, 2021, 2022 CERN.
+  Copyright (C) 2020, 2021, 2022, 2023 CERN.
 
   REANA is free software; you can redistribute it and/or modify it
   under the terms of the MIT License; see LICENSE file for more details.
@@ -18,6 +18,7 @@ export { default as TopHeader } from "./TopHeader";
 export { default as TooltipIfTruncated } from "./TooltipIfTruncated";
 export { default as JupyterNotebookIcon } from "./JupyterNotebookIcon";
 export { default as WorkflowDeleteModal } from "./WorkflowDeleteModal";
+export { default as WorkflowStopModal } from "./WorkflowStopModal";
 export { default as WorkflowActionsPopup } from "./WorkflowActionsPopup";
 export { default as PieChart } from "./PieChart";
 export { default as Search } from "./Search";

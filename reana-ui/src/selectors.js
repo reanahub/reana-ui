@@ -2,7 +2,7 @@
 	-*- coding: utf-8 -*-
 
 	This file is part of REANA.
-	Copyright (C) 2020, 2021, 2022 CERN.
+	Copyright (C) 2020, 2021, 2022, 2023 CERN.
 
   REANA is free software; you can redistribute it and/or modify it
   under the terms of the MIT License; see LICENSE file for more details.
@@ -47,6 +47,10 @@ export const getWorkflowDeleteModalOpen = (state) =>
   state.workflows.workflowDeleteModal.open;
 export const getWorkflowDeleteModalItem = (state) =>
   state.workflows.workflowDeleteModal.workflow;
+export const getWorkflowStopModalOpen = (state) =>
+  state.workflows.workflowStopModal.open;
+export const getWorkflowStopModalItem = (state) =>
+  state.workflows.workflowStopModal.workflow;
 export const getWorkflowRefresh = (state) => state.workflows.workflowRefresh;
 
 // Details
