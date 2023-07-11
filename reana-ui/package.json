@@ -34,7 +34,8 @@
     "fmt": "prettier --write .",
     "ci": "run-p lint prettier",
     "eject": "craco eject",
-    "postinstall": "semantic-ui-css-patch"
+    "postinstall": "semantic-ui-css-patch",
+    "postbuild": "find build \\( -name '*.js' -o -name '*.css' \\) -exec gzip -k9S .gz {} \\;"
   },
   "browserslist": {
     "production": [
