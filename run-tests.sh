@@ -1,7 +1,7 @@
 #!/bin/sh
 #
 # This file is part of REANA.
-# Copyright (C) 2018, 2019, 2020, 2021, 2022 CERN.
+# Copyright (C) 2018, 2019, 2020, 2021, 2022, 2023 CERN.
 #
 # REANA is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -33,11 +33,11 @@ check_js_tests () {
 }
 
 check_dockerfile () {
-    docker run -i --rm hadolint/hadolint:v1.18.2 < Dockerfile
+    docker run -i --rm docker.io/hadolint/hadolint:v1.18.2 < Dockerfile
 }
 
 check_docker_build () {
-    docker build -t reanahub/reana-ui .
+    docker build -t docker.io/reanahub/reana-ui .
 }
 
 check_all () {
