@@ -160,6 +160,13 @@ function parseWorkflowDates(workflow) {
   const createdMoment = moment.utc(workflow.created);
   const startedMoment = moment.utc(workflow.progress.run_started_at);
   const finishedMoment = moment.utc(workflow.progress.run_finished_at);
+  const stoppedMoment = moment.utc(workflow.progress.run_stopped_at);
+  // Mapping between workflow status and the end moment to use for calculating the duration
+  const endMomentStatusMapping = {
+    finished: finishedMoment,
+    stopped: stoppedMoment,
+    deleted: finishedMoment.isValid() ? finishedMoment : stoppedMoment,
+  };
   workflow.createdDate = createdMoment.format("Do MMM YYYY HH:mm");
   workflow.startedDate = startedMoment.format("Do MMM YYYY HH:mm");
   workflow.finishedDate = finishedMoment.format("Do MMM YYYY HH:mm");
@@ -177,7 +184,7 @@ function parseWorkflowDates(workflow) {
     }
 
     workflow.duration = formatDuration(
-      getDuration(startedMoment, finishedMoment)
+      getDuration(startedMoment, endMomentStatusMapping[workflow.status])
     );
   }
   return workflow;
@@ -190,7 +197,15 @@ export function parseLogs(logs) {
   const parsedLogs = JSON.parse(logs);
 
   for (let job of Object.values(parsedLogs.job_logs)) {
-    job.duration = formatDuration(getDuration(job.started_at, job.finished_at));
+    if (job.status === "stopped") {
+      // Hide the duration of the job, because in the job object
+      // there is no info about when the job (or the workflow) was stopped.
+      job.duration = null;
+    } else {
+      job.duration = formatDuration(
+        getDuration(job.started_at, job.finished_at)
+      );
+    }
   }
 
   return {
