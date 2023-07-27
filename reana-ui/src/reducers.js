@@ -64,6 +64,7 @@ export const configInitialState = {
   isLoaded: false,
   userConfirmation: true,
   loading: false,
+  filePreviewSizeLimit: null,
 };
 
 const authInitialState = {
@@ -142,6 +143,7 @@ const config = (state = configInitialState, action) => {
         hideSignup: action.hide_signup,
         userConfirmation: action.user_confirmation,
         quotaEnabled: action.quota_enabled,
+        filePreviewSizeLimit: action.file_preview_size_limit,
         isLoaded: true,
         loading: false,
       };

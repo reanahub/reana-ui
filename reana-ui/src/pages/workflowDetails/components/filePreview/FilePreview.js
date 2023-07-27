@@ -11,9 +11,11 @@
 import sortBy from "lodash/sortBy";
 import PropTypes from "prop-types";
 import { Suspense, lazy, useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import { Button, Icon, Loader, Message, Modal } from "semantic-ui-react";
 
 import client, { WORKFLOW_FILE_URL } from "~/client";
+import { getConfig } from "~/selectors";
 import { getMimeType } from "~/util";
 
 import styles from "./FilePreview.module.scss";
@@ -115,8 +117,6 @@ const PREVIEW_MIME_PREFIX_WHITELIST = {
   "application/x-root": ROOTPreview,
 };
 
-const FILE_SIZE_LIMIT = 5 * 1024 ** 2; // 5MB
-
 /**
  * Check if the given file name matches any given mime-type prefix
  * @param {Array} list Array of mime-type prefixes to check against
@@ -142,7 +142,7 @@ function matchesMimeType(list, fileName) {
  * @param {Integer} size File size
  * @return {component.Message|null} Component displaying reason or null
  */
-function checkConstraints(fileName, size) {
+function checkConstraints(fileName, size, sizeLimit) {
   let content;
   const match = matchesMimeType(
     Object.keys(PREVIEW_MIME_PREFIX_WHITELIST),
@@ -151,9 +151,9 @@ function checkConstraints(fileName, size) {
   if (!match) {
     const fileExt = fileName.split(".").pop();
     content = `${fileExt} files cannot be previewed. Please use download.`;
-  } else if (size > FILE_SIZE_LIMIT) {
+  } else if (size > sizeLimit) {
     content = `File size is too big to be previewed (limit ${
-      FILE_SIZE_LIMIT / 1024 ** 2
+      sizeLimit / 1024 ** 2
     }MB). Please use download.`;
   }
   return content ? <Message icon="info circle" content={content} info /> : null;
@@ -167,9 +167,11 @@ function getFileURL(workflow, fileName, preview = true) {
 }
 
 export default function FilePreview({ workflow, fileName, size, onClose }) {
+  const config = useSelector(getConfig);
+
   let preview = null;
   // Check whether the file can be previewed
-  const message = checkConstraints(fileName, size);
+  const message = checkConstraints(fileName, size, config.filePreviewSizeLimit);
   if (message) {
     preview = <Modal.Content scrolling>{message}</Modal.Content>;
   } else {
