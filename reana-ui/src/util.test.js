@@ -1,4 +1,10 @@
-import { formatDuration, formatSearch, getDuration, getMimeType } from "~/util";
+import {
+  formatDuration,
+  formatFileSize,
+  formatSearch,
+  getDuration,
+  getMimeType,
+} from "~/util";
 
 test.each([
   ["path/to/test.txt", "text/plain"],
@@ -38,3 +44,15 @@ test.each([
     expect(formatDuration(getDuration(start, end))).toEqual(formattedDuration);
   }
 );
+
+test.each([
+  [0, "0 Bytes"],
+  [123, "123 Bytes"],
+  [1.05 * 1024, "1.05 KiB"],
+  [3 * 1024 ** 3, "3 GiB"],
+  [-123, "-123 Bytes"],
+  [-1.05 * 1024, "-1.05 KiB"],
+  [-3 * 1024 ** 3, "-3 GiB"],
+])("formatFileSize(%p) === %p", (fileSize, formattedFileSize) => {
+  expect(formatFileSize(fileSize)).toEqual(formattedFileSize);
+});

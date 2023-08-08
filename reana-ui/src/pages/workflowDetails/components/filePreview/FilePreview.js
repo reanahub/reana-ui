@@ -16,7 +16,7 @@ import { Button, Icon, Loader, Message, Modal } from "semantic-ui-react";
 
 import client, { WORKFLOW_FILE_URL } from "~/client";
 import { getConfig } from "~/selectors";
-import { getMimeType } from "~/util";
+import { formatFileSize, getMimeType } from "~/util";
 
 import styles from "./FilePreview.module.scss";
 
@@ -152,9 +152,9 @@ function checkConstraints(fileName, size, sizeLimit) {
     const fileExt = fileName.split(".").pop();
     content = `${fileExt} files cannot be previewed. Please use download.`;
   } else if (size > sizeLimit) {
-    content = `File size is too big to be previewed (limit ${
-      sizeLimit / 1024 ** 2
-    }MB). Please use download.`;
+    content = `File size is too big to be previewed (limit ${formatFileSize(
+      sizeLimit
+    )}). Please use download.`;
   }
   return content ? <Message icon="info circle" content={content} info /> : null;
 }

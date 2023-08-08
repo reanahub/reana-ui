@@ -238,6 +238,34 @@ export function formatSearch(term) {
 }
 
 /**
+ * Format file size with human-readable units.
+ * @param {Number} size File size in bytes.
+ * @returns The formatted human-readable file size.
+ */
+export function formatFileSize(size, digits = 2) {
+  if (size === 0) {
+    return "0 Bytes";
+  }
+
+  const units = [
+    "Bytes",
+    "KiB",
+    "MiB",
+    "GiB",
+    "TiB",
+    "PiB",
+    "EiB",
+    "ZiB",
+    "YiB",
+  ];
+  const k = 1024;
+
+  const unitIndex = Math.floor(Math.log(Math.abs(size)) / Math.log(k));
+  const convertedValue = Number((size / k ** unitIndex).toFixed(digits));
+  return `${convertedValue} ${units[unitIndex]}`;
+}
+
+/**
  * Custom mapping between MIME types and file extensions.
  *
  * A local instance of `Mime` is initialized in the same way as the global `mime` mapping,
