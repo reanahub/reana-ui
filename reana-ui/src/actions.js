@@ -38,6 +38,7 @@ import {
 
 export const ERROR = "Error";
 export const NOTIFICATION = "Notification";
+export const WARNING = "Warning";
 export const CLEAR_NOTIFICATION = "Clear notification";
 
 export const CONFIG_FETCH = "Fetch app config info";
@@ -99,8 +100,17 @@ export function errorActionCreator(error, name) {
   };
 }
 
-export function triggerNotification(header, message, { error = false } = {}) {
-  return { type: error ? ERROR : NOTIFICATION, header, message };
+export function triggerNotification(
+  header,
+  message,
+  { error = false, warning = false } = {}
+) {
+  let actionType = NOTIFICATION;
+
+  if (error) actionType = ERROR;
+  else if (warning) actionType = WARNING;
+
+  return { type: actionType, header, message };
 }
 
 export const clearNotification = { type: CLEAR_NOTIFICATION };

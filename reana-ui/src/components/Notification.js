@@ -35,7 +35,11 @@ export default function Notification({
 
   const hide = () => dispatch(clearNotification);
   const visible = message || notification ? true : false;
-  const actionIcon = notification?.isError ? "warning sign" : "info circle";
+  const actionIcon = notification?.isError
+    ? "warning sign"
+    : notification?.isWarning
+    ? "warning circle"
+    : "info circle";
 
   if (closable && visible) {
     clearTimeout(timer.current);
@@ -51,8 +55,14 @@ export default function Notification({
           onDismiss={closable ? hide : null}
           size="small"
           error={error || (notification && notification.isError)}
-          success={success || (notification && !notification.isError)}
-          warning={warning}
+          success={
+            success ||
+            (notification && !notification.isError && !notification.isWarning)
+          }
+          warning={
+            warning ||
+            (notification && notification.isWarning && !notification.isError)
+          }
         />
       </Container>
     </Transition>

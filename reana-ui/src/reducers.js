@@ -42,6 +42,7 @@ import {
   CLOSE_DELETE_WORKFLOW_MODAL,
   OPEN_STOP_WORKFLOW_MODAL,
   CLOSE_STOP_WORKFLOW_MODAL,
+  WARNING,
 } from "~/actions";
 import { USER_ERROR } from "./errors";
 
@@ -104,6 +105,7 @@ const notification = (state = notificationInitialState, action) => {
   const { name, status, message, header } = action;
   switch (action.type) {
     case ERROR:
+    case WARNING:
     case NOTIFICATION:
       return {
         ...state,
@@ -112,6 +114,7 @@ const notification = (state = notificationInitialState, action) => {
         message,
         header,
         isError: action.type === ERROR,
+        isWarning: action.type === WARNING,
       };
     case CLEAR_NOTIFICATION:
       return notificationInitialState;

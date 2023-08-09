@@ -44,10 +44,39 @@ export default function LaunchOnReana() {
     setLoading(true);
     client
       .launchWorkflow(Object.fromEntries(query))
-      .then(({ data: { workflow_id: workflowId } }) => {
-        dispatch(clearNotification);
-        history.push(`/details/${workflowId}`);
-      })
+      .then(
+        ({
+          data: { workflow_id: workflowId, message, validation_warnings },
+        }) => {
+          if (validation_warnings) {
+            let warningMessages = [];
+            // Iterate over all keys in validation_warning
+            for (const key in validation_warnings) {
+              if (key === "additional_properties") {
+                const properties = validation_warnings[key].join(", ");
+                warningMessages.push(
+                  `Unexpected properties found in the REANA specification: ${properties}.`
+                );
+              } else {
+                // For other keys, we simply display the key and its value.
+                warningMessages.push(`${key}: ${validation_warnings[key]}`);
+              }
+            }
+
+            warningMessages.forEach((warning) => {
+              message += ` ${warning}`;
+            });
+            dispatch(
+              triggerNotification("Workflow submitted with warnings", message, {
+                warning: true,
+              })
+            );
+          } else {
+            dispatch(triggerNotification("Workflow submitted", message));
+          }
+          history.push(`/details/${workflowId}`);
+        }
+      )
       .catch((err) => {
         dispatch(errorActionCreator(err));
       })
