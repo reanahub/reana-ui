@@ -55,6 +55,7 @@
   "devDependencies": {
     "@babel/core": "^7.16.12",
     "@babel/eslint-parser": "^7.16.5",
+    "@babel/plugin-proposal-private-property-in-object": "^7.16.7",
     "@craco/craco": "^6.0.0",
     "@semantic-ui-react/craco-less": "^2.0.0",
     "@semantic-ui-react/css-patch": "^1.0.0",
