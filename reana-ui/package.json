@@ -24,6 +24,9 @@
     "redux-thunk": "^2.3.0",
     "semantic-ui-react": "^2.0.0"
   },
+  "resolutions": {
+    "jsroot/gl/node-gyp": "<9.4.0"
+  },
   "scripts": {
     "analyze": "source-map-explorer 'build/static/js/*.js'",
     "start": "craco start",
