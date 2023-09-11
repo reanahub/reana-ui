@@ -14,14 +14,19 @@ import { Progress } from "semantic-ui-react";
 import { statusMapping } from "~/util";
 
 export default function WorkflowProgress({ workflow }) {
-  function handlePercentage(completedSteps, totalSteps) {
+  function handlePercentage(completedSteps, totalSteps, status) {
+    if (status === "finished") return 100;
     return Math.floor((completedSteps * 100) / totalSteps);
   }
 
   return (
     <Progress
       size="small"
-      percent={handlePercentage(workflow.completed, workflow.total)}
+      percent={handlePercentage(
+        workflow.completed,
+        workflow.total,
+        workflow.status
+      )}
       color={statusMapping[workflow.status].color}
       active={workflow.status === "running"}
     />

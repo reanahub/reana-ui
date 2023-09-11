@@ -7,6 +7,7 @@ Version 0.9.1 (UNRELEASED)
 - Adds support for previewing PDF files in the workspace details page.
 - Adds an extra button for login with custom third-party Keycloak SSO authentication services.
 - Adds a new menu item to the workflow actions popup to allow stopping running workflows.
+- Changes the workflow progress bar to always display it as full for finished workflows.
 - Changes the interactive session notification by adding a message stating that the session will be closed after a specified number of days inactivity.
 - Changes the workflow-details page to make it possible to scroll through the list of workflow steps in the job logs section.
 
