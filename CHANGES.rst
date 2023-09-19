@@ -11,6 +11,7 @@ Version 0.9.1 (UNRELEASED)
 - Changes the interactive session notification by adding a message stating that the session will be closed after a specified number of days inactivity.
 - Changes the workflow-details page to make it possible to scroll through the list of workflow steps in the job logs section.
 - Changes the workflow-details page to not automatically refresh the selected job when viewing the related logs, but keeping the user-selected one active.
+- Changes the launcher page to allow showing custom demo examples.
 
 Version 0.9.0 (2023-01-19)
 --------------------------

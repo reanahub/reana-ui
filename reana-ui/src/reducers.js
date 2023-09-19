@@ -66,6 +66,7 @@ export const configInitialState = {
   userConfirmation: true,
   loading: false,
   filePreviewSizeLimit: null,
+  launcherExamples: [],
 };
 
 const authInitialState = {
@@ -147,6 +148,7 @@ const config = (state = configInitialState, action) => {
         userConfirmation: action.user_confirmation,
         quotaEnabled: action.quota_enabled,
         filePreviewSizeLimit: action.file_preview_size_limit,
+        launcherExamples: action.launcher_examples,
         isLoaded: true,
         loading: false,
       };
