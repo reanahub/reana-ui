@@ -47,18 +47,27 @@ EngineLogs.propTypes = {
 };
 
 function JobLogs({ logs }) {
-  const [selectedStep, setSelectedStep] = useState();
-
-  useEffect(() => {
+  function chooseLastStepID(logs) {
     const failedStepId = findKey(logs, (log) => log.status === "failed");
-    if (failedStepId) return setSelectedStep(failedStepId);
+    if (failedStepId) return failedStepId;
 
     const runningStepId = findKey(logs, (log) => log.status === "running");
-    if (runningStepId) return setSelectedStep(runningStepId);
+    if (runningStepId) return runningStepId;
 
-    const logKeys = Object.keys(logs);
-    setSelectedStep(logKeys[logKeys.length - 1]);
-  }, [logs]);
+    // Return the last step id if there are no failed or running steps.
+    return Object.keys(logs).pop();
+  }
+
+  const lastStepID = chooseLastStepID(logs);
+  const [selectedStep, setSelectedStep] = useState(lastStepID);
+
+  useEffect(() => {
+    // Only update the shown step logs if there was no log displayed before
+    // and there is one ready to be displayed now
+    if (lastStepID && !selectedStep) {
+      setSelectedStep(lastStepID);
+    }
+  }, [logs, lastStepID, selectedStep]);
 
   const steps = Object.entries(logs).map(([id, log]) => ({
     key: id,
