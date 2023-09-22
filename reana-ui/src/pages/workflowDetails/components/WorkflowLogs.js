@@ -91,7 +91,7 @@ function JobLogs({ logs }) {
         </div>
         {log && (
           <div className={styles["step-tags"]}>
-            <Label color={statusMapping[log.status].color}>
+            <Label color={statusMapping[log.status].color} basic>
               {log.status}
               {log.duration && (
                 <span className={styles["step-duration"]}>

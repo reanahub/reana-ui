@@ -10,6 +10,7 @@ Version 0.9.1 (UNRELEASED)
 - Changes the workflow progress bar to always display it as full for finished workflows.
 - Changes the interactive session notification by adding a message stating that the session will be closed after a specified number of days inactivity.
 - Changes the workflow-details page to make it possible to scroll through the list of workflow steps in the job logs section.
+- Changes the workflow-details page to make the label for the workflow steps status less visually prominent.
 
 Version 0.9.0 (2023-01-19)
 --------------------------
