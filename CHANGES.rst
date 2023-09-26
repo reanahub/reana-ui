@@ -1,17 +1,24 @@
 Changes
 =======
 
-Version 0.9.1 (UNRELEASED)
+Version 0.9.1 (2023-09-27)
 --------------------------
 
-- Adds support for previewing PDF files in the workspace details page.
-- Adds an extra button for login with custom third-party Keycloak SSO authentication services.
+- Adds support for previewing PDF files present in a workflow's workspace.
+- Adds support for previewing ROOT files present in a workflow's workspace.
+- Adds support for signing-in with a custom third-party Keycloak instance.
 - Adds a new menu item to the workflow actions popup to allow stopping running workflows.
-- Changes the workflow progress bar to always display it as full for finished workflows.
-- Changes the interactive session notification by adding a message stating that the session will be closed after a specified number of days inactivity.
+- Changes the workflow deletion message to clarify that attached interactive sessions are also closed when a workflow is deleted.
+- Changes the workflow progress bar to always display it as completed for finished workflows.
+- Changes the interactive session notification to also report that the session will be closed after a specified number of days of inactivity.
 - Changes the workflow-details page to make it possible to scroll through the list of workflow steps in the job logs section.
 - Changes the workflow-details page to not automatically refresh the selected job when viewing the related logs, but keeping the user-selected one active.
+- Changes the page titles to conform to the same sentence case style.
+- Changes workspace file preview to support customisable maximum file size limit allowed for previewing.
+- Changes nginx configuration to save bandwidth by serving gzip-compressed static files.
+- Changes the launcher page to show warnings when validating the REANA specification file of the workflow to be launched.
 - Changes the launcher page to allow showing custom demo examples.
+- Fixes calculation of workflow runtime durations for stopped workflows.
 
 Version 0.9.0 (2023-01-19)
 --------------------------
