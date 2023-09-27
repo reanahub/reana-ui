@@ -24,6 +24,16 @@
     .details-box {
       display: flex;
       align-items: baseline;
+
+      .size {
+        color: $light-gray;
+        font-size: 0.75em;
+        margin-right: 0.75em;
+
+        &.highlight {
+          color: $sui-red;
+        }
+      }
     }
   }
 

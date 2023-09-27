@@ -34,11 +34,15 @@ export default function WorkflowInfo({ workflow }) {
     completed,
     total,
     status,
+    size,
     launcherURL,
     session_uri: sessionUri,
     session_status: sessionStatus,
   } = workflow;
   const reanaToken = useSelector(getReanaToken);
+  const isDeleted = status === "deleted";
+  const hasDiskUsage = size.raw > 0;
+  const isDeletedUsingWorkspace = isDeleted && hasDiskUsage;
   const isSessionOpen = sessionStatus === "created";
   return (
     <div className={styles.workflow}>
@@ -65,6 +69,17 @@ export default function WorkflowInfo({ workflow }) {
             <span className={styles["launcher-label"]}>
               <LauncherLabel url={launcherURL} />
             </span>
+            <div>
+              {hasDiskUsage && (
+                <span
+                  className={`${styles.size} ${
+                    isDeletedUsingWorkspace ? styles.highlight : ""
+                  }`}
+                >
+                  <Icon name="hdd" /> {size.human_readable}
+                </span>
+              )}
+            </div>
             <Popup
               trigger={
                 <div>
