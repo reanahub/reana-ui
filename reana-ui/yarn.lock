@@ -6973,7 +6973,7 @@ jsonpointer@^5.0.0:
   resolved "https://registry.yarnpkg.com/jsonpointer/-/jsonpointer-5.0.1.tgz#2110e0af0900fd37467b5907ecd13a7884a1b559"
   integrity sha512-p/nXbhSEcu3pZRdkW1OfJhpsVtW1gd4Wa1fnQc9YLiTfAjn0312eMKimbdIQzuZl9aa9xUGaRlP9T/CJE/ditQ==
 
-jsroot@^7.3.1:
+jsroot@^7.5.0:
   version "7.5.1"
   resolved "https://registry.yarnpkg.com/jsroot/-/jsroot-7.5.1.tgz#50e486ac99b5e7bde88d820c0a5a53c220ef363e"
   integrity sha512-/yh7zYQO32lmmF5uJC8y1ZY0qMrWHN0zdZ7FYG7iTkBLS5J61vtJ7JAa3b0670mUZoQMThkXIfisN5tsrV4dSw==

@@ -5,7 +5,7 @@
   "dependencies": {
     "axios": "^1.5.1",
     "dompurify": "^3.0.6",
-    "jsroot": "^7.3.1",
+    "jsroot": "^7.5.0",
     "lodash": "^4.17.15",
     "mime": "^3.0.0",
     "moment": "^2.24.0",
