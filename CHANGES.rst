@@ -1,6 +1,11 @@
 Changes
 =======
 
+Version 0.9.2 (UNRELEASED)
+--------------------------
+
+- Changes Docker image Node version from 16 to 18.
+
 Version 0.9.1 (2023-09-27)
 --------------------------
 

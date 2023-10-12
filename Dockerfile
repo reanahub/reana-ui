@@ -1,4 +1,4 @@
-FROM docker.io/library/node:16 as react-build
+FROM docker.io/library/node:18 as react-build
 WORKDIR /code
 COPY . /code
 # hadolint ignore=DL3003
