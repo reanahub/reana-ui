@@ -151,9 +151,9 @@ class Client {
     return this._request(WORKFLOW_RETENTION_RULES_URL(id));
   }
 
-  deleteWorkflow(id, data) {
+  deleteWorkflow(id, { workspace, allRuns }) {
     return this._request(WORKFLOW_SET_STATUS_URL(id, { status: "deleted" }), {
-      data,
+      data: { workspace, all_runs: allRuns },
       method: "put",
     });
   }

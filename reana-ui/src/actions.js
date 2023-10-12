@@ -411,11 +411,11 @@ export function fetchWorkflowRetentionRules(id) {
   };
 }
 
-export function deleteWorkflow(id, workspace = true) {
+export function deleteWorkflow(id, { workspace = true, allRuns = false } = {}) {
   return async (dispatch) => {
     dispatch({ type: WORKFLOW_DELETE_INIT });
     return await client
-      .deleteWorkflow(id, { workspace })
+      .deleteWorkflow(id, { workspace, allRuns })
       .then((resp) => {
         dispatch({ type: WORKFLOW_DELETED, ...resp.data });
         dispatch({ type: WORKFLOW_LIST_REFRESH });
