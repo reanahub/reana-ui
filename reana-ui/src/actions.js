@@ -261,14 +261,20 @@ export function fetchWorkflows({
   status,
   sort,
   showLoader = true,
-  workflowId,
+  workflowIdOrName,
 }) {
   return async (dispatch) => {
     if (showLoader) {
       dispatch({ type: WORKFLOWS_FETCH });
     }
     return await client
-      .getWorkflows(pagination, formatSearch(search), status, sort, workflowId)
+      .getWorkflows({
+        pagination,
+        search: formatSearch(search),
+        status,
+        sort,
+        workflowIdOrName,
+      })
       .then((resp) =>
         dispatch({
           type: WORKFLOWS_RECEIVED,
@@ -294,9 +300,7 @@ export function fetchWorkflow(id, { refetch = false, showLoader = true } = {}) {
     } else {
       dispatch(
         fetchWorkflows({
-          workflowId: {
-            workflow_id_or_name: id,
-          },
+          workflowIdOrName: id,
           showLoader,
         }),
       );
