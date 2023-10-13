@@ -8,7 +8,7 @@
   under the terms of the MIT License; see LICENSE file for more details.
 */
 
-import ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
 import { Provider } from "react-redux";
 import store from "./store";
 import { loadUser, loadConfig } from "~/actions";
@@ -23,9 +23,11 @@ function fetchInitialData(store) {
 
 fetchInitialData(store);
 
-ReactDOM.render(
+const container = document.getElementById("root");
+const root = createRoot(container);
+
+root.render(
   <Provider store={store}>
     <App />
-  </Provider>,
-  document.getElementById("root")
+  </Provider>
 );

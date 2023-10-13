@@ -27,7 +27,9 @@ export default function Profile() {
   const reanaToken = useSelector(getReanaToken);
   const { quotaEnabled } = useSelector(getConfig);
 
-  useEffect(() => dispatch(loadUser({ loader: false })), [dispatch]);
+  useEffect(() => {
+    dispatch(loadUser({ loader: false }));
+  }, [dispatch]);
 
   return (
     <BasePage title="Your profile">

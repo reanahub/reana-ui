@@ -9,7 +9,6 @@
 */
 
 import PropTypes from "prop-types";
-import { unstable_batchedUpdates } from "react-dom";
 import { Input } from "semantic-ui-react";
 import debounce from "lodash/debounce";
 
@@ -35,10 +34,6 @@ Search.propTypes = {
 };
 
 export const applyFilter = (filter, pagination, setPagination) => (value) => {
-  // FIXME: refactor once implemented by default in future versions of React
-  // https://github.com/facebook/react/issues/16387#issuecomment-521623662c
-  unstable_batchedUpdates(() => {
-    filter(value);
-    setPagination({ ...pagination, page: 1 });
-  });
+  filter(value);
+  setPagination({ ...pagination, page: 1 });
 };
