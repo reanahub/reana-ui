@@ -32,13 +32,11 @@ export default function LauncherLabel({ url }) {
         trigger={
           <Label
             size="tiny"
-            color="grey"
             as="a"
             href={url}
             target="_blank"
             rel="noopener noreferrer"
             {...getProps(url)}
-            basic
           />
         }
         content={url}

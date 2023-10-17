@@ -8,9 +8,18 @@
 
 import styles from "./Box.module.scss";
 
-export default function Box({ children, className, wrap = false }) {
+export default function Box({
+  children,
+  className,
+  padding = true,
+  flex = true,
+}) {
   return (
-    <div className={`${styles.box} ${className} ${wrap ? styles.wrap : ""}`}>
+    <div
+      className={`${styles.box} ${className} ${padding ? styles.padding : ""} ${
+        flex ? styles.flex : ""
+      }`}
+    >
       {children}
     </div>
   );
