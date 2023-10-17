@@ -2,7 +2,7 @@
   -*- coding: utf-8 -*-
 
   This file is part of REANA.
-  Copyright (C) 2020, 2021, 2022 CERN.
+  Copyright (C) 2020, 2021, 2022, 2023 CERN.
 
   REANA is free software; you can redistribute it and/or modify it
   under the terms of the MIT License; see LICENSE file for more details.
@@ -10,77 +10,17 @@
 
 @import "@palette";
 
-.workflow {
+.flexbox {
+  display: flex;
+  justify-content: space-between;
+}
+
+.workflow-details-container {
+  padding: 1em;
   &:hover {
     background-color: lighten($sepia, 3%);
     border-color: darken($sepia, 10%);
     cursor: pointer;
     color: $raven;
-
-    .actions {
-      visibility: visible;
-    }
-  }
-
-  &.deleted {
-    opacity: 0.5;
-  }
-
-  .details-box {
-    display: flex;
-    align-items: baseline;
-    flex-grow: 1;
-    margin-right: 1em;
-    word-wrap: anywhere;
-
-    .status-icon {
-      padding-right: 20px;
-    }
-
-    .name {
-      font-size: 1.3em;
-    }
-
-    .run {
-      padding-left: 0.8em;
-    }
-
-    .size {
-      color: $light-gray;
-      font-size: 0.75em;
-      margin-right: 0.75em;
-
-      &.highlight {
-        color: $sui-red;
-      }
-    }
-  }
-
-  .name,
-  .status {
-    font-weight: bold;
-  }
-
-  .status,
-  .run {
-    font-size: 1.2em;
-  }
-
-  .status-box {
-    width: 210px;
-    flex-shrink: 0;
-  }
-
-  .actions {
-    visibility: hidden;
-    min-width: 22px;
-
-    &:hover {
-      color: darken($sepia, 30%);
-    }
-  }
-
-  .notebook {
-    font-size: 0.85em;
   }
 }
