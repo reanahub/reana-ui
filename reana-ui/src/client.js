@@ -38,7 +38,7 @@ export const WORKFLOW_FILES_URL = (id, params) =>
   `${api}/api/workflows/${id}/workspace?${stringifyQueryParams(params)}`;
 export const WORKFLOW_FILE_URL = (id, filename, preview = true) =>
   `${api}/api/workflows/${id}/workspace/${filename}?${stringifyQueryParams(
-    preview
+    preview,
   )}`;
 export const WORKFLOW_SET_STATUS_URL = (id, status) =>
   `${api}/api/workflows/${id}/status?${stringifyQueryParams(status)}`;
@@ -64,7 +64,7 @@ class Client {
    */
   async _request(
     url,
-    { data = null, method = "get", withCredentials = true, ...options } = {}
+    { data = null, method = "get", withCredentials = true, ...options } = {},
   ) {
     return await axios({
       method,
@@ -123,7 +123,7 @@ class Client {
         search,
         status,
         sort,
-      })
+      }),
     );
   }
 

@@ -45,7 +45,7 @@ export default function CodeSnippet({
   const accessChildren = (element) => {
     if (Array.isArray(element)) {
       return element.map((el) =>
-        el.props?.children ? accessChildren(el.props.children) : el
+        el.props?.children ? accessChildren(el.props.children) : el,
       );
     } else {
       return element?.props?.children ? [element?.props.children] : element;

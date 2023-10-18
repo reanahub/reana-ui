@@ -55,7 +55,7 @@ export default function LaunchOnReana() {
               if (key === "additional_properties") {
                 const properties = validation_warnings[key].join(", ");
                 warningMessages.push(
-                  `Unexpected properties found in the REANA specification: ${properties}.`
+                  `Unexpected properties found in the REANA specification: ${properties}.`,
                 );
               } else {
                 // For other keys, we simply display the key and its value.
@@ -69,13 +69,13 @@ export default function LaunchOnReana() {
             dispatch(
               triggerNotification("Workflow submitted with warnings", message, {
                 warning: true,
-              })
+              }),
             );
           } else {
             dispatch(triggerNotification("Workflow submitted", message));
           }
           history.push(`/details/${workflowId}`);
-        }
+        },
       )
       .catch((err) => {
         dispatch(errorActionCreator(err));
@@ -138,10 +138,10 @@ export default function LaunchOnReana() {
           triggerNotification(
             "An error has occurred",
             `Invalid JSON workflow parameters provided: ${query.get(
-              "parameters"
+              "parameters",
             )}`,
-            { error: true }
-          )
+            { error: true },
+          ),
         );
         query.delete("parameters");
       }

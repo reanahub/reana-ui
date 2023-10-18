@@ -152,7 +152,7 @@ export default function GitLabProjects() {
                       />
                     </List.Item>
                   );
-                }
+                },
               )}
             </List>
           </>

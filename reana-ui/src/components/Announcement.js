@@ -22,7 +22,7 @@ export default function Announcement() {
   const hiddenAnnouncement = window.localStorage.getItem("hideAnnouncement");
   const config = useSelector(getConfig);
   const [hidden, setHidden] = useState(
-    hiddenAnnouncement === config.announcement && hiddenAnnouncement
+    hiddenAnnouncement === config.announcement && hiddenAnnouncement,
   );
 
   function closeAnnouncement() {

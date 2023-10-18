@@ -103,7 +103,7 @@ export function errorActionCreator(error, name) {
 export function triggerNotification(
   header,
   message,
-  { error = false, warning = false } = {}
+  { error = false, warning = false } = {},
 ) {
   let actionType = NOTIFICATION;
 
@@ -175,8 +175,8 @@ function userSignFactory(initAction, succeedAction, request, body) {
                 userConfirmation
                   ? "Please confirm your email by clicking on the link we sent you."
                   : ""
-              }`
-            )
+              }`,
+            ),
           );
         }
         return resp;
@@ -198,7 +198,7 @@ export const userSignup = (formData) =>
     USER_SIGNUP,
     USER_SIGNEDUP,
     client.signUp.bind(client),
-    formData
+    formData,
   );
 
 export const userSignin = (formData) =>
@@ -206,7 +206,7 @@ export const userSignin = (formData) =>
     USER_SIGNIN,
     USER_SIGNEDIN,
     client.signIn.bind(client),
-    formData
+    formData,
   );
 
 export function userSignout() {
@@ -275,7 +275,7 @@ export function fetchWorkflows({
           workflows: parseWorkflows(resp.data.items),
           total: resp.data.total,
           userHasWorkflows: resp.data.user_has_workflows,
-        })
+        }),
       )
       .catch((err) => {
         dispatch(errorActionCreator(err, USER_INFO_URL));
@@ -298,7 +298,7 @@ export function fetchWorkflow(id, { refetch = false, showLoader = true } = {}) {
             workflow_id_or_name: id,
           },
           showLoader,
-        })
+        }),
       );
     }
   };
@@ -306,7 +306,7 @@ export function fetchWorkflow(id, { refetch = false, showLoader = true } = {}) {
 
 export function fetchWorkflowLogs(
   id,
-  { refetch = false, showLoader = true } = {}
+  { refetch = false, showLoader = true } = {},
 ) {
   return async (dispatch, getStore) => {
     const state = getStore();
@@ -325,7 +325,7 @@ export function fetchWorkflowLogs(
           type: WORKFLOW_LOGS_RECEIVED,
           id,
           logs: parseLogs(resp.data.logs),
-        })
+        }),
       )
       .catch((err) => {
         dispatch(errorActionCreator(err, WORKFLOW_LOGS_URL(id)));
@@ -344,7 +344,7 @@ export function fetchWorkflowFiles(id, pagination, search) {
           id,
           files: parseFiles(resp.data.items),
           total: resp.data.total,
-        })
+        }),
       )
       .catch((err) => {
         // 404 Not Found, workspace was deleted.
@@ -380,7 +380,7 @@ export function fetchWorkflowSpecification(id) {
           id,
           specification: resp.data.specification,
           parameters: resp.data.parameters,
-        })
+        }),
       )
       .catch((err) => {
         dispatch(errorActionCreator(err, WORKFLOW_SPECIFICATION_URL(id)));
@@ -397,9 +397,9 @@ export function fetchWorkflowRetentionRules(id) {
           type: WORKFLOW_RETENTION_RULES_RECEIVED,
           id,
           retentionRules: parseWorkflowRetentionRules(
-            resp.data.retention_rules
+            resp.data.retention_rules,
           ),
-        })
+        }),
       )
       .catch((err) => {
         dispatch(errorActionCreator(err, WORKFLOW_RETENTION_RULES_URL(id)));
@@ -421,8 +421,8 @@ export function deleteWorkflow(id, workspace = true) {
         dispatch(
           errorActionCreator(
             err,
-            WORKFLOW_SET_STATUS_URL(id, { status: "deleted" })
-          )
+            WORKFLOW_SET_STATUS_URL(id, { status: "deleted" }),
+          ),
         );
       });
   };
@@ -450,8 +450,8 @@ export function stopWorkflow(id) {
         dispatch(
           errorActionCreator(
             err,
-            WORKFLOW_SET_STATUS_URL(id, { status: "stop" })
-          )
+            WORKFLOW_SET_STATUS_URL(id, { status: "stop" }),
+          ),
         );
       });
   };

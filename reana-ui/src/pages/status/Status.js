@@ -155,7 +155,7 @@ export default function Status() {
             {Object.entries(status)
               .sort(([, a], [, b]) => a.sort > b.sort)
               .map(([title, status]) =>
-                renderPieChart(serialize[title](status))
+                renderPieChart(serialize[title](status)),
               )}
           </Grid>
         )}

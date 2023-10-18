@@ -91,7 +91,7 @@ export default function Quota() {
                 />
               </div>
             );
-          }
+          },
         )}
       </div>
     </>

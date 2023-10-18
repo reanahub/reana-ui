@@ -28,7 +28,7 @@ const statusOptions = WORKFLOW_STATUSES.map((status) => ({
 }));
 
 const nonDeletedStatusOptions = statusOptions.filter(
-  ({ value: status }) => status !== "deleted"
+  ({ value: status }) => status !== "deleted",
 );
 
 export default function WorkflowStatusFilters({ statusFilter, filter }) {

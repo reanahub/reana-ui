@@ -23,7 +23,7 @@ export default function OAuthSignin() {
     dispatch(
       triggerNotification("Authentication error", queryParams.message, {
         error: true,
-      })
+      }),
     );
   }
 

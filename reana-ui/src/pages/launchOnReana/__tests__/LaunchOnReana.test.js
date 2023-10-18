@@ -42,7 +42,7 @@ test("loads and displays launch on reana page", async () => {
       foo: "bar",
       name: "roofit",
       parameters: JSON.stringify({ events: 1000, script: "run.C" }),
-    })
+    }),
   );
   await waitFor(() => screen.getByRole("heading"));
 
@@ -60,7 +60,7 @@ test("loads and displays launch on reana page", async () => {
 
   fireEvent.click(screen.getByText("Launch"));
   await waitFor(() =>
-    expect(screen.getByText("Executing workflow...")).toHaveClass("active")
+    expect(screen.getByText("Executing workflow...")).toHaveClass("active"),
   );
 });
 
@@ -69,7 +69,7 @@ test("displays default workflow name when no name is provided", async () => {
     component({
       url: "https://zenodo.org/reana/specs/reana-cwl.yaml",
       foo: "bar",
-    })
+    }),
   );
   await waitFor(() => screen.getByRole("heading"));
   expect(screen.getByText(DEFAULT_WORKFLOW_NAME));
@@ -80,7 +80,7 @@ test("invalid workflow parameters are not displayed", async () => {
     component({
       url: "https://example.org/reana.yaml",
       parameters: "{foo, bar}",
-    })
+    }),
   );
   await waitFor(() => screen.getByRole("heading"));
   expect(screen.getByRole("heading")).toHaveTextContent("Launch on REANA");

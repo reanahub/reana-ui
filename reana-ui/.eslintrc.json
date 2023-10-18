@@ -7,12 +7,7 @@
     }
   },
   "plugins": ["prettier"],
-  "extends": [
-    "plugin:prettier/recommended",
-    "react-app",
-    "prettier",
-    "prettier/react"
-  ],
+  "extends": ["plugin:prettier/recommended", "react-app", "prettier"],
   "rules": {
     "prettier/prettier": "error",
     "react/jsx-uses-react": "off",

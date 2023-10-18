@@ -59,8 +59,8 @@ export default function WorkflowActionsPopup({ workflow, className }) {
               "The interactive session has been created. " +
                 "However, it could take several minutes to start the Jupyter Notebook. " +
                 "Click on the Jupyter logo to access it. " +
-                `${interactiveSessionInactivityWarning}`
-            )
+                `${interactiveSessionInactivityWarning}`,
+            ),
           );
         });
         setOpen(false);

@@ -131,7 +131,7 @@ function matchesMimeType(list, fileName) {
   // Sort matching mime-types prefixes by length and return the longest
   const matches = sortBy(
     list.filter((mimePrefix) => mimeType.startsWith(mimePrefix)),
-    [(mimePrefix) => mimePrefix.length]
+    [(mimePrefix) => mimePrefix.length],
   );
   return matches.pop() ?? null;
 }
@@ -146,14 +146,14 @@ function checkConstraints(fileName, size, sizeLimit) {
   let content;
   const match = matchesMimeType(
     Object.keys(PREVIEW_MIME_PREFIX_WHITELIST),
-    fileName
+    fileName,
   );
   if (!match) {
     const fileExt = fileName.split(".").pop();
     content = `${fileExt} files cannot be previewed. Please use download.`;
   } else if (size > sizeLimit) {
     content = `File size is too big to be previewed (limit ${formatFileSize(
-      sizeLimit
+      sizeLimit,
     )}). Please use download.`;
   }
   return content ? <Message icon="info circle" content={content} info /> : null;
@@ -177,7 +177,7 @@ export default function FilePreview({ workflow, fileName, size, onClose }) {
   } else {
     const mimeType = matchesMimeType(
       Object.keys(PREVIEW_MIME_PREFIX_WHITELIST),
-      fileName
+      fileName,
     );
     const Preview = PREVIEW_MIME_PREFIX_WHITELIST[mimeType];
     preview = (

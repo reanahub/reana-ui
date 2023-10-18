@@ -106,9 +106,9 @@ export function parseWorkflowRetentionRules(retentionRules) {
           pending: status === "pending",
           applied: status === "applied",
         };
-      }
+      },
     ),
-    [({ retentionDays }) => retentionDays]
+    [({ retentionDays }) => retentionDays],
   );
 }
 
@@ -184,7 +184,7 @@ function parseWorkflowDates(workflow) {
     }
 
     workflow.duration = formatDuration(
-      getDuration(startedMoment, endMomentStatusMapping[workflow.status])
+      getDuration(startedMoment, endMomentStatusMapping[workflow.status]),
     );
   }
   return workflow;
@@ -203,7 +203,7 @@ export function parseLogs(logs) {
       job.duration = null;
     } else {
       job.duration = formatDuration(
-        getDuration(job.started_at, job.finished_at)
+        getDuration(job.started_at, job.finished_at),
       );
     }
   }

@@ -77,7 +77,7 @@ function Workflows() {
         search: searchFilter,
         status: statusFilter,
         sort: sortDir,
-      })
+      }),
     );
 
     if (!interval.current && reanaToken && pollingSecs) {
@@ -90,7 +90,7 @@ function Workflows() {
             status: statusFilter,
             sort: sortDir,
             showLoader,
-          })
+          }),
         );
         setRefreshedAt(currentUTCTime());
       }, pollingSecs * 1000);
@@ -128,7 +128,7 @@ function Workflows() {
 
   //TODO: workflows should be flattened in the redux to avoid doing it on every render
   const workflowArray = Object.entries(workflows).map(
-    ([_, workflow]) => workflow
+    ([_, workflow]) => workflow,
   );
 
   return (
@@ -153,7 +153,7 @@ function Workflows() {
           setStatusFilter={applyFilter(
             setStatusFilter,
             pagination,
-            setPagination
+            setPagination,
           )}
           sortDir={sortDir}
           setSortDir={applyFilter(setSortDir, pagination, setPagination)}

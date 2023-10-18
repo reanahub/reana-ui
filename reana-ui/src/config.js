@@ -60,7 +60,7 @@ export const NON_FINISHED_STATUSES = [
  * List of possible statuses of a workflow, except for `deleted`.
  */
 export const NON_DELETED_STATUSES = WORKFLOW_STATUSES.filter(
-  (status) => status !== "deleted"
+  (status) => status !== "deleted",
 );
 
 /**

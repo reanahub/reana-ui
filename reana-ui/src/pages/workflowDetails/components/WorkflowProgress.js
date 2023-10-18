@@ -25,7 +25,7 @@ export default function WorkflowProgress({ workflow }) {
       percent={handlePercentage(
         workflow.completed,
         workflow.total,
-        workflow.status
+        workflow.status,
       )}
       color={statusMapping[workflow.status].color}
       active={workflow.status === "running"}

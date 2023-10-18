@@ -42,7 +42,7 @@ test.each([
   "formatDuration(getDuration(%p, %p) === %p",
   (start, end, formattedDuration) => {
     expect(formatDuration(getDuration(start, end))).toEqual(formattedDuration);
-  }
+  },
 );
 
 test.each([
