@@ -144,7 +144,9 @@ JobLogs.propTypes = {
 export default function WorkflowLogs({ workflow, engine = false }) {
   const dispatch = useDispatch();
   const loading = useSelector(loadingDetails);
-  const { engineLogs, jobLogs } = useSelector(getWorkflowLogs(workflow.id));
+  const { engineLogs = "", jobLogs = {} } = useSelector(
+    getWorkflowLogs(workflow.id),
+  );
 
   useEffect(() => {
     dispatch(fetchWorkflowLogs(workflow.id));
