@@ -9,7 +9,13 @@
 */
 
 import isEmpty from "lodash/isEmpty";
-import { Redirect, BrowserRouter, Route, Switch } from "react-router-dom";
+import {
+  Navigate,
+  BrowserRouter,
+  Route,
+  Routes,
+  useLocation,
+} from "react-router-dom";
 import { useSelector } from "react-redux";
 import { Dimmer, Loader } from "semantic-ui-react";
 
@@ -35,22 +41,14 @@ import Error from "./Error";
 
 import "./App.module.scss";
 
-function ProtectedRoute(props) {
+function RequireAuth({ children }) {
   const signedIn = useSelector(isSignedIn);
-  const { component: Component, render, ...restProps } = props;
-  const renderContent = render ? render() : <Component {...restProps} />;
-  return (
-    <Route
-      {...restProps}
-      render={({ location }) =>
-        signedIn ? (
-          renderContent
-        ) : (
-          <Redirect to={{ pathname: "/signin", state: { from: location } }} />
-        )
-      }
-    />
-  );
+  const location = useLocation();
+  if (signedIn) {
+    return children;
+  } else {
+    return <Navigate to="/signin" state={{ from: location }} />;
+  }
 }
 
 export default function App() {
@@ -70,27 +68,71 @@ export default function App() {
           <Loader inline="centered">Loading...</Loader>
         </Dimmer>
       ) : (
-        <Switch>
+        <Routes>
           <Route
             path="/signin"
-            render={() => (signedIn ? <Redirect to="/" /> : <Signin />)}
+            element={signedIn ? <Navigate to="/" /> : <Signin />}
           />
           <Route
             path="/signup"
-            render={() =>
-              signedIn || signupHidden ? <Redirect to="/" /> : <Signup />
+            element={
+              signedIn || signupHidden ? <Navigate to="/" /> : <Signup />
             }
           />
-          <Route path="/confirm/:token" component={Confirm} />
-          <Route path="/privacy-notice" component={PrivacyNotice} />
-          <Route path="/signin_callback" component={OAuthSignin} />
-          <ProtectedRoute exact path="/" component={WorkflowList} />
-          <ProtectedRoute path="/details/:id" component={WorkflowDetails} />
-          <ProtectedRoute path="/profile" component={Profile} />
-          <ProtectedRoute path="/status" component={Status} />
-          <ProtectedRoute exact path="/launch" component={LaunchOnReana} />
-          <ProtectedRoute path="/" component={NotFound} />
-        </Switch>
+          <Route path="/confirm/:token" element={<Confirm />} />
+          <Route path="/privacy-notice" element={<PrivacyNotice />} />
+          <Route path="/signin_callback" element={<OAuthSignin />} />
+          <Route
+            exact
+            path="/"
+            element={
+              <RequireAuth>
+                <WorkflowList />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/details/:id"
+            element={
+              <RequireAuth>
+                <WorkflowDetails />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <RequireAuth>
+                <Profile />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/status"
+            element={
+              <RequireAuth>
+                <Status />
+              </RequireAuth>
+            }
+          />
+          <Route
+            exact
+            path="/launch"
+            element={
+              <RequireAuth>
+                <LaunchOnReana />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/"
+            element={
+              <RequireAuth>
+                <NotFound />
+              </RequireAuth>
+            }
+          />
+        </Routes>
       )}
     </BrowserRouter>
   );

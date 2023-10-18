@@ -10,18 +10,20 @@
 
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { useHistory, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 import { confirmUserEmail } from "../../actions";
 
 export default function Confirm() {
   const { token } = useParams();
   const dispatch = useDispatch();
-  const history = useHistory();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    dispatch(confirmUserEmail(token)).then(() => history.replace("/"));
-  }, [dispatch, token, history]);
+    dispatch(confirmUserEmail(token)).then(() =>
+      navigate("/", { replace: true }),
+    );
+  }, [dispatch, token, navigate]);
 
   return null;
 }

@@ -8,7 +8,7 @@
   under the terms of the MIT License; see LICENSE file for more details.
 */
 
-import { Redirect } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 
 import { triggerNotification } from "~/actions";
@@ -28,8 +28,8 @@ export default function OAuthSignin() {
   }
 
   if ("next_url" in queryParams) {
-    return <Redirect to={queryParams.next_url} />;
+    return <Navigate to={queryParams.next_url} />;
   }
 
-  return <Redirect to="/" />;
+  return <Navigate to="/" />;
 }

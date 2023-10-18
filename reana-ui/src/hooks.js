@@ -10,11 +10,11 @@
 
 import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { useHistory, useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 export function useSubmit(action) {
   const dispatch = useDispatch();
-  const history = useHistory();
+  const navigate = useNavigate();
   const location = useLocation();
 
   const handleSubmit = (event, formData, setFormData) => {
@@ -23,7 +23,7 @@ export function useSubmit(action) {
       if (res.isAxiosError ?? false) {
         setFormData({ ...formData, password: "" });
       } else {
-        history.replace(from);
+        navigate(from, { replace: true });
       }
     });
     event.preventDefault();

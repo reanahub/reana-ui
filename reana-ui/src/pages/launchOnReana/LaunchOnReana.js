@@ -7,7 +7,7 @@
 */
 
 import { useState, useMemo } from "react";
-import { Redirect, useHistory } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Button, Container, Icon, Image, Loader } from "semantic-ui-react";
 
@@ -35,7 +35,7 @@ export const DEFAULT_SPEC_FILENAME = "reana.yaml";
 export default function LaunchOnReana() {
   const reanaToken = useSelector(getReanaToken);
   const [loading, setLoading] = useState(false);
-  const history = useHistory();
+  const navigate = useNavigate();
   const query = useQuery();
   filterParams(query);
   const dispatch = useDispatch();
@@ -74,7 +74,7 @@ export default function LaunchOnReana() {
           } else {
             dispatch(triggerNotification("Workflow submitted", message));
           }
-          history.push(`/details/${workflowId}`);
+          navigate(`/details/${workflowId}`);
         },
       )
       .catch((err) => {
@@ -151,7 +151,7 @@ export default function LaunchOnReana() {
   }, [dispatch, query]);
 
   if (!reanaToken) {
-    return <Redirect to="/" />;
+    return <Navigate to="/" />;
   }
 
   const pageTitle =
