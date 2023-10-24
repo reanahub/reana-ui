@@ -9,7 +9,14 @@
 import { useState, useMemo } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { Button, Container, Icon, Image, Loader } from "semantic-ui-react";
+import {
+  Button,
+  Container,
+  Icon,
+  Image,
+  Loader,
+  Table,
+} from "semantic-ui-react";
 
 import BasePage from "../BasePage";
 import Welcome from "./Welcome";
@@ -172,50 +179,74 @@ export default function LaunchOnReana() {
                 <Icon name="hourglass half" />
               </span>
               <div>
-                <div className={styles.name}>
-                  {query.get("name") ?? DEFAULT_WORKFLOW_NAME}
+                <div className={styles.flexbox}>
+                  <div>
+                    <div className={styles.name}>
+                      {query.get("name") ?? DEFAULT_WORKFLOW_NAME}
+                    </div>
+                    <a
+                      className={styles.url}
+                      href={query.get("url")}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {query.get("url")}
+                    </a>
+                  </div>
+                  <section className={styles.actions}>
+                    <Button
+                      primary
+                      icon="rocket"
+                      content="Launch"
+                      onClick={handleLaunch}
+                      disabled={loading || isMissingRequiredParams(query)}
+                    />
+                  </section>
                 </div>
-                <a
-                  className={styles.url}
-                  href={query.get("url")}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {query.get("url")}
-                </a>
                 <div>
-                  <Icon name="file code outline" />
+                  <div className={styles["launch-section-title"]}>
+                    Specification
+                  </div>
                   {query.get("specification") ?? DEFAULT_SPEC_FILENAME}
                 </div>
                 {query.get("parameters") && workflowParameters && (
                   <div className={styles.parameters}>
-                    <Icon name="sliders horizontal" />
-                    Parameters:
-                    <ul>
-                      {Object.entries(workflowParameters).map(([k, v]) => (
-                        <li key={k}>
-                          {k}: {v}
-                        </li>
-                      ))}
-                    </ul>
+                    <div className={styles["launch-section-title"]}>
+                      Parameters
+                    </div>
+                    <Table celled>
+                      <Table.Body>
+                        {Object.entries(workflowParameters).map(
+                          ([key, value]) => (
+                            <Table.Row key={key}>
+                              <Table.Cell
+                                className={styles["parameter-name-table-cell"]}
+                              >
+                                {key}
+                              </Table.Cell>
+                              <Table.Cell
+                                className={styles["parameter-value-table-cell"]}
+                              >
+                                <CodeSnippet>
+                                  {JSON.stringify(value, null, 2)}
+                                </CodeSnippet>
+                              </Table.Cell>
+                            </Table.Row>
+                          )
+                        )}
+                      </Table.Body>
+                    </Table>
                   </div>
                 )}
               </div>
             </section>
-            <section className={styles.actions}>
-              <Button
-                primary
-                icon="rocket"
-                content="Launch"
-                onClick={handleLaunch}
-                disabled={loading || isMissingRequiredParams(query)}
-              />
-            </section>
-            {/* FIXME: Hide the badge markdown snippet temporarily until implementing R/W */}
-            {/* <BadgeEmbed /> */}
           </Box>
         )}
-        <Loader active={loading} content="Executing workflow..." />
+        <Loader
+          active={loading}
+          content="Executing workflow..."
+          className={styles.loader}
+        />
       </Container>
     </BasePage>
   );

@@ -11,8 +11,19 @@
 .container {
   margin-top: 5em;
 
-  .box {
+  .launch-section-title {
+    font-weight: bold;
+    margin-top: 1rem;
+  }
+
+  .flexbox {
+    display: flex;
     align-items: center;
+    justify-content: space-between;
+  }
+
+  .box {
+    align-items: start;
 
     .details {
       display: flex;
@@ -57,5 +68,31 @@
     margin-top: 1em;
     font-size: 0.8em;
     width: 100%;
+  }
+
+  td.parameter-name-table-cell {
+    padding: 0.5em !important;
+    font-size: 0.8em;
+  }
+
+  td.parameter-value-table-cell {
+    padding: 0 !important;
+    font-size: 0.8em;
+
+    div {
+      margin: 0;
+      padding: 0.25em;
+    }
+  }
+
+  .loader {
+    padding: 20px;
+    background-color: white;
+    border-radius: 5px;
+
+    &:before,
+    &:after {
+      top: 10px !important;
+    }
   }
 }

@@ -53,10 +53,12 @@ test("loads and displays launch on reana page", async () => {
   expect(screen.getByText("roofit"));
   expect(screen.queryByText("Executing workflow...")).not.toHaveClass("active");
 
-  expect(screen.getByText("Parameters:"));
+  expect(screen.getByText("Parameters"));
   expect(screen.getByRole("heading")).toHaveTextContent("Launch on REANA");
-  expect(screen.getByText(/events: 1000/));
-  expect(screen.getByText(/script: run.C/));
+  expect(screen.getByText(/events/));
+  expect(screen.getByText(/1000/));
+  expect(screen.getByText(/script/));
+  expect(screen.getByText(/"run.C"/));
 
   fireEvent.click(screen.getByText("Launch"));
   await waitFor(() =>
