@@ -2,7 +2,7 @@
 	-*- coding: utf-8 -*-
 
 	This file is part of REANA.
-	Copyright (C) 2020, 2022 CERN.
+	Copyright (C) 2020, 2022, 2023 CERN.
 
   REANA is free software; you can redistribute it and/or modify it
   under the terms of the MIT License; see LICENSE file for more details.
@@ -40,6 +40,7 @@ import NotFound from "~/pages/error/NotFound";
 import Error from "./Error";
 
 import "./App.module.scss";
+import LauncherBadgeCreator from "~/pages/badgeCreator/LauncherBadgeCreator";
 
 function RequireAuth({ children }) {
   const signedIn = useSelector(isSignedIn);
@@ -121,6 +122,15 @@ export default function App() {
             element={
               <RequireAuth>
                 <LaunchOnReana />
+              </RequireAuth>
+            }
+          />
+          <Route
+            exact
+            path="/launcher-badge"
+            element={
+              <RequireAuth>
+                <LauncherBadgeCreator />
               </RequireAuth>
             }
           />

@@ -4,6 +4,7 @@ Changes
 Version 0.9.2 (UNRELEASED)
 --------------------------
 
+- Adds form to generate launcher URL and markdown badge to launch an analysis on REANA.
 - Adds option to delete all the runs of a workflow.
 - Changes the launch on REANA page to display the optional launch parameters in a table.
 - Changes Docker image Node version from 16 to 18.

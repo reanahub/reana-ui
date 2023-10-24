@@ -9,29 +9,15 @@
 import { useState, useMemo } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  Button,
-  Container,
-  Icon,
-  Image,
-  Loader,
-  Table,
-} from "semantic-ui-react";
+import { Button, Container, Icon, Loader, Table } from "semantic-ui-react";
 
 import BasePage from "../BasePage";
 import Welcome from "./Welcome";
 import { Box, CodeSnippet, Title } from "~/components";
-import {
-  clearNotification,
-  errorActionCreator,
-  triggerNotification,
-} from "~/actions";
+import { errorActionCreator, triggerNotification } from "~/actions";
 import client from "~/client";
 import { useQuery } from "~/hooks";
-import {
-  LAUNCH_ON_REANA_PARAMS_WHITELIST,
-  LAUNCH_ON_REANA_BADGE_URL,
-} from "~/config";
+import { LAUNCH_ON_REANA_PARAMS_WHITELIST } from "~/config";
 import { getReanaToken } from "~/selectors";
 
 import styles from "./LaunchOnReana.module.scss";
@@ -232,7 +218,7 @@ export default function LaunchOnReana() {
                                 </CodeSnippet>
                               </Table.Cell>
                             </Table.Row>
-                          )
+                          ),
                         )}
                       </Table.Body>
                     </Table>
@@ -251,19 +237,3 @@ export default function LaunchOnReana() {
     </BasePage>
   );
 }
-
-const BadgeEmbed = () => (
-  <details className={styles.badge}>
-    <summary>
-      Expand to see the text below, paste it into your README to show a REANA
-      badge:{" "}
-      <Image src={LAUNCH_ON_REANA_BADGE_URL} href={window.location.href} />
-    </summary>
-    <CodeSnippet dollarPrefix={false} copy>
-      <div>
-        [![Launch on REANA]({LAUNCH_ON_REANA_BADGE_URL})]($
-        {window.location.href})
-      </div>
-    </CodeSnippet>
-  </details>
-);

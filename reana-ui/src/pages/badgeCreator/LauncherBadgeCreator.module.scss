@@ -1,0 +1,23 @@
+/*
+  This file is part of REANA.
+  Copyright (C) 2023 CERN.
+
+  REANA is free software; you can redistribute it and/or modify it
+  under the terms of the MIT License; see LICENSE file for more details.
+*/
+
+.container {
+  margin-top: 5em;
+}
+
+.segment {
+  margin-bottom: 1em !important;
+}
+
+.parameters-header {
+  margin-bottom: 1rem;
+}
+
+.parameter-row {
+  box-sizing: content-box;
+}

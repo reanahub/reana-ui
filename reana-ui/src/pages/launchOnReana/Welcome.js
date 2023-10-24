@@ -68,6 +68,11 @@ export default function Welcome() {
           <DemoCard {...demoProps} key={index} />
         ))}
       </Card.Group>
+      <p>
+        If you have your own analysis, you can create a badge to quickly launch
+        it on REANA! Visit <Link to={"/launcher-badge"}>this page</Link> to get
+        started.
+      </p>
     </Container>
   );
 }
