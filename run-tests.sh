@@ -33,7 +33,7 @@ check_js_tests () {
 }
 
 check_dockerfile () {
-    docker run -i --rm docker.io/hadolint/hadolint:v1.18.2 < Dockerfile
+    docker run -i --rm docker.io/hadolint/hadolint:v2.12.0 < Dockerfile
 }
 
 check_docker_build () {

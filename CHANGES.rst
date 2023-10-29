@@ -6,6 +6,7 @@ Version 0.9.2 (UNRELEASED)
 
 - Adds option to delete all the runs of a workflow.
 - Changes Docker image Node version from 16 to 18.
+- Fixes container image building on the arm64 architecture.
 
 Version 0.9.1 (2023-09-27)
 --------------------------
