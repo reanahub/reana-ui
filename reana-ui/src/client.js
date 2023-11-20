@@ -28,7 +28,9 @@ export const GITLAB_AUTH_URL = `${api}/api/gitlab/connect`;
 export const GITLAB_PROJECTS_URL = `${api}/api/gitlab/projects`;
 export const GITLAB_WEBHOOK_URL = `${api}/api/gitlab/webhook`;
 export const WORKFLOWS_URL = (params) =>
-  `${api}/api/workflows?verbose=true&${stringifyQueryParams(params)}`;
+  `${api}/api/workflows?include_progress=true&include_workspace_size=true&${stringifyQueryParams(
+    params,
+  )}`;
 export const WORKFLOW_LOGS_URL = (id) => `${api}/api/workflows/${id}/logs`;
 export const WORKFLOW_SPECIFICATION_URL = (id) =>
   `${api}/api/workflows/${id}/specification`;
