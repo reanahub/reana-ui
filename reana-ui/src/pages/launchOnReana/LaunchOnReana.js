@@ -46,7 +46,16 @@ export default function LaunchOnReana() {
             // Iterate over all keys in validation_warning
             for (const key in validation_warnings) {
               if (key === "additional_properties") {
-                const properties = validation_warnings[key].join(", ");
+                const properties = validation_warnings[key]
+                  .map(
+                    (additionalProperty) =>
+                      `${additionalProperty.property}${
+                        additionalProperty.path
+                          ? ` (at ${additionalProperty.path})`
+                          : ""
+                      }`,
+                  )
+                  .join(", ");
                 warningMessages.push(
                   `Unexpected properties found in the REANA specification: ${properties}.`,
                 );
