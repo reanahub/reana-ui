@@ -1,13 +1,15 @@
 Changes
 =======
 
-Version 0.9.2 (UNRELEASED)
+Version 0.9.2 (2023-12-06)
 --------------------------
 
-- Adds form to generate launcher URL and markdown badge to launch an analysis on REANA.
+- Adds automated multi-platform container image building for amd64 and arm64 architectures.
 - Adds option to delete all the runs of a workflow.
-- Changes the launch on REANA page to display the optional launch parameters in a table.
-- Changes Docker image Node version from 16 to 18.
+- Adds form to generate the launcher URL of any user-provided analysis, together with the markdown snippet for the corresponding Launch-on-REANA badge.
+- Changes the Launch-on-REANA page to improve how workflow parameters are shown by displaying them inside a table.
+- Changes the Launch-on-REANA page to show improved validation warnings which also indicate where unexpected properties are located in the REANA specification file.
+- Changes version of Node.js Docker image from 16 to 18.
 - Fixes container image building on the arm64 architecture.
 
 Version 0.9.1 (2023-09-27)
