@@ -38,8 +38,8 @@ export default function Notification({
   const actionIcon = notification?.isError
     ? "warning sign"
     : notification?.isWarning
-    ? "warning circle"
-    : "info circle";
+      ? "warning circle"
+      : "info circle";
 
   if (closable && visible) {
     clearTimeout(timer.current);

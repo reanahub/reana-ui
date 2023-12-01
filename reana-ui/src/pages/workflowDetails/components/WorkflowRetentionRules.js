@@ -83,12 +83,12 @@ export default function WorkflowRetentionRules({ id }) {
                   {rule.applied
                     ? "already applied"
                     : rule.inactive
-                    ? "inactive rule"
-                    : rule.pending
-                    ? "currently being deleted"
-                    : rule.active
-                    ? `after ${rule.applyOn} (${rule.timeBeforeExecution})`
-                    : "-"}
+                      ? "inactive rule"
+                      : rule.pending
+                        ? "currently being deleted"
+                        : rule.active
+                          ? `after ${rule.applyOn} (${rule.timeBeforeExecution})`
+                          : "-"}
                 </Table.Cell>
               </Table.Row>
             ))}

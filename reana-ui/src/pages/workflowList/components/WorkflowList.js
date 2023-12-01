@@ -102,16 +102,16 @@ export default function WorkflowList({ workflows, loading }) {
                         {friendlyFinished
                           ? `Finished ${friendlyFinished}`
                           : friendlyStarted
-                          ? `Started ${friendlyStarted}`
-                          : `Created ${friendlyCreated}`}
+                            ? `Started ${friendlyStarted}`
+                            : `Created ${friendlyCreated}`}
                       </div>
                     }
                     content={
                       friendlyFinished
                         ? finishedDate
                         : friendlyStarted
-                        ? startedDate
-                        : createdDate
+                          ? startedDate
+                          : createdDate
                     }
                   />
                 </div>
