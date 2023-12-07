@@ -71,3 +71,9 @@ export const getWorkflowParameters = (id) => (state) =>
   id in state.details.details && state.details.details[id].parameters;
 export const getWorkflowRetentionRules = (id) => (state) =>
   id in state.details.details && state.details.details[id].retentionRules;
+
+// Sharing
+export const getUsersSharedWithYou = (state) =>
+  state.sharing && state.sharing.usersSharedWithYou;
+export const getUsersYouSharedWith = (state) =>
+  state.sharing && state.sharing.usersYouSharedWith;

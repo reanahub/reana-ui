@@ -23,6 +23,8 @@ export const USER_SIGNIN_URL = `${api}/api/login`;
 export const USER_SIGNOUT_URL = `${api}/api/logout`;
 export const USER_REQUEST_TOKEN_URL = `${api}/api/token`;
 export const USER_CONFIRM_EMAIL_URL = `${api}/api/confirm-email`;
+export const USERS_SHARED_WITH_YOU_URL = `${api}/api/users/shared-with-you`;
+export const USERS_YOU_SHARED_WITH_URL = `${api}/api/users/you-shared-with`;
 export const CLUSTER_STATUS_URL = `${api}/api/status`;
 export const GITLAB_AUTH_URL = `${api}/api/gitlab/connect`;
 export const GITLAB_PROJECTS_URL = (params) =>
@@ -116,13 +118,31 @@ class Client {
     });
   }
 
-  getWorkflows({ pagination, search, status, sort, workflowIdOrName } = {}) {
+  getWorkflows({
+    pagination,
+    search,
+    status,
+    ownedBy,
+    sharedWith,
+    sort,
+    workflowIdOrName,
+  } = {}) {
+    let shared = false;
+    if (ownedBy === "anybody") {
+      ownedBy = undefined;
+      shared = true;
+    } else if (ownedBy === "you") {
+      ownedBy = undefined;
+    }
     return this._request(
       WORKFLOWS_URL({
         ...(pagination ?? {}),
         workflow_id_or_name: workflowIdOrName,
         search,
         status,
+        shared,
+        shared_by: ownedBy,
+        shared_with: sharedWith,
         sort,
       }),
     );
@@ -197,6 +217,14 @@ class Client {
       data,
       method: "post",
     });
+  }
+
+  getUsersSharedWithYou() {
+    return this._request(USERS_SHARED_WITH_YOU_URL);
+  }
+
+  getUsersYouSharedWith() {
+    return this._request(USERS_YOU_SHARED_WITH_URL);
   }
 }
 

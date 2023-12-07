@@ -91,6 +91,19 @@ export const OPEN_INTERACTIVE_SESSION_MODAL = "Open interactive session modal";
 export const CLOSE_INTERACTIVE_SESSION_MODAL =
   "Close interactive session modal";
 
+export const USERS_SHARED_WITH_YOU_FETCH =
+  "Fetch users who shared workflows with you";
+export const USERS_SHARED_WITH_YOU_RECEIVED =
+  "Users who shared workflows with you received";
+export const USERS_SHARED_WITH_YOU_FETCH_ERROR =
+  "Fetch users who shared workflows with you error";
+export const USERS_YOU_SHARED_WITH_FETCH =
+  "Fetch users you shared workflows with";
+export const USERS_YOU_SHARED_WITH_RECEIVED =
+  "Users you shared workflows with received";
+export const USERS_YOU_SHARED_WITH_FETCH_ERROR =
+  "Fetch users you shared workflows with error";
+
 export function errorActionCreator(error, name) {
   const { status, data } = error?.response;
   const { message } = data;
@@ -262,6 +275,8 @@ export function fetchWorkflows({
   pagination,
   search,
   status,
+  ownedBy,
+  sharedWith,
   sort,
   showLoader = true,
   workflowIdOrName,
@@ -275,6 +290,8 @@ export function fetchWorkflows({
         pagination,
         search: formatSearch(search),
         status,
+        ownedBy,
+        sharedWith,
         sort,
         workflowIdOrName,
       })
@@ -519,6 +536,44 @@ export function closeInteractiveSession(id) {
       })
       .catch((err) => {
         dispatch(errorActionCreator(err, INTERACTIVE_SESSIONS_CLOSE_URL(id)));
+      });
+  };
+}
+
+export function fetchUsersSharedWithYou() {
+  return async (dispatch) => {
+    dispatch({ type: USERS_SHARED_WITH_YOU_FETCH });
+
+    return await client
+      .getUsersSharedWithYou()
+      .then((resp) => {
+        dispatch({
+          type: USERS_SHARED_WITH_YOU_RECEIVED,
+          users_shared_with_you: resp.data.users_shared_with_you,
+        });
+        return resp;
+      })
+      .catch((err) => {
+        dispatch(errorActionCreator(err, USERS_SHARED_WITH_YOU_FETCH_ERROR));
+      });
+  };
+}
+
+export function fetchUsersYouSharedWith() {
+  return async (dispatch) => {
+    dispatch({ type: USERS_YOU_SHARED_WITH_FETCH });
+
+    return await client
+      .getUsersYouSharedWith()
+      .then((resp) => {
+        dispatch({
+          type: USERS_YOU_SHARED_WITH_RECEIVED,
+          users_you_shared_with: resp.data.users_you_shared_with,
+        });
+        return resp;
+      })
+      .catch((err) => {
+        dispatch(errorActionCreator(err, USERS_YOU_SHARED_WITH_FETCH_ERROR));
       });
   };
 }

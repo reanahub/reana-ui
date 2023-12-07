@@ -2,7 +2,7 @@
   -*- coding: utf-8 -*-
 
   This file is part of REANA.
-  Copyright (C) 2020, 2021, 2022 CERN.
+  Copyright (C) 2020, 2021, 2022, 2023 CERN.
 
   REANA is free software; you can redistribute it and/or modify it
   under the terms of the MIT License; see LICENSE file for more details.
@@ -51,6 +51,8 @@ function Workflows() {
   const [pagination, setPagination] = useState({ page: 1, size: PAGE_SIZE });
   const [statusFilter, setStatusFilter] = useState(NON_DELETED_STATUSES);
   const [searchFilter, setSearchFilter] = useState();
+  const [ownedByFilter, setOwnedByFilter] = useState();
+  const [sharedWithFilter, setSharedWithFilter] = useState();
   const [sortDir, setSortDir] = useState("desc");
   const dispatch = useDispatch();
   const config = useSelector(getConfig);
@@ -76,6 +78,8 @@ function Workflows() {
         pagination: { ...pagination },
         search: searchFilter,
         status: statusFilter,
+        ownedBy: ownedByFilter,
+        sharedWith: sharedWithFilter,
         sort: sortDir,
       }),
     );
@@ -88,6 +92,8 @@ function Workflows() {
             pagination: { ...pagination },
             search: searchFilter,
             status: statusFilter,
+            ownedBy: ownedByFilter,
+            sharedWith: sharedWithFilter,
             sort: sortDir,
             showLoader,
           }),
@@ -103,6 +109,8 @@ function Workflows() {
     reanaToken,
     searchFilter,
     statusFilter,
+    ownedByFilter,
+    sharedWithFilter,
     sortDir,
     workflowRefresh,
   ]);
@@ -133,7 +141,7 @@ function Workflows() {
 
   return (
     <div className={styles.container}>
-      <Container text>
+      <Container id={styles["workflow-list-container"]}>
         <Title className={styles.title}>
           <span>Your workflows</span>
           <span className={styles.refresh}>
@@ -152,6 +160,18 @@ function Workflows() {
           statusFilter={statusFilter}
           setStatusFilter={applyFilter(
             setStatusFilter,
+            pagination,
+            setPagination,
+          )}
+          ownedByFilter={ownedByFilter}
+          setOwnedByFilter={applyFilter(
+            setOwnedByFilter,
+            pagination,
+            setPagination,
+          )}
+          sharedWithFilter={sharedWithFilter}
+          setSharedWithFilter={applyFilter(
+            setSharedWithFilter,
             pagination,
             setPagination,
           )}
