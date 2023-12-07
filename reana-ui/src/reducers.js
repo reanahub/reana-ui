@@ -43,6 +43,12 @@ import {
   OPEN_STOP_WORKFLOW_MODAL,
   CLOSE_STOP_WORKFLOW_MODAL,
   WARNING,
+  USERS_SHARED_WITH_YOU_FETCH,
+  USERS_SHARED_WITH_YOU_RECEIVED,
+  USERS_SHARED_WITH_YOU_FETCH_ERROR,
+  USERS_YOU_SHARED_WITH_FETCH,
+  USERS_YOU_SHARED_WITH_RECEIVED,
+  USERS_YOU_SHARED_WITH_FETCH_ERROR,
 } from "~/actions";
 import { USER_ERROR } from "./errors";
 
@@ -100,6 +106,11 @@ const detailsInitialState = {
 const quotaInitialState = {
   cpu: {},
   disk: {},
+};
+
+const sharingInitialState = {
+  usersSharedWithYou: [],
+  usersYouSharedWith: [],
 };
 
 const notification = (state = notificationInitialState, action) => {
@@ -328,6 +339,33 @@ const quota = (state = quotaInitialState, action) => {
   }
 };
 
+const sharing = (state = sharingInitialState, action) => {
+  switch (action.type) {
+    case USERS_SHARED_WITH_YOU_FETCH:
+      return { ...state };
+    case USERS_SHARED_WITH_YOU_RECEIVED:
+      return {
+        ...state,
+        usersSharedWithYou: action.users_shared_with_you,
+      };
+    case USERS_SHARED_WITH_YOU_FETCH_ERROR:
+      return { ...state, loading: false };
+    case USERS_YOU_SHARED_WITH_FETCH:
+      return {
+        ...state,
+      };
+    case USERS_YOU_SHARED_WITH_RECEIVED:
+      return {
+        ...state,
+        usersYouSharedWith: action.users_you_shared_with,
+      };
+    case USERS_YOU_SHARED_WITH_FETCH_ERROR:
+      return { ...state, loading: false };
+    default:
+      return state;
+  }
+};
+
 const reanaApp = combineReducers({
   notification,
   config,
@@ -335,6 +373,7 @@ const reanaApp = combineReducers({
   workflows,
   details,
   quota,
+  sharing,
 });
 
 export default reanaApp;
