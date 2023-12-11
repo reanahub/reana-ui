@@ -1,7 +1,7 @@
 Changes
 =======
 
-Version 0.9.3 (UNRELEASED)
+Version 0.9.3 (2023-12-12)
 --------------------------
 
 - Adds metadata labels to Dockerfile.
