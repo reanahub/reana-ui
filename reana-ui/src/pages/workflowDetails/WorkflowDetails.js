@@ -30,6 +30,7 @@ import {
   WorkflowActionsPopup,
   WorkflowBadges,
   WorkflowDeleteModal,
+  WorkflowShareModal,
   WorkflowStopModal,
 } from "~/components";
 import {
@@ -170,6 +171,7 @@ export default function WorkflowDetails() {
         <InteractiveSessionModal />
         <WorkflowDeleteModal />
         <WorkflowStopModal />
+        <WorkflowShareModal />
       </Container>
     </BasePage>
   );

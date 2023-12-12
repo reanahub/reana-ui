@@ -20,6 +20,7 @@ import {
   openDeleteWorkflowModal,
   openStopWorkflowModal,
   openInteractiveSessionModal,
+  openShareWorkflowModal,
 } from "~/actions";
 
 import { JupyterNotebookIcon } from "~/components";
@@ -50,6 +51,17 @@ export default function WorkflowActionsPopup({ workflow, className }) {
       },
     });
   }
+
+  menuItems.push({
+    key: "share",
+    content: "Share workflow",
+    icon: "share alternate",
+    onClick: (e) => {
+      dispatch(openShareWorkflowModal(workflow));
+      setOpen(false);
+      e.stopPropagation();
+    },
+  });
 
   if (isSessionOpen) {
     menuItems.push({

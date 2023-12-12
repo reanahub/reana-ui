@@ -45,6 +45,11 @@ export const WORKFLOW_FILE_URL = (id, filename, preview = true) =>
   )}`;
 export const WORKFLOW_SET_STATUS_URL = (id, status) =>
   `${api}/api/workflows/${id}/status?${stringifyQueryParams(status)}`;
+export const WORKFLOW_SHARE_STATUS_URL = (id) =>
+  `${api}/api/workflows/${id}/share-status`;
+export const WORKFLOW_SHARE_URL = (id) => `${api}/api/workflows/${id}/share`;
+export const WORKFLOW_UNSHARE_URL = (id) =>
+  `${api}/api/workflows/${id}/unshare`;
 export const INTERACTIVE_SESSIONS_OPEN_URL = (id, type = "jupyter") =>
   `${api}/api/workflows/${id}/open/${type}`;
 export const INTERACTIVE_SESSIONS_CLOSE_URL = (id) =>
@@ -225,6 +230,24 @@ class Client {
 
   getUsersYouSharedWith() {
     return this._request(USERS_YOU_SHARED_WITH_URL);
+  }
+
+  getWorkflowShareStatus(id) {
+    return this._request(WORKFLOW_SHARE_STATUS_URL(id));
+  }
+
+  shareWorkflow(id, data) {
+    return this._request(WORKFLOW_SHARE_URL(id), {
+      data,
+      method: "post",
+    });
+  }
+
+  unshareWorkflow(id, data) {
+    return this._request(WORKFLOW_UNSHARE_URL(id), {
+      data,
+      method: "post",
+    });
   }
 }
 

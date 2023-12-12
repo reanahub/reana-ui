@@ -22,6 +22,7 @@ export { default as WorkflowDeleteModal } from "./WorkflowDeleteModal";
 export { default as WorkflowInfo } from "./WorkflowInfo";
 export { default as WorkflowBadges } from "./WorkflowBadges";
 export { default as WorkflowStopModal } from "./WorkflowStopModal";
+export { default as WorkflowShareModal } from "./WorkflowShareModal";
 export { default as WorkflowActionsPopup } from "./WorkflowActionsPopup";
 export { default as WorkflowProgressCircleBar } from "./WorkflowProgressCircleBar";
 export { default as PieChart } from "./PieChart";

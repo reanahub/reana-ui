@@ -86,10 +86,23 @@ export const WORKFLOW_STOP_INIT = "Initialize workflow stopping";
 export const WORKFLOW_STOPPED = "Workflow stopped";
 export const OPEN_STOP_WORKFLOW_MODAL = "Open stop workflow modal";
 export const CLOSE_STOP_WORKFLOW_MODAL = "Close stop workflow modal";
+export const OPEN_SHARE_WORKFLOW_MODAL = "Open share workflow modal";
+export const CLOSE_SHARE_WORKFLOW_MODAL = "Close share workflow modal";
 export const WORKFLOW_LIST_REFRESH = "Refresh workflow list";
 export const OPEN_INTERACTIVE_SESSION_MODAL = "Open interactive session modal";
 export const CLOSE_INTERACTIVE_SESSION_MODAL =
   "Close interactive session modal";
+export const WORKFLOW_SHARE_STATUS_FETCH = "Fetch workflow share status";
+export const WORKFLOW_SHARE_STATUS_RECEIVED = "Workflow share status received";
+export const WORKFLOW_SHARE_STATUS_FETCH_ERROR =
+  "Fetch workflow share status error";
+export const WORKFLOW_SHARE_INIT = "Initialise workflow sharing";
+export const WORKFLOW_SHARED_SUCCESSFULLY = "Workflow shared successfully";
+export const WORKFLOW_SHARED_ERROR = "Workflow shared error";
+export const WORKFLOW_SHARE_FINISH = "Finish workflow sharing";
+export const WORKFLOW_UNSHARE_INIT = "Initialise workflow unsharing";
+export const WORKFLOW_UNSHARED = "Workflow unshared";
+export const WORKFLOW_UNSHARE_ERROR = "Workflow unshare error";
 
 export const USERS_SHARED_WITH_YOU_FETCH =
   "Fetch users who shared workflows with you";
@@ -540,6 +553,14 @@ export function closeInteractiveSession(id) {
   };
 }
 
+export function openShareWorkflowModal(workflow) {
+  return { type: OPEN_SHARE_WORKFLOW_MODAL, workflow };
+}
+
+export function closeShareWorkflowModal() {
+  return { type: CLOSE_SHARE_WORKFLOW_MODAL };
+}
+
 export function fetchUsersSharedWithYou() {
   return async (dispatch) => {
     dispatch({ type: USERS_SHARED_WITH_YOU_FETCH });
@@ -574,6 +595,93 @@ export function fetchUsersYouSharedWith() {
       })
       .catch((err) => {
         dispatch(errorActionCreator(err, USERS_YOU_SHARED_WITH_FETCH_ERROR));
+      });
+  };
+}
+
+export function fetchWorkflowShareStatus(id) {
+  return async (dispatch) => {
+    dispatch({ type: WORKFLOW_SHARE_STATUS_FETCH });
+    return await client
+      .getWorkflowShareStatus(id)
+      .then((resp) => {
+        dispatch({
+          type: WORKFLOW_SHARE_STATUS_RECEIVED,
+          id,
+          workflow_share_status: resp.data.shared_with,
+        });
+        return resp;
+      })
+      .catch((err) => {
+        dispatch(errorActionCreator(err, WORKFLOW_SHARE_STATUS_FETCH_ERROR));
+      });
+  };
+}
+
+export function shareWorkflow(
+  id,
+  user_id,
+  user_emails_to_share_with,
+  valid_until,
+) {
+  return async (dispatch) => {
+    dispatch({ type: WORKFLOW_SHARE_INIT });
+
+    const users_shared_with = [];
+    const users_not_shared_with = [];
+
+    for (const user_email_to_share_with of user_emails_to_share_with) {
+      await client
+        .shareWorkflow(id, {
+          user_id,
+          user_email_to_share_with,
+          valid_until,
+        })
+        .then(() => {
+          users_shared_with.push(user_email_to_share_with);
+        })
+        .catch((err) => {
+          const error_message = err.response.data.message;
+          users_not_shared_with.push({
+            user_email_to_share_with,
+            error_message,
+          });
+        });
+
+      if (users_shared_with.length > 0) {
+        dispatch({
+          type: WORKFLOW_SHARED_SUCCESSFULLY,
+          users_shared_with,
+        });
+      }
+
+      if (users_not_shared_with.length > 0) {
+        dispatch({
+          type: WORKFLOW_SHARED_ERROR,
+          users_not_shared_with,
+        });
+      }
+    }
+
+    dispatch({ type: WORKFLOW_SHARE_FINISH });
+  };
+}
+
+export function unshareWorkflow(id, user_id, user_email_to_unshare_with) {
+  return async (dispatch) => {
+    dispatch({ type: WORKFLOW_UNSHARE_INIT });
+
+    return await client
+      .unshareWorkflow(id, {
+        user_id,
+        user_email_to_unshare_with,
+      })
+      .then(() => {
+        dispatch({ type: WORKFLOW_UNSHARED, user_email_to_unshare_with });
+      })
+      .catch((err) => {
+        const error_message = err.response.data.message;
+        dispatch({ type: WORKFLOW_UNSHARE_ERROR, error_message });
       });
   };
 }
