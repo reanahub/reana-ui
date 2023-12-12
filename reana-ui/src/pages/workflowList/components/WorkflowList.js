@@ -20,6 +20,7 @@ import {
   JupyterNotebookIcon,
   WorkflowActionsPopup,
   WorkflowDeleteModal,
+  WorkflowShareModal,
   WorkflowStopModal,
 } from "~/components";
 import { statusMapping } from "~/util";
@@ -137,6 +138,7 @@ export default function WorkflowList({ workflows, loading }) {
       })}
       <WorkflowDeleteModal />
       <WorkflowStopModal />
+      <WorkflowShareModal />
     </>
   );
 }
