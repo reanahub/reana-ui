@@ -24,6 +24,7 @@ export const getUserQuota = (state) => state.quota;
 
 // Auth
 export const isSignedIn = (state) => !!state.auth.email;
+export const getUserId = (state) => state.auth.id;
 export const getUserEmail = (state) => state.auth.email;
 export const getUserFullName = (state) => state.auth.fullName;
 export const getUserFetchError = (state) => state.auth.error[USER_ERROR.fetch];
@@ -51,6 +52,16 @@ export const getWorkflowStopModalOpen = (state) =>
   state.workflows.workflowStopModal.open;
 export const getWorkflowStopModalItem = (state) =>
   state.workflows.workflowStopModal.workflow;
+export const getWorkflowShareModalOpen = (state) =>
+  state.workflows.workflowShareModal.open;
+export const getWorkflowShareModalItem = (state) =>
+  state.workflows.workflowShareModal.workflow;
+export const getWorkflowShareStatus = (id) => (state) =>
+  state.workflows.workflows &&
+  state.workflows.workflows[id] &&
+  state.workflows.workflows[id].sharedWith;
+export const getLoadingWorkflowShareStatus = (state) =>
+  state.workflows && state.workflows.loadingWorkflowShareStatus;
 export const getWorkflowRefresh = (state) => state.workflows.workflowRefresh;
 
 // Details
@@ -73,3 +84,15 @@ export const getUsersSharedWithYou = (state) =>
   state.sharing && state.sharing.usersSharedWithYou;
 export const getUsersYouSharedWith = (state) =>
   state.sharing && state.sharing.usersYouSharedWith;
+export const getLoadingWorkflowShare = (state) =>
+  state.sharing && state.sharing.loadingWorkflowShare;
+export const getLoadingWorkflowUnshare = (state) =>
+  state.sharing && state.sharing.loadingWorkflowUnshare;
+export const getUsersWorkflowWasSharedWith = (state) =>
+  state.sharing && state.sharing.usersWorkflowWasSharedWith;
+export const getUsersWorkflowWasNotSharedWith = (state) =>
+  state.sharing && state.sharing.usersWorkflowWasNotSharedWith;
+export const getUnshareError = (state) =>
+  state.sharing && state.sharing.unshareError;
+export const getUserWorkflowWasUnsharedWith = (state) =>
+  state.sharing && state.sharing.userWorkflowWasUnsharedWith;
