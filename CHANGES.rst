@@ -4,6 +4,7 @@ Changes
 Version 0.9.3 (UNRELEASED)
 --------------------------
 
+- Adds metadata labels to Dockerfile.
 - Changes version of NGINX Docker image from 1.19 to 1.25.
 
 Version 0.9.2 (2023-12-06)
