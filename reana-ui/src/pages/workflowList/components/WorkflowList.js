@@ -76,25 +76,46 @@ export default function WorkflowList({ workflows, loading }) {
                   <span className={styles.name}>{name}</span>
                   <span className={styles.run}>#{run}</span>
                   <div>
-                    {hasDiskUsage && (
-                      <span
-                        className={`${styles.size} ${
-                          isDeletedUsingWorkspace ? styles.highlight : ""
-                        }`}
-                      >
-                        <Icon name="hdd" /> {size.human_readable}
-                      </span>
-                    )}
-                    {isSessionOpen && (
-                      <a
-                        href={INTERACTIVE_SESSION_URL(sessionUri, reanaToken)}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        onClick={(e) => e.stopPropagation()}
-                        className={styles.notebook}
-                      >
-                        <JupyterNotebookIcon />
-                      </a>
+                    {workflow.owner_email === "-" ? (
+                      <>
+                        {hasDiskUsage && (
+                          <span
+                            className={`${styles.size} ${
+                              isDeletedUsingWorkspace ? styles.highlight : ""
+                            }`}
+                          >
+                            <Icon name="hdd" /> {size.human_readable}
+                          </span>
+                        )}
+                        {isSessionOpen && (
+                          <a
+                            href={INTERACTIVE_SESSION_URL(
+                              sessionUri,
+                              reanaToken,
+                            )}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={(e) => e.stopPropagation()}
+                            className={styles.notebook}
+                          >
+                            <JupyterNotebookIcon />
+                          </a>
+                        )}
+                      </>
+                    ) : (
+                      <Popup
+                        trigger={
+                          <span className={styles.owner}>
+                            <Icon name="eye" style={{ marginTop: "-3px" }} />
+                            {workflow.owner_email}
+                          </span>
+                        }
+                        position="top center"
+                        content={
+                          "This workflow is read-only shared with you by " +
+                          workflow.owner_email
+                        }
+                      />
                     )}
                   </div>
                   <Popup
@@ -131,6 +152,7 @@ export default function WorkflowList({ workflows, loading }) {
               <WorkflowActionsPopup
                 workflow={workflow}
                 className={styles.actions}
+                insideClickableElement
               />
             </Box>
           </Link>
