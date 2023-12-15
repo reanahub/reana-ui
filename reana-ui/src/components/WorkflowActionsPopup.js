@@ -29,7 +29,11 @@ import styles from "./WorkflowActionsPopup.module.scss";
 
 const JupyterIcon = <JupyterNotebookIcon className={styles["jupyter-icon"]} />;
 
-export default function WorkflowActionsPopup({ workflow, className }) {
+export default function WorkflowActionsPopup({
+  workflow,
+  className,
+  insideClickableElement,
+}) {
   const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
   const { id, size, status, session_status: sessionStatus } = workflow;
@@ -111,6 +115,17 @@ export default function WorkflowActionsPopup({ workflow, className }) {
     });
   }
 
+  if (workflow.owner_email !== "-") {
+    return (
+      <div
+        className={className || styles.container}
+        style={
+          insideClickableElement ? { cursor: "pointer" } : { cursor: "default" }
+        }
+      />
+    );
+  }
+
   return (
     <div className={className}>
       {menuItems.length > 0 && (
@@ -145,4 +160,5 @@ WorkflowActionsPopup.defaultProps = {
 WorkflowActionsPopup.propTypes = {
   workflow: workflowShape.isRequired,
   className: PropTypes.string,
+  insideClickableElement: PropTypes.bool,
 };

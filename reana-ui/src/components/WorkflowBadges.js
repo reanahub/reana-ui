@@ -9,7 +9,7 @@
 */
 
 import styles from "./WorkflowBadges.module.scss";
-import { Label } from "semantic-ui-react";
+import { Icon, Label, Popup } from "semantic-ui-react";
 import { JupyterNotebookIcon } from "~/components";
 import { INTERACTIVE_SESSION_URL } from "~/client";
 import { LauncherLabel } from "~/components";
@@ -29,36 +29,54 @@ export default function WorkflowBadges({ workflow }) {
 
   return (
     <div className={styles.badgesContainer}>
-      {workflow.duration && (
-        <Label
-          basic
-          size="tiny"
-          content={`CPU ${workflow.duration}`}
-          icon="clock"
-        />
-      )}
-      {hasDiskUsage && (
-        <Label
-          basic
-          size="tiny"
-          content={`Disk ${size.human_readable}`}
-          icon="hdd"
-        />
-      )}
-      <LauncherLabel url={launcherURL} />
-      {isSessionOpen && (
-        <Label
-          size="tiny"
-          content={"Notebook"}
-          icon={
-            <i className="icon">
-              <JupyterNotebookIcon size={12} />
-            </i>
+      {workflow.owner_email === "-" ? (
+        <>
+          {workflow.duration && (
+            <Label
+              basic
+              size="tiny"
+              content={`CPU ${workflow.duration}`}
+              icon="clock"
+            />
+          )}
+          {hasDiskUsage && (
+            <Label
+              basic
+              size="tiny"
+              content={`Disk ${size.human_readable}`}
+              icon="hdd"
+            />
+          )}
+          <LauncherLabel url={launcherURL} />
+          {isSessionOpen && (
+            <Label
+              size="tiny"
+              content={"Notebook"}
+              icon={
+                <i className="icon">
+                  <JupyterNotebookIcon size={12} />
+                </i>
+              }
+              as="a"
+              href={INTERACTIVE_SESSION_URL(sessionUri, reanaToken)}
+              target="_blank"
+              rel="noopener noreferrer"
+            />
+          )}
+        </>
+      ) : (
+        <Popup
+          trigger={
+            <span className={styles.owner}>
+              <Icon name="eye" style={{ marginTop: "-3px" }} />
+              {workflow.owner_email}
+            </span>
           }
-          as="a"
-          href={INTERACTIVE_SESSION_URL(sessionUri, reanaToken)}
-          target="_blank"
-          rel="noopener noreferrer"
+          position="top center"
+          content={
+            "This workflow is read-only shared with you by " +
+            workflow.owner_email
+          }
         />
       )}
     </div>

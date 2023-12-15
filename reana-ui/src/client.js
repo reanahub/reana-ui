@@ -131,14 +131,16 @@ class Client {
     sharedWith,
     sort,
     workflowIdOrName,
+    includeShared = false,
   } = {}) {
     let shared = false;
-    if (ownedBy === "anybody") {
+    if (ownedBy === "anybody" || includeShared) {
       ownedBy = undefined;
       shared = true;
     } else if (ownedBy === "you") {
       ownedBy = undefined;
     }
+
     return this._request(
       WORKFLOWS_URL({
         ...(pagination ?? {}),

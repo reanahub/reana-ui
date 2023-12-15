@@ -293,11 +293,13 @@ export function fetchWorkflows({
   sort,
   showLoader = true,
   workflowIdOrName,
+  includeShared = false,
 }) {
   return async (dispatch) => {
     if (showLoader) {
       dispatch({ type: WORKFLOWS_FETCH });
     }
+
     return await client
       .getWorkflows({
         pagination,
@@ -307,15 +309,16 @@ export function fetchWorkflows({
         sharedWith,
         sort,
         workflowIdOrName,
+        includeShared,
       })
-      .then((resp) =>
+      .then((resp) => {
         dispatch({
           type: WORKFLOWS_RECEIVED,
           workflows: parseWorkflows(resp.data.items),
           total: resp.data.total,
           userHasWorkflows: resp.data.user_has_workflows,
-        }),
-      )
+        });
+      })
       .catch((err) => {
         dispatch(errorActionCreator(err, USER_INFO_URL));
         dispatch({ type: WORKFLOWS_FETCH_ERROR });
@@ -335,6 +338,7 @@ export function fetchWorkflow(id, { refetch = false, showLoader = true } = {}) {
         fetchWorkflows({
           workflowIdOrName: id,
           showLoader,
+          includeShared: true,
         }),
       );
     }
