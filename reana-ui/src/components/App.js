@@ -84,7 +84,6 @@ export default function App() {
           <Route path="/privacy-notice" element={<PrivacyNotice />} />
           <Route path="/signin_callback" element={<OAuthSignin />} />
           <Route
-            exact
             path="/"
             element={
               <RequireAuth>
@@ -117,7 +116,6 @@ export default function App() {
             }
           />
           <Route
-            exact
             path="/launch"
             element={
               <RequireAuth>
@@ -126,7 +124,6 @@ export default function App() {
             }
           />
           <Route
-            exact
             path="/launcher-badge"
             element={
               <RequireAuth>
@@ -135,7 +132,7 @@ export default function App() {
             }
           />
           <Route
-            path="/"
+            path="*"
             element={
               <RequireAuth>
                 <NotFound />
