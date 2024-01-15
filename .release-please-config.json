@@ -15,10 +15,17 @@
         { "type": "docs", "section": "Documentation", "hidden": false },
         { "type": "chore", "section": "Chores", "hidden": true }
       ],
+      "extra-files": [
+        {
+          "type": "json",
+          "path": "reana-ui/package.json",
+          "jsonpath": "$.version"
+        }
+      ],
       "versioning": "always-bump-patch"
     }
   },
   "pull-request-footer": " ",
   "pull-request-header": " ",
-  "release-type": "node"
+  "release-type": "simple"
 }
