@@ -43,4 +43,6 @@ LABEL org.opencontainers.image.source="https://github.com/reanahub/reana-ui"
 LABEL org.opencontainers.image.title="reana-ui"
 LABEL org.opencontainers.image.url="https://github.com/reanahub/reana-ui"
 LABEL org.opencontainers.image.vendor="reanahub"
+# x-release-please-start-version
 LABEL org.opencontainers.image.version="0.9.3"
+# x-release-please-end

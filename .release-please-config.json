@@ -15,13 +15,7 @@
         { "type": "docs", "section": "Documentation", "hidden": false },
         { "type": "chore", "section": "Chores", "hidden": true }
       ],
-      "extra-files": [
-        {
-          "type": "json",
-          "path": "reana-ui/package.json",
-          "jsonpath": "$.version"
-        }
-      ],
+      "extra-files": ["Dockerfile", "reana-ui/package.json"],
       "versioning": "always-bump-patch"
     }
   },
