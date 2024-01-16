@@ -1,0 +1,46 @@
+/*
+  -*- coding: utf-8 -*-
+
+  This file is part of REANA.
+  Copyright (C) 2023 CERN.
+
+  REANA is free software; you can redistribute it and/or modify it
+  under the terms of the MIT License; see LICENSE file for more details.
+*/
+
+#sharing-filter-dropdown {
+  border-top-right-radius: 0%;
+  border-bottom-right-radius: 0%;
+}
+
+#sharing-filter-dropdown:hover,
+#sharing-filter-dropdown:focus,
+#sharing-filter-dropdown:active {
+  z-index: 2;
+}
+
+#selected-user-dropdown {
+  border-top-left-radius: 0%;
+  border-bottom-left-radius: 0%;
+  margin-left: -1px;
+  overflow: hidden;
+}
+
+#selected-user-dropdown.input {
+  border-top-left-radius: 0%;
+  border-bottom-left-radius: 0%;
+  margin-left: -1px;
+}
+
+#selected-user-dropdown > div[aria-atomic="true"] {
+  max-width: 105px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  height: 14+2px;
+  margin-bottom: -2px;
+}
+
+#selected-user-dropdown[aria-expanded="true"] {
+  overflow: visible;
+}
