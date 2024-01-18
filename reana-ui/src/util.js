@@ -156,13 +156,16 @@ export function getDuration(start, end) {
 /**
  * Parses workflows date info in a friendly way.
  */
-function parseWorkflowDates(workflow) {
+export function parseWorkflowDates(workflow) {
   const createdMoment = moment.utc(workflow.created);
   const startedMoment = moment.utc(workflow.progress.run_started_at);
   const finishedMoment = moment.utc(workflow.progress.run_finished_at);
   const stoppedMoment = moment.utc(workflow.progress.run_stopped_at);
   // Mapping between workflow status and the end moment to use for calculating the duration
+  // If the workflow has not terminated yet (running, queued, pending), the endMoment should not be
+  // specified, and the current time will be used instead.
   const endMomentStatusMapping = {
+    failed: finishedMoment,
     finished: finishedMoment,
     stopped: stoppedMoment,
     deleted: finishedMoment.isValid() ? finishedMoment : stoppedMoment,

@@ -4,6 +4,7 @@ import {
   formatSearch,
   getDuration,
   getMimeType,
+  parseWorkflowDates,
 } from "~/util";
 
 test.each([
@@ -56,3 +57,31 @@ test.each([
 ])("formatFileSize(%p) === %p", (fileSize, formattedFileSize) => {
   expect(formatFileSize(fileSize)).toEqual(formattedFileSize);
 });
+
+test.each([
+  ["finished", "15 min 0 sec", { run_finished_at: "2024-01-18T08:45:00" }],
+  ["failed", "15 min 0 sec", { run_finished_at: "2024-01-18T08:45:00" }],
+  ["stopped", "10 min 0 sec", { run_stopped_at: "2024-01-18T08:40:00" }],
+  ["running", "20 min 0 sec", {}],
+  ["queued", "20 min 0 sec", {}],
+  ["pending", "20 min 0 sec", {}],
+  ["created", "20 min 0 sec", {}],
+])(
+  `parseWorkflowDates [status: %p], duration === %p`,
+  (status, duration, progress_override) => {
+    const workflow = {
+      status: status,
+      created: "2024-01-18T08:25:00",
+      progress: {
+        run_started_at: "2024-01-18T08:30:00",
+        run_stopped_at: null,
+        run_finished_at: null,
+        ...progress_override,
+      },
+    };
+
+    jest.useFakeTimers();
+    jest.setSystemTime(new Date(2024, 0, 18, 8, 50, 0));
+    expect(parseWorkflowDates(workflow).duration).toEqual(duration);
+  },
+);
