@@ -304,7 +304,7 @@ const LauncherBadgeCreator = () => {
               </p>
               <CodeSnippet dollarPrefix={false} copy>
                 <div>
-                  [![Launch on REANA]({LAUNCH_ON_REANA_BADGE_URL})]($
+                  [![Launch on REANA]({LAUNCH_ON_REANA_BADGE_URL})](
                   {launcherURL})
                 </div>
               </CodeSnippet>
