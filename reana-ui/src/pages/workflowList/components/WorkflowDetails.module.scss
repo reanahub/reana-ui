@@ -72,18 +72,15 @@
   .status-box {
     width: 210px;
     flex-shrink: 0;
+    display: flex;
+    justify-content: end;
+    text-align: right;
   }
 
-  .actions {
-    min-width: 22px;
-
-    &:hover {
-      color: darken($sepia, 30%);
-    }
-
-    &.always-visible {
-      visibility: visible;
-    }
+  .progressbar-container {
+    width: 80px;
+    padding: 10px;
+    padding-top: 0;
   }
 
   .notebook {
