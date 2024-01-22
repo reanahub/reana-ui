@@ -53,8 +53,12 @@ export function parseWorkflows(workflows) {
     workflow.run = info.join(".");
     const progress = workflow.progress.finished;
     const total = workflow.progress.total;
+    const running = workflow.progress.running;
+    const failed = workflow.progress.failed;
     workflow.completed = typeof progress === "object" ? progress.total : 0;
     workflow.total = total.total;
+    workflow.running = typeof running === "object" ? running.total : 0;
+    workflow.failed = typeof failed === "object" ? failed.total : 0;
     workflow.launcherURL = workflow.launcher_url;
     workflow = parseWorkflowDates(workflow);
 

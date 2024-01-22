@@ -11,12 +11,12 @@
 import { Icon, Popup } from "semantic-ui-react";
 import PropTypes from "prop-types";
 
-import { WorkflowActionsPopup } from "~/components";
 import { statusMapping } from "~/util";
 
 import styles from "./WorkflowDetails.module.scss";
+import WorkflowProgressCircleBar from "~/pages/workflowList/components/WorkflowProgressCircleBar";
 
-export default function WorkflowDetails({ workflow, actionsOnHover = false }) {
+export default function WorkflowDetails({ workflow }) {
   const {
     name,
     run,
@@ -26,7 +26,6 @@ export default function WorkflowDetails({ workflow, actionsOnHover = false }) {
     friendlyCreated,
     friendlyStarted,
     friendlyFinished,
-    duration,
     completed,
     total,
     status,
@@ -69,14 +68,18 @@ export default function WorkflowDetails({ workflow, actionsOnHover = false }) {
           </div>
         </div>
         <div className={styles["status-box"]}>
-          <span
-            className={`${styles["status"]} sui-${statusMapping[status].color}`}
-          >
-            {status}
-          </span>{" "}
-          {statusMapping[status].preposition} {duration}
           <div>
-            step {completed}/{total}
+            <span
+              className={`${styles["status"]} sui-${statusMapping[status].color}`}
+            >
+              {status}
+            </span>{" "}
+            <div>
+              step {completed}/{total}
+            </div>
+          </div>
+          <div className={styles["progressbar-container"]}>
+            <WorkflowProgressCircleBar workflow={workflow} />
           </div>
         </div>
       </div>

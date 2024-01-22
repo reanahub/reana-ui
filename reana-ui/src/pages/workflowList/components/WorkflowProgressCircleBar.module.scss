@@ -1,0 +1,41 @@
+@import "@palette";
+
+.progress-bar-container {
+  svg {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+  }
+
+  circle {
+    fill: none;
+    transition: stroke-dasharray 0.35s ease;
+  }
+
+  .progress-bar-running {
+    stroke: $sui-blue;
+  }
+
+  .progress-bar-finished {
+    stroke: $sui-green;
+  }
+
+  .progress-bar-failed {
+    stroke: $sui-red;
+  }
+
+  .progress-bar-background,
+  .progress-bar-workflow-status-queued,
+  .progress-bar-workflow-status-pending,
+  .progress-bar-workflow-status-created {
+    stroke: $light-gray;
+  }
+
+  .progress-bar-workflow-status-deleted {
+    stroke: $gray;
+  }
+
+  .progress-bar-workflow-status-stopped {
+    stroke: $sui-yellow !important;
+  }
+}
