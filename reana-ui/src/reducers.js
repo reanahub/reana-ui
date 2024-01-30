@@ -43,6 +43,24 @@ import {
   OPEN_STOP_WORKFLOW_MODAL,
   CLOSE_STOP_WORKFLOW_MODAL,
   WARNING,
+  USERS_SHARED_WITH_YOU_FETCH,
+  USERS_SHARED_WITH_YOU_RECEIVED,
+  USERS_SHARED_WITH_YOU_FETCH_ERROR,
+  USERS_YOU_SHARED_WITH_FETCH,
+  USERS_YOU_SHARED_WITH_RECEIVED,
+  USERS_YOU_SHARED_WITH_FETCH_ERROR,
+  OPEN_SHARE_WORKFLOW_MODAL,
+  CLOSE_SHARE_WORKFLOW_MODAL,
+  WORKFLOW_SHARE_STATUS_FETCH,
+  WORKFLOW_SHARE_STATUS_RECEIVED,
+  WORKFLOW_SHARE_INIT,
+  WORKFLOW_SHARED_SUCCESSFULLY,
+  WORKFLOW_SHARED_ERROR,
+  WORKFLOW_SHARE_FINISH,
+  WORKFLOW_SHARE_STATUS_FETCH_ERROR,
+  WORKFLOW_UNSHARE_INIT,
+  WORKFLOW_UNSHARED,
+  WORKFLOW_UNSHARE_ERROR,
 } from "~/actions";
 import { USER_ERROR } from "./errors";
 
@@ -70,6 +88,7 @@ export const configInitialState = {
 };
 
 const authInitialState = {
+  id: null,
   email: null,
   reanaToken: {
     value: null,
@@ -89,7 +108,9 @@ const workflowsInitialState = {
   userHasWorkflows: false,
   workflowDeleteModal: { open: false, workflow: null },
   workflowStopModal: { open: false, workflow: null },
+  workflowShareModal: { open: false, workflow: null },
   workflowRefresh: null,
+  loadingWorkflowShareStatus: false,
 };
 
 const detailsInitialState = {
@@ -100,6 +121,16 @@ const detailsInitialState = {
 const quotaInitialState = {
   cpu: {},
   disk: {},
+};
+
+const sharingInitialState = {
+  usersSharedWithYou: [],
+  usersYouSharedWith: [],
+  loadingWorkflowShare: false,
+  loadingWorkflowUnshare: false,
+  usersWorkflowWasSharedWith: [],
+  usersWorkflowWasNotSharedWith: [],
+  userWorkflowWasUnsharedWith: null,
 };
 
 const notification = (state = notificationInitialState, action) => {
@@ -166,6 +197,7 @@ const auth = (state = authInitialState, action) => {
     case USER_RECEIVED:
       return {
         ...state,
+        id: action.id_,
         email: action.email,
         fullName: action.full_name,
         username: action.username,
@@ -249,8 +281,31 @@ const workflows = (state = workflowsInitialState, action) => {
       };
     case CLOSE_STOP_WORKFLOW_MODAL:
       return { ...state, workflowStopModal: { open: false, workflow: null } };
+    case OPEN_SHARE_WORKFLOW_MODAL:
+      return {
+        ...state,
+        workflowShareModal: { open: true, workflow: action.workflow },
+      };
+    case CLOSE_SHARE_WORKFLOW_MODAL:
+      return { ...state, workflowShareModal: { open: false, workflow: null } };
     case WORKFLOW_LIST_REFRESH:
       return { ...state, workflowRefresh: Math.random() };
+    case WORKFLOW_SHARE_STATUS_FETCH:
+      return { ...state, loadingWorkflowShareStatus: true };
+    case WORKFLOW_SHARE_STATUS_RECEIVED:
+      return {
+        ...state,
+        workflows: {
+          ...state.workflows,
+          [action.id]: {
+            ...state.workflows[action.id],
+            sharedWith: action.workflow_share_status,
+          },
+        },
+        loadingWorkflowShareStatus: false,
+      };
+    case WORKFLOW_SHARE_STATUS_FETCH_ERROR:
+      return { ...state, loadingWorkflowShareStatus: false };
 
     default:
       return state;
@@ -328,6 +383,74 @@ const quota = (state = quotaInitialState, action) => {
   }
 };
 
+const sharing = (state = sharingInitialState, action) => {
+  switch (action.type) {
+    case USERS_SHARED_WITH_YOU_FETCH:
+      return { ...state };
+    case USERS_SHARED_WITH_YOU_RECEIVED:
+      return {
+        ...state,
+        usersSharedWithYou: action.users_shared_with_you,
+      };
+    case USERS_SHARED_WITH_YOU_FETCH_ERROR:
+      return { ...state };
+    case USERS_YOU_SHARED_WITH_FETCH:
+      return {
+        ...state,
+      };
+    case USERS_YOU_SHARED_WITH_RECEIVED:
+      return {
+        ...state,
+        usersYouSharedWith: action.users_you_shared_with,
+      };
+    case USERS_YOU_SHARED_WITH_FETCH_ERROR:
+      return { ...state };
+    case WORKFLOW_SHARE_INIT:
+      return {
+        ...state,
+        loadingWorkflowShare: true,
+        usersWorkflowWasSharedWith: [],
+        usersWorkflowWasNotSharedWith: [],
+      };
+    case WORKFLOW_SHARED_SUCCESSFULLY:
+      return {
+        ...state,
+        usersWorkflowWasSharedWith: action.users_shared_with,
+      };
+    case WORKFLOW_SHARED_ERROR:
+      return {
+        ...state,
+        usersWorkflowWasNotSharedWith: action.users_not_shared_with,
+      };
+    case WORKFLOW_SHARE_FINISH:
+      return {
+        ...state,
+        loadingWorkflowShare: false,
+      };
+    case WORKFLOW_UNSHARE_INIT:
+      return {
+        ...state,
+        unshareError: null,
+        loadingWorkflowUnshare: true,
+      };
+    case WORKFLOW_UNSHARED:
+      return {
+        ...state,
+        loadingWorkflowUnshare: false,
+        userWorkflowWasUnsharedWith: action.user_email_to_unshare_with,
+      };
+    case WORKFLOW_UNSHARE_ERROR:
+      return {
+        ...state,
+        loadingWorkflowUnshare: false,
+        unshareError: action.error_message,
+      };
+
+    default:
+      return state;
+  }
+};
+
 const reanaApp = combineReducers({
   notification,
   config,
@@ -335,6 +458,7 @@ const reanaApp = combineReducers({
   workflows,
   details,
   quota,
+  sharing,
 });
 
 export default reanaApp;

@@ -2,7 +2,7 @@
   -*- coding: utf-8 -*-
 
   This file is part of REANA.
-  Copyright (C) 2020, 2022 CERN.
+  Copyright (C) 2020, 2022, 2023 CERN.
 
   REANA is free software; you can redistribute it and/or modify it
   under the terms of the MIT License; see LICENSE file for more details.
@@ -49,7 +49,7 @@ export default function WorkflowStatusFilters({ statusFilter, filter }) {
 
   return (
     <>
-      <Grid.Column width={7}>
+      <Grid.Column mobile={16} tablet={4} computer={3}>
         <Dropdown
           text="Status"
           fluid
@@ -61,7 +61,12 @@ export default function WorkflowStatusFilters({ statusFilter, filter }) {
           value={valueList}
         />
       </Grid.Column>
-      <Grid.Column width={5}>
+      <Grid.Column
+        mobile={16}
+        tablet={5}
+        computer={4}
+        className="center aligned"
+      >
         <Checkbox
           toggle
           label="Show deleted runs"
