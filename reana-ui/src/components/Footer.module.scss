@@ -19,7 +19,7 @@
   height: 60px;
   color: $gray;
 
-  .links > a {
+  .links > a:not(:first-child) {
     margin-left: 1em;
   }
 }

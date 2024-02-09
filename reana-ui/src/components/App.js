@@ -33,7 +33,6 @@ import OAuthSignin from "~/pages/signin/OAuthSignin";
 import WorkflowList from "~/pages/workflowList/WorkflowList";
 import WorkflowDetails from "~/pages/workflowDetails/WorkflowDetails";
 import Profile from "~/pages/profile/Profile";
-import PrivacyNotice from "~/pages/privacyNotice/PrivacyNotice";
 import Status from "~/pages/status/Status";
 import LaunchOnReana from "~/pages/launchOnReana/LaunchOnReana";
 import NotFound from "~/pages/error/NotFound";
@@ -81,7 +80,6 @@ export default function App() {
             }
           />
           <Route path="/confirm/:token" element={<Confirm />} />
-          <Route path="/privacy-notice" element={<PrivacyNotice />} />
           <Route path="/signin_callback" element={<OAuthSignin />} />
           <Route
             path="/"

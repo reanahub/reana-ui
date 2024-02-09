@@ -20,11 +20,15 @@ export default function Footer() {
   const config = useSelector(getConfig);
   return (
     <footer className={styles["footer-bottom"]}>
-      <span>
-        {config.cernRopo && (
-          <Link to="/privacy-notice">
+      <span className={styles["links"]}>
+        {config.privacyNoticeURL && (
+          <a
+            href={config.privacyNoticeURL}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             <Icon name="privacy"></Icon> Privacy notice
-          </Link>
+          </a>
         )}
       </span>
       <span className={styles["links"]}>
