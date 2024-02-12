@@ -2,7 +2,7 @@
   -*- coding: utf-8 -*-
 
   This file is part of REANA.
-  Copyright (C) 2020, 2022, 2023 CERN.
+  Copyright (C) 2020, 2022, 2023, 2024 CERN.
 
   REANA is free software; you can redistribute it and/or modify it
   under the terms of the MIT License; see LICENSE file for more details.
@@ -24,15 +24,18 @@ import {
 import BasePage from "../BasePage";
 import {
   Notification,
+  WorkflowInfo,
+  WorkflowActionsPopup,
+  WorkflowBadges,
   WorkflowDeleteModal,
   WorkflowStopModal,
 } from "~/components";
 import {
-  WorkflowInfo,
   WorkflowLogs,
   WorkflowFiles,
   WorkflowSpecification,
 } from "./components";
+import styles from "./WorkflowDetails.module.scss";
 
 const FINISHED_STATUSES = ["finished", "failed", "stopped", "deleted"];
 
@@ -139,8 +142,14 @@ export default function WorkflowDetails() {
 
   return (
     <BasePage title={pageTitle}>
-      <Container>
+      <Container className={styles["workflow-details-container"]}>
         <WorkflowInfo workflow={workflow} />
+        <div className={styles["badges-and-actions"]}>
+          <WorkflowBadges workflow={workflow} withDivider={false} />
+          <div className={styles.actionsContainer}>
+            <WorkflowActionsPopup workflow={workflow} />
+          </div>
+        </div>
         <Tab
           menu={{ secondary: true, pointing: true }}
           panes={panes}

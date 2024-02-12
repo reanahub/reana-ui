@@ -16,7 +16,7 @@ export default function WorkflowProgressCircleBar({ workflow }) {
 
   const size = 80;
   const strokeWidth = 10;
-  const radius = size / 2 - strokeWidth;
+  const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
 
   let lengthFinishedArc = (completed / total) * circumference;

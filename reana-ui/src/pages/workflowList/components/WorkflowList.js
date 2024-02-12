@@ -2,21 +2,26 @@
   -*- coding: utf-8 -*-
 
   This file is part of REANA.
-  Copyright (C) 2020, 2021, 2022, 2023 CERN.
+  Copyright (C) 2020, 2021, 2022, 2023, 2024 CERN.
 
   REANA is free software; you can redistribute it and/or modify it
   under the terms of the MIT License; see LICENSE file for more details.
 */
 
-import { Loader, Message } from "semantic-ui-react";
+import { Loader, Message, Divider } from "semantic-ui-react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 
-import { Box, WorkflowDeleteModal, WorkflowStopModal } from "~/components";
+import {
+  Box,
+  WorkflowBadges,
+  WorkflowInfo,
+  WorkflowDeleteModal,
+  WorkflowStopModal,
+  WorkflowActionsPopup,
+} from "~/components";
 
 import styles from "./WorkflowList.module.scss";
-import WorkflowDetails from "~/pages/workflowList/components/WorkflowDetails";
-import WorkflowBadges from "~/pages/workflowList/components/WorkflowBadges";
 
 export default function WorkflowList({ workflows, loading }) {
   if (loading) return <Loader active />;
@@ -30,10 +35,19 @@ export default function WorkflowList({ workflows, loading }) {
           <Box padding={false} flex={false}>
             <Link key={workflow.id} to={`/details/${workflow.id}`}>
               <div className={styles["workflow-details-container"]}>
-                <WorkflowDetails workflow={workflow} actionsOnHover={true} />
+                <WorkflowInfo workflow={workflow} actionsOnHover={true} />
               </div>
             </Link>
-            <WorkflowBadges workflow={workflow} />
+            <Divider className={styles.divider}></Divider>
+            <div className={styles["badges-and-actions"]}>
+              <WorkflowBadges workflow={workflow} />
+              <div className={styles.actionsContainer}>
+                <WorkflowActionsPopup
+                  workflow={workflow}
+                  className={`${styles.actions} ${styles["always-visible"]}`}
+                />
+              </div>
+            </div>
           </Box>
         );
       })}
