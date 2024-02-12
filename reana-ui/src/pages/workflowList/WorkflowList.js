@@ -132,7 +132,7 @@ function Workflows() {
   );
 
   return (
-    <div className={`${styles.container} ${styles["workflow-list-container"]}`}>
+    <div className={styles.container}>
       <Container text>
         <Title className={styles.title}>
           <span>Your workflows</span>

@@ -25,15 +25,18 @@ import BasePage from "../BasePage";
 import {
   InteractiveSessionModal,
   Notification,
+  WorkflowInfo,
+  WorkflowActionsPopup,
+  WorkflowBadges,
   WorkflowDeleteModal,
   WorkflowStopModal,
 } from "~/components";
 import {
-  WorkflowInfo,
   WorkflowLogs,
   WorkflowFiles,
   WorkflowSpecification,
 } from "./components";
+import styles from "./WorkflowDetails.module.scss";
 
 const FINISHED_STATUSES = ["finished", "failed", "stopped", "deleted"];
 
@@ -140,8 +143,14 @@ export default function WorkflowDetails() {
 
   return (
     <BasePage title={pageTitle}>
-      <Container>
+      <Container className={styles["workflow-details-container"]}>
         <WorkflowInfo workflow={workflow} />
+        <div className={styles["badges-and-actions"]}>
+          <WorkflowBadges workflow={workflow} withDivider={false} />
+          <div className={styles.actionsContainer}>
+            <WorkflowActionsPopup workflow={workflow} />
+          </div>
+        </div>
         <Tab
           menu={{ secondary: true, pointing: true }}
           panes={panes}
