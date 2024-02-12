@@ -2,7 +2,7 @@
   -*- coding: utf-8 -*-
 
   This file is part of REANA.
-  Copyright (C) 2023 CERN.
+  Copyright (C) 2023, 2024 CERN.
 
   REANA is free software; you can redistribute it and/or modify it
   under the terms of the MIT License; see LICENSE file for more details.
@@ -13,10 +13,10 @@ import PropTypes from "prop-types";
 
 import { statusMapping } from "~/util";
 
-import styles from "./WorkflowDetails.module.scss";
-import WorkflowProgressCircleBar from "~/pages/workflowList/components/WorkflowProgressCircleBar";
+import styles from "./WorkflowInfo.module.scss";
+import { WorkflowProgressCircleBar } from "~/components";
 
-export default function WorkflowDetails({ workflow }) {
+export default function WorkflowInfo({ workflow }) {
   const {
     name,
     run,
@@ -87,6 +87,6 @@ export default function WorkflowDetails({ workflow }) {
   );
 }
 
-WorkflowDetails.propTypes = {
+WorkflowInfo.propTypes = {
   workflow: PropTypes.object.isRequired,
 };

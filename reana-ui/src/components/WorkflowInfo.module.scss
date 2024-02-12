@@ -17,13 +17,7 @@
 
 .workflow {
   color: $raven;
-
-  /**FIXME visibility on hover is missing!*/
-  &.hover {
-    .actions {
-      visibility: visible !important;
-    }
-  }
+  font-size: 1.15rem;
 
   &.deleted {
     opacity: 0.5;
@@ -47,16 +41,6 @@
     .run {
       padding-left: 0.8em;
     }
-
-    .size {
-      color: $light-gray;
-      font-size: 0.75em;
-      margin-right: 0.75em;
-
-      &.highlight {
-        color: $sui-red;
-      }
-    }
   }
 
   .name,
@@ -73,17 +57,12 @@
     width: 210px;
     flex-shrink: 0;
     display: flex;
-    justify-content: end;
+    justify-content: flex-end;
     text-align: right;
   }
 
   .progressbar-container {
     width: 80px;
-    padding: 10px;
-    padding-top: 0;
-  }
-
-  .notebook {
-    font-size: 0.85em;
+    padding: 0 10px;
   }
 }
