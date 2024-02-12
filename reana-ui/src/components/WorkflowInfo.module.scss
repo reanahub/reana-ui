@@ -17,6 +17,7 @@
 
 .workflow {
   color: $raven;
+  font-size: 1.15rem;
 
   /**FIXME visibility on hover is missing!*/
   &.hover {
@@ -73,7 +74,7 @@
     width: 210px;
     flex-shrink: 0;
     display: flex;
-    justify-content: end;
+    justify-content: flex-end;
     text-align: right;
   }
 
