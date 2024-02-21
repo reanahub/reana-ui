@@ -9,6 +9,7 @@
 */
 
 import styles from "./WorkflowBadges.module.scss";
+import PropTypes from "prop-types";
 import { Label, Popup } from "semantic-ui-react";
 import { JupyterNotebookIcon, DaskIcon } from "~/components";
 import { INTERACTIVE_SESSION_URL, DASK_DASHBOARD_URL } from "~/client";
@@ -16,7 +17,7 @@ import { LauncherLabel } from "~/components";
 import { getReanaToken, getUserEmail } from "~/selectors";
 import { useSelector } from "react-redux";
 
-export default function WorkflowBadges({ workflow }) {
+export default function WorkflowBadges({ workflow, badgeSize = "tiny" }) {
   const reanaToken = useSelector(getReanaToken);
   const userEmail = useSelector(getUserEmail);
   const {
@@ -38,7 +39,7 @@ export default function WorkflowBadges({ workflow }) {
           {workflow.duration && (
             <Label
               basic
-              size="tiny"
+              size={badgeSize}
               content={`CPU ${workflow.duration}`}
               icon="clock"
             />
@@ -46,7 +47,7 @@ export default function WorkflowBadges({ workflow }) {
           {hasDiskUsage && (
             <Label
               basic
-              size="tiny"
+              size={badgeSize}
               content={`Disk ${size.human_readable}`}
               icon="hdd"
             />
@@ -54,7 +55,7 @@ export default function WorkflowBadges({ workflow }) {
           <LauncherLabel url={launcherURL} />
           {isSessionOpen && (
             <Label
-              size="tiny"
+              size={badgeSize}
               content={"Notebook"}
               icon={
                 <i className="icon">
@@ -69,7 +70,7 @@ export default function WorkflowBadges({ workflow }) {
           )}
           {isDaskClusterUp && (
             <Label
-              size="tiny"
+              size={badgeSize}
               content={"Dashboard"}
               icon={
                 <i className="icon">
@@ -99,3 +100,8 @@ export default function WorkflowBadges({ workflow }) {
     </div>
   );
 }
+
+WorkflowBadges.propTypes = {
+  workflow: PropTypes.object.isRequired,
+  badgeSize: PropTypes.string,
+};
