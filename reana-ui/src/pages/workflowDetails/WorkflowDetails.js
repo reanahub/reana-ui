@@ -145,7 +145,7 @@ export default function WorkflowDetails() {
       <Container className={styles["workflow-details-container"]}>
         <WorkflowInfo workflow={workflow} />
         <div className={styles["badges-and-actions"]}>
-          <WorkflowBadges workflow={workflow} withDivider={false} />
+          <WorkflowBadges workflow={workflow} badgeSize="medium" />
           <div className={styles.actionsContainer}>
             <WorkflowActionsPopup workflow={workflow} />
           </div>

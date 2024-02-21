@@ -1,4 +1,5 @@
 import styles from "./WorkflowBadges.module.scss";
+import PropTypes from "prop-types";
 import { Label } from "semantic-ui-react";
 import { JupyterNotebookIcon } from "~/components";
 import { INTERACTIVE_SESSION_URL } from "~/client";
@@ -7,7 +8,7 @@ import { getReanaToken } from "~/selectors";
 import { useSelector } from "react-redux";
 import { statusMapping } from "~/util";
 
-export default function WorkflowBadges({ workflow }) {
+export default function WorkflowBadges({ workflow, badgeSize = "tiny" }) {
   const reanaToken = useSelector(getReanaToken);
   const {
     id,
@@ -24,7 +25,7 @@ export default function WorkflowBadges({ workflow }) {
       <div className={styles.badgesContainer}>
         {workflow.duration && (
           <Label
-            size="tiny"
+            size={badgeSize}
             content={workflow.duration}
             icon="clock"
             as="a"
@@ -37,7 +38,7 @@ export default function WorkflowBadges({ workflow }) {
         )}
         {hasDiskUsage && (
           <Label
-            size="tiny"
+            size={badgeSize}
             content={size.human_readable}
             icon="hdd"
             as="a"
@@ -49,7 +50,7 @@ export default function WorkflowBadges({ workflow }) {
         )}
         {isSessionOpen && (
           <Label
-            size="tiny"
+            size={badgeSize}
             content={" Notebook"}
             icon={<JupyterNotebookIcon size={12} />}
             as="a"
@@ -64,3 +65,8 @@ export default function WorkflowBadges({ workflow }) {
     </>
   );
 }
+
+WorkflowBadges.propTypes = {
+  workflow: PropTypes.object.isRequired,
+  badgeSize: PropTypes.string,
+};
