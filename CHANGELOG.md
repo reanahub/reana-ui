@@ -1,5 +1,47 @@
 # Changelog
 
+## [0.9.4](https://github.com/reanahub/reana-ui/compare/0.9.3...0.9.4) (2024-03-04)
+
+
+### Build
+
+* **package:** require jsroot&lt;7.6.0 ([#399](https://github.com/reanahub/reana-ui/issues/399)) ([d53b290](https://github.com/reanahub/reana-ui/commit/d53b290f7264e5da8e7b31c6ef2015748146e2f0))
+* **package:** update yarn.lock ([#399](https://github.com/reanahub/reana-ui/issues/399)) ([10e41b1](https://github.com/reanahub/reana-ui/commit/10e41b17cc45cb43fafa5f755c2730aa6c047933))
+
+
+### Features
+
+* **footer:** link privacy notice to configured URL ([#393](https://github.com/reanahub/reana-ui/issues/393)) ([f0edde6](https://github.com/reanahub/reana-ui/commit/f0edde6bf4ceb8a92915446d0353df009919b8f3)), closes [#392](https://github.com/reanahub/reana-ui/issues/392)
+
+
+### Bug fixes
+
+* **launcher:** remove dollar sign in generated Markdown ([#389](https://github.com/reanahub/reana-ui/issues/389)) ([8ad4afd](https://github.com/reanahub/reana-ui/commit/8ad4afdf9053a3736e4df036646aa114260f79d9))
+* **progress:** update failed workflows duration using finish time ([#387](https://github.com/reanahub/reana-ui/issues/387)) ([809fdc5](https://github.com/reanahub/reana-ui/commit/809fdc5e8b35ef03490921d15febcdb819fa6df7)), closes [#386](https://github.com/reanahub/reana-ui/issues/386)
+* **router:** show 404 page for invalid URLs ([#382](https://github.com/reanahub/reana-ui/issues/382)) ([c18e81d](https://github.com/reanahub/reana-ui/commit/c18e81ded87db6fbbbf06237d747f9655e0e5cc9)), closes [#379](https://github.com/reanahub/reana-ui/issues/379)
+
+
+### Code refactoring
+
+* **docs:** move from reST to Markdown ([#391](https://github.com/reanahub/reana-ui/issues/391)) ([8d58277](https://github.com/reanahub/reana-ui/commit/8d582775ab1a0779601e37f9b9498f76cc5ce4cd))
+
+
+### Continuous integration
+
+* **commitlint:** addition of commit message linter ([#380](https://github.com/reanahub/reana-ui/issues/380)) ([1c9ec74](https://github.com/reanahub/reana-ui/commit/1c9ec7493a28c8c482acb6a90e4c4baf16bf9507))
+* **commitlint:** allow release commit style ([#400](https://github.com/reanahub/reana-ui/issues/400)) ([426a2b0](https://github.com/reanahub/reana-ui/commit/426a2b0c3c401c52a3ad39fa7d5c5d3834eb2082))
+* **commitlint:** check for the presence of concrete PR number ([#390](https://github.com/reanahub/reana-ui/issues/390)) ([e938f60](https://github.com/reanahub/reana-ui/commit/e938f60440bb8c48ac8f00637e44d5f34980137e))
+* **release-please:** initial configuration ([#380](https://github.com/reanahub/reana-ui/issues/380)) ([db2e82b](https://github.com/reanahub/reana-ui/commit/db2e82b454ba80b93895835e7c95ae96f3ff5dc9))
+* **release-please:** switch to `simple` release strategy ([#383](https://github.com/reanahub/reana-ui/issues/383)) ([2c64085](https://github.com/reanahub/reana-ui/commit/2c64085dd8dc70ceaf775b527f5467ae297e09e5))
+* **release-please:** update version in package.json and Dockerfile ([#385](https://github.com/reanahub/reana-ui/issues/385)) ([5d232af](https://github.com/reanahub/reana-ui/commit/5d232aff36d1f795df1fc8736ae3825a2b763750))
+* **shellcheck:** exclude node_modules from the analyzed paths ([#387](https://github.com/reanahub/reana-ui/issues/387)) ([8913e4d](https://github.com/reanahub/reana-ui/commit/8913e4dd58250bf30318539c8f75abda0b024e43))
+* **shellcheck:** fix exit code propagation ([#390](https://github.com/reanahub/reana-ui/issues/390)) ([7b5f29e](https://github.com/reanahub/reana-ui/commit/7b5f29ebc604a2d27d76f8a51b437c3e561fec32))
+
+
+### Documentation
+
+* **authors:** complete list of contributors ([#396](https://github.com/reanahub/reana-ui/issues/396)) ([814d68e](https://github.com/reanahub/reana-ui/commit/814d68ef5e2103a5f33e0dcf97bd8ffd777db78f))
+
 ## 0.9.3 (2023-12-12)
 
 - Adds metadata labels to Dockerfile.
@@ -125,4 +167,3 @@
 ## 0.3.0 (2018-07-04)
 
 - Initial public release.
-
