@@ -1,0 +1,100 @@
+/*
+  -*- coding: utf-8 -*-
+
+  This file is part of REANA.
+  Copyright (C) 2023 CERN.
+
+  REANA is free software; you can redistribute it and/or modify it
+  under the terms of the MIT License; see LICENSE file for more details.
+*/
+
+#workflow-share-modal > i {
+  top: 1.0535rem;
+  right: 1rem;
+  color: rgba(0, 0, 0, 0.87);
+}
+
+#expiration-date-modal > i {
+  top: 1.0535rem;
+  right: 1rem;
+  color: rgba(0, 0, 0, 0.87);
+}
+
+#loader-share-workflow:before,
+#loader-share-status:before,
+#loader-unshare-workflow:before {
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+#loader-share-workflow:after,
+#loader-share-status:after,
+#loader-unshare-workflow:after {
+  border-color: #767676 transparent transparent;
+}
+
+#loader-share-workflow {
+  margin-left: 5px;
+}
+
+#loader-unshare-workflow {
+  margin-top: 1.5em;
+}
+
+#message {
+  margin: 1em 0;
+}
+
+#share-buttons {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5em;
+}
+
+#share-button {
+  display: flex;
+  align-items: center;
+}
+
+#expiration-date-button {
+  margin-right: 0;
+}
+
+#expiration-modal-actions {
+  text-align: left;
+}
+
+#expiration-modal-set-button {
+  margin-left: 0.5em;
+}
+
+#read-only-header {
+  margin-top: 0.75em;
+}
+
+#share-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.5em;
+}
+
+#share-user-icon {
+  margin-right: 0.25em;
+}
+
+#no-share-message {
+  margin-top: -0.25em;
+}
+
+#sharing-modal-actions {
+  padding: 1.5em;
+}
+
+#copy-link-button {
+  margin-left: 0px;
+}
+
+#done-button {
+  margin-right: 0px;
+}

@@ -25,6 +25,7 @@ import BasePage from "../BasePage";
 import {
   Notification,
   WorkflowDeleteModal,
+  WorkflowShareModal,
   WorkflowStopModal,
 } from "~/components";
 import {
@@ -148,6 +149,7 @@ export default function WorkflowDetails() {
         />
         <WorkflowDeleteModal />
         <WorkflowStopModal />
+        <WorkflowShareModal />
       </Container>
     </BasePage>
   );
