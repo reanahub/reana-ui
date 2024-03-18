@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.9.5](https://github.com/reanahub/reana-ui/compare/0.9.4...0.9.5) (2024-03-18)
+
+
+### Continuous integration
+
+* **actions:** update GitHub actions due to Node 16 deprecation ([#401](https://github.com/reanahub/reana-ui/issues/401)) ([43ced0c](https://github.com/reanahub/reana-ui/commit/43ced0c02c16f90c3f637e6b4c31feec817277d6))
+
 ## [0.9.4](https://github.com/reanahub/reana-ui/compare/0.9.3...0.9.4) (2024-03-04)
 
 
