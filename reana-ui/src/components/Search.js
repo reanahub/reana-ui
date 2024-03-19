@@ -16,7 +16,7 @@ import styles from "./Search.module.scss";
 
 const TYPING_DELAY = 1000;
 
-export default function Search({ search }) {
+export default function Search({ search, loading = false }) {
   const handleChange = debounce(search, TYPING_DELAY);
   return (
     <Input
@@ -25,12 +25,14 @@ export default function Search({ search }) {
       placeholder="Search..."
       className={styles.input}
       onChange={(_, data) => handleChange(data.value)}
+      loading={loading}
     />
   );
 }
 
 Search.propTypes = {
   search: PropTypes.func.isRequired,
+  loading: PropTypes.bool,
 };
 
 export const applyFilter = (filter, pagination, setPagination) => (value) => {
