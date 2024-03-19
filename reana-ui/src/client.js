@@ -25,7 +25,8 @@ export const USER_REQUEST_TOKEN_URL = `${api}/api/token`;
 export const USER_CONFIRM_EMAIL_URL = `${api}/api/confirm-email`;
 export const CLUSTER_STATUS_URL = `${api}/api/status`;
 export const GITLAB_AUTH_URL = `${api}/api/gitlab/connect`;
-export const GITLAB_PROJECTS_URL = `${api}/api/gitlab/projects`;
+export const GITLAB_PROJECTS_URL = (params) =>
+  `${api}/api/gitlab/projects?${stringifyQueryParams(params)}`;
 export const GITLAB_WEBHOOK_URL = `${api}/api/gitlab/webhook`;
 export const WORKFLOWS_URL = (params) =>
   `${api}/api/workflows?verbose=true&${stringifyQueryParams(params)}`;
@@ -174,8 +175,8 @@ class Client {
     });
   }
 
-  getGitlabProjects() {
-    return this._request(GITLAB_PROJECTS_URL);
+  getGitlabProjects({ search } = {}) {
+    return this._request(GITLAB_PROJECTS_URL({ search }));
   }
 
   toggleGitlabProject(method, data) {
