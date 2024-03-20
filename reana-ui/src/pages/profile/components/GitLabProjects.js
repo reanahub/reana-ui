@@ -13,14 +13,18 @@ import { useEffect, useState, useRef } from "react";
 import { Button, List, Loader, Radio, Message, Icon } from "semantic-ui-react";
 
 import client, { GITLAB_AUTH_URL } from "~/client";
-import { Search } from "~/components";
+import { Search, Pagination } from "~/components";
 
 import styles from "./GitLabProjects.module.scss";
 
 export default function GitLabProjects() {
+  const DEFAULT_PAGINATION = { page: 1, size: 10 };
+
   const [projects, setProjects] = useState(null);
   const [fetchingProjects, setFetchingProjects] = useState(false);
   const [searchFilter, setSearchFilter] = useState(null);
+  const [pagination, setPagination] = useState(DEFAULT_PAGINATION);
+  const [totalPages, setTotalPages] = useState(0);
 
   // keep track of last fetch request in order to avoid
   // updating the state with out-of-order responses
@@ -29,7 +33,10 @@ export default function GitLabProjects() {
   useEffect(() => {
     // Fetch project list
     setFetchingProjects(true);
-    let request = client.getGitlabProjects({ search: searchFilter });
+    let request = client.getGitlabProjects({
+      pagination,
+      search: searchFilter,
+    });
     lastFetchRequest.current = request;
 
     request
@@ -39,10 +46,17 @@ export default function GitLabProjects() {
           return;
         }
         let newProjects = {};
-        for (const [id, details] of Object.entries(res.data)) {
-          newProjects[id] = { ...details, toggling: false };
+        for (const project of res.data.items) {
+          newProjects[project.id] = { ...project, toggling: false };
         }
         setProjects(newProjects);
+        const newTotalPages =
+          res.data.total != null
+            ? Math.ceil(res.data.total / pagination.size)
+            : res.data.has_next
+              ? pagination.page + 1
+              : pagination.page;
+        setTotalPages(newTotalPages);
         setFetchingProjects(false);
       })
       .catch((e) => {
@@ -51,9 +65,10 @@ export default function GitLabProjects() {
           return;
         }
         setProjects(null);
+        setTotalPages(0);
         setFetchingProjects(false);
       });
-  }, [searchFilter]);
+  }, [searchFilter, pagination]);
 
   const setToggling = (projectId, toggling) => {
     setProjects((currentProjects) => ({
@@ -101,6 +116,12 @@ export default function GitLabProjects() {
       });
   };
 
+  const onSearchFilterChange = (value) => {
+    // reset pagination if search filter changes
+    setPagination(DEFAULT_PAGINATION);
+    setSearchFilter(value);
+  };
+
   if (fetchingProjects && projects === null) {
     // projects were never fetched before, show spinner
     return (
@@ -136,7 +157,7 @@ export default function GitLabProjects() {
   } else {
     return (
       <>
-        <Search search={setSearchFilter} loading={fetchingProjects} />
+        <Search search={onSearchFilterChange} loading={fetchingProjects} />
         {!isEmpty(projects) ? (
           <>
             <List>
@@ -167,6 +188,16 @@ export default function GitLabProjects() {
                 },
               )}
             </List>
+            <div className={styles.pagination}>
+              <Pagination
+                activePage={pagination.page}
+                totalPages={totalPages}
+                onPageChange={(_, { activePage }) => {
+                  setPagination({ ...pagination, page: activePage });
+                }}
+                disabled={fetchingProjects}
+              />
+            </div>
           </>
         ) : (
           <Message info icon>

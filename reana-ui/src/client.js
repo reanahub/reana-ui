@@ -175,8 +175,10 @@ class Client {
     });
   }
 
-  getGitlabProjects({ search } = {}) {
-    return this._request(GITLAB_PROJECTS_URL({ search }));
+  getGitlabProjects({ search, pagination } = {}) {
+    return this._request(
+      GITLAB_PROJECTS_URL({ ...(pagination ?? {}), search }),
+    );
   }
 
   toggleGitlabProject(method, data) {
