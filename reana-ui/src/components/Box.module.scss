@@ -9,12 +9,19 @@
 @import "@palette";
 
 .box {
-  display: flex;
-  justify-content: space-between;
   color: $raven;
   border: 5px solid $sepia;
   margin: 1rem 0;
-  padding: 1em 1em;
+  padding: 0;
+
+  &.padding {
+    padding: 1em 1em;
+  }
+
+  &.flex {
+    display: flex;
+    justify-content: space-between;
+  }
 
   &.wrap {
     flex-wrap: wrap;
