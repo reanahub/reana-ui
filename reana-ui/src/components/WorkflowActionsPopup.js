@@ -2,7 +2,7 @@
   -*- coding: utf-8 -*-
 
   This file is part of REANA.
-  Copyright (C) 2020, 2021, 2022, 2023 CERN.
+  Copyright (C) 2020, 2021, 2022, 2023, 2024 CERN.
 
   REANA is free software; you can redistribute it and/or modify it
   under the terms of the MIT License; see LICENSE file for more details.
@@ -11,17 +11,15 @@
 import { useState } from "react";
 import PropTypes from "prop-types";
 import { Icon, Menu, Popup } from "semantic-ui-react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 
 import { workflowShape } from "~/props";
-import { getConfig } from "~/selectors";
 import {
   deleteWorkflow,
-  openInteractiveSession,
   closeInteractiveSession,
   openDeleteWorkflowModal,
   openStopWorkflowModal,
-  triggerNotification,
+  openInteractiveSessionModal,
 } from "~/actions";
 
 import { JupyterNotebookIcon } from "~/components";
@@ -32,7 +30,6 @@ const JupyterIcon = <JupyterNotebookIcon className={styles["jupyter-icon"]} />;
 
 export default function WorkflowActionsPopup({ workflow, className }) {
   const dispatch = useDispatch();
-  const config = useSelector(getConfig);
   const [open, setOpen] = useState(false);
   const { id, size, status, session_status: sessionStatus } = workflow;
   const isDeleted = status === "deleted";
@@ -48,21 +45,7 @@ export default function WorkflowActionsPopup({ workflow, className }) {
       content: "Open Jupyter Notebook",
       icon: JupyterIcon,
       onClick: (e) => {
-        dispatch(openInteractiveSession(id)).then(() => {
-          const interactiveSessionInactivityWarning =
-            config.maxInteractiveSessionInactivityPeriod
-              ? `Please note that it will be automatically closed after ${config.maxInteractiveSessionInactivityPeriod} days of inactivity.`
-              : "";
-          dispatch(
-            triggerNotification(
-              "Success!",
-              "The interactive session has been created. " +
-                "However, it could take several minutes to start the Jupyter Notebook. " +
-                "Click on the Jupyter logo to access it. " +
-                `${interactiveSessionInactivityWarning}`,
-            ),
-          );
-        });
+        dispatch(openInteractiveSessionModal(workflow));
         setOpen(false);
         e.stopPropagation();
       },
