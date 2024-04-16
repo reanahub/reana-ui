@@ -2,7 +2,7 @@
   -*- coding: utf-8 -*-
 
   This file is part of REANA.
-  Copyright (C) 2020, 2022, 2023 CERN.
+  Copyright (C) 2020, 2022, 2023, 2024 CERN.
 
   REANA is free software; you can redistribute it and/or modify it
   under the terms of the MIT License; see LICENSE file for more details.
@@ -40,6 +40,8 @@ import {
   WORKFLOW_RETENTION_RULES_RECEIVED,
   OPEN_DELETE_WORKFLOW_MODAL,
   CLOSE_DELETE_WORKFLOW_MODAL,
+  OPEN_INTERACTIVE_SESSION_MODAL,
+  CLOSE_INTERACTIVE_SESSION_MODAL,
   OPEN_STOP_WORKFLOW_MODAL,
   CLOSE_STOP_WORKFLOW_MODAL,
   WARNING,
@@ -67,6 +69,7 @@ export const configInitialState = {
   loading: false,
   filePreviewSizeLimit: null,
   launcherExamples: [],
+  interactiveSessions: null,
 };
 
 const authInitialState = {
@@ -89,6 +92,7 @@ const workflowsInitialState = {
   userHasWorkflows: false,
   workflowDeleteModal: { open: false, workflow: null },
   workflowStopModal: { open: false, workflow: null },
+  interactiveSessionModal: { open: false, workflow: null },
   workflowRefresh: null,
 };
 
@@ -125,6 +129,18 @@ const notification = (state = notificationInitialState, action) => {
 };
 
 const config = (state = configInitialState, action) => {
+  const parseInteractiveSessions = (interactiveSessions) => {
+    const environments = interactiveSessions?.environments ?? {};
+    const parsedEnvironments = {};
+    for (const sessionType in environments) {
+      parsedEnvironments[sessionType] = {
+        allowCustom: environments[sessionType]?.allow_custom ?? false,
+        recommended: environments[sessionType]?.recommended ?? [],
+      };
+    }
+    return { ...interactiveSessions, environments: parsedEnvironments };
+  };
+
   switch (action.type) {
     case CONFIG_FETCH:
       return { ...state, loading: true };
@@ -149,6 +165,9 @@ const config = (state = configInitialState, action) => {
         quotaEnabled: action.quota_enabled,
         filePreviewSizeLimit: action.file_preview_size_limit,
         launcherExamples: action.launcher_examples,
+        interactiveSessions: parseInteractiveSessions(
+          action.interactive_sessions,
+        ),
         isLoaded: true,
         loading: false,
       };
@@ -249,6 +268,16 @@ const workflows = (state = workflowsInitialState, action) => {
       };
     case CLOSE_STOP_WORKFLOW_MODAL:
       return { ...state, workflowStopModal: { open: false, workflow: null } };
+    case OPEN_INTERACTIVE_SESSION_MODAL:
+      return {
+        ...state,
+        interactiveSessionModal: { open: true, workflow: action.workflow },
+      };
+    case CLOSE_INTERACTIVE_SESSION_MODAL:
+      return {
+        ...state,
+        interactiveSessionModal: { open: false, workflow: null },
+      };
     case WORKFLOW_LIST_REFRESH:
       return { ...state, workflowRefresh: Math.random() };
 

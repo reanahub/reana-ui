@@ -2,7 +2,7 @@
   -*- coding: utf-8 -*-
 
   This file is part of REANA.
-  Copyright (C) 2020, 2021, 2022, 2023 CERN.
+  Copyright (C) 2020, 2021, 2022, 2023, 2024 CERN.
 
   REANA is free software; you can redistribute it and/or modify it
   under the terms of the MIT License; see LICENSE file for more details.
@@ -12,15 +12,15 @@ import isEmpty from "lodash/isEmpty";
 
 import client, {
   CONFIG_URL,
+  INTERACTIVE_SESSIONS_CLOSE_URL,
+  INTERACTIVE_SESSIONS_OPEN_URL,
   USER_INFO_URL,
   USER_SIGNOUT_URL,
-  WORKFLOW_LOGS_URL,
-  WORKFLOW_SPECIFICATION_URL,
-  WORKFLOW_RETENTION_RULES_URL,
   WORKFLOW_FILES_URL,
+  WORKFLOW_LOGS_URL,
+  WORKFLOW_RETENTION_RULES_URL,
   WORKFLOW_SET_STATUS_URL,
-  INTERACTIVE_SESSIONS_OPEN_URL,
-  INTERACTIVE_SESSIONS_CLOSE_URL,
+  WORKFLOW_SPECIFICATION_URL,
 } from "~/client";
 import {
   parseWorkflows,
@@ -87,6 +87,9 @@ export const WORKFLOW_STOPPED = "Workflow stopped";
 export const OPEN_STOP_WORKFLOW_MODAL = "Open stop workflow modal";
 export const CLOSE_STOP_WORKFLOW_MODAL = "Close stop workflow modal";
 export const WORKFLOW_LIST_REFRESH = "Refresh workflow list";
+export const OPEN_INTERACTIVE_SESSION_MODAL = "Open interactive session modal";
+export const CLOSE_INTERACTIVE_SESSION_MODAL =
+  "Close interactive session modal";
 
 export function errorActionCreator(error, name) {
   const { status, data } = error?.response;
@@ -469,16 +472,39 @@ export function closeStopWorkflowModal() {
   return { type: CLOSE_STOP_WORKFLOW_MODAL };
 }
 
-export function openInteractiveSession(id) {
-  return async (dispatch) => {
+export function openInteractiveSessionModal(workflow) {
+  return { type: OPEN_INTERACTIVE_SESSION_MODAL, workflow };
+}
+
+export function closeInteractiveSessionModal() {
+  return { type: CLOSE_INTERACTIVE_SESSION_MODAL };
+}
+
+export function openInteractiveSession(id, options = {}) {
+  return async (dispatch, getStore) => {
+    const state = getStore();
+    const config = getConfig(state);
     return await client
-      .openInteractiveSession(id)
+      .openInteractiveSession(id, options)
       .then((resp) => {
         dispatch({ type: WORKFLOW_LIST_REFRESH });
+
+        const interactiveSessionInactivityWarning =
+          config.maxInteractiveSessionInactivityPeriod
+            ? `Please note that it will be automatically closed after ${config.maxInteractiveSessionInactivityPeriod} days of inactivity.`
+            : "";
+        dispatch(
+          triggerNotification(
+            "Success!",
+            "The interactive session has been created. " +
+              "However, it could take several minutes to start the Jupyter Notebook. " +
+              "Click on the Jupyter logo to access it. " +
+              `${interactiveSessionInactivityWarning}`,
+          ),
+        );
       })
       .catch((err) => {
         dispatch(errorActionCreator(err, INTERACTIVE_SESSIONS_OPEN_URL(id)));
-        throw err;
       });
   };
 }
@@ -493,7 +519,6 @@ export function closeInteractiveSession(id) {
       })
       .catch((err) => {
         dispatch(errorActionCreator(err, INTERACTIVE_SESSIONS_CLOSE_URL(id)));
-        throw err;
       });
   };
 }

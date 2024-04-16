@@ -2,7 +2,7 @@
   -*- coding: utf-8 -*-
 
   This file is part of REANA.
-  Copyright (C) 2020, 2022, 2023 CERN.
+  Copyright (C) 2020, 2022, 2023, 2024 CERN.
 
   REANA is free software; you can redistribute it and/or modify it
   under the terms of the MIT License; see LICENSE file for more details.
@@ -23,6 +23,7 @@ import {
 } from "~/selectors";
 import BasePage from "../BasePage";
 import {
+  InteractiveSessionModal,
   Notification,
   WorkflowDeleteModal,
   WorkflowStopModal,
@@ -146,6 +147,7 @@ export default function WorkflowDetails() {
           panes={panes}
           defaultActiveIndex={defaultActiveIndex}
         />
+        <InteractiveSessionModal />
         <WorkflowDeleteModal />
         <WorkflowStopModal />
       </Container>
