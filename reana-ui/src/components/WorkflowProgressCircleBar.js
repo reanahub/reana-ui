@@ -11,89 +11,98 @@
 import PropTypes from "prop-types";
 import styles from "./WorkflowProgressCircleBar.module.scss";
 
-export default function WorkflowProgressCircleBar({ workflow }) {
-  const { completed, failed, running, total, status } = workflow;
+export default function WorkflowProgressCircleBar({
+  workflow,
+  strokeWidth = 22,
+  size = "1em",
+}) {
+  const { completed, failed, running: started, total, status } = workflow;
 
-  const size = 80;
-  const strokeWidth = 10;
-  const radius = (size - strokeWidth) / 2;
-  const circumference = 2 * Math.PI * radius;
+  // running also includes the completed and failed steps
+  const running = started - completed - failed;
 
-  let lengthFinishedArc = (completed / total) * circumference;
-  let lengthRunningArc = (running / total) * circumference;
-  let lengthFailedArc = (failed / total) * circumference;
-  // Explicitly set the size of the progress bar for workflows that
-  // are not running to avoid dealing with undefined number of steps
-  const TERMINAL_STATUSES = ["finished", "failed", "stopped"];
-  const PREPARING_STATUSES = ["created", "queued", "pending"];
-  if (TERMINAL_STATUSES.includes(status)) {
-    lengthRunningArc = 0;
-  }
-  if (PREPARING_STATUSES.includes(status)) {
-    lengthFinishedArc = 0;
-    lengthRunningArc = 0;
-    lengthFailedArc = 0;
-  }
+  const viewBoxSize = 100;
+  const radius = (viewBoxSize - strokeWidth) / 2;
+
+  // length of the arcs, as fractions of the total number of steps
+  let lengthFinishedArc = total ? (completed ?? 0) / total : 0;
+  let lengthFailedArc = total ? (failed ?? 0) / total : 0;
+  let lengthRunningArc = total ? (running ?? 0) / total : 0;
 
   // The workflow could be completely restored from the cache, in which case
   // the total number of steps would be 0. If the workflow is finished, we
   // want to show the full progress bar as finished even in this case.
   if (status === "finished") {
-    lengthFinishedArc = circumference;
-    lengthRunningArc = 0;
+    lengthFinishedArc = 1;
     lengthFailedArc = 0;
+    lengthRunningArc = 0;
   }
 
+  const calculateArcPath = (length, offset) => {
+    if (length >= 1) {
+      // cannot use 1 as otherwise the full circle would not be drawn
+      length = 0.9999;
+    }
+
+    // start end end angles of the arc, in radians
+    // an arc with zero offset starts from the top (pi/2 radians)
+    const start_rad = Math.PI / 2 - offset * Math.PI * 2;
+    const end_rad = Math.PI / 2 - (offset + length) * Math.PI * 2;
+
+    // y coordinates are subtracted and not added because the y axis points downwards
+    const start_x = viewBoxSize / 2 + radius * Math.cos(start_rad);
+    const start_y = viewBoxSize / 2 - radius * Math.sin(start_rad);
+    const end_x = viewBoxSize / 2 + radius * Math.cos(end_rad);
+    const end_y = viewBoxSize / 2 - radius * Math.sin(end_rad);
+
+    // move to the center and draw the arc
+    return `M ${start_x} ${start_y}
+    A ${radius} ${radius} 0 ${length > 0.5 ? 1 : 0} 1 ${end_x} ${end_y} `;
+  };
+
   return (
-    <div className={styles["progress-bar-container"]}>
+    <span
+      style={{ width: size, height: size }}
+      className={styles["progress-bar-container"]}
+    >
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        viewBox={`0 0 ${size} ${size}`}
-        width={`${size}`}
-        height={`${size}`}
+        viewBox={`0 0 ${viewBoxSize} ${viewBoxSize}`}
       >
         <circle
-          cx={`${size / 2}`}
-          cy={`${size / 2}`}
+          cx={`${viewBoxSize / 2}`}
+          cy={`${viewBoxSize / 2}`}
           r={`${radius}`}
           className={styles["progress-bar-background"]}
-          strokeWidth={`${strokeWidth}`}
+          strokeWidth={strokeWidth}
+          pathLength={100}
         />
-        <circle
-          cx={`${size / 2}`}
-          cy={`${size / 2}`}
-          r={`${radius}`}
-          className={`${styles["progress-bar-running"]} ${
-            styles["progress-bar-workflow-status-" + status]
-          }`}
-          strokeDasharray={`${lengthRunningArc} ${circumference}`}
-          strokeDashoffset={`-${lengthFinishedArc}`}
-          strokeWidth={`${strokeWidth}`}
-        />
-        <circle
-          cx={`${size / 2}`}
-          cy={`${size / 2}`}
-          r={`${radius}`}
+        <path
+          d={calculateArcPath(lengthFinishedArc, 0)}
           className={`${styles["progress-bar-finished"]} ${
             styles["progress-bar-workflow-status-" + status]
           }`}
-          strokeDasharray={`${lengthFinishedArc} ${circumference}`}
-          strokeDashoffset="0"
-          strokeWidth={`${strokeWidth}`}
+          strokeWidth={strokeWidth}
         />
-        <circle
-          cx={`${size / 2}`}
-          cy={`${size / 2}`}
-          r={`${radius}`}
+        <path
+          d={calculateArcPath(lengthFailedArc, lengthFinishedArc)}
           className={`${styles["progress-bar-failed"]} ${
             styles["progress-bar-workflow-status-" + status]
           }`}
-          strokeDasharray={`${lengthFailedArc} ${circumference}`}
-          strokeDashoffset={`-${lengthFinishedArc}`}
-          strokeWidth={`${strokeWidth}`}
+          strokeWidth={strokeWidth}
+        />
+        <path
+          d={calculateArcPath(
+            lengthRunningArc,
+            lengthFinishedArc + lengthFailedArc,
+          )}
+          className={`${styles["progress-bar-running"]} ${
+            styles["progress-bar-workflow-status-" + status]
+          }`}
+          strokeWidth={strokeWidth}
         />
       </svg>
-    </div>
+    </span>
   );
 }
 

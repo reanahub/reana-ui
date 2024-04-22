@@ -1,6 +1,6 @@
 /*
   This file is part of REANA.
-  Copyright (C) 2022 CERN.
+  Copyright (C) 2022, 2024 CERN.
 
   REANA is free software; you can redistribute it and/or modify it
   under the terms of the MIT License; see LICENSE file for more details.
@@ -168,7 +168,7 @@ export default function LaunchOnReana() {
         {isMissingRequiredParams(query) ? (
           <Welcome />
         ) : (
-          <Box className={styles.box} wrap>
+          <Box className={styles.box}>
             <section className={styles.details}>
               <span className={styles.icon}>
                 <Icon name="hourglass half" />

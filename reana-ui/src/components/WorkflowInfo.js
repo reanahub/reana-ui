@@ -32,55 +32,47 @@ export default function WorkflowInfo({ workflow }) {
   } = workflow;
 
   return (
-    <div>
-      <div
-        className={`${styles.flexbox} ${styles.workflow} ${
-          status === "deleted" ? styles.deleted : ""
-        }`}
-      >
-        <div className={styles["details-box"]}>
-          <Icon
-            className={styles["status-icon"]}
-            name={statusMapping[status].icon}
-            color={statusMapping[status].color}
-          />
-          <div>
-            <span className={styles.name}>{name}</span>
-            <span className={styles.run}>#{run}</span>
-            <Popup
-              trigger={
-                <div>
-                  {friendlyFinished
-                    ? `Finished ${friendlyFinished}`
-                    : friendlyStarted
-                      ? `Started ${friendlyStarted}`
-                      : `Created ${friendlyCreated}`}
-                </div>
-              }
-              content={
-                friendlyFinished
-                  ? finishedDate
+    <div className={styles["workflow-info"]}>
+      <div className={styles["details-box"]}>
+        <Icon
+          className={styles["status-icon"]}
+          name={statusMapping[status].icon}
+          color={statusMapping[status].color}
+        />
+        <div>
+          <span className={styles.name}>{name}</span>
+          <span className={styles.run}>#{run}</span>
+          <Popup
+            trigger={
+              <div>
+                {friendlyFinished
+                  ? `Finished ${friendlyFinished}`
                   : friendlyStarted
-                    ? startedDate
-                    : createdDate
-              }
-            />
-          </div>
+                    ? `Started ${friendlyStarted}`
+                    : `Created ${friendlyCreated}`}
+              </div>
+            }
+            content={
+              friendlyFinished
+                ? finishedDate
+                : friendlyStarted
+                  ? startedDate
+                  : createdDate
+            }
+          />
         </div>
-        <div className={styles["status-box"]}>
-          <div>
-            <span
-              className={`${styles["status"]} sui-${statusMapping[status].color}`}
-            >
-              {status}
-            </span>{" "}
-            <div>
-              step {completed}/{total}
-            </div>
-          </div>
-          <div className={styles["progressbar-container"]}>
-            <WorkflowProgressCircleBar workflow={workflow} />
-          </div>
+      </div>
+      <div className={styles["status-box"]}>
+        <span
+          className={`${styles["status"]} sui-${statusMapping[status].color}`}
+        >
+          {status}
+        </span>
+        <div className={styles["progress-box"]}>
+          <span>
+            step {completed}/{total}
+          </span>
+          <WorkflowProgressCircleBar workflow={workflow} />
         </div>
       </div>
     </div>

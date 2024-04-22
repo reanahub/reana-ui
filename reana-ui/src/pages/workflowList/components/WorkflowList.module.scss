@@ -15,9 +15,13 @@
   justify-content: space-between;
 }
 
+.deleted {
+  opacity: 0.5;
+}
+
 .divider {
   margin: 0 !important;
-  border-color: #f8f8f8 !important;
+  border-color: $sepia !important;
 }
 
 .badges-and-actions {
@@ -25,27 +29,11 @@
   justify-content: space-between;
   width: 100%;
   padding: 0.75em 1em;
-
-  .actions {
-    min-width: 22px;
-    cursor: pointer;
-
-    &:hover {
-      color: #d1d1d1;
-    }
-
-    &.always-visible {
-      visibility: visible;
-    }
-  }
 }
 
 .workflow-details-container {
   padding: 1em;
   &:hover {
     background-color: lighten($sepia, 3%);
-    border-color: darken($sepia, 10%);
-    cursor: pointer;
-    color: $raven;
   }
 }

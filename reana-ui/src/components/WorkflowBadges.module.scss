@@ -2,22 +2,18 @@
   -*- coding: utf-8 -*-
 
   This file is part of REANA.
-  Copyright (C) 2023 CERN.
+  Copyright (C) 2023, 2024 CERN.
 
   REANA is free software; you can redistribute it and/or modify it
   under the terms of the MIT License; see LICENSE file for more details.
 */
+@import "@palette";
 
 .badgesContainer {
   display: flex;
+  gap: 5px;
 
-  a:global(.label) {
-    margin-left: 15px;
-    gap: 10px;
-
-    &:hover {
-      cursor: pointer;
-      filter: opacity(0.8);
-    }
+  :global(.ui.basic.label) {
+    color: $raven;
   }
 }
