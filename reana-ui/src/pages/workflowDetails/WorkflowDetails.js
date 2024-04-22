@@ -11,9 +11,10 @@
 import { useCallback, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
-import { Container, Dimmer, Loader, Tab } from "semantic-ui-react";
+import { Container, Dimmer, Icon, Loader, Tab } from "semantic-ui-react";
 
 import { fetchWorkflow, fetchWorkflowLogs } from "~/actions";
+import { NON_FINISHED_STATUSES } from "~/config";
 import {
   getWorkflow,
   getWorkflowRefresh,
@@ -144,12 +145,22 @@ export default function WorkflowDetails() {
   return (
     <BasePage title={pageTitle}>
       <Container className={styles["workflow-details-container"]}>
-        <WorkflowInfo workflow={workflow} />
-        <div className={styles["badges-and-actions"]}>
-          <WorkflowBadges workflow={workflow} withDivider={false} />
-          <div className={styles.actionsContainer}>
+        <div className={styles["workflow-info"]}>
+          <WorkflowInfo workflow={workflow} />
+          <div className={styles.actions}>
+            {NON_FINISHED_STATUSES.includes(workflow.status) && (
+              <Icon
+                link
+                name="refresh"
+                className={styles.refresh}
+                onClick={() => window.location.reload()}
+              />
+            )}
             <WorkflowActionsPopup workflow={workflow} />
           </div>
+        </div>
+        <div className={styles.badges}>
+          <WorkflowBadges className={styles.badges} workflow={workflow} />
         </div>
         <Tab
           menu={{ secondary: true, pointing: true }}

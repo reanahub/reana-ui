@@ -1,27 +1,26 @@
+/*
+  -*- coding: utf-8 -*-
+
+  This file is part of REANA.
+  Copyright (C) 2024 CERN.
+
+  REANA is free software; you can redistribute it and/or modify it
+  under the terms of the MIT License; see LICENSE file for more details.
+*/
+
 @import "@palette";
 
 .progress-bar-container {
-  svg {
-    width: 100%;
-    height: 100%;
-    transform: rotate(-90deg);
-  }
+  // inline-flex fixes the vertical alignment of svg images
+  display: inline-flex;
 
   circle {
     fill: none;
     transition: stroke-dasharray 0.35s ease;
   }
 
-  .progress-bar-running {
-    stroke: $sui-blue;
-  }
-
-  .progress-bar-finished {
-    stroke: $sui-green;
-  }
-
-  .progress-bar-failed {
-    stroke: $sui-red;
+  path {
+    fill: none;
   }
 
   .progress-bar-background,
@@ -36,6 +35,30 @@
   }
 
   .progress-bar-workflow-status-stopped {
-    stroke: $sui-yellow !important;
+    stroke: $sui-yellow;
+
+    &.progress-bar-running {
+      stroke-dasharray: 10 8;
+    }
+  }
+
+  .progress-bar-workflow-status-running {
+    stroke: $sui-blue;
+
+    &.progress-bar-running {
+      stroke-dasharray: 10 8;
+    }
+  }
+
+  .progress-bar-workflow-status-finished {
+    stroke: $sui-green;
+  }
+
+  .progress-bar-workflow-status-failed {
+    stroke: $sui-red;
+
+    &.progress-bar-failed {
+      stroke-dasharray: 10 8;
+    }
   }
 }

@@ -33,7 +33,12 @@ export default function WorkflowList({ workflows, loading }) {
     <>
       {workflows.map((workflow) => {
         return (
-          <Box padding={false} flex={false}>
+          <Box
+            className={workflow.status === "deleted" ? styles.deleted : ""}
+            key={workflow.id}
+            padding={false}
+            flex={false}
+          >
             <Link key={workflow.id} to={`/details/${workflow.id}`}>
               <div className={styles["workflow-details-container"]}>
                 <WorkflowInfo workflow={workflow} actionsOnHover={true} />
@@ -42,12 +47,7 @@ export default function WorkflowList({ workflows, loading }) {
             <Divider className={styles.divider}></Divider>
             <div className={styles["badges-and-actions"]}>
               <WorkflowBadges workflow={workflow} />
-              <div className={styles.actionsContainer}>
-                <WorkflowActionsPopup
-                  workflow={workflow}
-                  className={`${styles.actions} ${styles["always-visible"]}`}
-                />
-              </div>
+              <WorkflowActionsPopup workflow={workflow} />
             </div>
           </Box>
         );

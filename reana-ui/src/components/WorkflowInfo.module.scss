@@ -2,7 +2,7 @@
   -*- coding: utf-8 -*-
 
   This file is part of REANA.
-  Copyright (C) 2023 CERN.
+  Copyright (C) 2023, 2024 CERN.
 
   REANA is free software; you can redistribute it and/or modify it
   under the terms of the MIT License; see LICENSE file for more details.
@@ -10,18 +10,11 @@
 
 @import "@palette";
 
-.flexbox {
+.workflow-info {
   display: flex;
   justify-content: space-between;
-}
-
-.workflow {
   color: $raven;
   font-size: 1.15rem;
-
-  &.deleted {
-    opacity: 0.5;
-  }
 
   .details-box {
     display: flex;
@@ -31,7 +24,7 @@
     word-wrap: anywhere;
 
     .status-icon {
-      padding-right: 20px;
+      margin-right: 5px;
     }
 
     .name {
@@ -39,7 +32,7 @@
     }
 
     .run {
-      padding-left: 0.8em;
+      margin-left: 0.8em;
     }
   }
 
@@ -54,15 +47,13 @@
   }
 
   .status-box {
-    width: 210px;
     flex-shrink: 0;
-    display: flex;
-    justify-content: flex-end;
     text-align: right;
   }
 
-  .progressbar-container {
-    width: 80px;
-    padding: 0 10px;
+  .progress-box {
+    display: flex;
+    align-items: center;
+    gap: 0.4em;
   }
 }

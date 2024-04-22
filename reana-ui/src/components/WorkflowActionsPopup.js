@@ -47,7 +47,6 @@ export default function WorkflowActionsPopup({ workflow, className }) {
       onClick: (e) => {
         dispatch(openInteractiveSessionModal(workflow));
         setOpen(false);
-        e.stopPropagation();
       },
     });
   }
@@ -60,7 +59,6 @@ export default function WorkflowActionsPopup({ workflow, className }) {
       onClick: (e) => {
         dispatch(closeInteractiveSession(id));
         setOpen(false);
-        e.stopPropagation();
       },
     });
   }
@@ -73,7 +71,6 @@ export default function WorkflowActionsPopup({ workflow, className }) {
       onClick: (e) => {
         dispatch(openStopWorkflowModal(workflow));
         setOpen(false);
-        e.stopPropagation();
       },
     });
   }
@@ -86,7 +83,6 @@ export default function WorkflowActionsPopup({ workflow, className }) {
       onClick: (e) => {
         dispatch(openDeleteWorkflowModal(workflow));
         setOpen(false);
-        e.stopPropagation();
       },
     });
   }
@@ -99,23 +95,22 @@ export default function WorkflowActionsPopup({ workflow, className }) {
       onClick: (e) => {
         dispatch(deleteWorkflow(id));
         setOpen(false);
-        e.stopPropagation();
       },
     });
   }
 
   return (
-    <div className={className || styles.container}>
+    <div className={className}>
       {menuItems.length > 0 && (
         <Popup
           basic
           trigger={
             <Icon
+              link
               name="ellipsis vertical"
               className={styles.icon}
               onClick={(e) => {
                 setOpen(true);
-                e.preventDefault();
               }}
             />
           }
