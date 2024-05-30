@@ -2,6 +2,7 @@
 
 The list of contributors in alphabetical order:
 
+- [Alp Tuna](https://orcid.org/0009-0001-1915-3993)
 - [Audrius Mecionis](https://orcid.org/0000-0002-3759-1663)
 - [Diego Rodriguez](https://orcid.org/0000-0003-0649-2002)
 - [Dinos Kousidis](https://orcid.org/0000-0002-4914-4289)
