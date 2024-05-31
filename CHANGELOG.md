@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.9.5](https://github.com/reanahub/reana-ui/compare/0.9.4...0.9.5) (2024-05-31)
+
+
+### ⚠ BREAKING CHANGES
+
+* **gitlab:** The REST API endpoint `gitlab_projects` now includes pagination details.
+
+### Features
+
+* **gitlab:** add filtering for GitLab project lists ([#403](https://github.com/reanahub/reana-ui/issues/403)) ([c2e8b6c](https://github.com/reanahub/reana-ui/commit/c2e8b6c843eaa01c4191676789bb21a58291cf30))
+* **gitlab:** add pagination for GitLab project lists ([#403](https://github.com/reanahub/reana-ui/issues/403)) ([d403634](https://github.com/reanahub/reana-ui/commit/d4036342dd5c2e89c840da15f993b112a8ef2fa6))
+
+
+### Bug fixes
+
+* **gitlab:** redirect user to repository after clicking on name ([#406](https://github.com/reanahub/reana-ui/issues/406)) ([9b0c589](https://github.com/reanahub/reana-ui/commit/9b0c589eb3421a47d2443cc10facd877e88f4d7b)), closes [#356](https://github.com/reanahub/reana-ui/issues/356)
+
+
+### Continuous integration
+
+* **actions:** update GitHub actions due to Node 16 deprecation ([#401](https://github.com/reanahub/reana-ui/issues/401)) ([43ced0c](https://github.com/reanahub/reana-ui/commit/43ced0c02c16f90c3f637e6b4c31feec817277d6))
+
 ## [0.9.4](https://github.com/reanahub/reana-ui/compare/0.9.3...0.9.4) (2024-03-04)
 
 
