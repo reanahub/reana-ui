@@ -2,16 +2,18 @@
   -*- coding: utf-8 -*-
 
   This file is part of REANA.
-  Copyright (C) 2020, 2022, 2024 CERN.
+  Copyright (C) 2023, 2024 CERN.
 
   REANA is free software; you can redistribute it and/or modify it
   under the terms of the MIT License; see LICENSE file for more details.
 */
-
 @import "@palette";
 
-.jupyter-icon {
-  width: 1.18em;
-  float: right;
-  margin: -0.2em 0em 0em 0.5em;
+.badgesContainer {
+  display: flex;
+  gap: 5px;
+
+  :global(.ui.basic.label) {
+    color: $raven;
+  }
 }

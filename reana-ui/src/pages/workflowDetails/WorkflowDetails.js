@@ -2,7 +2,7 @@
   -*- coding: utf-8 -*-
 
   This file is part of REANA.
-  Copyright (C) 2020, 2022, 2023 CERN.
+  Copyright (C) 2020, 2022, 2023, 2024 CERN.
 
   REANA is free software; you can redistribute it and/or modify it
   under the terms of the MIT License; see LICENSE file for more details.
@@ -11,9 +11,10 @@
 import { useCallback, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
-import { Container, Dimmer, Loader, Tab } from "semantic-ui-react";
+import { Container, Dimmer, Icon, Loader, Tab } from "semantic-ui-react";
 
 import { fetchWorkflow, fetchWorkflowLogs } from "~/actions";
+import { NON_FINISHED_STATUSES } from "~/config";
 import {
   getWorkflow,
   getWorkflowRefresh,
@@ -24,15 +25,18 @@ import {
 import BasePage from "../BasePage";
 import {
   Notification,
+  WorkflowInfo,
+  WorkflowActionsPopup,
+  WorkflowBadges,
   WorkflowDeleteModal,
   WorkflowStopModal,
 } from "~/components";
 import {
-  WorkflowInfo,
   WorkflowLogs,
   WorkflowFiles,
   WorkflowSpecification,
 } from "./components";
+import styles from "./WorkflowDetails.module.scss";
 
 const FINISHED_STATUSES = ["finished", "failed", "stopped", "deleted"];
 
@@ -139,8 +143,24 @@ export default function WorkflowDetails() {
 
   return (
     <BasePage title={pageTitle}>
-      <Container>
-        <WorkflowInfo workflow={workflow} />
+      <Container className={styles["workflow-details-container"]}>
+        <div className={styles["workflow-info"]}>
+          <WorkflowInfo workflow={workflow} />
+          <div className={styles.actions}>
+            {NON_FINISHED_STATUSES.includes(workflow.status) && (
+              <Icon
+                link
+                name="refresh"
+                className={styles.refresh}
+                onClick={() => window.location.reload()}
+              />
+            )}
+            <WorkflowActionsPopup workflow={workflow} />
+          </div>
+        </div>
+        <div className={styles.badges}>
+          <WorkflowBadges className={styles.badges} workflow={workflow} />
+        </div>
         <Tab
           menu={{ secondary: true, pointing: true }}
           panes={panes}

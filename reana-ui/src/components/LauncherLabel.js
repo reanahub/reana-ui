@@ -1,6 +1,6 @@
 /*
   This file is part of REANA.
-  Copyright (C) 2022 CERN.
+  Copyright (C) 2022, 2024 CERN.
 
   REANA is free software; you can redistribute it and/or modify it
   under the terms of the MIT License; see LICENSE file for more details.
@@ -32,13 +32,11 @@ export default function LauncherLabel({ url }) {
         trigger={
           <Label
             size="tiny"
-            color="grey"
             as="a"
             href={url}
             target="_blank"
             rel="noopener noreferrer"
             {...getProps(url)}
-            basic
           />
         }
         content={url}

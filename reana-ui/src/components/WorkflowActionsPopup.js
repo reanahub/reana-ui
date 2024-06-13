@@ -2,7 +2,7 @@
   -*- coding: utf-8 -*-
 
   This file is part of REANA.
-  Copyright (C) 2020, 2021, 2022, 2023 CERN.
+  Copyright (C) 2020, 2021, 2022, 2023, 2024 CERN.
 
   REANA is free software; you can redistribute it and/or modify it
   under the terms of the MIT License; see LICENSE file for more details.
@@ -64,7 +64,6 @@ export default function WorkflowActionsPopup({ workflow, className }) {
           );
         });
         setOpen(false);
-        e.stopPropagation();
       },
     });
   }
@@ -77,7 +76,6 @@ export default function WorkflowActionsPopup({ workflow, className }) {
       onClick: (e) => {
         dispatch(closeInteractiveSession(id));
         setOpen(false);
-        e.stopPropagation();
       },
     });
   }
@@ -90,7 +88,6 @@ export default function WorkflowActionsPopup({ workflow, className }) {
       onClick: (e) => {
         dispatch(openStopWorkflowModal(workflow));
         setOpen(false);
-        e.stopPropagation();
       },
     });
   }
@@ -103,7 +100,6 @@ export default function WorkflowActionsPopup({ workflow, className }) {
       onClick: (e) => {
         dispatch(openDeleteWorkflowModal(workflow));
         setOpen(false);
-        e.stopPropagation();
       },
     });
   }
@@ -116,23 +112,22 @@ export default function WorkflowActionsPopup({ workflow, className }) {
       onClick: (e) => {
         dispatch(deleteWorkflow(id));
         setOpen(false);
-        e.stopPropagation();
       },
     });
   }
 
   return (
-    <div className={className || styles.container}>
+    <div className={className}>
       {menuItems.length > 0 && (
         <Popup
           basic
           trigger={
             <Icon
+              link
               name="ellipsis vertical"
               className={styles.icon}
               onClick={(e) => {
                 setOpen(true);
-                e.preventDefault();
               }}
             />
           }
