@@ -23,6 +23,8 @@ export const USER_SIGNIN_URL = `${api}/api/login`;
 export const USER_SIGNOUT_URL = `${api}/api/logout`;
 export const USER_REQUEST_TOKEN_URL = `${api}/api/token`;
 export const USER_CONFIRM_EMAIL_URL = `${api}/api/confirm-email`;
+export const USERS_SHARED_WITH_YOU_URL = `${api}/api/users/shared-with-you`;
+export const USERS_YOU_SHARED_WITH_URL = `${api}/api/users/you-shared-with`;
 export const CLUSTER_STATUS_URL = `${api}/api/status`;
 export const GITLAB_AUTH_URL = `${api}/api/gitlab/connect`;
 export const GITLAB_PROJECTS_URL = (params) =>
@@ -43,6 +45,11 @@ export const WORKFLOW_FILE_URL = (id, filename, preview = true) =>
   )}`;
 export const WORKFLOW_SET_STATUS_URL = (id, status) =>
   `${api}/api/workflows/${id}/status?${stringifyQueryParams(status)}`;
+export const WORKFLOW_SHARE_STATUS_URL = (id) =>
+  `${api}/api/workflows/${id}/share-status`;
+export const WORKFLOW_SHARE_URL = (id) => `${api}/api/workflows/${id}/share`;
+export const WORKFLOW_UNSHARE_URL = (id) =>
+  `${api}/api/workflows/${id}/unshare`;
 export const INTERACTIVE_SESSIONS_OPEN_URL = (id, type = "jupyter") =>
   `${api}/api/workflows/${id}/open/${type}`;
 export const INTERACTIVE_SESSIONS_CLOSE_URL = (id) =>
@@ -116,13 +123,33 @@ class Client {
     });
   }
 
-  getWorkflows({ pagination, search, status, sort, workflowIdOrName } = {}) {
+  getWorkflows({
+    pagination,
+    search,
+    status,
+    ownedBy,
+    sharedWith,
+    sort,
+    workflowIdOrName,
+    includeShared = false,
+  } = {}) {
+    let shared = false;
+    if (ownedBy === "anybody" || includeShared) {
+      ownedBy = undefined;
+      shared = true;
+    } else if (ownedBy === "you") {
+      ownedBy = undefined;
+    }
+
     return this._request(
       WORKFLOWS_URL({
         ...(pagination ?? {}),
         workflow_id_or_name: workflowIdOrName,
         search,
         status,
+        shared,
+        shared_by: ownedBy,
+        shared_with: sharedWith,
         sort,
       }),
     );
@@ -191,6 +218,32 @@ class Client {
 
   launchWorkflow(data) {
     return this._request(LAUNCH_ON_REANA_URL, {
+      data,
+      method: "post",
+    });
+  }
+
+  getUsersSharedWithYou() {
+    return this._request(USERS_SHARED_WITH_YOU_URL);
+  }
+
+  getUsersYouSharedWith() {
+    return this._request(USERS_YOU_SHARED_WITH_URL);
+  }
+
+  getWorkflowShareStatus(id) {
+    return this._request(WORKFLOW_SHARE_STATUS_URL(id));
+  }
+
+  shareWorkflow(id, data) {
+    return this._request(WORKFLOW_SHARE_URL(id), {
+      data,
+      method: "post",
+    });
+  }
+
+  unshareWorkflow(id, data) {
+    return this._request(WORKFLOW_UNSHARE_URL(id), {
       data,
       method: "post",
     });

@@ -51,20 +51,43 @@ export default function WorkflowInfo({ workflow }) {
           <div>
             <span className={styles["name"]}>{name}</span>
             <span className={styles["run"]}>#{run}</span>
-            {isSessionOpen && (
-              <a
-                href={INTERACTIVE_SESSION_URL(sessionUri, reanaToken)}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={(e) => e.stopPropagation()}
-                className={styles.notebook}
-              >
-                <JupyterNotebookIcon />
-              </a>
-            )}
+
             <span className={styles["launcher-label"]}>
               <LauncherLabel url={launcherURL} />
             </span>
+
+            {workflow.owner_email === "-" ? (
+              <>
+                {isSessionOpen && (
+                  <a
+                    href={INTERACTIVE_SESSION_URL(sessionUri, reanaToken)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                    className={styles.notebook}
+                  >
+                    <JupyterNotebookIcon />
+                  </a>
+                )}
+              </>
+            ) : (
+              <Popup
+                trigger={
+                  <span className={styles.owner}>
+                    <Icon
+                      name="eye"
+                      size="large"
+                      style={{ marginTop: "-5px" }}
+                    />
+                  </span>
+                }
+                position="top center"
+                content={
+                  "This workflow is read-only shared with you by " +
+                  workflow.owner_email
+                }
+              />
+            )}
             <Popup
               trigger={
                 <div>
@@ -106,7 +129,10 @@ export default function WorkflowInfo({ workflow }) {
               step {completed}/{total}
             </div>
           </div>
-          <WorkflowActionsPopup workflow={workflow} />
+          <WorkflowActionsPopup
+            workflow={workflow}
+            style={{ cursor: "default" }}
+          />
         </div>
       </section>
       <WorkflowProgress workflow={workflow} />
