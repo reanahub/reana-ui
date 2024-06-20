@@ -71,7 +71,9 @@ function JobLogs({ logs }) {
 
   const steps = Object.entries(logs).map(([id, log]) => ({
     key: id,
-    text: log.job_name || log.backend_job_id,
+    text:
+      (log.job_name || log.backend_job_id) +
+      (log.duration !== null ? ` (${log.duration})` : ``),
     icon: {
       name: "dot circle outline",
       size: "small",
@@ -100,14 +102,8 @@ function JobLogs({ logs }) {
         </div>
         {log && (
           <div className={styles["step-tags"]}>
-            <Label color={statusMapping[log.status].color}>
+            <Label basic color={statusMapping[log.status].color}>
               {log.status}
-              {log.duration && (
-                <span className={styles["step-duration"]}>
-                  {" "}
-                  {statusMapping[log.status].preposition} {log.duration}
-                </span>
-              )}
             </Label>
             <Label>
               <Icon name="cloud" />
