@@ -1,6 +1,6 @@
 # Use Node 18
 # hadolint ignore=DL3029
-FROM --platform=$BUILDPLATFORM docker.io/library/node:18 as react-build
+FROM --platform=$BUILDPLATFORM docker.io/library/node:18 AS react-build
 
 # Use default answers in installation commands
 ENV DEBIAN_FRONTEND=noninteractive
