@@ -286,6 +286,7 @@ const customMime = new Mime(standardMimeTypes, otherMimeTypes, {
   // See https://github.com/root-project/root/issues/6771
   "application/x-root": ["root"],
   "text/x-python": ["py"],
+  "text/x-gherkin": ["feature"],
 });
 
 /**

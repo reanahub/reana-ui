@@ -2,6 +2,7 @@
 
 The list of contributors in alphabetical order:
 
+- [Alastair Lyall](https://orcid.org/0009-0000-4955-8935)
 - [Alp Tuna](https://orcid.org/0009-0001-1915-3993)
 - [Audrius Mecionis](https://orcid.org/0000-0002-3759-1663)
 - [Daan Rosendal](https://orcid.org/0000-0002-3447-9000)
