@@ -160,7 +160,11 @@ export default function WorkflowDetails() {
           </div>
         </div>
         <div className={styles.badges}>
-          <WorkflowBadges className={styles.badges} workflow={workflow} />
+          <WorkflowBadges
+            className={styles.badges}
+            workflow={workflow}
+            badgeSize="medium"
+          />
         </div>
         <Tab
           menu={{ secondary: true, pointing: true }}
