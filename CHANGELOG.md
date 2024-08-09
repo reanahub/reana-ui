@@ -1,5 +1,43 @@
 # Changelog
 
+## [0.9.5](https://github.com/reanahub/reana-ui/compare/0.9.4...0.9.5) (2024-08-09)
+
+
+### ⚠ BREAKING CHANGES
+
+* **gitlab:** The REST API endpoint `gitlab_projects` now includes pagination details.
+
+### Build
+
+* **docker:** fix FromAsCasing warning ([#411](https://github.com/reanahub/reana-ui/issues/411)) ([b203d93](https://github.com/reanahub/reana-ui/commit/b203d93f854d89b302c712b5734cda0b5aabdbb9)), closes [#410](https://github.com/reanahub/reana-ui/issues/410)
+
+
+### Features
+
+* **gitlab:** add filtering for GitLab project lists ([#403](https://github.com/reanahub/reana-ui/issues/403)) ([c2e8b6c](https://github.com/reanahub/reana-ui/commit/c2e8b6c843eaa01c4191676789bb21a58291cf30))
+* **gitlab:** add pagination for GitLab project lists ([#403](https://github.com/reanahub/reana-ui/issues/403)) ([d403634](https://github.com/reanahub/reana-ui/commit/d4036342dd5c2e89c840da15f993b112a8ef2fa6))
+* **progress:** add circular progress bar in workflow list page ([#394](https://github.com/reanahub/reana-ui/issues/394)) ([7f4f1ac](https://github.com/reanahub/reana-ui/commit/7f4f1ac456dcf5602ed3d0e37bcdb8e3447a17eb))
+* **sessions:** add modal for choosing session environment ([#405](https://github.com/reanahub/reana-ui/issues/405)) ([7a83b20](https://github.com/reanahub/reana-ui/commit/7a83b206cd8d3c7f20f511780519ee8192c83ef5))
+* **workflow-list:** redesign subtler progress bar and badges ([#394](https://github.com/reanahub/reana-ui/issues/394)) ([660584e](https://github.com/reanahub/reana-ui/commit/660584e53d4c63d100bad73c39e674af12022824))
+* **workflow-list:** unify badge style and remove nested links ([#394](https://github.com/reanahub/reana-ui/issues/394)) ([d623ff4](https://github.com/reanahub/reana-ui/commit/d623ff44e1fb3aa6505597c2e70bd6bd674a7e6c))
+
+
+### Bug fixes
+
+* **gitlab:** redirect user to repository after clicking on name ([#406](https://github.com/reanahub/reana-ui/issues/406)) ([9b0c589](https://github.com/reanahub/reana-ui/commit/9b0c589eb3421a47d2443cc10facd877e88f4d7b)), closes [#356](https://github.com/reanahub/reana-ui/issues/356)
+
+
+### Code refactoring
+
+* **workflow-badges:** centralise list and details components ([#394](https://github.com/reanahub/reana-ui/issues/394)) ([fa65bb5](https://github.com/reanahub/reana-ui/commit/fa65bb5df8d8ec498a6c2db4c836c5e23552efbd)), closes [#151](https://github.com/reanahub/reana-ui/issues/151) [#395](https://github.com/reanahub/reana-ui/issues/395)
+
+
+### Continuous integration
+
+* **actions:** update GitHub actions due to Node 16 deprecation ([#401](https://github.com/reanahub/reana-ui/issues/401)) ([43ced0c](https://github.com/reanahub/reana-ui/commit/43ced0c02c16f90c3f637e6b4c31feec817277d6))
+* **actions:** upgrade to Ubuntu 24.04 and Python 3.12 ([#409](https://github.com/reanahub/reana-ui/issues/409)) ([1561a4b](https://github.com/reanahub/reana-ui/commit/1561a4b4e4944ecc19f5bca34041c41155655d4f))
+* **commitlint:** improve checking of merge commits ([#409](https://github.com/reanahub/reana-ui/issues/409)) ([c066472](https://github.com/reanahub/reana-ui/commit/c06647276d52807e29c0b382c819f6cd0513f562))
+
 ## [0.9.4](https://github.com/reanahub/reana-ui/compare/0.9.3...0.9.4) (2024-03-04)
 
 
