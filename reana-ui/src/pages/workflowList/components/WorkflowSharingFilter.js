@@ -17,9 +17,12 @@ import { fetchUsersSharedWithYou, fetchUsersYouSharedWith } from "~/actions";
 import { getUsersSharedWithYou, getUsersYouSharedWith } from "~/selectors";
 import styles from "./WorkflowSharingFilter.module.scss";
 
+const OWNED_BY = "owned_by";
+const SHARED_WITH = "shared_with";
+
 const sharingFilterOptions = [
-  { key: 0, text: "Owned by", value: "owned_by" },
-  { key: 1, text: "Shared with", value: "shared_with" },
+  { key: 0, text: "Owned by", value: OWNED_BY },
+  { key: 1, text: "Shared with", value: SHARED_WITH },
 ];
 
 export default function WorkflowSharingFilters({
@@ -29,10 +32,7 @@ export default function WorkflowSharingFilters({
   setSharedWithFilter,
 }) {
   const dispatch = useDispatch();
-  const [selectedFilterOption, setSelectedFilterOption] = useState(
-    sharingFilterOptions[0],
-  );
-  const [dynamicOptions, setDynamicOptions] = useState([]);
+  const [selectedFilterOption, setSelectedFilterOption] = useState(OWNED_BY);
 
   const usersYouSharedWith = useSelector(getUsersYouSharedWith, _.isEqual);
   const usersSharedWithYou = useSelector(getUsersSharedWithYou, _.isEqual);
@@ -62,7 +62,9 @@ export default function WorkflowSharingFilters({
     [usersYouSharedWith],
   );
 
-  const [selectedUser, setSelectedUser] = useState();
+  const [selectedUser, setSelectedUser] = useState(
+    usersSharedWithYouOptions[0].value,
+  );
 
   useEffect(() => {
     dispatch(fetchUsersYouSharedWith());
@@ -70,19 +72,16 @@ export default function WorkflowSharingFilters({
   }, [dispatch]);
 
   useEffect(() => {
-    setDynamicOptions(usersSharedWithYouOptions);
-  }, [usersSharedWithYou, usersSharedWithYouOptions]);
-
-  useEffect(() => {
-    if (selectedFilterOption.value === sharingFilterOptions[0].value) {
-      if (!isEqual(ownedByFilter, selectedUser?.value)) {
+    // synchronise local state with parent state
+    if (selectedFilterOption === OWNED_BY) {
+      if (!isEqual(ownedByFilter, selectedUser)) {
         setSharedWithFilter(undefined);
-        setOwnedByFilter(selectedUser?.value);
+        setOwnedByFilter(selectedUser);
       }
     } else {
-      if (!isEqual(sharedWithFilter, selectedUser?.value)) {
+      if (!isEqual(sharedWithFilter, selectedUser)) {
+        setSharedWithFilter(selectedUser);
         setOwnedByFilter(undefined);
-        setSharedWithFilter(selectedUser?.value);
       }
     }
   }, [
@@ -91,54 +90,47 @@ export default function WorkflowSharingFilters({
     setOwnedByFilter,
     setSharedWithFilter,
     selectedUser,
-    selectedFilterOption.value,
+    selectedFilterOption,
   ]);
 
   const handleSelectedFilterOptionChange = (_, { value }) => {
-    const selectedOption = sharingFilterOptions.find(
-      (option) => option.value === value,
-    );
-    setSelectedFilterOption(selectedOption);
+    setSelectedFilterOption(value);
 
-    if (value === sharingFilterOptions[0].value) {
-      setDynamicOptions(usersSharedWithYouOptions);
-      setSelectedUser(usersSharedWithYouOptions[0]);
+    if (value === OWNED_BY) {
+      setSelectedUser(usersSharedWithYouOptions[0].value);
     } else {
-      setDynamicOptions(usersYouSharedWithOptions);
-      setSelectedUser(usersYouSharedWithOptions[0]);
+      setSelectedUser(usersYouSharedWithOptions[0].value);
     }
   };
 
   const handleSelectedUserChange = (_, { value }) => {
-    const selectedUser = dynamicOptions.find(
-      (option) => option.value === value,
-    );
-    setSelectedUser(selectedUser);
+    setSelectedUser(value);
   };
 
   return (
     <Grid.Column mobile={16} tablet={7} computer={6}>
       <div style={{ display: "flex" }}>
         <Dropdown
-          text={selectedFilterOption.text}
           fluid
-          closeOnChange
           selection
           options={sharingFilterOptions}
           onChange={handleSelectedFilterOptionChange}
-          defaultValue={selectedFilterOption.value}
-          id={styles["sharing-filter-dropdown"]}
+          value={selectedFilterOption}
+          className={styles["sharing-filter-dropdown"]}
         />
         <Dropdown
-          text={selectedUser?.text || "you"}
           fluid
           selection
           search
           scrolling
-          options={dynamicOptions}
+          options={
+            selectedFilterOption === OWNED_BY
+              ? usersSharedWithYouOptions
+              : usersYouSharedWithOptions
+          }
           onChange={handleSelectedUserChange}
-          value={selectedUser?.value || "you"}
-          id={styles["selected-user-dropdown"]}
+          value={selectedUser}
+          className={styles["selected-user-dropdown"]}
         />
       </div>
     </Grid.Column>

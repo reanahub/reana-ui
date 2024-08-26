@@ -9,15 +9,16 @@
 */
 
 import styles from "./WorkflowBadges.module.scss";
-import { Icon, Label, Popup } from "semantic-ui-react";
+import { Label, Popup } from "semantic-ui-react";
 import { JupyterNotebookIcon } from "~/components";
 import { INTERACTIVE_SESSION_URL } from "~/client";
 import { LauncherLabel } from "~/components";
-import { getReanaToken } from "~/selectors";
+import { getReanaToken, getUserEmail } from "~/selectors";
 import { useSelector } from "react-redux";
 
 export default function WorkflowBadges({ workflow }) {
   const reanaToken = useSelector(getReanaToken);
+  const userEmail = useSelector(getUserEmail);
   const {
     size,
     launcherURL,
@@ -29,7 +30,7 @@ export default function WorkflowBadges({ workflow }) {
 
   return (
     <div className={styles.badgesContainer}>
-      {workflow.owner_email === "-" ? (
+      {workflow.ownerEmail === userEmail && (
         <>
           {workflow.duration && (
             <Label
@@ -64,18 +65,16 @@ export default function WorkflowBadges({ workflow }) {
             />
           )}
         </>
-      ) : (
+      )}
+      {workflow.ownerEmail !== userEmail && (
         <Popup
           trigger={
-            <span className={styles.owner}>
-              <Icon name="eye" style={{ marginTop: "-3px" }} />
-              {workflow.owner_email}
-            </span>
+            <Label basic size="tiny" content={workflow.ownerEmail} icon="eye" />
           }
           position="top center"
           content={
             "This workflow is read-only shared with you by " +
-            workflow.owner_email
+            workflow.ownerEmail
           }
         />
       )}

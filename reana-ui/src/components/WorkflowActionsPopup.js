@@ -8,20 +8,21 @@
   under the terms of the MIT License; see LICENSE file for more details.
 */
 
-import { useState } from "react";
 import PropTypes from "prop-types";
+import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Icon, Menu, Popup } from "semantic-ui-react";
-import { useDispatch } from "react-redux";
 
-import { workflowShape } from "~/props";
 import {
-  deleteWorkflow,
   closeInteractiveSession,
+  deleteWorkflow,
   openDeleteWorkflowModal,
-  openStopWorkflowModal,
   openInteractiveSessionModal,
   openShareWorkflowModal,
+  openStopWorkflowModal,
 } from "~/actions";
+import { workflowShape } from "~/props";
+import { getUserEmail } from "~/selectors";
 
 import { JupyterNotebookIcon } from "~/components";
 
@@ -29,13 +30,10 @@ import styles from "./WorkflowActionsPopup.module.scss";
 
 const JupyterIcon = <JupyterNotebookIcon className={styles["jupyter-icon"]} />;
 
-export default function WorkflowActionsPopup({
-  workflow,
-  className,
-  insideClickableElement,
-}) {
+export default function WorkflowActionsPopup({ workflow, className }) {
   const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
+  const userEmail = useSelector(getUserEmail);
   const { id, size, status, session_status: sessionStatus } = workflow;
   const isDeleted = status === "deleted";
   const isDeletedUsingWorkspace = isDeleted && size.raw > 0;
@@ -63,7 +61,6 @@ export default function WorkflowActionsPopup({
     onClick: (e) => {
       dispatch(openShareWorkflowModal(workflow));
       setOpen(false);
-      e.stopPropagation();
     },
   });
 
@@ -115,20 +112,9 @@ export default function WorkflowActionsPopup({
     });
   }
 
-  if (workflow.owner_email !== "-") {
-    return (
-      <div
-        className={className || styles.container}
-        style={
-          insideClickableElement ? { cursor: "pointer" } : { cursor: "default" }
-        }
-      />
-    );
-  }
-
   return (
     <div className={className}>
-      {menuItems.length > 0 && (
+      {workflow.ownerEmail === userEmail && menuItems.length > 0 && (
         <Popup
           basic
           trigger={
@@ -160,5 +146,4 @@ WorkflowActionsPopup.defaultProps = {
 WorkflowActionsPopup.propTypes = {
   workflow: workflowShape.isRequired,
   className: PropTypes.string,
-  insideClickableElement: PropTypes.bool,
 };

@@ -73,12 +73,22 @@ function Workflows() {
   useEffect(() => cleanPolling(), [workflowRefresh]);
 
   useEffect(() => {
+    let shared = false;
+    let sharedBy = null;
+    if (ownedByFilter === "anybody") {
+      shared = true;
+      sharedBy = null;
+    } else if (ownedByFilter !== "you") {
+      sharedBy = ownedByFilter;
+    }
+
     dispatch(
       fetchWorkflows({
         pagination: { ...pagination },
         search: searchFilter,
         status: statusFilter,
-        ownedBy: ownedByFilter,
+        shared,
+        sharedBy,
         sharedWith: sharedWithFilter,
         sort: sortDir,
       }),
@@ -87,12 +97,14 @@ function Workflows() {
     if (!interval.current && reanaToken && pollingSecs) {
       interval.current = setInterval(() => {
         const showLoader = false;
+
         dispatch(
           fetchWorkflows({
             pagination: { ...pagination },
             search: searchFilter,
             status: statusFilter,
-            ownedBy: ownedByFilter,
+            shared,
+            sharedBy,
             sharedWith: sharedWithFilter,
             sort: sortDir,
             showLoader,
@@ -141,7 +153,7 @@ function Workflows() {
 
   return (
     <div className={styles.container}>
-      <Container id={styles["workflow-list-container"]}>
+      <Container text className={styles["workflow-list-container"]}>
         <Title className={styles.title}>
           <span>Your workflows</span>
           <span className={styles.refresh}>

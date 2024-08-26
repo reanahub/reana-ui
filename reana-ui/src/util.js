@@ -60,6 +60,7 @@ export function parseWorkflows(workflows) {
     workflow.running = typeof running === "object" ? running.total : 0;
     workflow.failed = typeof failed === "object" ? failed.total : 0;
     workflow.launcherURL = workflow.launcher_url;
+    workflow.ownerEmail = workflow.owner_email;
     workflow = parseWorkflowDates(workflow);
 
     obj[workflow.id] = workflow;

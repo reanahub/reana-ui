@@ -127,20 +127,12 @@ class Client {
     pagination,
     search,
     status,
-    ownedBy,
+    sharedBy,
     sharedWith,
     sort,
     workflowIdOrName,
-    includeShared = false,
+    shared,
   } = {}) {
-    let shared = false;
-    if (ownedBy === "anybody" || includeShared) {
-      ownedBy = undefined;
-      shared = true;
-    } else if (ownedBy === "you") {
-      ownedBy = undefined;
-    }
-
     return this._request(
       WORKFLOWS_URL({
         ...(pagination ?? {}),
@@ -148,7 +140,7 @@ class Client {
         search,
         status,
         shared,
-        shared_by: ownedBy,
+        shared_by: sharedBy,
         shared_with: sharedWith,
         sort,
       }),
@@ -238,16 +230,19 @@ class Client {
     return this._request(WORKFLOW_SHARE_STATUS_URL(id));
   }
 
-  shareWorkflow(id, data) {
+  shareWorkflow(id, { userEmailToShareWith, validUntil }) {
     return this._request(WORKFLOW_SHARE_URL(id), {
-      data,
+      data: {
+        user_email_to_share_with: userEmailToShareWith,
+        valid_until: validUntil,
+      },
       method: "post",
     });
   }
 
-  unshareWorkflow(id, data) {
+  unshareWorkflow(id, { userEmailToUnshareWith }) {
     return this._request(WORKFLOW_UNSHARE_URL(id), {
-      data,
+      data: { user_email_to_unshare_with: userEmailToUnshareWith },
       method: "post",
     });
   }

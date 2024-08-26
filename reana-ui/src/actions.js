@@ -16,25 +16,28 @@ import client, {
   INTERACTIVE_SESSIONS_OPEN_URL,
   USER_INFO_URL,
   USER_SIGNOUT_URL,
+  USERS_SHARED_WITH_YOU_URL,
+  USERS_YOU_SHARED_WITH_URL,
   WORKFLOW_FILES_URL,
   WORKFLOW_LOGS_URL,
   WORKFLOW_RETENTION_RULES_URL,
   WORKFLOW_SET_STATUS_URL,
+  WORKFLOW_SHARE_STATUS_URL,
   WORKFLOW_SPECIFICATION_URL,
 } from "~/client";
-import {
-  parseWorkflows,
-  parseWorkflowRetentionRules,
-  parseLogs,
-  parseFiles,
-  formatSearch,
-} from "~/util";
 import {
   getConfig,
   getWorkflow,
   getWorkflowLogs,
   getWorkflowSpecification,
 } from "~/selectors";
+import {
+  formatSearch,
+  parseFiles,
+  parseLogs,
+  parseWorkflowRetentionRules,
+  parseWorkflows,
+} from "~/util";
 
 export const ERROR = "Error";
 export const NOTIFICATION = "Notification";
@@ -96,26 +99,11 @@ export const WORKFLOW_SHARE_STATUS_FETCH = "Fetch workflow share status";
 export const WORKFLOW_SHARE_STATUS_RECEIVED = "Workflow share status received";
 export const WORKFLOW_SHARE_STATUS_FETCH_ERROR =
   "Fetch workflow share status error";
-export const WORKFLOW_SHARE_INIT = "Initialise workflow sharing";
-export const WORKFLOW_SHARED_SUCCESSFULLY = "Workflow shared successfully";
-export const WORKFLOW_SHARED_ERROR = "Workflow shared error";
-export const WORKFLOW_SHARE_FINISH = "Finish workflow sharing";
-export const WORKFLOW_UNSHARE_INIT = "Initialise workflow unsharing";
-export const WORKFLOW_UNSHARED = "Workflow unshared";
-export const WORKFLOW_UNSHARE_ERROR = "Workflow unshare error";
 
-export const USERS_SHARED_WITH_YOU_FETCH =
-  "Fetch users who shared workflows with you";
 export const USERS_SHARED_WITH_YOU_RECEIVED =
   "Users who shared workflows with you received";
-export const USERS_SHARED_WITH_YOU_FETCH_ERROR =
-  "Fetch users who shared workflows with you error";
-export const USERS_YOU_SHARED_WITH_FETCH =
-  "Fetch users you shared workflows with";
 export const USERS_YOU_SHARED_WITH_RECEIVED =
   "Users you shared workflows with received";
-export const USERS_YOU_SHARED_WITH_FETCH_ERROR =
-  "Fetch users you shared workflows with error";
 
 export function errorActionCreator(error, name) {
   const { status, data } = error?.response;
@@ -288,12 +276,12 @@ export function fetchWorkflows({
   pagination,
   search,
   status,
-  ownedBy,
+  sharedBy,
   sharedWith,
   sort,
   showLoader = true,
   workflowIdOrName,
-  includeShared = false,
+  shared = false,
 }) {
   return async (dispatch) => {
     if (showLoader) {
@@ -305,20 +293,20 @@ export function fetchWorkflows({
         pagination,
         search: formatSearch(search),
         status,
-        ownedBy,
+        sharedBy,
         sharedWith,
         sort,
         workflowIdOrName,
-        includeShared,
+        shared,
       })
-      .then((resp) => {
+      .then((resp) =>
         dispatch({
           type: WORKFLOWS_RECEIVED,
           workflows: parseWorkflows(resp.data.items),
           total: resp.data.total,
           userHasWorkflows: resp.data.user_has_workflows,
-        });
-      })
+        }),
+      )
       .catch((err) => {
         dispatch(errorActionCreator(err, USER_INFO_URL));
         dispatch({ type: WORKFLOWS_FETCH_ERROR });
@@ -338,7 +326,7 @@ export function fetchWorkflow(id, { refetch = false, showLoader = true } = {}) {
         fetchWorkflows({
           workflowIdOrName: id,
           showLoader,
-          includeShared: true,
+          shared: true,
         }),
       );
     }
@@ -567,38 +555,34 @@ export function closeShareWorkflowModal() {
 
 export function fetchUsersSharedWithYou() {
   return async (dispatch) => {
-    dispatch({ type: USERS_SHARED_WITH_YOU_FETCH });
-
     return await client
       .getUsersSharedWithYou()
       .then((resp) => {
         dispatch({
           type: USERS_SHARED_WITH_YOU_RECEIVED,
-          users_shared_with_you: resp.data.users_shared_with_you,
+          usersSharedYouWith: resp.data.users_shared_with_you,
         });
         return resp;
       })
       .catch((err) => {
-        dispatch(errorActionCreator(err, USERS_SHARED_WITH_YOU_FETCH_ERROR));
+        dispatch(errorActionCreator(err, USERS_SHARED_WITH_YOU_URL));
       });
   };
 }
 
 export function fetchUsersYouSharedWith() {
   return async (dispatch) => {
-    dispatch({ type: USERS_YOU_SHARED_WITH_FETCH });
-
     return await client
       .getUsersYouSharedWith()
       .then((resp) => {
         dispatch({
           type: USERS_YOU_SHARED_WITH_RECEIVED,
-          users_you_shared_with: resp.data.users_you_shared_with,
+          usersYouSharedWith: resp.data.users_you_shared_with,
         });
         return resp;
       })
       .catch((err) => {
-        dispatch(errorActionCreator(err, USERS_YOU_SHARED_WITH_FETCH_ERROR));
+        dispatch(errorActionCreator(err, USERS_YOU_SHARED_WITH_URL));
       });
   };
 }
@@ -609,83 +593,24 @@ export function fetchWorkflowShareStatus(id) {
     return await client
       .getWorkflowShareStatus(id)
       .then((resp) => {
+        // convert to camel-case
+        const sharedWith = [];
+        for (const share of resp.data.shared_with) {
+          sharedWith.push({
+            userEmail: share.user_email,
+            validUntil: share.valid_until,
+          });
+        }
         dispatch({
           type: WORKFLOW_SHARE_STATUS_RECEIVED,
           id,
-          workflow_share_status: resp.data.shared_with,
+          sharedWith,
         });
         return resp;
       })
       .catch((err) => {
-        dispatch(errorActionCreator(err, WORKFLOW_SHARE_STATUS_FETCH_ERROR));
-      });
-  };
-}
-
-export function shareWorkflow(
-  id,
-  user_id,
-  user_emails_to_share_with,
-  valid_until,
-) {
-  return async (dispatch) => {
-    dispatch({ type: WORKFLOW_SHARE_INIT });
-
-    const users_shared_with = [];
-    const users_not_shared_with = [];
-
-    for (const user_email_to_share_with of user_emails_to_share_with) {
-      await client
-        .shareWorkflow(id, {
-          user_id,
-          user_email_to_share_with,
-          valid_until,
-        })
-        .then(() => {
-          users_shared_with.push(user_email_to_share_with);
-        })
-        .catch((err) => {
-          const error_message = err.response.data.message;
-          users_not_shared_with.push({
-            user_email_to_share_with,
-            error_message,
-          });
-        });
-
-      if (users_shared_with.length > 0) {
-        dispatch({
-          type: WORKFLOW_SHARED_SUCCESSFULLY,
-          users_shared_with,
-        });
-      }
-
-      if (users_not_shared_with.length > 0) {
-        dispatch({
-          type: WORKFLOW_SHARED_ERROR,
-          users_not_shared_with,
-        });
-      }
-    }
-
-    dispatch({ type: WORKFLOW_SHARE_FINISH });
-  };
-}
-
-export function unshareWorkflow(id, user_id, user_email_to_unshare_with) {
-  return async (dispatch) => {
-    dispatch({ type: WORKFLOW_UNSHARE_INIT });
-
-    return await client
-      .unshareWorkflow(id, {
-        user_id,
-        user_email_to_unshare_with,
-      })
-      .then(() => {
-        dispatch({ type: WORKFLOW_UNSHARED, user_email_to_unshare_with });
-      })
-      .catch((err) => {
-        const error_message = err.response.data.message;
-        dispatch({ type: WORKFLOW_UNSHARE_ERROR, error_message });
+        dispatch({ type: WORKFLOW_SHARE_STATUS_FETCH_ERROR });
+        dispatch(errorActionCreator(err, WORKFLOW_SHARE_STATUS_URL(id)));
       });
   };
 }
