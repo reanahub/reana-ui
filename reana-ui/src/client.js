@@ -56,6 +56,8 @@ export const INTERACTIVE_SESSIONS_CLOSE_URL = (id) =>
   `${api}/api/workflows/${id}/close/`;
 export const INTERACTIVE_SESSION_URL = (sessionUri, reanaToken) =>
   `${api}${sessionUri}?token=${reanaToken}`;
+export const DASK_DASHBOARD_URL = (workflow_id) =>
+  `${api}/${workflow_id}/dashboard/status`;
 export const LAUNCH_ON_REANA_URL = `${api}/api/launch`;
 
 class Client {

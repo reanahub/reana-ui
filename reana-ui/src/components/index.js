@@ -17,6 +17,7 @@ export { default as Title } from "./Title";
 export { default as TopHeader } from "./TopHeader";
 export { default as TooltipIfTruncated } from "./TooltipIfTruncated";
 export { default as LauncherLabel } from "./LauncherLabel";
+export { default as DaskIcon } from "./DaskIcon";
 export { default as JupyterNotebookIcon } from "./JupyterNotebookIcon";
 export { default as WorkflowDeleteModal } from "./WorkflowDeleteModal";
 export { default as WorkflowInfo } from "./WorkflowInfo";

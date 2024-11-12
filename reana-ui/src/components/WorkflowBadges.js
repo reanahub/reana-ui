@@ -10,8 +10,8 @@
 
 import styles from "./WorkflowBadges.module.scss";
 import { Label, Popup } from "semantic-ui-react";
-import { JupyterNotebookIcon } from "~/components";
-import { INTERACTIVE_SESSION_URL } from "~/client";
+import { JupyterNotebookIcon, DaskIcon } from "~/components";
+import { INTERACTIVE_SESSION_URL, DASK_DASHBOARD_URL } from "~/client";
 import { LauncherLabel } from "~/components";
 import { getReanaToken, getUserEmail } from "~/selectors";
 import { useSelector } from "react-redux";
@@ -22,11 +22,14 @@ export default function WorkflowBadges({ workflow }) {
   const {
     size,
     launcherURL,
+    services,
     session_uri: sessionUri,
     session_status: sessionStatus,
   } = workflow;
   const hasDiskUsage = size.raw > 0;
   const isSessionOpen = sessionStatus === "running";
+  const isDaskClusterUp =
+    services.length > 0 && services[0].status === "running";
 
   return (
     <div className={styles.badgesContainer}>
@@ -60,6 +63,21 @@ export default function WorkflowBadges({ workflow }) {
               }
               as="a"
               href={INTERACTIVE_SESSION_URL(sessionUri, reanaToken)}
+              target="_blank"
+              rel="noopener noreferrer"
+            />
+          )}
+          {isDaskClusterUp && (
+            <Label
+              size="tiny"
+              content={"Dashboard"}
+              icon={
+                <i className="icon">
+                  <DaskIcon size={12} />
+                </i>
+              }
+              as="a"
+              href={DASK_DASHBOARD_URL(workflow.id)}
               target="_blank"
               rel="noopener noreferrer"
             />
