@@ -520,7 +520,7 @@ export function openInteractiveSession(id, options = {}) {
             "Success!",
             "The interactive session has been created. " +
               "However, it could take several minutes to start the Jupyter Notebook. " +
-              "Click on the Jupyter logo to access it. " +
+              "Click on the Jupyter notebook badge to access it. " +
               `${interactiveSessionInactivityWarning}`,
           ),
         );

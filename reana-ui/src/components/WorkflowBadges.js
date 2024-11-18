@@ -26,7 +26,7 @@ export default function WorkflowBadges({ workflow }) {
     session_status: sessionStatus,
   } = workflow;
   const hasDiskUsage = size.raw > 0;
-  const isSessionOpen = sessionStatus === "created";
+  const isSessionOpen = sessionStatus === "running";
 
   return (
     <div className={styles.badgesContainer}>
