@@ -25,9 +25,6 @@
     "redux-thunk": "^2.3.0",
     "semantic-ui-react": "^2.0.0"
   },
-  "resolutions": {
-    "jsroot/gl/node-gyp": "<9.4.0"
-  },
   "scripts": {
     "analyze": "source-map-explorer 'build/static/js/*.js'",
     "start": "craco start",
@@ -55,26 +52,35 @@
   },
   "devDependencies": {
     "@babel/core": "^7.23.2",
-    "@babel/eslint-parser": "^7.16.5",
+    "@babel/eslint-parser": "^7.26.5",
     "@babel/plugin-proposal-private-property-in-object": "^7.16.7",
     "@craco/craco": "^7.1.0",
+    "@eslint/compat": "^1.2.6",
+    "@eslint/eslintrc": "^3.2.0",
+    "@eslint/js": "^9.19.0",
     "@semantic-ui-react/craco-less": "^3.0.0",
     "@semantic-ui-react/css-patch": "^1.0.0",
     "@testing-library/jest-dom": "^6.1.4",
     "@testing-library/react": "^14.0.0",
+    "@typescript-eslint/eslint-plugin": "^8.23.0",
+    "@typescript-eslint/parser": "^8.23.0",
     "craco-alias": "^3.0.1",
+    "eslint": "^9.19.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-config-react-app": "^7.0.1",
-    "eslint-plugin-prettier": "^5.0.1",
+    "eslint-plugin-import": "^2.31.0",
+    "eslint-plugin-prettier": "^5.2.3",
     "eslint-plugin-react": "^7.23.2",
     "npm-run-all": "^4.1.5",
     "prettier": "^3.0.3",
     "semantic-ui-less": "^2.4.1",
-    "source-map-explorer": "^2.5.0"
+    "source-map-explorer": "^2.5.0",
+    "typescript": "^5.7.3"
   },
   "jest": {
     "transformIgnorePatterns": [
       "node_modules/(?!axios)/"
     ]
-  }
+  },
+  "packageManager": "yarn@4.6.0"
 }
