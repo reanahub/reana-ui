@@ -9,6 +9,8 @@ ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /code
 COPY . /code
 
+RUN yarn set version 4.6.0
+
 # Build frontend application
 # hadolint ignore=DL3003,DL3008
 RUN apt-get update -y && \
