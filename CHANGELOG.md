@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.9.5](https://github.com/reanahub/reana-ui/compare/0.9.4...0.9.5) (2025-05-20)
+
+
+### Build
+
+* **docker:** fix FromAsCasing warning ([#425](https://github.com/reanahub/reana-ui/issues/425)) ([63f2e31](https://github.com/reanahub/reana-ui/commit/63f2e31c230aeb3d74ff12c9aab07981e663a1f5)), closes [#410](https://github.com/reanahub/reana-ui/issues/410)
+
+
+### Continuous integration
+
+* **runners:** upgrade CI runners to Ubuntu 22.04 ([#422](https://github.com/reanahub/reana-ui/issues/422)) ([e2061a9](https://github.com/reanahub/reana-ui/commit/e2061a91fc696b14569719d836e10b4f564b1a2b))
+
 ## [0.9.4](https://github.com/reanahub/reana-ui/compare/0.9.3...0.9.4) (2024-03-04)
 
 
