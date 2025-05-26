@@ -2,7 +2,7 @@
   -*- coding: utf-8 -*-
 
   This file is part of REANA.
-  Copyright (C) 2020, 2022, 2023 CERN.
+  Copyright (C) 2020, 2022, 2023, 2025 CERN.
 
   REANA is free software; you can redistribute it and/or modify it
   under the terms of the MIT License; see LICENSE file for more details.
@@ -215,10 +215,10 @@ export function parseLogs(logs) {
       );
     }
   }
-
   return {
     jobLogs: parsedLogs.job_logs,
     engineLogs: parsedLogs.workflow_logs,
+    serviceLogs: parsedLogs.service_logs,
   };
 }
 

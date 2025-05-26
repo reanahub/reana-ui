@@ -2,7 +2,7 @@
   -*- coding: utf-8 -*-
 
   This file is part of REANA.
-  Copyright (C) 2020, 2022, 2023, 2024 CERN.
+  Copyright (C) 2020, 2022, 2023, 2024, 2025 CERN.
 
   REANA is free software; you can redistribute it and/or modify it
   under the terms of the MIT License; see LICENSE file for more details.
@@ -114,6 +114,14 @@ export default function WorkflowDetails() {
     {
       menuItem: { key: "job-logs", icon: "terminal", content: "Job logs" },
       render: () => <WorkflowLogs workflow={workflow} />,
+    },
+    {
+      menuItem: {
+        key: "service-logs",
+        icon: "cloud",
+        content: "Service logs",
+      },
+      render: () => <WorkflowLogs service workflow={workflow} />,
     },
     {
       menuItem: {
