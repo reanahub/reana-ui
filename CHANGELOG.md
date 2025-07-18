@@ -1,3 +1,5 @@
+<!-- markdownlint-disable MD013 -->
+
 # Changelog
 
 ## [0.9.4](https://github.com/reanahub/reana-ui/compare/0.9.3...0.9.4) (2024-03-04)

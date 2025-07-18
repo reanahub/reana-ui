@@ -16,6 +16,7 @@ import { stringifyQueryParams } from "~/util";
 // URLs
 export const CONFIG_URL = `${api}/api/config`;
 export const USER_INFO_URL = `${api}/api/you`;
+export const CLUSTER_INFO_URL = `${api}/api/info`;
 export const USER_SIGNUP_URL = `${api}/api/register`;
 export const USER_OAUTH_SIGNIN_URL = (next, ssoProvider) =>
   `${api}/api/oauth/login/${ssoProvider}?${stringifyQueryParams({ next })}`;
@@ -91,6 +92,10 @@ class Client {
 
   getUser() {
     return this._request(USER_INFO_URL);
+  }
+
+  getClusterInfo() {
+    return this._request(CLUSTER_INFO_URL);
   }
 
   _sign(url, data) {
