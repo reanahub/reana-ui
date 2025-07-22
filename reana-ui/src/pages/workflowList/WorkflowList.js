@@ -23,10 +23,10 @@ import {
   loadingWorkflows,
   userHasWorkflows,
   getWorkflowRefresh,
+  getUsersSharedWithYou,
 } from "~/selectors";
 import { NON_DELETED_STATUSES } from "~/config";
-import { Title } from "~/components";
-import { Pagination, Search } from "~/components";
+import { Pagination, Search, Title } from "~/components";
 import { applyFilter } from "~/components/Search";
 import BasePage from "../BasePage";
 import Welcome from "./components/Welcome";
@@ -34,6 +34,7 @@ import WorkflowFilters from "./components/WorkflowFilters";
 import WorkflowList from "./components/WorkflowList";
 
 import styles from "./WorkflowList.module.scss";
+import _ from "lodash";
 
 const PAGE_SIZE = 5;
 
@@ -63,6 +64,7 @@ function Workflows() {
   const loading = useSelector(loadingWorkflows);
   const reanaToken = useSelector(getReanaToken);
   const configLoaded = useSelector(isConfigLoaded);
+  const usersSharedWithYou = useSelector(getUsersSharedWithYou, _.isEqual);
   const interval = useRef(null);
   const hideWelcomePage = !workflows || !configLoaded;
   const { pollingSecs } = config;
@@ -75,10 +77,15 @@ function Workflows() {
   useEffect(() => {
     let shared = false;
     let sharedBy = null;
+
     if (ownedByFilter === "anybody") {
       shared = true;
       sharedBy = null;
+    } else if (ownedByFilter === "others") {
+      shared = true;
+      sharedBy = `${usersSharedWithYou.map((user) => user.email)}`;
     } else if (ownedByFilter !== "you") {
+      // Owned by specific user
       sharedBy = ownedByFilter;
     }
 
@@ -125,6 +132,7 @@ function Workflows() {
     sharedWithFilter,
     sortDir,
     workflowRefresh,
+    usersSharedWithYou,
   ]);
 
   const cleanPolling = () => {
