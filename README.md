@@ -27,15 +27,49 @@ The detailed information on how to install and use REANA can be found in
 
 ## Development
 
-```console
-$ git clone https://github.com/reanahub/reana-ui.git
-$ cd reana-ui/reana-ui
-$ yarn
-$ yarn start # make sure REANA_SERVER_URL env var is set
-$ firefox localhost:3000
+If you would like to develop this `reana-ui` package locally on your laptop
+(without compiling new container images of this component), you can proceed
+as follows.
+
+Install a local REANA instance on your laptop, following [REANA developer
+wiki](https://github.com/reanahub/reana/wiki/Using-live-code-reload-and-debug-mode).
+
+Install Node version 18 and Yarn version 4. If you are on macOS, beware that
+Yarn v4 may not be available in brew, so use the official upstream
+installation technique. For example:
+
+```
+mise use -g node@18
+open https://yarnpkg.com/getting-started/install
 ```
 
-## Yarn scripts
+Clone this repository if you haven't already and go into the React package
+directory:
+
+```console
+git clone https://github.com/reanahub/reana-ui.git
+cd reana-ui/reana-ui
+```
+
+We can now install dependencies and start the development server:
+
+```console
+yarn
+export REANA_SERVER_URL=https://localhost:30443
+yarn start
+```
+
+You can now visit `https://localhost:3000` to see your local development
+interface and start seeing your code changes live.
+
+Note that if you are using macOS and are having trouble running `yarn`, you may
+need to install several dependent packages:
+
+```console
+brew install pkg-config cairo pango libpng jpeg giflib librsvg pixman
+```
+
+Available Yarn scripts:
 
 - `start`: start a development server with live reload
 - `build`: build a production-ready bundle in the `build` folder
