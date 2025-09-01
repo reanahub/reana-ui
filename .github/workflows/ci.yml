@@ -1,5 +1,5 @@
 # This file is part of REANA.
-# Copyright (C) 2020, 2022, 2024 CERN.
+# Copyright (C) 2020, 2022, 2024, 2025 CERN.
 #
 # REANA is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -79,8 +79,11 @@ jobs:
         with:
           node-version: "18"
 
-      - name: Install project dependencies
-        run: yarn global add prettier
+      - name: Enable corepack and set yarn version
+        run: corepack enable && yarn set version 4.6.0
+
+      - name: Install prettier
+        run: yarn add prettier
 
       - name: Run prettier code formatter
         run: ./run-tests.sh --check-prettier
@@ -96,8 +99,11 @@ jobs:
         with:
           node-version: "18"
 
-      - name: Install project dependencies
-        run: yarn global add eslint
+      - name: Enable corepack and set yarn version
+        run: corepack enable && yarn set version 4.6.0
+
+      - name: Install eslint
+        run: cd reana-ui && yarn add --dev && cd ..
 
       - name: Run prettier code formatter
         run: ./run-tests.sh --check-lint
@@ -113,8 +119,8 @@ jobs:
         with:
           node-version: "18"
 
-      - name: Install project dependencies
-        run: yarn
+      - name: Enable corepack and set yarn version
+        run: corepack enable && yarn set version 4.6.0
 
       - name: Run JavaScript tests
         run: ./run-tests.sh --check-js-tests
