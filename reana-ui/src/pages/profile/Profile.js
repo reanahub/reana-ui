@@ -9,7 +9,7 @@
 */
 
 import { Container } from "semantic-ui-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
 import { getConfig, getReanaToken } from "~/selectors";
@@ -21,15 +21,24 @@ import Quota from "./components/Quota";
 import { Title } from "~/components";
 
 import styles from "./Profile.module.scss";
+import client from "~/client";
 
 export default function Profile() {
   const dispatch = useDispatch();
   const reanaToken = useSelector(getReanaToken);
   const { quotaEnabled } = useSelector(getConfig);
 
+  const [hasGitLabIntegration, setHasGitLabIntegration] = useState(null);
+
   useEffect(() => {
     dispatch(loadUser({ loader: false }));
   }, [dispatch]);
+
+  useEffect(() => {
+    client.getClusterInfo().then((res) => {
+      setHasGitLabIntegration(!!res.data.gitlab_host["value"]);
+    });
+  }, []);
 
   return (
     <BasePage title="Your profile">
@@ -40,10 +49,12 @@ export default function Profile() {
         </div>
         {reanaToken && (
           <>
-            <div>
-              <Title>Your GitLab projects</Title>
-              <GitLabProjects />
-            </div>
+            {hasGitLabIntegration && (
+              <div>
+                <Title>Your GitLab projects</Title>
+                <GitLabProjects />
+              </div>
+            )}
             {quotaEnabled && (
               <div>
                 <Title>Your quota</Title>
