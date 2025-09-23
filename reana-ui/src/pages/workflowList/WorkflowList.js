@@ -50,6 +50,7 @@ function Workflows() {
   const [refreshedAt, setRefreshedAt] = useState(currentUTCTime());
   const [pagination, setPagination] = useState({ page: 1, size: PAGE_SIZE });
   const [statusFilter, setStatusFilter] = useState(NON_DELETED_STATUSES);
+  const [interactiveOnlyFilter, setInteractiveOnlyFilter] = useState(false);
   const [searchFilter, setSearchFilter] = useState();
   const [ownedByFilter, setOwnedByFilter] = useState();
   const [sharedWithFilter, setSharedWithFilter] = useState();
@@ -91,6 +92,7 @@ function Workflows() {
         sharedBy,
         sharedWith: sharedWithFilter,
         sort: sortDir,
+        ...(interactiveOnlyFilter ? { type: "interactive" } : {}),
       }),
     );
 
@@ -108,6 +110,7 @@ function Workflows() {
             sharedWith: sharedWithFilter,
             sort: sortDir,
             showLoader,
+            ...(interactiveOnlyFilter ? { type: "interactive" } : {}),
           }),
         );
         setRefreshedAt(currentUTCTime());
@@ -125,6 +128,7 @@ function Workflows() {
     sharedWithFilter,
     sortDir,
     workflowRefresh,
+    interactiveOnlyFilter,
   ]);
 
   const cleanPolling = () => {
@@ -172,6 +176,12 @@ function Workflows() {
           statusFilter={statusFilter}
           setStatusFilter={applyFilter(
             setStatusFilter,
+            pagination,
+            setPagination,
+          )}
+          interactiveOnlyFilter={interactiveOnlyFilter}
+          setInteractiveOnlyFilter={applyFilter(
+            setInteractiveOnlyFilter,
             pagination,
             setPagination,
           )}
