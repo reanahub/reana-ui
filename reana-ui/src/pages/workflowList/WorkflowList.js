@@ -15,7 +15,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Container, Dimmer, Dropdown, Icon, Loader } from "semantic-ui-react";
 import isEqual from "lodash/isEqual";
 
-import { fetchWorkflows } from "~/actions";
+import { fetchUsersSharedWithYou, fetchWorkflows } from "~/actions";
 import {
   getConfig,
   getReanaToken,
@@ -25,6 +25,7 @@ import {
   loadingWorkflows,
   userHasWorkflows,
   getWorkflowRefresh,
+  getUsersSharedWithYou,
 } from "~/selectors";
 import { NON_DELETED_STATUSES } from "~/config";
 import { Title, Pagination, Search } from "~/components";
@@ -58,6 +59,7 @@ function Workflows() {
   const workflows = useSelector(getWorkflows);
   const workflowsCount = useSelector(getWorkflowsCount);
   const hasUserWorkflows = useSelector(userHasWorkflows);
+  const usersSharedWithYou = useSelector(getUsersSharedWithYou);
   const workflowRefresh = useSelector(getWorkflowRefresh);
   const loading = useSelector(loadingWorkflows);
   const reanaToken = useSelector(getReanaToken);
@@ -82,16 +84,26 @@ function Workflows() {
   const [committedSearch, setCommittedSearch] = useState(initialSearch);
 
   // Owned by derived from URL
-  const ownedByFilter = useMemo(
-    () => (searchParams.get("shared") === "true" ? "anybody" : "you"),
-    [searchParams],
-  );
+  const ownedByFilter = useMemo(() => {
+    const sharedBy = searchParams.get("shared-by");
+    if (sharedBy) {
+      // Explicit owner selected
+      return sharedBy;
+    }
+    // Fallback to "you" vs "anybody" based on shared
+    return searchParams.get("shared") === "true" ? "anybody" : "you";
+  }, [searchParams]);
 
   // Shared with flag from URL
   const sharedWithMode = useMemo(
     () => searchParams.get("shared-with") === "true",
     [searchParams],
   );
+
+  // Load information about users who have shared workflows with you
+  useEffect(() => {
+    dispatch(fetchUsersSharedWithYou());
+  }, [dispatch]);
 
   const [sharedWithFilter, setSharedWithFilter] = useState(() =>
     searchParams.get("shared-with") === "true" ? "anybody" : undefined,
@@ -177,8 +189,19 @@ function Workflows() {
       (prev) => {
         const qp = new URLSearchParams(prev);
         qp.delete("shared-with"); // ensure shared-with mode is off
-        if (next === "anybody") qp.set("shared", "true");
-        else qp.delete("shared"); // default is "you"
+        if (next === "anybody") {
+          // Show "anybody" workflows
+          qp.set("shared", "true");
+          qp.delete("shared-by");
+        } else if (!next || next === "you") {
+          // Back to "you" (default view)
+          qp.delete("shared");
+          qp.delete("shared-by");
+        } else {
+          // Specific owner selected (e.g. john.doe@example.org)
+          qp.delete("shared");
+          qp.set("shared-by", next);
+        }
         qp.delete("page");
         return qp;
       },
@@ -192,6 +215,7 @@ function Workflows() {
         if (on) {
           qp.set("shared-with", "true");
           qp.delete("shared");
+          qp.delete("shared-by");
         } else {
           qp.delete("shared-with");
         }
@@ -266,12 +290,18 @@ function Workflows() {
     // owned-by vs shared-with
     const inSharedWith = sharedWithMode;
 
+    // owned_by=you          -> shared=false
+    // owned_by=anybody      -> shared=true
+    // owned_by=<user@email> -> shared=false, shared_by=<user@email>
     let shared, sharedBy;
     if (!inSharedWith) {
       if (ownedByFilter === "anybody") {
         shared = true;
         sharedBy = null;
-      } else if (ownedByFilter && ownedByFilter !== "you") {
+      } else if (!ownedByFilter || ownedByFilter === "you") {
+        shared = false;
+      } else {
+        shared = false;
         sharedBy = ownedByFilter;
       }
     }
@@ -388,7 +418,9 @@ function Workflows() {
     );
   }
 
-  if (!hasUserWorkflows) return <Welcome />;
+  if (!hasUserWorkflows && usersSharedWithYou.length === 0) {
+    return <Welcome />;
+  }
 
   // Flatten workflows object to array for rendering
   const workflowArray = Object.values(workflows || {});
