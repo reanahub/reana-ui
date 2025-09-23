@@ -114,6 +114,26 @@ function Workflows() {
     () => searchParams.get("sort") || "desc",
     [searchParams],
   );
+  const interactiveOnlyFilter = useMemo(
+    () => searchParams.get("open-sessions") === "true",
+    [searchParams],
+  );
+
+  const setInteractiveOnlyFilterInUrl = (on) => {
+    setSearchParams(
+      (prev) => {
+        const qp = new URLSearchParams(prev);
+        if (on) {
+          qp.set("open-sessions", "true");
+        } else {
+          qp.delete("open-sessions");
+        }
+        qp.delete("page"); // reset pagination when filter changes
+        return qp;
+      },
+      { replace: false },
+    );
+  };
 
   // URL writers
   const setStatusFilterInUrl = (nextStatus) => {
@@ -282,6 +302,7 @@ function Workflows() {
       sharedBy,
       sharedWith: sharedWithParam,
       sort: sortDir,
+      ...(interactiveOnlyFilter ? { type: "interactive" } : {}),
     };
   }, [
     pagination,
@@ -293,6 +314,7 @@ function Workflows() {
     sharedWithFilter,
     sharedWithMode,
     sortDir,
+    interactiveOnlyFilter,
   ]);
 
   const lastParamsRef = useRef();
@@ -395,6 +417,8 @@ function Workflows() {
           showDeleted={showDeletedMode}
           setShowDeleted={setShowDeletedInUrl}
           statusExplicit={statusExplicit}
+          interactiveOnlyFilter={interactiveOnlyFilter}
+          setInteractiveOnlyFilter={setInteractiveOnlyFilterInUrl}
           ownedByFilter={ownedByFilter}
           setOwnedByFilter={setOwnedByFilter}
           sharedWithFilter={sharedWithFilter}

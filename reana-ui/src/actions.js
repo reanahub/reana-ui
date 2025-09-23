@@ -282,6 +282,7 @@ export function fetchWorkflows({
   showLoader = true,
   workflowIdOrName,
   shared = false,
+  type,
 }) {
   return async (dispatch) => {
     if (showLoader) {
@@ -298,6 +299,7 @@ export function fetchWorkflows({
         sort,
         workflowIdOrName,
         shared,
+        ...(type ? { type } : {}),
       })
       .then((resp) =>
         dispatch({

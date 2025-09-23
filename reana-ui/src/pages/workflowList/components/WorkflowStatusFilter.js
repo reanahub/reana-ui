@@ -64,8 +64,8 @@ export default function WorkflowStatusFilters({
       </Grid.Column>
       <Grid.Column
         mobile={16}
-        tablet={5}
-        computer={4}
+        tablet={4}
+        computer={3}
         className="center aligned"
       >
         <Checkbox

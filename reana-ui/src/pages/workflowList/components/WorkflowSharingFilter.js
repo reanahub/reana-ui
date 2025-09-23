@@ -121,7 +121,7 @@ export default function WorkflowSharingFilters({
   };
 
   return (
-    <Grid.Column mobile={16} tablet={7} computer={6}>
+    <Grid.Column mobile={16} tablet={7} computer={4}>
       <div style={{ display: "flex" }}>
         <Dropdown
           fluid

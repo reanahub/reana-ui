@@ -16,6 +16,7 @@ import WorkflowSorting from "./WorkflowSorting";
 
 import styles from "./WorkflowFilters.module.scss";
 import WorkflowSharingFilters from "./WorkflowSharingFilter";
+import WorkflowSessionFilters from "./WorkflowSessionFilters";
 
 export default function WorkflowFilters({
   statusFilter,
@@ -31,6 +32,8 @@ export default function WorkflowFilters({
   sharedWithMode,
   setSharedWithFilter,
   setSharedWithModeInUrl,
+  interactiveOnlyFilter,
+  setInteractiveOnlyFilter,
 }) {
   return (
     <div className={styles.container}>
@@ -41,6 +44,10 @@ export default function WorkflowFilters({
           showDeleted={showDeleted}
           setShowDeleted={setShowDeleted}
           statusExplicit={statusExplicit}
+        />
+        <WorkflowSessionFilters
+          enabled={interactiveOnlyFilter}
+          filter={setInteractiveOnlyFilter}
         />
         <WorkflowSharingFilters
           ownedByFilter={ownedByFilter}
@@ -71,4 +78,6 @@ WorkflowFilters.propTypes = {
   sharedWithFilter: PropTypes.string,
   sharedWithMode: PropTypes.bool,
   setSharedWithFilter: PropTypes.func.isRequired,
+  interactiveOnlyFilter: PropTypes.bool.isRequired,
+  setInteractiveOnlyFilter: PropTypes.func.isRequired,
 };
