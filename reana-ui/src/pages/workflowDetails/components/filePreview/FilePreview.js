@@ -112,6 +112,7 @@ const PREVIEW_MIME_PREFIX_WHITELIST = {
   "image/": ImagePreview,
   "text/html": HTMLPreview,
   "text/": TextPreview,
+  "application/x-sh": TextPreview,
   "application/json": TextPreview,
   "application/pdf": PDFPreview,
   "application/x-root": ROOTPreview,
