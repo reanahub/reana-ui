@@ -9,9 +9,11 @@
 */
 
 import moment from "moment";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Container, Dimmer, Icon, Loader } from "semantic-ui-react";
+import isEqual from "lodash/isEqual";
 
 import { fetchWorkflows } from "~/actions";
 import {
@@ -25,14 +27,11 @@ import {
   getWorkflowRefresh,
 } from "~/selectors";
 import { NON_DELETED_STATUSES } from "~/config";
-import { Title } from "~/components";
-import { Pagination, Search } from "~/components";
-import { applyFilter } from "~/components/Search";
+import { Title, Pagination, Search } from "~/components";
 import BasePage from "../BasePage";
 import Welcome from "./components/Welcome";
 import WorkflowFilters from "./components/WorkflowFilters";
 import WorkflowList from "./components/WorkflowList";
-
 import styles from "./WorkflowList.module.scss";
 
 const PAGE_SIZE = 5;
@@ -48,12 +47,7 @@ export default function WorkflowListPage() {
 function Workflows() {
   const currentUTCTime = () => moment.utc().format("HH:mm:ss [UTC]");
   const [refreshedAt, setRefreshedAt] = useState(currentUTCTime());
-  const [pagination, setPagination] = useState({ page: 1, size: PAGE_SIZE });
-  const [statusFilter, setStatusFilter] = useState(NON_DELETED_STATUSES);
-  const [searchFilter, setSearchFilter] = useState();
-  const [ownedByFilter, setOwnedByFilter] = useState();
-  const [sharedWithFilter, setSharedWithFilter] = useState();
-  const [sortDir, setSortDir] = useState("desc");
+  const [searchParams, setSearchParams] = useSearchParams();
   const dispatch = useDispatch();
   const config = useSelector(getConfig);
   const workflows = useSelector(getWorkflows);
@@ -63,73 +57,290 @@ function Workflows() {
   const loading = useSelector(loadingWorkflows);
   const reanaToken = useSelector(getReanaToken);
   const configLoaded = useSelector(isConfigLoaded);
-  const interval = useRef(null);
   const hideWelcomePage = !workflows || !configLoaded;
   const { pollingSecs } = config;
 
-  // FIXME: workflowRefresh is a temporary solution to refresh workflow list
-  // by saving random number in redux. It should be refactored in the future
-  // once websockets will be implemented
-  useEffect(() => cleanPolling(), [workflowRefresh]);
+  const page = useMemo(() => {
+    const n = parseInt(searchParams.get("page") || "", 10);
+    return Number.isFinite(n) && n > 0 ? n : 1;
+  }, [searchParams]);
+  const pagination = useMemo(() => ({ page, size: PAGE_SIZE }), [page]);
+  const initialSearch = searchParams.get("search") || "";
+  const [searchText, setSearchText] = useState(initialSearch);
+  const [committedSearch, setCommittedSearch] = useState(initialSearch);
 
-  useEffect(() => {
-    let shared = false;
-    let sharedBy = null;
-    if (ownedByFilter === "anybody") {
-      shared = true;
-      sharedBy = null;
-    } else if (ownedByFilter !== "you") {
-      sharedBy = ownedByFilter;
-    }
+  // Owned by derived from URL
+  const ownedByFilter = useMemo(
+    () => (searchParams.get("shared") === "true" ? "anybody" : "you"),
+    [searchParams],
+  );
 
-    dispatch(
-      fetchWorkflows({
-        pagination: { ...pagination },
-        search: searchFilter,
-        status: statusFilter,
-        shared,
-        sharedBy,
-        sharedWith: sharedWithFilter,
-        sort: sortDir,
-      }),
+  // Shared with flag from URL
+  const sharedWithMode = useMemo(
+    () => searchParams.get("shared-with") === "true",
+    [searchParams],
+  );
+
+  const [sharedWithFilter, setSharedWithFilter] = useState(() =>
+    searchParams.get("shared-with") === "true" ? "anybody" : undefined,
+  );
+  const showDeletedMode = useMemo(
+    () => searchParams.get("show-deleted") === "true",
+    [searchParams],
+  );
+
+  // Single value Status single value from URL - undefined means all
+  const statusFilter = useMemo(
+    () => searchParams.get("status") ?? undefined,
+    [searchParams],
+  );
+  const statusExplicit = useMemo(
+    () => searchParams.has("status"),
+    [searchParams],
+  );
+  const sortDir = useMemo(
+    () => searchParams.get("sort") || "desc",
+    [searchParams],
+  );
+
+  // URL writers
+  const setStatusFilterInUrl = (nextStatus) => {
+    setSearchParams(
+      (prev) => {
+        const qp = new URLSearchParams(prev);
+        if (nextStatus) qp.set("status", nextStatus);
+        else qp.delete("status");
+        qp.delete("page");
+        return qp;
+      },
+      { replace: false },
     );
+  };
+  const setShowDeletedInUrl = (on) => {
+    setSearchParams(
+      (prev) => {
+        const qp = new URLSearchParams(prev);
+        if (on) qp.set("show-deleted", "true");
+        else qp.delete("show-deleted");
+        qp.delete("page");
+        return qp;
+      },
+      { replace: false },
+    );
+  };
+  const setSortDirInUrl = (nextSort) => {
+    setSearchParams(
+      (prev) => {
+        const qp = new URLSearchParams(prev);
+        if (nextSort && nextSort !== "desc") qp.set("sort", nextSort);
+        else qp.delete("sort");
+        qp.delete("page");
+        return qp;
+      },
+      { replace: false },
+    );
+  };
+  const setOwnedByFilter = (next) => {
+    setSearchParams(
+      (prev) => {
+        const qp = new URLSearchParams(prev);
+        qp.delete("shared-with"); // ensure shared-with mode is off
+        if (next === "anybody") qp.set("shared", "true");
+        else qp.delete("shared"); // default is "you"
+        qp.delete("page");
+        return qp;
+      },
+      { replace: false },
+    );
+  };
+  const setSharedWithModeInUrl = (on) => {
+    setSearchParams(
+      (prev) => {
+        const qp = new URLSearchParams(prev);
+        if (on) {
+          qp.set("shared-with", "true");
+          qp.delete("shared");
+        } else {
+          qp.delete("shared-with");
+        }
+        qp.delete("page");
+        return qp;
+      },
+      { replace: false },
+    );
+  };
 
-    if (!interval.current && reanaToken && pollingSecs) {
-      interval.current = setInterval(() => {
-        const showLoader = false;
+  const gotoPage = (nextPage) => {
+    setSearchParams(
+      (prev) => {
+        const qp = new URLSearchParams(prev);
+        if (nextPage > 1) qp.set("page", String(nextPage));
+        else qp.delete("page");
+        return qp;
+      },
+      { replace: false },
+    );
+  };
 
-        dispatch(
-          fetchWorkflows({
-            pagination: { ...pagination },
-            search: searchFilter,
-            status: statusFilter,
-            shared,
-            sharedBy,
-            sharedWith: sharedWithFilter,
-            sort: sortDir,
-            showLoader,
-          }),
-        );
-        setRefreshedAt(currentUTCTime());
-      }, pollingSecs * 1000);
+  // Keep URL and search box in sync
+  useEffect(() => {
+    const urlSearch = searchParams.get("search") || "";
+    // If URL changed, update textbox and committedSearch
+    if (urlSearch !== committedSearch && urlSearch !== searchText) {
+      setSearchText(urlSearch);
+      setCommittedSearch(urlSearch);
+      return;
     }
-    return cleanPolling;
+    if (committedSearch && urlSearch !== committedSearch) {
+      setSearchParams(
+        (prev) => {
+          const qp = new URLSearchParams(prev);
+          qp.set("search", committedSearch);
+          return qp;
+        },
+        { replace: false },
+      );
+    } else if (!committedSearch && urlSearch) {
+      setSearchParams(
+        (prev) => {
+          const qp = new URLSearchParams(prev);
+          qp.delete("search");
+          return qp;
+        },
+        { replace: false },
+      );
+    }
+  }, [committedSearch, searchParams, searchText, setSearchParams]);
+
+  // if ?page= param is not in a valid format, or page is 1, remove page from URL
+  useEffect(() => {
+    const raw = searchParams.get("page");
+    const n = parseInt(raw || "", 10);
+    const shouldRemovePage =
+      searchParams.has("page") &&
+      (!raw || // page=empty string
+        !Number.isFinite(n) || // page=abc
+        n <= 1); // page=1, page=0
+
+    if (shouldRemovePage) {
+      const next = new URLSearchParams(searchParams);
+      next.delete("page");
+      setSearchParams(next, { replace: true });
+    }
+  }, [searchParams, setSearchParams]);
+
+  // Build API params from URL state
+  const requestParams = useMemo(() => {
+    // owned-by vs shared-with
+    const inSharedWith = sharedWithMode;
+
+    let shared, sharedBy;
+    if (!inSharedWith) {
+      if (ownedByFilter === "anybody") {
+        shared = true;
+        sharedBy = null;
+      } else if (ownedByFilter && ownedByFilter !== "you") {
+        sharedBy = ownedByFilter;
+      }
+    }
+
+    const sharedWithParam = inSharedWith
+      ? sharedWithFilter && sharedWithFilter !== "anybody"
+        ? sharedWithFilter
+        : true
+      : undefined;
+
+    // Status appending
+    let statusForApi;
+    if (statusExplicit) {
+      statusForApi = showDeletedMode
+        ? statusFilter === "deleted"
+          ? ["deleted"]
+          : [statusFilter, "deleted"]
+        : [statusFilter];
+    } else {
+      statusForApi = showDeletedMode ? undefined : NON_DELETED_STATUSES;
+    }
+
+    return {
+      pagination: { ...pagination },
+      search: committedSearch || undefined,
+      status: statusForApi,
+      shared,
+      sharedBy,
+      sharedWith: sharedWithParam,
+      sort: sortDir,
+    };
   }, [
-    pollingSecs,
-    dispatch,
     pagination,
-    reanaToken,
-    searchFilter,
+    committedSearch,
     statusFilter,
+    statusExplicit,
+    showDeletedMode,
     ownedByFilter,
     sharedWithFilter,
+    sharedWithMode,
     sortDir,
-    workflowRefresh,
   ]);
 
-  const cleanPolling = () => {
-    clearInterval(interval.current);
-    interval.current = null;
+  const lastParamsRef = useRef();
+  const rafIdRef = useRef(0);
+  useEffect(() => {
+    if (!configLoaded || !reanaToken) return;
+    if (rafIdRef.current) cancelAnimationFrame(rafIdRef.current);
+    const paramsForFrame = requestParams;
+
+    rafIdRef.current = requestAnimationFrame(() => {
+      if (!isEqual(lastParamsRef.current, paramsForFrame)) {
+        lastParamsRef.current = paramsForFrame;
+        dispatch(fetchWorkflows(paramsForFrame));
+      }
+      rafIdRef.current = 0;
+    });
+
+    return () => {
+      if (rafIdRef.current) cancelAnimationFrame(rafIdRef.current);
+      rafIdRef.current = 0;
+    };
+  }, [dispatch, requestParams, configLoaded, reanaToken]);
+
+  const latestParamsRef = useRef(requestParams);
+  useEffect(() => {
+    latestParamsRef.current = requestParams;
+  }, [requestParams]);
+
+  useEffect(() => {
+    if (!reanaToken || !pollingSecs || !configLoaded) return;
+    const id = setInterval(() => {
+      const apiParams = latestParamsRef.current;
+      dispatch(fetchWorkflows({ ...apiParams, showLoader: false }));
+      setRefreshedAt(currentUTCTime());
+    }, pollingSecs * 1000);
+    return () => clearInterval(id);
+  }, [dispatch, reanaToken, pollingSecs, configLoaded]);
+
+  // External refresh trigger
+  useEffect(() => {
+    if (!configLoaded || !reanaToken) return;
+    if (workflowRefresh === undefined) return;
+    const apiParams = latestParamsRef.current;
+    dispatch(fetchWorkflows({ ...apiParams, showLoader: false }));
+  }, [workflowRefresh, dispatch, configLoaded, reanaToken]);
+
+  // Run search using Enter/Click and go to page 1
+  const submitSearch = () => {
+    const q = searchText.trim();
+    setSearchParams(
+      (prev) => {
+        const qp = new URLSearchParams(prev);
+        if (q) qp.set("search", q);
+        else qp.delete("search");
+        qp.delete("page");
+        return qp;
+      },
+      { replace: false },
+    );
+    setCommittedSearch(q);
   };
 
   if (hideWelcomePage) {
@@ -142,14 +353,10 @@ function Workflows() {
     );
   }
 
-  if (!hasUserWorkflows) {
-    return <Welcome />;
-  }
+  if (!hasUserWorkflows) return <Welcome />;
 
-  //TODO: workflows should be flattened in the redux to avoid doing it on every render
-  const workflowArray = Object.entries(workflows).map(
-    ([_, workflow]) => workflow,
-  );
+  // Flatten workflows object to array for rendering
+  const workflowArray = Object.values(workflows || {});
 
   return (
     <div className={styles.container}>
@@ -166,41 +373,33 @@ function Workflows() {
           </span>
         </Title>
         <Search
-          search={applyFilter(setSearchFilter, pagination, setPagination)}
+          value={searchText}
+          onChange={setSearchText}
+          onSubmit={submitSearch}
         />
         <WorkflowFilters
           statusFilter={statusFilter}
-          setStatusFilter={applyFilter(
-            setStatusFilter,
-            pagination,
-            setPagination,
-          )}
+          setStatusFilter={setStatusFilterInUrl}
+          showDeleted={showDeletedMode}
+          setShowDeleted={setShowDeletedInUrl}
+          statusExplicit={statusExplicit}
           ownedByFilter={ownedByFilter}
-          setOwnedByFilter={applyFilter(
-            setOwnedByFilter,
-            pagination,
-            setPagination,
-          )}
+          setOwnedByFilter={setOwnedByFilter}
           sharedWithFilter={sharedWithFilter}
-          setSharedWithFilter={applyFilter(
-            setSharedWithFilter,
-            pagination,
-            setPagination,
-          )}
+          sharedWithMode={sharedWithMode}
+          setSharedWithFilter={setSharedWithFilter}
           sortDir={sortDir}
-          setSortDir={applyFilter(setSortDir, pagination, setPagination)}
+          setSortDir={setSortDirInUrl}
+          setSharedWithModeInUrl={setSharedWithModeInUrl}
         />
         <WorkflowList workflows={workflowArray} loading={loading} />
       </Container>
       {workflowsCount > PAGE_SIZE && !loading && (
         <Pagination
           className={styles.pagination}
-          activePage={pagination.page}
+          activePage={page}
           totalPages={Math.ceil(workflowsCount / PAGE_SIZE)}
-          onPageChange={(_, { activePage }) => {
-            cleanPolling();
-            setPagination({ ...pagination, page: activePage });
-          }}
+          onPageChange={(_, { activePage }) => gotoPage(activePage)}
         />
       )}
     </div>

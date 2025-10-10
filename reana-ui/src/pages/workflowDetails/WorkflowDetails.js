@@ -10,7 +10,7 @@
 
 import { useCallback, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams, useNavigate } from "react-router-dom";
 import { Container, Dimmer, Icon, Loader, Tab } from "semantic-ui-react";
 
 import { fetchWorkflow, fetchWorkflowLogs } from "~/actions";
@@ -43,8 +43,13 @@ import styles from "./WorkflowDetails.module.scss";
 const FINISHED_STATUSES = ["finished", "failed", "stopped", "deleted"];
 
 export default function WorkflowDetails() {
-  const { id: workflowId } = useParams();
-
+  const {
+    id: workflowId,
+    tab: tabFromPath = "",
+    job: jobFromPath,
+  } = useParams();
+  const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const dispatch = useDispatch();
   const workflow = useSelector(getWorkflow(workflowId));
   const loading = useSelector(loadingWorkflows);
@@ -52,6 +57,43 @@ export default function WorkflowDetails() {
   const { pollingSecs } = useSelector(getConfig);
   const interval = useRef(null);
   const workflowRefresh = useSelector(getWorkflowRefresh);
+
+  const getPageFromUrl = () => {
+    const n = parseInt(searchParams.get("page") || "", 10);
+    return Number.isFinite(n) && n > 0 ? n : 1;
+  };
+
+  const page = getPageFromUrl();
+
+  // if ?page= param is not in a valid format, or page is 1, remove page from URL
+  useEffect(() => {
+    const raw = searchParams.get("page");
+    const n = parseInt(raw || "", 10);
+    const shouldRemovePage =
+      searchParams.has("page") &&
+      (!raw || // page=empty string
+        !Number.isFinite(n) || // page=abc
+        n <= 1); // page=1, page=0
+
+    if (shouldRemovePage) {
+      const next = new URLSearchParams(searchParams);
+      next.delete("page");
+      setSearchParams(next, { replace: true });
+    }
+  }, [searchParams, setSearchParams]);
+
+  const gotoPage = (nextPage) => {
+    // Merge with existing params - keeps search, tab, etc.
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev);
+        if (nextPage > 1) next.set("page", String(nextPage));
+        else next.delete("page"); // if page 1, remove param
+        return next;
+      },
+      { replace: false },
+    );
+  };
 
   const refetchWorkflow = useCallback(() => {
     const options = { refetch: true, showLoader: false };
@@ -129,7 +171,14 @@ export default function WorkflowDetails() {
         icon: "folder outline",
         content: "Workspace",
       },
-      render: () => <WorkflowFiles title="Workspace" id={workflow.id} />,
+      render: () => (
+        <WorkflowFiles
+          title="Workspace"
+          id={workflow.id}
+          page={page}
+          onPageChange={gotoPage}
+        />
+      ),
     },
     {
       menuItem: {
@@ -141,13 +190,19 @@ export default function WorkflowDetails() {
     },
   ];
 
-  // If the workflow has finished and it did not fail, then engine logs are shown.
+  // If the workflow has finished, and it did not fail, then engine logs are shown.
   // Otherwise, job logs are displayed.
   const hasFinished = FINISHED_STATUSES.includes(workflow.status);
   let defaultActiveIndex = 1; // job logs
   if (hasFinished && workflow.status !== "failed") {
     defaultActiveIndex = 0; // engine logs
   }
+
+  // If URL has a /:tab value, use it to find the index
+  const tabKeys = panes.map((p) => p.menuItem.key);
+  const activeTabIndex = tabFromPath
+    ? Math.max(tabKeys.indexOf(tabFromPath), 0)
+    : defaultActiveIndex;
 
   const pageTitle = `${workflow.name} #${workflow.run}`;
 
@@ -174,7 +229,27 @@ export default function WorkflowDetails() {
         <Tab
           menu={{ secondary: true, pointing: true }}
           panes={panes}
-          defaultActiveIndex={defaultActiveIndex}
+          activeIndex={activeTabIndex}
+          onTabChange={(_, data) => {
+            const nextKey = tabKeys[data.activeIndex];
+            // Preserve query params only if needed (page and search are only meaningful for workspace)
+            const keepQuery =
+              nextKey === "workspace"
+                ? (() => {
+                    const q = new URLSearchParams(searchParams);
+                    return q.toString() ? `?${q.toString()}` : "";
+                  })()
+                : "";
+
+            // Build new path, for job-logs, preserve current :job path segment if present.
+            const base = `/workflows/${workflowId}`;
+            const path =
+              nextKey === "job-logs"
+                ? `${base}/job-logs${jobFromPath ? `/${jobFromPath}` : ""}`
+                : `${base}/${nextKey}`;
+
+            navigate(`${path}${keepQuery}`, { replace: false });
+          }}
         />
         <InteractiveSessionModal />
         <WorkflowDeleteModal />

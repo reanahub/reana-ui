@@ -10,13 +10,13 @@
 
 import sortBy from "lodash/sortBy";
 import PropTypes from "prop-types";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
+import { useSearchParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Icon, Loader, Message, Segment, Table } from "semantic-ui-react";
 
 import { fetchWorkflowFiles } from "~/actions";
 import { Pagination, Search } from "~/components";
-import { applyFilter } from "~/components/Search";
 import {
   getWorkflowFiles,
   getWorkflowFilesCount,
@@ -29,7 +29,7 @@ import styles from "./WorkflowFiles.module.scss";
 
 const PAGE_SIZE = 15;
 
-export default function WorkflowFiles({ id }) {
+export default function WorkflowFiles({ id, page = 1, onPageChange }) {
   const dispatch = useDispatch();
   const loading = useSelector(loadingDetails);
   const _files = useSelector(getWorkflowFiles(id));
@@ -37,13 +37,28 @@ export default function WorkflowFiles({ id }) {
 
   const [files, setFiles] = useState();
   const [sorting, setSorting] = useState({ column: null, direction: null });
-  const [pagination, setPagination] = useState({ page: 1, size: PAGE_SIZE });
-  const [searchFilter, setSearchFilter] = useState();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchText, setSearchText] = useState(
+    () => searchParams.get("search") || "",
+  );
+  const searchQuery = (searchParams.get("search") || "").trim();
   const [filePreview, setFilePreview] = useState(null);
 
+  // Use pagination from parent-controlled URL page (memoized to avoid extra effects)
+  const pagination = useMemo(
+    () => ({ page: page || 1, size: PAGE_SIZE }),
+    [page],
+  );
+
+  // Keep input in sync when URL changes
   useEffect(() => {
-    dispatch(fetchWorkflowFiles(id, pagination, searchFilter));
-  }, [dispatch, id, pagination, searchFilter]);
+    const urlSearch = searchParams.get("search") || "";
+    setSearchText((prev) => (prev !== urlSearch ? urlSearch : prev));
+  }, [searchParams]);
+
+  useEffect(() => {
+    dispatch(fetchWorkflowFiles(id, pagination, searchQuery));
+  }, [dispatch, id, pagination, searchQuery]);
 
   useEffect(() => {
     setFiles(_files);
@@ -81,6 +96,23 @@ export default function WorkflowFiles({ id }) {
     />
   );
 
+  // Submit search on Enter/click, then reset to page 1 (remove ?page)
+  const submitSearch = () => {
+    const q = searchText.trim();
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev);
+        if (q) next.set("search", q);
+        else next.delete("search");
+        // Reset to first page by removing page param
+        next.delete("page");
+        return next;
+      },
+      { replace: true },
+    );
+    resetSort();
+  };
+
   return files === null ? (
     <Message
       icon="info circle"
@@ -91,7 +123,9 @@ export default function WorkflowFiles({ id }) {
     <>
       <WorkflowRetentionRules id={id} />
       <Search
-        search={applyFilter(setSearchFilter, pagination, setPagination)}
+        value={searchText}
+        onChange={setSearchText}
+        onSubmit={submitSearch}
       />
       {loading ? (
         <Loader active inline="centered" className={styles["loader"]} />
@@ -163,7 +197,9 @@ export default function WorkflowFiles({ id }) {
                 activePage={pagination.page}
                 totalPages={Math.ceil(filesCount / PAGE_SIZE)}
                 onPageChange={(_, { activePage }) => {
-                  setPagination({ ...pagination, page: activePage });
+                  if (typeof onPageChange === "function") {
+                    onPageChange(activePage);
+                  }
                   resetSort();
                 }}
                 size="mini"
@@ -178,4 +214,6 @@ export default function WorkflowFiles({ id }) {
 
 WorkflowFiles.propTypes = {
   id: PropTypes.string.isRequired,
+  page: PropTypes.number, // Current page coming from the URL
+  onPageChange: PropTypes.func, // Notify parent to update the URL when user paginates
 };

@@ -9,8 +9,8 @@
 */
 
 import { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
-import findKey from "lodash/findKey";
 import { useDispatch, useSelector } from "react-redux";
 import { Icon, Dropdown, Label, Loader, Message } from "semantic-ui-react";
 
@@ -50,7 +50,43 @@ EngineLogs.propTypes = {
 // UI design should be changed to allow for multiple services to be displayed at once if another service is introduced.
 function ServiceLogs({ isDask, components, workflowStatus }) {
   const isExecuting = NON_FINISHED_STATUSES.includes(workflowStatus);
-  const [selectedComponentIndex, setSelectedComponentIndex] = useState("0");
+  // start empty to avoid reading components[0] before data arrives
+  const [selectedComponentIndex, setSelectedComponentIndex] = useState("");
+  const { id: workflowId, job: componentFromPath } = useParams();
+  const navigate = useNavigate();
+
+  // Keep dropdown selection and URL in sync (must run before any early return to satisfy hooks rule)
+  useEffect(() => {
+    if (!isDask || isExecuting) return;
+    if (!Array.isArray(components) || components.length === 0) {
+      if (selectedComponentIndex !== "") setSelectedComponentIndex("");
+      return;
+    }
+    if (componentFromPath) {
+      const idx = components.findIndex(
+        (c) => c && c.component === componentFromPath,
+      );
+      if (idx >= 0) {
+        if (String(idx) !== selectedComponentIndex) {
+          setSelectedComponentIndex(String(idx));
+        }
+        return;
+      }
+    }
+    // Standardize URL to first component when missing/invalid
+    navigate(
+      `/workflows/${workflowId}/service-logs/${encodeURIComponent(components[0].component)}`,
+      { replace: true },
+    );
+  }, [
+    isDask,
+    isExecuting,
+    components,
+    componentFromPath,
+    workflowId,
+    navigate,
+    selectedComponentIndex,
+  ]);
 
   if (!isDask) {
     return (
@@ -100,15 +136,30 @@ function ServiceLogs({ isDask, components, workflowStatus }) {
             selection
             options={dropdownOptions}
             value={selectedComponentIndex}
-            onChange={(_, { value }) => setSelectedComponentIndex(value)}
+            onChange={(_, { value }) => {
+              setSelectedComponentIndex(value);
+              const componentName = components?.[value]?.component;
+              if (componentName) {
+                navigate(
+                  `/workflows/${workflowId}/service-logs/${encodeURIComponent(componentName)}`,
+                  { replace: false },
+                );
+              }
+            }}
             className={styles.dropdown}
           />
         </div>
       </section>
-      {selectedComponentIndex && (
+      {components?.[selectedComponentIndex]?.content ? (
         <CodeSnippet dollarPrefix={false} classes={styles.logs}>
           {components[selectedComponentIndex].content}
         </CodeSnippet>
+      ) : (
+        <Message
+          icon="info circle"
+          content="There are no service logs to display."
+          info
+        />
       )}
     </>
   );
@@ -120,40 +171,71 @@ ServiceLogs.propTypes = {
 };
 
 function JobLogs({ logs }) {
-  function chooseLastStepID(logs) {
-    const failedStepId = findKey(logs, (log) => log.status === "failed");
-    if (failedStepId) return failedStepId;
+  const { id: workflowId, job: jobFromPath } = useParams();
+  const navigate = useNavigate();
 
-    const runningStepId = findKey(logs, (log) => log.status === "running");
-    if (runningStepId) return runningStepId;
+  // Standardize selector: path /workflows/:id/job-logs/:job where :job = backend_job_id
+  const urlBackendId = jobFromPath || undefined;
 
-    // Return the last step id if there are no failed or running steps.
-    return Object.keys(logs).pop();
-  }
+  // Pick a reasonable default backend job id
+  const allJobs = Object.values(logs);
+  const defaultBackendId =
+    allJobs.find((l) => l.status === "failed")?.backend_job_id ||
+    allJobs.find((l) => l.status === "running")?.backend_job_id ||
+    allJobs.at(-1)?.backend_job_id;
 
-  const lastStepID = chooseLastStepID(logs);
-  const [selectedStep, setSelectedStep] = useState(lastStepID);
+  const [selectedJobId, setSelectedJobId] = useState(
+    urlBackendId || defaultBackendId,
+  );
 
+  // If URL changes externally, reflect in state
   useEffect(() => {
-    // Only update the shown step logs if there was no log displayed before
-    // and there is one ready to be displayed now
-    if (lastStepID && !selectedStep) {
-      setSelectedStep(lastStepID);
+    const nextId = jobFromPath || undefined;
+    if (!nextId) return;
+    const exists = allJobs.some((l) => l.backend_job_id === nextId);
+    if (exists && nextId !== selectedJobId) {
+      selectedJobId(nextId);
     }
-  }, [logs, lastStepID, selectedStep]);
+  }, [jobFromPath, selectedJobId, allJobs]);
+
+  // If job is invalid, navigate to a safe fallback to prevent crashing
+  useEffect(() => {
+    if (!allJobs.length) return; // nothing to validate yet
+    const backendIds = allJobs.map((l) => l.backend_job_id).filter(Boolean);
+    const invalidParam = urlBackendId && !backendIds.includes(urlBackendId);
+    if (invalidParam) {
+      const base = `/workflows/${workflowId}/job-logs`;
+      const fallback = defaultBackendId || null;
+      const target = fallback ? `${base}/${fallback}` : base;
+      navigate(target, { replace: true });
+    }
+  }, [urlBackendId, allJobs, defaultBackendId, workflowId, navigate]);
+
+  // Ensure selectedJobId always matches an existing job
+  useEffect(() => {
+    const found = Object.values(logs).find(
+      (l) => l.backend_job_id === selectedJobId,
+    );
+    if (!found) {
+      setSelectedJobId(defaultBackendId);
+    }
+  }, [logs, selectedJobId, defaultBackendId]);
 
   const steps = Object.entries(logs).map(([id, log]) => ({
-    key: id,
+    key: log.backend_job_id,
     text: log.job_name || log.backend_job_id,
     icon: {
       name: "dot circle outline",
       size: "small",
       color: statusMapping[log.status].color,
     },
-    value: id,
+    value: log.backend_job_id,
   }));
 
-  const log = logs[selectedStep];
+  const log = Object.values(logs).find(
+    (l) => l.backend_job_id === selectedJobId,
+  );
+
   return (
     <>
       <section className={styles["step-info"]}>
@@ -166,11 +248,24 @@ function JobLogs({ logs }) {
             search
             selection
             options={steps}
-            value={selectedStep}
-            onChange={(_, { value }) => setSelectedStep(value)}
+            value={selectedJobId}
+            onChange={(_, { value }) => {
+              setSelectedJobId(value);
+              // Build new path with backend_job_id as a part of the URL
+              const base = `/workflows/${workflowId}/job-logs`;
+              const path = value ? `${base}/${value}` : base;
+              navigate(path, { replace: false });
+            }}
             className={styles.dropdown}
           />
         </div>
+        {!log && allJobs.length > 0 && (
+          <Message
+            icon="info circle"
+            content="Selected job was not found. Showing the default job."
+            info
+          />
+        )}
         {log && (
           <div className={styles["step-tags"]}>
             <Label color={statusMapping[log.status].color}>

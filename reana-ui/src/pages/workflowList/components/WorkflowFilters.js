@@ -20,12 +20,17 @@ import WorkflowSharingFilters from "./WorkflowSharingFilter";
 export default function WorkflowFilters({
   statusFilter,
   setStatusFilter,
+  showDeleted,
+  setShowDeleted,
+  statusExplicit,
   sortDir,
   setSortDir,
   ownedByFilter,
   setOwnedByFilter,
   sharedWithFilter,
+  sharedWithMode,
   setSharedWithFilter,
+  setSharedWithModeInUrl,
 }) {
   return (
     <div className={styles.container}>
@@ -33,12 +38,17 @@ export default function WorkflowFilters({
         <WorkflowStatusFilter
           statusFilter={statusFilter}
           filter={setStatusFilter}
+          showDeleted={showDeleted}
+          setShowDeleted={setShowDeleted}
+          statusExplicit={statusExplicit}
         />
         <WorkflowSharingFilters
           ownedByFilter={ownedByFilter}
           setOwnedByFilter={setOwnedByFilter}
           sharedWithFilter={sharedWithFilter}
+          sharedWithMode={sharedWithMode}
           setSharedWithFilter={setSharedWithFilter}
+          setSharedWithModeInUrl={setSharedWithModeInUrl}
         />
         <Grid.Column mobile={16} tablet={4} computer={3} floated="right">
           <WorkflowSorting value={sortDir} sort={setSortDir} />
@@ -49,12 +59,16 @@ export default function WorkflowFilters({
 }
 
 WorkflowFilters.propTypes = {
-  statusFilter: PropTypes.array.isRequired,
+  statusFilter: PropTypes.string,
   setStatusFilter: PropTypes.func.isRequired,
+  showDeleted: PropTypes.bool.isRequired,
+  setShowDeleted: PropTypes.func.isRequired,
+  statusExplicit: PropTypes.bool.isRequired,
   sortDir: PropTypes.string.isRequired,
   setSortDir: PropTypes.func.isRequired,
   ownedByFilter: PropTypes.string,
   setOwnedByFilter: PropTypes.func.isRequired,
   sharedWithFilter: PropTypes.string,
+  sharedWithMode: PropTypes.bool,
   setSharedWithFilter: PropTypes.func.isRequired,
 };

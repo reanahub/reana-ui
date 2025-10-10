@@ -8,7 +8,7 @@
   under the terms of the MIT License; see LICENSE file for more details.
 */
 
-import _, { isEqual } from "lodash";
+import _ from "lodash";
 import PropTypes from "prop-types";
 import { useEffect, useMemo, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
@@ -29,10 +29,15 @@ export default function WorkflowSharingFilters({
   ownedByFilter,
   setOwnedByFilter,
   sharedWithFilter,
+  sharedWithMode,
   setSharedWithFilter,
+  setSharedWithModeInUrl,
 }) {
   const dispatch = useDispatch();
-  const [selectedFilterOption, setSelectedFilterOption] = useState(OWNED_BY);
+  // Initial mode comes from URL
+  const [selectedFilterOption, setSelectedFilterOption] = useState(
+    sharedWithMode ? SHARED_WITH : OWNED_BY,
+  );
 
   const usersYouSharedWith = useSelector(getUsersYouSharedWith, _.isEqual);
   const usersSharedWithYou = useSelector(getUsersSharedWithYou, _.isEqual);
@@ -62,8 +67,8 @@ export default function WorkflowSharingFilters({
     [usersYouSharedWith],
   );
 
-  const [selectedUser, setSelectedUser] = useState(
-    usersSharedWithYouOptions[0].value,
+  const [selectedUser, setSelectedUser] = useState(() =>
+    sharedWithMode ? "anybody" : usersSharedWithYouOptions[0].value,
   );
 
   useEffect(() => {
@@ -71,40 +76,48 @@ export default function WorkflowSharingFilters({
     dispatch(fetchUsersSharedWithYou());
   }, [dispatch]);
 
+  // Keep the dropdown value aligned with URL
   useEffect(() => {
-    // synchronise local state with parent state
     if (selectedFilterOption === OWNED_BY) {
-      if (!isEqual(ownedByFilter, selectedUser)) {
-        setSharedWithFilter(undefined);
-        setOwnedByFilter(selectedUser);
-      }
+      setSelectedUser(ownedByFilter ?? usersSharedWithYouOptions[0].value);
     } else {
-      if (!isEqual(sharedWithFilter, selectedUser)) {
-        setSharedWithFilter(selectedUser);
-        setOwnedByFilter(undefined);
-      }
+      setSelectedUser(sharedWithFilter ?? "anybody");
     }
   }, [
+    selectedFilterOption,
     ownedByFilter,
     sharedWithFilter,
-    setOwnedByFilter,
-    setSharedWithFilter,
-    selectedUser,
-    selectedFilterOption,
+    usersSharedWithYouOptions,
   ]);
+
+  // Reflect URL back if user edited the URL manually
+  useEffect(() => {
+    setSelectedFilterOption(sharedWithMode ? SHARED_WITH : OWNED_BY);
+  }, [sharedWithMode]);
 
   const handleSelectedFilterOptionChange = (_, { value }) => {
     setSelectedFilterOption(value);
 
     if (value === OWNED_BY) {
-      setSelectedUser(usersSharedWithYouOptions[0].value);
+      setOwnedByFilter("you");
+      setSharedWithFilter(undefined);
+      setSelectedUser("you");
+      setSharedWithModeInUrl(false);
     } else {
-      setSelectedUser(usersYouSharedWithOptions[0].value);
+      setSharedWithFilter("anybody");
+      setSelectedUser("anybody");
+      setSharedWithModeInUrl(true);
     }
   };
 
   const handleSelectedUserChange = (_, { value }) => {
-    setSelectedUser(value);
+    if (selectedFilterOption === OWNED_BY) {
+      setOwnedByFilter(value);
+      setSharedWithFilter(undefined);
+    } else {
+      setSharedWithFilter(value);
+      setOwnedByFilter(undefined);
+    }
   };
 
   return (
@@ -141,5 +154,6 @@ WorkflowSharingFilters.propTypes = {
   ownedByFilter: PropTypes.string,
   setOwnedByFilter: PropTypes.func.isRequired,
   sharedWithFilter: PropTypes.string,
+  sharedWithMode: PropTypes.bool,
   setSharedWithFilter: PropTypes.func.isRequired,
 };

@@ -40,7 +40,7 @@ export default function WorkflowList({ workflows, loading }) {
             padding={false}
             flex={false}
           >
-            <Link key={workflow.id} to={`/details/${workflow.id}`}>
+            <Link key={workflow.id} to={`/workflows/${workflow.id}`}>
               <div className={styles["workflow-details-container"]}>
                 <WorkflowInfo workflow={workflow} actionsOnHover={true} />
               </div>

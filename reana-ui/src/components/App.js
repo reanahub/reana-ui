@@ -14,6 +14,7 @@ import {
   BrowserRouter,
   Route,
   Routes,
+  useParams,
   useLocation,
 } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -49,6 +50,12 @@ function RequireAuth({ children }) {
   } else {
     return <Navigate to="/signin" state={{ from: location }} />;
   }
+}
+
+function RedirectDetailsToWorkflows() {
+  const { id } = useParams();
+  const location = useLocation();
+  return <Navigate to={`/workflows/${id}${location.search}`} replace />;
 }
 
 export default function App() {
@@ -90,10 +97,18 @@ export default function App() {
             }
           />
           <Route
-            path="/details/:id"
+            path="/workflows/:id/:tab?/:job?"
             element={
               <RequireAuth>
                 <WorkflowDetails />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/details/:id"
+            element={
+              <RequireAuth>
+                <RedirectDetailsToWorkflows />
               </RequireAuth>
             }
           />

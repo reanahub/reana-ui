@@ -9,33 +9,68 @@
 */
 
 import PropTypes from "prop-types";
-import { Input } from "semantic-ui-react";
-import debounce from "lodash/debounce";
+import { Input, Icon } from "semantic-ui-react";
+import isEqual from "lodash/isEqual";
 
 import styles from "./Search.module.scss";
 
-const TYPING_DELAY = 1000;
+export default function Search({
+  value = "",
+  onChange,
+  onSubmit,
+  loading = false,
+}) {
+  const handleChange = (text) => {
+    if (typeof onChange === "function") {
+      onChange(text);
+    }
+  };
 
-export default function Search({ search, loading = false }) {
-  const handleChange = debounce(search, TYPING_DELAY);
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter" && typeof onSubmit === "function") {
+      onSubmit();
+    }
+  };
+
+  const handleClick = () => {
+    if (typeof onSubmit === "function") {
+      onSubmit();
+    }
+  };
+
   return (
     <Input
       fluid
       icon="search"
       placeholder="Search..."
+      value={value}
       className={styles.input}
       onChange={(_, data) => handleChange(data.value)}
+      onKeyDown={handleKeyDown}
+      iconPosition="right"
       loading={loading}
-    />
+      aria-label="Search workflows"
+    >
+      <input />
+      <Icon name="search" link onClick={handleClick} title="Search" />
+    </Input>
   );
 }
 
 Search.propTypes = {
-  search: PropTypes.func.isRequired,
+  value: PropTypes.string,
+  onChange: PropTypes.func,
+  onSubmit: PropTypes.func,
   loading: PropTypes.bool,
+  search: PropTypes.func,
 };
 
-export const applyFilter = (filter, pagination, setPagination) => (value) => {
-  filter(value);
-  setPagination({ ...pagination, page: 1 });
+export const applyFilter = (setFilter, resetPage) => (nextValue) => {
+  setFilter((prevValue) => {
+    if (isEqual(prevValue, nextValue)) {
+      return prevValue;
+    }
+    resetPage();
+    return nextValue;
+  });
 };
