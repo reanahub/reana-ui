@@ -10,8 +10,6 @@
 
 import PropTypes from "prop-types";
 import { Input, Icon } from "semantic-ui-react";
-import isEqual from "lodash/isEqual";
-
 import styles from "./Search.module.scss";
 
 export default function Search({
@@ -63,14 +61,4 @@ Search.propTypes = {
   onSubmit: PropTypes.func,
   loading: PropTypes.bool,
   search: PropTypes.func,
-};
-
-export const applyFilter = (setFilter, resetPage) => (nextValue) => {
-  setFilter((prevValue) => {
-    if (isEqual(prevValue, nextValue)) {
-      return prevValue;
-    }
-    resetPage();
-    return nextValue;
-  });
 };
