@@ -13,7 +13,7 @@ import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Container, Dimmer, Icon, Loader } from "semantic-ui-react";
 
-import { fetchWorkflows } from "~/actions";
+import { fetchUsersSharedWithYou, fetchWorkflows } from "~/actions";
 import {
   getConfig,
   getReanaToken,
@@ -23,6 +23,7 @@ import {
   loadingWorkflows,
   userHasWorkflows,
   getWorkflowRefresh,
+  getUsersSharedWithYou,
 } from "~/selectors";
 import { NON_DELETED_STATUSES } from "~/config";
 import { Title } from "~/components";
@@ -59,6 +60,7 @@ function Workflows() {
   const workflows = useSelector(getWorkflows);
   const workflowsCount = useSelector(getWorkflowsCount);
   const hasUserWorkflows = useSelector(userHasWorkflows);
+  const usersSharedWithYou = useSelector(getUsersSharedWithYou);
   const workflowRefresh = useSelector(getWorkflowRefresh);
   const loading = useSelector(loadingWorkflows);
   const reanaToken = useSelector(getReanaToken);
@@ -71,6 +73,10 @@ function Workflows() {
   // by saving random number in redux. It should be refactored in the future
   // once websockets will be implemented
   useEffect(() => cleanPolling(), [workflowRefresh]);
+
+  useEffect(() => {
+    dispatch(fetchUsersSharedWithYou());
+  }, [dispatch]);
 
   useEffect(() => {
     let shared = false;
@@ -142,7 +148,7 @@ function Workflows() {
     );
   }
 
-  if (!hasUserWorkflows) {
+  if (!hasUserWorkflows && usersSharedWithYou.length === 0) {
     return <Welcome />;
   }
 
