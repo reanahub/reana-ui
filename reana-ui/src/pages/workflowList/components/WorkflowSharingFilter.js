@@ -41,6 +41,7 @@ export default function WorkflowSharingFilters({
     () => [
       { key: "you", text: "you", value: "you" },
       { key: "anybody", text: "anybody", value: "anybody" },
+      { key: "others", text: "others", value: "others" },
       ...usersSharedWithYou.map((user, index) => ({
         key: index,
         text: user.email,
@@ -53,6 +54,7 @@ export default function WorkflowSharingFilters({
   const usersYouSharedWithOptions = useMemo(
     () => [
       { key: "anybody", text: "anybody", value: "anybody" },
+      { key: "nobody", text: "nobody", value: "nobody" },
       ...usersYouSharedWith.map((user, index) => ({
         key: index,
         text: user.email,
