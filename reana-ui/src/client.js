@@ -134,6 +134,7 @@ class Client {
     sort,
     workflowIdOrName,
     shared,
+    type,
   } = {}) {
     return this._request(
       WORKFLOWS_URL({
@@ -145,6 +146,7 @@ class Client {
         shared_by: sharedBy,
         shared_with: sharedWith,
         sort,
+        type,
       }),
     );
   }
