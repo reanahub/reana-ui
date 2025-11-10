@@ -66,6 +66,7 @@ export const configInitialState = {
   chatURL: null,
   privacyNoticeURL: null,
   cernSSO: false,
+  eoscSSO: false,
   loginProviderConfig: null,
   adminEmail: null,
   maxInteractiveSessionInactivityPeriod: null,
@@ -176,6 +177,7 @@ const config = (state = configInitialState, action) => {
         chatURL: action.chat_url,
         privacyNoticeURL: action.privacy_notice_url,
         cernSSO: action.cern_sso,
+        eoscSSO: action.eosc_sso,
         loginProviderConfig: action.login_provider_config,
         adminEmail: action.admin_email,
         maxInteractiveSessionInactivityPeriod:
