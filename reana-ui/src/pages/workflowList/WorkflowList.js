@@ -286,7 +286,7 @@ function Workflows() {
   const lastParamsRef = useRef();
   const rafIdRef = useRef(0);
   useEffect(() => {
-    if (!configLoaded || !reanaToken) return;
+    if (!configLoaded) return;
     if (rafIdRef.current) cancelAnimationFrame(rafIdRef.current);
     const paramsForFrame = requestParams;
 
@@ -310,6 +310,7 @@ function Workflows() {
   }, [requestParams]);
 
   useEffect(() => {
+    // Only poll if user has a token (no point polling for users without workflows)
     if (!reanaToken || !pollingSecs || !configLoaded) return;
     const id = setInterval(() => {
       const apiParams = latestParamsRef.current;
@@ -321,7 +322,7 @@ function Workflows() {
 
   // External refresh trigger
   useEffect(() => {
-    if (!configLoaded || !reanaToken) return;
+    if (!configLoaded) return;
     if (workflowRefresh === undefined) return;
     const apiParams = latestParamsRef.current;
     dispatch(fetchWorkflows({ ...apiParams, showLoader: false }));
