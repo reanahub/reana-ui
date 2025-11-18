@@ -8,28 +8,18 @@
   under the terms of the MIT License; see LICENSE file for more details.
 */
 
-import { Navigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-
-import { triggerNotification } from "~/actions";
+import { useEffect } from "react";
 import { useQuery } from "~/hooks";
 
 export default function OAuthSignin() {
-  const dispatch = useDispatch();
   const query = useQuery();
-  const queryParams = Object.fromEntries(query.entries());
 
-  if ("code" in queryParams && queryParams.code !== "200") {
-    dispatch(
-      triggerNotification("Authentication error", queryParams.message, {
-        error: true,
-      }),
-    );
-  }
+  useEffect(() => {
+    const queryParams = Object.fromEntries(query.entries());
+    const targetUrl = queryParams.next_url || "/";
+    // Reload the page to fetch fresh user data with the new session cookie
+    window.location.href = targetUrl;
+  }, [query]);
 
-  if ("next_url" in queryParams) {
-    return <Navigate to={queryParams.next_url} />;
-  }
-
-  return <Navigate to="/" />;
+  return null;
 }
