@@ -105,7 +105,7 @@ export default function App() {
             }
           />
           <Route
-            path="/details/:id"
+            path="/details/:id/:tab?/:job?"
             element={
               <RequireAuth>
                 <RedirectDetailsToWorkflows />

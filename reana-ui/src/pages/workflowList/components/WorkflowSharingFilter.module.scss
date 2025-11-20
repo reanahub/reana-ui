@@ -14,14 +14,13 @@
 }
 
 :global(.ui.selection.dropdown).selected-user-dropdown {
-  border-top-left-radius: 0%;
-  border-bottom-left-radius: 0%;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
   border-left: 0;
 
   > div[aria-atomic="true"] {
     max-width: 100%;
     white-space: nowrap;
-    overflow: hidden;
     text-overflow: ellipsis;
   }
 }

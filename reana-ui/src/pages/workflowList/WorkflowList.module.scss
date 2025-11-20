@@ -45,3 +45,43 @@
 :global(.ui.text.container).workflow-list-container {
   max-width: 825px !important;
 }
+
+.paginationRow {
+  display: grid;
+  align-items: center;
+  justify-items: center;
+}
+
+.pageSizeNotVisible {
+  grid-column: 1;
+  display: inline-flex;
+  gap: 0.5rem;
+  visibility: hidden;
+
+  :global(.ui.selection.dropdown > .text) {
+    font-size: 1rem;
+  }
+}
+
+.pagination {
+  grid-column: 2;
+  justify-self: center;
+}
+
+.pageSize {
+  grid-column: 3;
+  justify-self: end;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 2em;
+  margin-bottom: 2em;
+
+  :global(.ui.selection.dropdown > .text) {
+    font-size: 1rem;
+  }
+}
+
+.pageSizeLabel {
+  font-size: 1rem;
+}

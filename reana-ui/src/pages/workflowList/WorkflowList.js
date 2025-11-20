@@ -12,7 +12,7 @@ import moment from "moment";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { Container, Dimmer, Icon, Loader } from "semantic-ui-react";
+import { Container, Dimmer, Dropdown, Icon, Loader } from "semantic-ui-react";
 import isEqual from "lodash/isEqual";
 
 import { fetchWorkflows } from "~/actions";
@@ -34,7 +34,12 @@ import WorkflowFilters from "./components/WorkflowFilters";
 import WorkflowList from "./components/WorkflowList";
 import styles from "./WorkflowList.module.scss";
 
-const PAGE_SIZE = 5;
+const pageSizeOptions = [5, 10, 20, 50, 100].map((size) => ({
+  key: size,
+  text: String(size),
+  value: size,
+}));
+const DEFAULT_PAGE_SIZE = pageSizeOptions[1].value;
 
 export default function WorkflowListPage() {
   return (
@@ -59,12 +64,19 @@ function Workflows() {
   const configLoaded = useSelector(isConfigLoaded);
   const hideWelcomePage = !workflows || !configLoaded;
   const { pollingSecs } = config;
-
+  const isValidPage = (n) => Number.isFinite(n) && n > 0;
   const page = useMemo(() => {
-    const n = parseInt(searchParams.get("page") || "", 10);
-    return Number.isFinite(n) && n > 0 ? n : 1;
+    const n = parseInt(searchParams.get("page") || "");
+    return isValidPage(n) ? n : 1;
   }, [searchParams]);
-  const pagination = useMemo(() => ({ page, size: PAGE_SIZE }), [page]);
+  const [pageSize, setPageSize] = useState(() => {
+    const n = parseInt(searchParams.get("page-size") || "");
+    return isValidPage(n) ? n : DEFAULT_PAGE_SIZE;
+  });
+  const pagination = useMemo(
+    () => ({ page, size: pageSize }),
+    [page, pageSize],
+  );
   const initialSearch = searchParams.get("search") || "";
   const [searchText, setSearchText] = useState(initialSearch);
   const [committedSearch, setCommittedSearch] = useState(initialSearch);
@@ -215,7 +227,7 @@ function Workflows() {
   // if ?page= param is not in a valid format, or page is 1, remove page from URL
   useEffect(() => {
     const raw = searchParams.get("page");
-    const n = parseInt(raw || "", 10);
+    const n = parseInt(raw || "");
     const shouldRemovePage =
       searchParams.has("page") &&
       (!raw || // page=empty string
@@ -393,15 +405,63 @@ function Workflows() {
           setSharedWithModeInUrl={setSharedWithModeInUrl}
         />
         <WorkflowList workflows={workflowArray} loading={loading} />
+        {!loading && (
+          <div className={styles.paginationRow}>
+            {/* To emulate size of page-size dropdown and ensure page buttons stay in middle of screen */}
+            <div className={styles.pageSizeNotVisible}>
+              <span className={styles.pageSizeLabel}>Results per page:</span>
+              <Dropdown
+                selection
+                compact
+                options={pageSizeOptions}
+                value={pageSize}
+              />
+            </div>
+            {workflowsCount > pageSize && (
+              <Pagination
+                className={styles.pagination}
+                activePage={page}
+                totalPages={Math.ceil(workflowsCount / pageSize)}
+                onPageChange={(_, { activePage }) => gotoPage(activePage)}
+              />
+            )}
+            <div className={styles.pageSize}>
+              <span className={styles.pageSizeLabel}>Results per page:</span>
+              <Dropdown
+                selection
+                compact
+                options={
+                  pageSizeOptions.some((o) => o.value === pageSize)
+                    ? pageSizeOptions
+                    : [
+                        ...pageSizeOptions,
+                        {
+                          key: pageSize,
+                          text: String(pageSize),
+                          value: pageSize,
+                        },
+                      ].sort((a, b) => a.value - b.value)
+                }
+                value={pageSize}
+                onChange={(_, { value }) => {
+                  const newSize = Number(value);
+                  setPageSize(newSize);
+                  setSearchParams((prev) => {
+                    const qp = new URLSearchParams(prev);
+                    if (newSize !== DEFAULT_PAGE_SIZE) {
+                      qp.set("page-size", String(newSize));
+                    } else {
+                      qp.delete("page-size");
+                    }
+                    qp.delete("page"); // reset to page 1
+                    return qp;
+                  });
+                }}
+              />
+            </div>
+          </div>
+        )}
       </Container>
-      {workflowsCount > PAGE_SIZE && !loading && (
-        <Pagination
-          className={styles.pagination}
-          activePage={page}
-          totalPages={Math.ceil(workflowsCount / PAGE_SIZE)}
-          onPageChange={(_, { activePage }) => gotoPage(activePage)}
-        />
-      )}
     </div>
   );
 }
