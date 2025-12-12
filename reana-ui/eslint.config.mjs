@@ -4,7 +4,6 @@ import prettier from "eslint-plugin-prettier";
 import babelParser from "@babel/eslint-parser";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import js from "@eslint/js";
 import { FlatCompat } from "@eslint/eslintrc";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -13,6 +12,7 @@ const compat = new FlatCompat({
   baseDirectory: __dirname,
 });
 
+// eslint-disable-next-line import/no-anonymous-default-export
 export default [
   ...fixupConfigRules(
     compat.extends("plugin:prettier/recommended", "react-app", "prettier"),

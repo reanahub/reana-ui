@@ -9,6 +9,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /code
 COPY . /code
 
+# Pin Yarn to a fixed version
 RUN yarn set version 4.6.0
 
 # Build frontend application
