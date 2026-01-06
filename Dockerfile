@@ -38,7 +38,7 @@ CMD ["nginx", "-g", "daemon off;"]
 
 # Set image labels
 LABEL org.opencontainers.image.authors="team@reanahub.io"
-LABEL org.opencontainers.image.created="2024-03-04"
+LABEL org.opencontainers.image.created="2026-01-06"
 LABEL org.opencontainers.image.description="REANA reproducible analysis platform - web user interface component"
 LABEL org.opencontainers.image.documentation="https://reana-ui.readthedocs.io/"
 LABEL org.opencontainers.image.licenses="MIT"
@@ -47,5 +47,5 @@ LABEL org.opencontainers.image.title="reana-ui"
 LABEL org.opencontainers.image.url="https://github.com/reanahub/reana-ui"
 LABEL org.opencontainers.image.vendor="reanahub"
 # x-release-please-start-version
-LABEL org.opencontainers.image.version="0.95.0-alpha.1"
+LABEL org.opencontainers.image.version="0.95.0-alpha.2"
 # x-release-please-end
