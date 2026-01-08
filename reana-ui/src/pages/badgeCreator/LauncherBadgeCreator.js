@@ -104,7 +104,7 @@ const LauncherBadgeCreator = () => {
     // Validate URL
     try {
       new URL(launcherData.url);
-    } catch (e) {
+    } catch {
       setValidationErrors((prevErrors) => ({
         ...prevErrors,
         url: "Not a valid URL!",
@@ -166,7 +166,7 @@ const LauncherBadgeCreator = () => {
         try {
           paramsObject[param.key] = JSON.parse(param.value);
           paramsString = JSON.stringify(paramsObject);
-        } catch (e) {
+        } catch {
           setValidationErrors((prevErrors) => ({
             ...prevErrors,
             parameters: prevErrors.parameters.toSpliced(index, 1, {

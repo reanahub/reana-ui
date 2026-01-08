@@ -83,3 +83,4 @@ reana-ui/npm-debug.log*
 reana-ui/yarn-debug.log*
 reana-ui/yarn-error.log*
 reana-ui/package-lock.json
+reana-ui/.yarn/

@@ -135,7 +135,7 @@ export default function LaunchOnReana() {
     function fn(query) {
       try {
         return JSON.parse(query.get("parameters"));
-      } catch (error) {
+      } catch {
         dispatch(
           triggerNotification(
             "An error has occurred",
