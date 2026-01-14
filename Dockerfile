@@ -1,6 +1,6 @@
-# Use Node 18
+# Use Node 22.16
 # hadolint ignore=DL3029
-FROM --platform=$BUILDPLATFORM docker.io/library/node:18 AS react-build
+FROM --platform=$BUILDPLATFORM docker.io/library/node:22.16.0 AS react-build
 
 # Use default answers in installation commands
 ENV DEBIAN_FRONTEND=noninteractive
@@ -10,7 +10,7 @@ WORKDIR /code
 COPY . /code
 
 # Pin Yarn to a fixed version
-RUN yarn set version 4.6.0
+RUN yarn set version 4.12.0
 
 # Build frontend application
 # hadolint ignore=DL3003,DL3008
@@ -30,7 +30,7 @@ RUN apt-get update -y && \
     rm -rf /var/lib/apt/lists/*
 
 # Serve frontend application
-FROM docker.io/library/nginx:1.25
+FROM docker.io/library/nginx:1.28
 COPY --from=react-build /code/reana-ui/build /usr/share/nginx/html
 COPY nginx/reana-ui.conf /etc/nginx/conf.d/default.conf
 EXPOSE 80
