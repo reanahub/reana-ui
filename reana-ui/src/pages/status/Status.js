@@ -37,6 +37,7 @@ const getDataSeries = (values) =>
 export default function Status() {
   const [status, setStatus] = useState();
   const [loading, setLoading] = useState(false);
+  const [jobsMemoryLimit, setJobsMemoryLimit] = useState(null);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -57,6 +58,16 @@ export default function Status() {
 
     getClusterStatus();
   }, [dispatch]);
+
+  useEffect(() => {
+    client
+      .getClusterInfo()
+      .then((res) => {
+        const raw = res?.data?.default_kubernetes_memory_limit?.value;
+        setJobsMemoryLimit(raw);
+      })
+      .catch(() => setJobsMemoryLimit(null));
+  }, []);
 
   const serialize = {
     node: ({ available, unschedulable, ...rest }) => {
@@ -89,10 +100,11 @@ export default function Status() {
       details: [
         `${running} running`,
         `${pending} pending`,
-        `${available} available`,
+        `${available} available*`,
       ],
       data: getDataSeries({ running, pending, available }),
       ...rest,
+      footnote: `* assuming that jobs ask for ${jobsMemoryLimit || "4Gi"} of memory`,
     }),
     session: ({ active, ...rest }) => ({
       title: "Notebooks",
@@ -108,36 +120,41 @@ export default function Status() {
     details,
     data,
     total,
+    footnote,
     percentage,
     health,
   }) => {
     return (
       <Grid.Column className={styles.column} key={title}>
-        <PieChart
-          data={data}
-          value={percentage}
-          totalValue={total || 100}
-          backgroundColor={statusColorMapping.available}
-        />
-        <div className={styles["status-details"]}>
-          <div className={styles.usage}>
-            <h3>{title}</h3>
-            {details.map((detail, index) => (
-              <div key={`${title}-${index}`}>{detail}</div>
-            ))}
-          </div>
+        <div className={styles.cardMain}>
+          <PieChart
+            data={data}
+            value={percentage}
+            totalValue={total || 100}
+            backgroundColor={statusColorMapping.available}
+          />
 
-          {percentage !== undefined && (
-            <Label
-              basic
-              size="small"
-              color={healthMapping[health]}
-              className={styles.percentage}
-            >
-              {percentage || 0}%
-            </Label>
-          )}
+          <div className={styles["status-details"]}>
+            <div className={styles.usage}>
+              <h3>{title}</h3>
+              {details.map((detail, index) => (
+                <div key={`${title}-${index}`}>{detail}</div>
+              ))}
+            </div>
+
+            {percentage !== undefined && (
+              <Label
+                basic
+                size="small"
+                color={healthMapping[health]}
+                className={styles.percentage}
+              >
+                {percentage || 0}%
+              </Label>
+            )}
+          </div>
         </div>
+        {footnote && <div className={styles.footnote}>{footnote}</div>}
       </Grid.Column>
     );
   };
@@ -151,13 +168,15 @@ export default function Status() {
             Loading cluster status...
           </Loader>
         ) : (
-          <Grid columns={2}>
-            {Object.entries(status)
-              .sort(([, a], [, b]) => a.sort > b.sort)
-              .map(([title, status]) =>
-                renderPieChart(serialize[title](status)),
-              )}
-          </Grid>
+          <>
+            <Grid columns={2}>
+              {Object.entries(status)
+                .sort(([, a], [, b]) => a.sort - b.sort)
+                .map(([title, status]) =>
+                  renderPieChart(serialize[title](status)),
+                )}
+            </Grid>
+          </>
         )}
       </Container>
     </BasePage>

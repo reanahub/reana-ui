@@ -11,13 +11,25 @@
 @import "@palette";
 
 :global(.ui.grid > .column:not(.row)).column {
-  display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: stretch;
   padding-top: 2em;
 }
 
 .container {
   margin-top: 5em;
+
+  .cardMain {
+    display: flex;
+    align-items: center;
+    width: 100%;
+  }
+
+  .footnote {
+    margin-top: 0.75rem;
+    font-size: 0.8em;
+    opacity: 0.8;
+  }
 
   .status-details {
     color: $raven;
