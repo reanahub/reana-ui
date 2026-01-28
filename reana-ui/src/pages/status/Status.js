@@ -35,27 +35,19 @@ const getDataSeries = (values) =>
   }));
 
 export default function Status() {
-  const [status, setStatus] = useState();
-  const [loading, setLoading] = useState(false);
+  const [status, setStatus] = useState({});
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const getClusterStatus = () => {
-      setLoading(true);
-      client
-        .getClusterStatus()
-        .then((res) => {
-          setStatus(res.data);
-          setLoading(false);
-        })
-        .catch((err) => {
-          setStatus({});
-          setLoading(false);
-          dispatch(errorActionCreator(err));
-        });
-    };
-
-    getClusterStatus();
+    client
+      .getClusterStatus()
+      .then((res) => {
+        setStatus(res.data);
+      })
+      .catch((err) => {
+        setStatus({});
+        dispatch(errorActionCreator(err));
+      });
   }, [dispatch]);
 
   const serialize = {
@@ -146,7 +138,7 @@ export default function Status() {
     <BasePage title="Cluster health">
       <Container text className={styles.container}>
         <Title>Cluster health</Title>
-        {loading || !status ? (
+        {!status ? (
           <Loader active inline="centered">
             Loading cluster status...
           </Loader>
