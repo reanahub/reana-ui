@@ -25,6 +25,7 @@ const statusColorMapping = {
   running: "#36a165", // green
   pending: "#e5975e", // orange
   unschedulable: "#e55e5e", // red
+  unavailable: "#e55e5e", // red
 };
 
 const getDataSeries = (values) =>
@@ -35,27 +36,23 @@ const getDataSeries = (values) =>
   }));
 
 export default function Status() {
-  const [status, setStatus] = useState();
-  const [loading, setLoading] = useState(false);
+  const [status, setStatus] = useState({});
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const getClusterStatus = () => {
-      setLoading(true);
-      client
-        .getClusterStatus()
-        .then((res) => {
-          setStatus(res.data);
-          setLoading(false);
-        })
-        .catch((err) => {
-          setStatus({});
-          setLoading(false);
-          dispatch(errorActionCreator(err));
-        });
-    };
-
-    getClusterStatus();
+    client.getClusterStatus().then((res) => {
+      console.log("cluster status");
+      console.log(res.data);
+    });
+    client
+      .getClusterStatus()
+      .then((res) => {
+        setStatus(res.data);
+      })
+      .catch((err) => {
+        setStatus({});
+        dispatch(errorActionCreator(err));
+      });
   }, [dispatch]);
 
   const serialize = {
@@ -71,12 +68,20 @@ export default function Status() {
         ...rest,
       };
     },
-    workflow: ({ running, pending, queued, available, ...rest }) => ({
+    workflow: ({
+      running,
+      pending,
+      queued,
+      available,
+      unavailable,
+      ...rest
+    }) => ({
       title: "Workflows",
       details: [
         `${running} running`,
         `${pending} pending`,
         `${available} available`,
+        `${unavailable} unavailable`,
         <span
           className={queued > 0 ? styles.highlight : ""}
         >{`${queued} queued`}</span>,
@@ -84,20 +89,21 @@ export default function Status() {
       data: getDataSeries({ running, pending, available }),
       ...rest,
     }),
-    job: ({ running, pending, available, ...rest }) => ({
+    job: ({ running, pending, available, unavailable, ...rest }) => ({
       title: "Jobs",
       details: [
         `${running} running`,
         `${pending} pending`,
         `${available} available`,
+        `${unavailable} unavailable`,
       ],
       data: getDataSeries({ running, pending, available }),
       ...rest,
     }),
-    session: ({ active, ...rest }) => ({
+    session: ({ active, unavailable, ...rest }) => ({
       title: "Notebooks",
-      details: [`${active} active`],
-      data: [{ value: active, color: statusColorMapping["running"] }],
+      details: [`${active} active`, `${unavailable} unavailable`],
+      data: getDataSeries({ active, unavailable }),
       total: active,
       ...rest,
     }),
@@ -146,7 +152,7 @@ export default function Status() {
     <BasePage title="Cluster health">
       <Container text className={styles.container}>
         <Title>Cluster health</Title>
-        {loading || !status ? (
+        {!status ? (
           <Loader active inline="centered">
             Loading cluster status...
           </Loader>
