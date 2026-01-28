@@ -25,6 +25,7 @@ const statusColorMapping = {
   running: "#36a165", // green
   pending: "#e5975e", // orange
   unschedulable: "#e55e5e", // red
+  unavailable: "#e55e5e", // red
 };
 
 const getDataSeries = (values) =>
@@ -39,6 +40,10 @@ export default function Status() {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    client.getClusterStatus().then((res) => {
+      console.log("cluster status");
+      console.log(res.data);
+    });
     client
       .getClusterStatus()
       .then((res) => {
@@ -63,12 +68,20 @@ export default function Status() {
         ...rest,
       };
     },
-    workflow: ({ running, pending, queued, available, ...rest }) => ({
+    workflow: ({
+      running,
+      pending,
+      queued,
+      available,
+      unavailable,
+      ...rest
+    }) => ({
       title: "Workflows",
       details: [
         `${running} running`,
         `${pending} pending`,
         `${available} available`,
+        `${unavailable} unavailable`,
         <span
           className={queued > 0 ? styles.highlight : ""}
         >{`${queued} queued`}</span>,
@@ -76,20 +89,21 @@ export default function Status() {
       data: getDataSeries({ running, pending, available }),
       ...rest,
     }),
-    job: ({ running, pending, available, ...rest }) => ({
+    job: ({ running, pending, available, unavailable, ...rest }) => ({
       title: "Jobs",
       details: [
         `${running} running`,
         `${pending} pending`,
         `${available} available`,
+        `${unavailable} unavailable`,
       ],
       data: getDataSeries({ running, pending, available }),
       ...rest,
     }),
-    session: ({ active, ...rest }) => ({
+    session: ({ active, unavailable, ...rest }) => ({
       title: "Notebooks",
-      details: [`${active} active`],
-      data: [{ value: active, color: statusColorMapping["running"] }],
+      details: [`${active} active`, `${unavailable} unavailable`],
+      data: getDataSeries({ active, unavailable }),
       total: active,
       ...rest,
     }),
