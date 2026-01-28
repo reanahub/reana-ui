@@ -92,9 +92,7 @@ function ServiceLogs({ isDask, components, workflowStatus }) {
     return (
       <Message
         icon="info circle"
-        content={
-          "The service logs are only available for Dask workflows at the moment."
-        }
+        content={"The service logs are only available for Dask workflows."}
         info
       />
     );

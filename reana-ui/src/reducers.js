@@ -355,7 +355,7 @@ const details = (state = detailsInitialState, action) => {
         loadingDetails: false,
       };
     case WORKFLOW_SPECIFICATION_FETCH:
-      return { ...state, loadingDetails: true };
+      return state;
     case WORKFLOW_SPECIFICATION_RECEIVED:
       return {
         ...state,
@@ -367,7 +367,6 @@ const details = (state = detailsInitialState, action) => {
             parameters: action.parameters,
           },
         },
-        loadingDetails: false,
       };
     case WORKFLOW_RETENTION_RULES_RECEIVED:
       return {

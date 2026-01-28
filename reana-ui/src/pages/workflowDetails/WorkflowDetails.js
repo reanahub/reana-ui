@@ -8,12 +8,16 @@
   under the terms of the MIT License; see LICENSE file for more details.
 */
 
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useParams, useSearchParams, useNavigate } from "react-router-dom";
 import { Container, Dimmer, Icon, Loader, Tab } from "semantic-ui-react";
-
-import { fetchWorkflow, fetchWorkflowLogs } from "~/actions";
+import client from "~/client";
+import {
+  fetchWorkflow,
+  fetchWorkflowLogs,
+  fetchWorkflowSpecification,
+} from "~/actions";
 import { NON_FINISHED_STATUSES } from "~/config";
 import {
   getWorkflow,
@@ -21,6 +25,7 @@ import {
   loadingWorkflows,
   isWorkflowsFetched,
   getConfig,
+  getWorkflowSpecification,
 } from "~/selectors";
 import BasePage from "../BasePage";
 import {
@@ -58,6 +63,29 @@ export default function WorkflowDetails() {
   const { pollingSecs } = useSelector(getConfig);
   const interval = useRef(null);
   const workflowRefresh = useSelector(getWorkflowRefresh);
+
+  const workflowSpec = useSelector(getWorkflowSpecification(workflowId));
+  const [daskEnabled, setDaskEnabled] = useState(null);
+  useEffect(() => {
+    client
+      .getClusterInfo()
+      .then((res) => {
+        const raw = res?.data?.dask_enabled?.value;
+        setDaskEnabled(raw?.toLowerCase() === "true");
+      })
+      .catch(() => setDaskEnabled(false));
+  }, []);
+
+  // Fetch workflow specification (to decide if this workflow uses Dask)
+  useEffect(() => {
+    if (!daskEnabled) return;
+    dispatch(fetchWorkflowSpecification(workflowId));
+  }, [dispatch, workflowId, daskEnabled]);
+
+  const workflowUsesDask = useMemo(() => {
+    if (!daskEnabled) return false;
+    return Boolean(workflowSpec?.workflow?.resources?.dask);
+  }, [daskEnabled, workflowSpec]);
 
   const getPageFromUrl = () => {
     const n = parseInt(searchParams.get("page") || "", 10);
@@ -158,14 +186,18 @@ export default function WorkflowDetails() {
       menuItem: { key: "job-logs", icon: "terminal", content: "Job logs" },
       render: () => <WorkflowLogs workflow={workflow} />,
     },
-    {
-      menuItem: {
-        key: "service-logs",
-        icon: "cloud",
-        content: "Service logs",
-      },
-      render: () => <WorkflowLogs service workflow={workflow} />,
-    },
+    ...(workflowUsesDask
+      ? [
+          {
+            menuItem: {
+              key: "service-logs",
+              icon: "cloud",
+              content: "Service logs",
+            },
+            render: () => <WorkflowLogs service workflow={workflow} />,
+          },
+        ]
+      : []),
     {
       menuItem: {
         key: "workspace",
