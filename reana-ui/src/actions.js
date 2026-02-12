@@ -122,6 +122,14 @@ export function errorActionCreator(error, name) {
   };
 }
 
+function isNoActiveTokensError(error) {
+  const status = error?.response?.status;
+  const message = (error?.response?.data?.message || "").toLowerCase();
+  return (
+    (status === 401 || status === 403) && message.includes("no active tokens")
+  );
+}
+
 export function triggerNotification(
   header,
   message,
@@ -181,7 +189,16 @@ export function loadUser({ loader = true } = {}) {
 function userSignFactory(initAction, succeedAction, request, body) {
   return async (dispatch, getStore) => {
     const state = getStore();
-    const { userConfirmation } = getConfig(state);
+    const { userConfirmation, accessTokenIssuancePolicy } = getConfig(state);
+    const tokenPolicyRaw = String(accessTokenIssuancePolicy ?? "manual")
+      .trim()
+      .toLowerCase();
+    const tokenPolicy =
+      tokenPolicyRaw === "auto" || tokenPolicyRaw === "manual"
+        ? tokenPolicyRaw
+        : "manual";
+    const shouldNotifyEmailConfirmation =
+      userConfirmation && tokenPolicy !== "auto";
 
     dispatch({ type: initAction });
     return await request(body)
@@ -190,16 +207,18 @@ function userSignFactory(initAction, succeedAction, request, body) {
         dispatch({ type: succeedAction });
         dispatch(loadUser());
         if (initAction === USER_SIGNUP) {
-          dispatch(
-            triggerNotification(
-              "Success!",
-              `User registered. ${
-                userConfirmation
-                  ? "Please confirm your email by clicking on the link we sent you."
-                  : ""
-              }`,
-            ),
-          );
+          if (shouldNotifyEmailConfirmation) {
+            dispatch(
+              triggerNotification(
+                "Success!",
+                `User registered. ${
+                  userConfirmation
+                    ? "Please confirm your email by clicking on the link we sent you."
+                    : ""
+                }`,
+              ),
+            );
+          }
         }
         return resp;
       })
@@ -611,6 +630,15 @@ export function fetchUsersSharedWithYou() {
         return resp;
       })
       .catch((err) => {
+        // User is signed in but has no access token yet (manual policy)
+        // Do not show a global red error notification
+        if (isNoActiveTokensError(err)) {
+          dispatch({
+            type: USERS_SHARED_WITH_YOU_RECEIVED,
+            usersSharedYouWith: [],
+          });
+          return;
+        }
         dispatch(errorActionCreator(err, USERS_SHARED_WITH_YOU_URL));
       });
   };
@@ -628,6 +656,13 @@ export function fetchUsersYouSharedWith() {
         return resp;
       })
       .catch((err) => {
+        if (isNoActiveTokensError(err)) {
+          dispatch({
+            type: USERS_YOU_SHARED_WITH_RECEIVED,
+            usersYouSharedWith: [],
+          });
+          return;
+        }
         dispatch(errorActionCreator(err, USERS_YOU_SHARED_WITH_URL));
       });
   };

@@ -27,6 +27,17 @@ export default function Signin() {
   const dispatch = useDispatch();
   const [formData, setFormData] = useState({ email: "", password: "" });
   const location = useLocation();
+  const tokenIssuancePolicyRaw = String(
+    config.accessTokenIssuancePolicy ?? "manual",
+  )
+    .trim()
+    .toLowerCase();
+  const tokenIssuancePolicy =
+    tokenIssuancePolicyRaw === "auto" || tokenIssuancePolicyRaw === "manual"
+      ? tokenIssuancePolicyRaw
+      : "manual";
+  const shouldNotifyEmailConfirmation =
+    config.userConfirmation && tokenIssuancePolicy !== "auto";
 
   const handleClick = (ssoProvider) => {
     const from = location.state?.from || {
@@ -39,7 +50,7 @@ export default function Signin() {
     // FIXME: We assume that the sign-up went successfully but we actually don't know.
     // We should upgrade Invenio-OAuthClient to latest version that supports REST apps
     // and adapt the whole workflow.
-    if (config.userConfirmation) {
+    if (shouldNotifyEmailConfirmation) {
       dispatch(
         triggerNotification(
           "Success!",
