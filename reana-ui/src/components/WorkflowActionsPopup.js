@@ -17,6 +17,7 @@ import {
   closeInteractiveSession,
   deleteWorkflow,
   openDeleteWorkflowModal,
+  openPruneWorkflowModal,
   openInteractiveSessionModal,
   openShareWorkflowModal,
   openStopWorkflowModal,
@@ -83,6 +84,18 @@ export default function WorkflowActionsPopup({ workflow, className }) {
       icon: "stop",
       onClick: (e) => {
         dispatch(openStopWorkflowModal(workflow));
+        setOpen(false);
+      },
+    });
+  }
+
+  if (!isDeleted && !isRunning) {
+    menuItems.push({
+      key: "prune",
+      content: "Prune workspace",
+      icon: "filter",
+      onClick: (e) => {
+        dispatch(openPruneWorkflowModal(workflow));
         setOpen(false);
       },
     });

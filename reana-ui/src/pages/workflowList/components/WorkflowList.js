@@ -17,6 +17,7 @@ import {
   WorkflowBadges,
   WorkflowInfo,
   WorkflowDeleteModal,
+  WorkflowPruneModal,
   WorkflowShareModal,
   WorkflowStopModal,
   WorkflowActionsPopup,
@@ -55,6 +56,7 @@ export default function WorkflowList({ workflows, loading }) {
       })}
       <InteractiveSessionModal />
       <WorkflowDeleteModal />
+      <WorkflowPruneModal />
       <WorkflowStopModal />
       <WorkflowShareModal />
     </>

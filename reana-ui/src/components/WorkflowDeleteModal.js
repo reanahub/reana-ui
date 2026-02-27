@@ -73,9 +73,6 @@ export default function WorkflowDeleteModal() {
         <Message icon warning>
           <Icon name="warning circle" />
           <Message.Content>
-            <Message.Header>
-              Deletion of workspace and interactive sessions!
-            </Message.Header>
             This action will delete also the workflow's workspace
             {size.human_readable ? ` (${size.human_readable})` : ""} and any
             open interactive session attached to it. Please make sure to
@@ -96,10 +93,13 @@ export default function WorkflowDeleteModal() {
       <Modal.Actions>
         <Button
           negative
-          onClick={() => {
-            dispatch(deleteWorkflow(id, { allRuns })).then(() => {
-              onCloseModal();
-            });
+          onClick={async () => {
+            try {
+              await dispatch(deleteWorkflow(id, { allRuns }));
+              onCloseModal(); // close only on success
+            } catch (e) {
+              // keep modal open on error, notification is handled already
+            }
           }}
         >
           {deleteButtonLabel}

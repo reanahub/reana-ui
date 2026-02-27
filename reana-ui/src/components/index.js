@@ -20,6 +20,7 @@ export { default as LauncherLabel } from "./LauncherLabel";
 export { default as DaskIcon } from "./DaskIcon";
 export { default as JupyterNotebookIcon } from "./JupyterNotebookIcon";
 export { default as WorkflowDeleteModal } from "./WorkflowDeleteModal";
+export { default as WorkflowPruneModal } from "./WorkflowPruneModal";
 export { default as WorkflowInfo } from "./WorkflowInfo";
 export { default as WorkflowBadges } from "./WorkflowBadges";
 export { default as WorkflowStopModal } from "./WorkflowStopModal";

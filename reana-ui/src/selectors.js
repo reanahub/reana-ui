@@ -47,6 +47,10 @@ export const getWorkflowDeleteModalOpen = (state) =>
   state.workflows.workflowDeleteModal.open;
 export const getWorkflowDeleteModalItem = (state) =>
   state.workflows.workflowDeleteModal.workflow;
+export const getWorkflowPruneModalOpen = (state) =>
+  state.workflows.workflowPruneModal.open;
+export const getWorkflowPruneModalItem = (state) =>
+  state.workflows.workflowPruneModal.workflow;
 export const getWorkflowStopModalOpen = (state) =>
   state.workflows.workflowStopModal.open;
 export const getWorkflowStopModalItem = (state) =>

@@ -40,6 +40,8 @@ import {
   WORKFLOW_RETENTION_RULES_RECEIVED,
   OPEN_DELETE_WORKFLOW_MODAL,
   CLOSE_DELETE_WORKFLOW_MODAL,
+  OPEN_PRUNE_WORKFLOW_MODAL,
+  CLOSE_PRUNE_WORKFLOW_MODAL,
   OPEN_INTERACTIVE_SESSION_MODAL,
   CLOSE_INTERACTIVE_SESSION_MODAL,
   OPEN_STOP_WORKFLOW_MODAL,
@@ -100,6 +102,7 @@ const workflowsInitialState = {
   total: null,
   userHasWorkflows: false,
   workflowDeleteModal: { open: false, workflow: null },
+  workflowPruneModal: { open: false, workflow: null },
   workflowStopModal: { open: false, workflow: null },
   interactiveSessionModal: { open: false, workflow: null },
   workflowShareModal: { open: false, workflow: null },
@@ -285,6 +288,13 @@ const workflows = (state = workflowsInitialState, action) => {
       };
     case CLOSE_DELETE_WORKFLOW_MODAL:
       return { ...state, workflowDeleteModal: { open: false, workflow: null } };
+    case OPEN_PRUNE_WORKFLOW_MODAL:
+      return {
+        ...state,
+        workflowPruneModal: { open: true, workflow: action.workflow },
+      };
+    case CLOSE_PRUNE_WORKFLOW_MODAL:
+      return { ...state, workflowPruneModal: { open: false, workflow: null } };
     case OPEN_STOP_WORKFLOW_MODAL:
       return {
         ...state,

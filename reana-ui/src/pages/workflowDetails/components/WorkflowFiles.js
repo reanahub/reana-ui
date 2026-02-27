@@ -20,6 +20,7 @@ import { Pagination, Search } from "~/components";
 import {
   getWorkflowFiles,
   getWorkflowFilesCount,
+  getWorkflowRefresh,
   loadingDetails,
 } from "~/selectors";
 import { WorkflowRetentionRules } from ".";
@@ -31,6 +32,7 @@ const PAGE_SIZE = 15;
 
 export default function WorkflowFiles({ id, page = 1, onPageChange }) {
   const dispatch = useDispatch();
+  const workflowRefresh = useSelector(getWorkflowRefresh);
   const loading = useSelector(loadingDetails);
   const _files = useSelector(getWorkflowFiles(id));
   const filesCount = useSelector(getWorkflowFilesCount(id));
@@ -58,7 +60,7 @@ export default function WorkflowFiles({ id, page = 1, onPageChange }) {
 
   useEffect(() => {
     dispatch(fetchWorkflowFiles(id, pagination, searchQuery));
-  }, [dispatch, id, pagination, searchQuery]);
+  }, [dispatch, id, pagination, searchQuery, workflowRefresh]);
 
   useEffect(() => {
     setFiles(_files);

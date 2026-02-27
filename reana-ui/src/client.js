@@ -36,6 +36,8 @@ export const WORKFLOWS_URL = (params) =>
 export const WORKFLOW_LOGS_URL = (id) => `${api}/api/workflows/${id}/logs`;
 export const WORKFLOW_SPECIFICATION_URL = (id) =>
   `${api}/api/workflows/${id}/specification`;
+export const WORKFLOW_PRUNE_URL = (id, params) =>
+  `${api}/api/workflows/${id}/prune?${stringifyQueryParams(params)}`;
 export const WORKFLOW_RETENTION_RULES_URL = (id) =>
   `${api}/api/workflows/${id}/retention_rules`;
 export const WORKFLOW_FILES_URL = (id, params) =>
@@ -178,6 +180,18 @@ class Client {
 
   getWorkflowRetentionRules(id) {
     return this._request(WORKFLOW_RETENTION_RULES_URL(id));
+  }
+
+  pruneWorkspace(id, { includeInputs = false, includeOutputs = false } = {}) {
+    return this._request(
+      WORKFLOW_PRUNE_URL(id, {
+        include_inputs: includeInputs,
+        include_outputs: includeOutputs,
+      }),
+      {
+        method: "post",
+      },
+    );
   }
 
   deleteWorkflow(id, { workspace, allRuns }) {

@@ -20,6 +20,7 @@ import client, {
   USERS_YOU_SHARED_WITH_URL,
   WORKFLOW_FILES_URL,
   WORKFLOW_LOGS_URL,
+  WORKFLOW_PRUNE_URL,
   WORKFLOW_RETENTION_RULES_URL,
   WORKFLOW_SET_STATUS_URL,
   WORKFLOW_SHARE_STATUS_URL,
@@ -83,8 +84,12 @@ export const WORKFLOW_RETENTION_RULES_RECEIVED =
   "Workflow retention rules received";
 export const WORKFLOW_DELETE_INIT = "Initialize workflow deletion";
 export const WORKFLOW_DELETED = "Workflow deleted";
+export const WORKFLOW_PRUNE_INIT = "Initialize workspace pruning";
+export const WORKFLOW_PRUNED = "Workspace pruned";
 export const OPEN_DELETE_WORKFLOW_MODAL = "Open delete workflow modal";
 export const CLOSE_DELETE_WORKFLOW_MODAL = "Close delete workflow modal";
+export const OPEN_PRUNE_WORKFLOW_MODAL = "Open prune workflow modal";
+export const CLOSE_PRUNE_WORKFLOW_MODAL = "Close prune workflow modal";
 export const WORKFLOW_STOP_INIT = "Initialize workflow stopping";
 export const WORKFLOW_STOPPED = "Workflow stopped";
 export const OPEN_STOP_WORKFLOW_MODAL = "Open stop workflow modal";
@@ -455,6 +460,37 @@ export function deleteWorkflow(id, { workspace = true, allRuns = false } = {}) {
             WORKFLOW_SET_STATUS_URL(id, { status: "deleted" }),
           ),
         );
+        throw err;
+      });
+  };
+}
+
+export function pruneWorkspace(
+  id,
+  { includeInputs = false, includeOutputs = false } = {},
+) {
+  return async (dispatch) => {
+    dispatch({ type: WORKFLOW_PRUNE_INIT });
+    return await client
+      .pruneWorkspace(id, { includeInputs, includeOutputs })
+      .then((resp) => {
+        dispatch({ type: WORKFLOW_PRUNED, ...resp.data });
+        dispatch({ type: WORKFLOW_LIST_REFRESH });
+        dispatch(triggerNotification("Success!", resp.data.message));
+        dispatch(fetchWorkflow(id, { refetch: true, showLoader: false }));
+        return resp;
+      })
+      .catch((err) => {
+        dispatch(
+          errorActionCreator(
+            err,
+            WORKFLOW_PRUNE_URL(id, {
+              include_inputs: includeInputs,
+              include_outputs: includeOutputs,
+            }),
+          ),
+        );
+        throw err;
       });
   };
 }
@@ -465,6 +501,14 @@ export function openDeleteWorkflowModal(workflow) {
 
 export function closeDeleteWorkflowModal() {
   return { type: CLOSE_DELETE_WORKFLOW_MODAL };
+}
+
+export function openPruneWorkflowModal(workflow) {
+  return { type: OPEN_PRUNE_WORKFLOW_MODAL, workflow };
+}
+
+export function closePruneWorkflowModal() {
+  return { type: CLOSE_PRUNE_WORKFLOW_MODAL };
 }
 
 export function stopWorkflow(id) {
