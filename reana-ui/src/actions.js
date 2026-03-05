@@ -455,7 +455,10 @@ export function fetchWorkflowRetentionRules(id) {
   };
 }
 
-export function deleteWorkflow(id, { workspace = true, allRuns = false } = {}) {
+export function deleteWorkflow(
+  id,
+  { workspace = true, allRuns = false, notifyError = true } = {},
+) {
   return async (dispatch) => {
     dispatch({ type: WORKFLOW_DELETE_INIT });
     return await client
@@ -466,12 +469,14 @@ export function deleteWorkflow(id, { workspace = true, allRuns = false } = {}) {
         dispatch(triggerNotification("Success!", resp.data.message));
       })
       .catch((err) => {
-        dispatch(
-          errorActionCreator(
-            err,
-            WORKFLOW_SET_STATUS_URL(id, { status: "deleted" }),
-          ),
-        );
+        if (notifyError) {
+          dispatch(
+            errorActionCreator(
+              err,
+              WORKFLOW_SET_STATUS_URL(id, { status: "deleted" }),
+            ),
+          );
+        }
         throw err;
       });
   };

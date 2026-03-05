@@ -67,3 +67,9 @@ export const NON_DELETED_STATUSES = WORKFLOW_STATUSES.filter(
  * List of HTML tags that can be present in an announcement.
  */
 export const ALLOWED_HTML_TAGS_ANNOUNCEMENT = ["a", "b", "em", "i", "strong"];
+
+/**
+ * Pagination size used when we prefetch workflow runs in a single request
+ * (delete modal needs the list to detect related restarts sharing a workspace).
+ */
+export const WORKFLOW_RUNS_PREFETCH_PAGE_SIZE = 1000;
