@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
 # This file is part of REANA.
-# Copyright (C) 2018, 2019, 2020, 2021, 2022, 2023, 2024 CERN.
+# Copyright (C) 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025 CERN.
 #
 # REANA is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -9,11 +9,31 @@
 set -o errexit
 set -o nounset
 
-check_commitlint () {
+docker_build() {
+    docker build -t docker.io/reanahub/reana-ui .
+}
+
+docs_sphinx() {
+    sphinx-build -qnNW docs docs/_build/html
+}
+
+format_prettier() {
+    (cd reana-ui && yarn && yarn prettier)
+}
+
+js_tests() {
+    (cd reana-ui && yarn && yarn test --ci --passWithNoTests)
+}
+
+lint_commitlint() {
     from=${2:-master}
     to=${3:-HEAD}
     pr=${4:-[0-9]+}
-    npx commitlint --from="$from" --to="$to"
+    if command -v commitlint >/dev/null 2>&1; then
+        commitlint --from="$from" --to="$to"
+    else
+        npx commitlint --from="$from" --to="$to"
+    fi
     found=0
     while IFS= read -r line; do
         commit_hash=$(echo "$line" | cut -d ' ' -f 1)
@@ -31,7 +51,7 @@ check_commitlint () {
         # (iii) check absence of merge commits in feature branches
         if [ "$commit_number_of_parents" -gt 1 ]; then
             if echo "$commit_title" | grep -qE "^chore\(.*\): merge "; then
-                break  # skip checking maint-to-master merge commits
+                break # skip checking maint-to-master merge commits
             else
                 echo "✖   Merge commits are not allowed in feature branches: $commit_title"
                 found=1
@@ -43,72 +63,60 @@ check_commitlint () {
     fi
 }
 
-check_shellcheck () {
-    find . -name "*.sh" ! -path "./reana-ui/node_modules/*" -exec shellcheck {} \+
-}
-
-check_sphinx () {
-    sphinx-build -qnNW docs docs/_build/html
-}
-
-check_lint () {
-    (cd reana-ui && yarn && yarn lint)
-}
-
-check_prettier () {
-    (cd reana-ui && yarn && yarn prettier)
-}
-
-check_js_tests () {
-    (cd reana-ui && yarn && yarn test --ci --passWithNoTests)
-}
-
-check_dockerfile () {
+lint_hadolint() {
     docker run -i --rm docker.io/hadolint/hadolint:v2.12.0 < Dockerfile
 }
 
-check_docker_build () {
-    docker build -t docker.io/reanahub/reana-ui .
+lint_js() {
+    (cd reana-ui && yarn && yarn lint)
 }
 
-check_all () {
-    check_commitlint
-    check_shellcheck
-    check_sphinx
-    check_lint
-    check_prettier
-    check_js_tests
-    check_dockerfile
-    check_docker_build
+lint_shellcheck() {
+    find . -name "*.sh" ! -path "./reana-ui/node_modules/*" -exec shellcheck {} \+
+}
+
+all() {
+    docker_build
+    docs_sphinx
+    format_prettier
+    js_tests
+    lint_commitlint
+    lint_hadolint
+    lint_js
+    lint_shellcheck
+}
+
+help() {
+    echo "Usage: $0 [options]"
+    echo "Options:"
+    echo "  --all                Perform all checks [default]"
+    echo "  --docker-build       Check Docker build"
+    echo "  --docs-sphinx        Check Sphinx docs build"
+    echo "  --format-prettier    Check formatting of JavaScript etc files"
+    echo "  --help               Display this help message"
+    echo "  --js-tests           Check JavaScript test suite"
+    echo "  --lint-commitlint    Check linting of commit messages"
+    echo "  --lint-hadolint      Check linting of Dockerfiles"
+    echo "  --lint-js            Check linting of JavaScript code"
+    echo "  --lint-shellcheck    Check linting of shell scripts"
 }
 
 if [ $# -eq 0 ]; then
-    check_all
+    all
     exit 0
 fi
 
-for arg in "$@"
-do
-    case $arg in
-        --check-sphinx) check_sphinx;;
-        --check-lint) check_lint;;
-        --check-prettier) check_prettier;;
-        --check-js-tests) check_js_tests;;
-        --check-dockerfile) check_dockerfile;;
-        --check-docker-build) check_docker_build;;
-        *)
-    esac
-done
-
 arg="$1"
 case $arg in
-    --check-commitlint) check_commitlint "$@";;
-    --check-shellcheck) check_shellcheck;;
-    --check-sphinx) check_sphinx;;
-    --check-lint) check_lint;;
-    --check-prettier) check_prettier;;
-    --check-js-tests) check_js_tests;;
-    --check-dockerfile) check_dockerfile;;
-    --check-docker-build) check_docker_build;;
-    *) echo "[ERROR] Invalid argument '$arg'. Exiting." && exit 1;;
+--all) all ;;
+--help) help ;;
+--docker-build) docker_build ;;
+--docs-sphinx) docs_sphinx ;;
+--format-prettier) format_prettier ;;
+--js-tests) js_tests ;;
+--lint-commitlint) lint_commitlint "$@" ;;
+--lint-hadolint) lint_hadolint ;;
+--lint-js) lint_js ;;
+--lint-shellcheck) lint_shellcheck ;;
+*) echo "[ERROR] Invalid argument '$arg'. Exiting." && help && exit 1 ;;
 esac
