@@ -38,7 +38,7 @@ Install Node version 18 and Yarn version 4. If you are on macOS, beware that
 Yarn v4 may not be available in brew, so use the official upstream
 installation technique. For example:
 
-```
+```console
 mise use -g node@18
 open https://yarnpkg.com/getting-started/install
 ```
