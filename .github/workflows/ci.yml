@@ -177,6 +177,20 @@ jobs:
       - name: Run JavaScript linter
         run: ./run-tests.sh --lint-js
 
+  lint-markdownlint:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+
+      - name: Lint Markdown files
+        run: |
+          npm install markdownlint-cli2 --global
+          ./run-tests.sh --lint-markdownlint
+
   lint-shellcheck:
     runs-on: ubuntu-24.04
     steps:
@@ -220,8 +234,9 @@ jobs:
       - js-tests
       - lint-commitlint
       - lint-hadolint
-      - lint-jsonlint
       - lint-js
+      - lint-jsonlint
+      - lint-markdownlint
       - lint-shellcheck
       - lint-yamllint
     steps:
