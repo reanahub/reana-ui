@@ -17,6 +17,10 @@ docs_sphinx() {
     sphinx-build -qnNW docs docs/_build/html
 }
 
+format_shfmt() {
+    shfmt -d .
+}
+
 format_prettier() {
     (cd reana-ui && yarn && yarn prettier)
 }
@@ -68,7 +72,7 @@ lint_jsonlint() {
 }
 
 lint_hadolint() {
-    docker run -i --rm docker.io/hadolint/hadolint:v2.12.0 < Dockerfile
+    docker run -i --rm docker.io/hadolint/hadolint:v2.12.0 <Dockerfile
 }
 
 lint_js() {
@@ -87,6 +91,7 @@ all() {
     docker_build
     docs_sphinx
     format_prettier
+    format_shfmt
     js_tests
     lint_commitlint
     lint_hadolint
@@ -103,6 +108,7 @@ help() {
     echo "  --docker-build       Check Docker build"
     echo "  --docs-sphinx        Check Sphinx docs build"
     echo "  --format-prettier    Check formatting of JavaScript etc files"
+    echo "  --format-shfmt       Check formatting of shell scripts"
     echo "  --help               Display this help message"
     echo "  --js-tests           Check JavaScript test suite"
     echo "  --lint-commitlint    Check linting of commit messages"
@@ -125,6 +131,7 @@ case $arg in
 --docker-build) docker_build ;;
 --docs-sphinx) docs_sphinx ;;
 --format-prettier) format_prettier ;;
+--format-shfmt) format_shfmt ;;
 --js-tests) js_tests ;;
 --lint-commitlint) lint_commitlint "$@" ;;
 --lint-hadolint) lint_hadolint ;;
