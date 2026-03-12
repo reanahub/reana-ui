@@ -79,6 +79,10 @@ lint_shellcheck() {
     find . -name "*.sh" ! -path "./reana-ui/node_modules/*" -exec shellcheck {} \+
 }
 
+lint_yamllint() {
+    yamllint .
+}
+
 all() {
     docker_build
     docs_sphinx
@@ -89,6 +93,7 @@ all() {
     lint_jsonlint
     lint_js
     lint_shellcheck
+    lint_yamllint
 }
 
 help() {
@@ -105,6 +110,7 @@ help() {
     echo "  --lint-jsonlint      Check linting of JSON files"
     echo "  --lint-js            Check linting of JavaScript code"
     echo "  --lint-shellcheck    Check linting of shell scripts"
+    echo "  --lint-yamllint      Check linting of YAML files"
 }
 
 if [ $# -eq 0 ]; then
@@ -125,5 +131,6 @@ case $arg in
 --lint-jsonlint) lint_jsonlint ;;
 --lint-js) lint_js ;;
 --lint-shellcheck) lint_shellcheck ;;
+--lint-yamllint) lint_yamllint ;;
 *) echo "[ERROR] Invalid argument '$arg'. Exiting." && help && exit 1 ;;
 esac
