@@ -27,6 +27,15 @@ const statusColorMapping = {
   unschedulable: "#e55e5e", // red
 };
 
+const formatGiB = (raw) => {
+  if (raw === undefined || raw === null) return null;
+  const s = String(raw).trim();
+  // matches common kubernetes style like: "3Gi"
+  const m = s.match(/^(\d+(?:\.\d+)?)\s*Gi$/i);
+  if (m) return `${m[1]} GiB`;
+  return s;
+};
+
 const getDataSeries = (values) =>
   Object.entries(values).map(([title, value]) => ({
     title,
@@ -37,6 +46,7 @@ const getDataSeries = (values) =>
 export default function Status() {
   const [status, setStatus] = useState();
   const [loading, setLoading] = useState(false);
+  const [jobsMemoryLimit, setJobsMemoryLimit] = useState(null);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -57,6 +67,16 @@ export default function Status() {
 
     getClusterStatus();
   }, [dispatch]);
+
+  useEffect(() => {
+    client
+      .getClusterInfo()
+      .then((res) => {
+        const raw = res?.data?.default_kubernetes_memory_limit?.value;
+        setJobsMemoryLimit(formatGiB(raw));
+      })
+      .catch(() => setJobsMemoryLimit(null));
+  }, []);
 
   const serialize = {
     node: ({ available, unschedulable, ...rest }) => {
@@ -89,7 +109,7 @@ export default function Status() {
       details: [
         `${running} running`,
         `${pending} pending`,
-        `${available} available`,
+        `${available} available*`,
       ],
       data: getDataSeries({ running, pending, available }),
       ...rest,
@@ -151,13 +171,24 @@ export default function Status() {
             Loading cluster status...
           </Loader>
         ) : (
-          <Grid columns={2}>
-            {Object.entries(status)
-              .sort(([, a], [, b]) => a.sort > b.sort)
-              .map(([title, status]) =>
-                renderPieChart(serialize[title](status)),
-              )}
-          </Grid>
+          <>
+            <Grid columns={2}>
+              {Object.entries(status)
+                .sort(([, a], [, b]) => a.sort > b.sort)
+                .map(([title, status]) =>
+                  renderPieChart(serialize[title](status)),
+                )}
+            </Grid>
+            {status?.job && (
+              <div
+                style={{ marginTop: "2rem", fontSize: "0.8em", opacity: 0.8 }}
+              >
+                * = assuming the jobs ask for {jobsMemoryLimit || " 3 GiB "} of
+                memory (where {jobsMemoryLimit || " 3 GiB "} is taken from
+                kubernetes_jobs_memory_limit helm value).
+              </div>
+            )}
+          </>
         )}
       </Container>
     </BasePage>
