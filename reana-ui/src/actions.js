@@ -14,6 +14,7 @@ import client, {
   CONFIG_URL,
   INTERACTIVE_SESSIONS_CLOSE_URL,
   INTERACTIVE_SESSIONS_OPEN_URL,
+  isNoActiveTokensError,
   USER_INFO_URL,
   USER_SIGNOUT_URL,
   USERS_SHARED_WITH_YOU_URL,
@@ -120,14 +121,6 @@ export function errorActionCreator(error, name) {
     message,
     header: "An error has occurred",
   };
-}
-
-function isNoActiveTokensError(error) {
-  const status = error?.response?.status;
-  const message = (error?.response?.data?.message || "").toLowerCase();
-  return (
-    (status === 401 || status === 403) && message.includes("no active tokens")
-  );
 }
 
 export function triggerNotification(

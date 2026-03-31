@@ -13,6 +13,14 @@ import axios from "axios";
 import { api } from "~/config";
 import { stringifyQueryParams } from "~/util";
 
+export function isNoActiveTokensError(error) {
+  const status = error?.response?.status;
+  const message = (error?.response?.data?.message || "").toLowerCase();
+  return (
+    (status === 401 || status === 403) && message.includes("no active tokens")
+  );
+}
+
 // URLs
 export const CONFIG_URL = `${api}/api/config`;
 export const USER_INFO_URL = `${api}/api/you`;
@@ -75,17 +83,37 @@ class Client {
    * @param {Boolean} withCredentials - Whether ot not cross-site Access-Control requests should be made using credentials.
    * @returns {Promise} Axios Promise
    */
+
+  constructor() {
+    this._onUnauthorized = null;
+  }
+
+  setOnUnauthorized(callback) {
+    this._onUnauthorized = callback;
+  }
+
   async _request(
     url,
     { data = null, method = "get", withCredentials = true, ...options } = {},
   ) {
-    return await axios({
-      method,
-      url,
-      data,
-      withCredentials,
-      ...options,
-    });
+    try {
+      return await axios({
+        method,
+        url,
+        data,
+        withCredentials,
+        ...options,
+      });
+    } catch (error) {
+      if (
+        error?.response?.status === 401 &&
+        this._onUnauthorized &&
+        !isNoActiveTokensError(error)
+      ) {
+        this._onUnauthorized();
+      }
+      throw error;
+    }
   }
 
   getConfig() {

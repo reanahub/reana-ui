@@ -11,10 +11,15 @@
 import { createRoot } from "react-dom/client";
 import { Provider } from "react-redux";
 import store from "./store";
-import { loadUser, loadConfig } from "~/actions";
+import client from "~/client";
+import { loadUser, loadConfig, USER_SIGNEDOUT } from "~/actions";
 import App from "./components/App";
 
 import "semantic-ui-less/semantic.less";
+
+client.setOnUnauthorized(() => {
+  store.dispatch({ type: USER_SIGNEDOUT });
+});
 
 function fetchInitialData(store) {
   store.dispatch(loadUser());
