@@ -21,6 +21,16 @@ export function isNoActiveTokensError(error) {
   );
 }
 
+export function isSessionExpiredError(error) {
+  const status = error?.response?.status;
+  const message = (error?.response?.data?.message || "").toLowerCase();
+  return (
+    status === 401 &&
+    (message.includes("user not signed in") ||
+      message.includes("user not logged in"))
+  );
+}
+
 // URLs
 export const CONFIG_URL = `${api}/api/config`;
 export const USER_INFO_URL = `${api}/api/you`;
@@ -105,11 +115,7 @@ class Client {
         ...options,
       });
     } catch (error) {
-      if (
-        error?.response?.status === 401 &&
-        this._onUnauthorized &&
-        !isNoActiveTokensError(error)
-      ) {
+      if (this._onUnauthorized && isSessionExpiredError(error)) {
         this._onUnauthorized();
       }
       throw error;
