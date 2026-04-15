@@ -27,6 +27,22 @@
   }
 }
 
+.quota-period {
+  margin-top: 0.75rem;
+  font-size: 0.75rem;
+  line-height: 1.4;
+}
+
+.quota-period-label {
+  color: rgba($raven, 0.8);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.quota-period-value {
+  margin-top: 0.2rem;
+}
+
 .quota-info {
   margin-top: 2em;
 }
