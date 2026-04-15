@@ -11,6 +11,7 @@
 import { useSelector } from "react-redux";
 import { Grid, Label } from "semantic-ui-react";
 import isEmpty from "lodash/isEmpty";
+import moment from "moment";
 
 import { PieChart, Notification } from "~/components";
 import { REANA_QUOTAS_DOCS_URL } from "~/config";
@@ -18,6 +19,22 @@ import { getConfig, getUserQuota } from "~/selectors";
 import { healthMapping } from "~/util";
 
 import styles from "./Quota.module.scss";
+
+export function getQuotaPeriodWindow(quota = {}) {
+  const {
+    quota_period_months: periodMonths,
+    quota_period_start_at: periodStartAt,
+  } = quota;
+  if (!periodMonths || !periodStartAt) return null;
+
+  const periodStart = moment(periodStartAt);
+  if (!periodStart.isValid()) return null;
+
+  return {
+    startLabel: periodStart.format("ll"),
+    endLabel: periodStart.clone().add(periodMonths, "months").format("ll"),
+  };
+}
 
 export default function Quota() {
   const config = useSelector(getConfig);
@@ -27,6 +44,7 @@ export default function Quota() {
     const { usage, limit, health } = quota;
     const percentage = Math.round((usage?.raw / limit?.raw) * 100);
     const hasLimit = limit?.raw > 0;
+    const quotaPeriodWindow = getQuotaPeriodWindow(quota);
 
     return (
       !isEmpty(quota) && (
@@ -41,6 +59,16 @@ export default function Quota() {
               <h3>{usage.human_readable}</h3>
               {hasLimit ? `out of ${limit.human_readable} ` : "used"}
             </div>
+            {quotaPeriodWindow && (
+              <div className={styles["quota-period"]}>
+                <div className={styles["quota-period-label"]}>
+                  CURRENT PERIOD
+                </div>
+                <div className={styles["quota-period-value"]}>
+                  {quotaPeriodWindow.startLabel} - {quotaPeriodWindow.endLabel}
+                </div>
+              </div>
+            )}
             {hasLimit && (
               <Label
                 basic
