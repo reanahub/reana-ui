@@ -77,6 +77,7 @@ export const WORKFLOWS_FETCH_ERROR = "Workflows fetch error";
 export const WORKFLOW_LOGS_FETCH = "Fetch workflow logs";
 export const WORKFLOW_LOGS_RECEIVED = "Workflow logs received";
 export const WORKFLOW_FILES_FETCH = "Fetch workflow files";
+export const WORKFLOW_FILES_FETCH_ERROR = "Workflow files fetch error";
 export const WORKFLOW_FILES_RECEIVED = "Workflow files received";
 export const WORKFLOW_SPECIFICATION_FETCH = "Fetch workflow specification";
 export const WORKFLOW_SPECIFICATION_RECEIVED =
@@ -404,6 +405,7 @@ export function fetchWorkflowFiles(id, pagination, search) {
             total: 0,
           });
         } else {
+          dispatch({ type: WORKFLOW_FILES_FETCH_ERROR });
           dispatch(errorActionCreator(err, WORKFLOW_FILES_URL(id, pagination)));
         }
       });

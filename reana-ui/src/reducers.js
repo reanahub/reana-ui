@@ -36,6 +36,7 @@ import {
   WORKFLOW_SPECIFICATION_FETCH,
   WORKFLOW_SPECIFICATION_RECEIVED,
   WORKFLOW_FILES_FETCH,
+  WORKFLOW_FILES_FETCH_ERROR,
   WORKFLOW_FILES_RECEIVED,
   WORKFLOW_RETENTION_RULES_RECEIVED,
   OPEN_DELETE_WORKFLOW_MODAL,
@@ -342,6 +343,8 @@ const details = (state = detailsInitialState, action) => {
       };
     case WORKFLOW_FILES_FETCH:
       return { ...state, loadingDetails: true };
+    case WORKFLOW_FILES_FETCH_ERROR:
+      return { ...state, loadingDetails: false };
     case WORKFLOW_FILES_RECEIVED:
       return {
         ...state,
