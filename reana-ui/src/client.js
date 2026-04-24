@@ -135,10 +135,11 @@ class Client {
   }
 
   _sign(url, data) {
+    const formData = new URLSearchParams(data);
     return this._request(url, {
-      data,
+      data: formData,
       method: "post",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
     });
   }
 
