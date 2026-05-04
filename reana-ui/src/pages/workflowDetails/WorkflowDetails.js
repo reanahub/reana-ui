@@ -182,10 +182,6 @@ export default function WorkflowDetails() {
       },
       render: () => <WorkflowLogs engine workflow={workflow} />,
     },
-    {
-      menuItem: { key: "job-logs", icon: "terminal", content: "Job logs" },
-      render: () => <WorkflowLogs workflow={workflow} />,
-    },
     ...(workflowUsesDask
       ? [
           {
@@ -198,6 +194,10 @@ export default function WorkflowDetails() {
           },
         ]
       : []),
+    {
+      menuItem: { key: "job-logs", icon: "terminal", content: "Job logs" },
+      render: () => <WorkflowLogs workflow={workflow} />,
+    },
     {
       menuItem: {
         key: "workspace",
@@ -226,13 +226,13 @@ export default function WorkflowDetails() {
   // If the workflow has finished, and it did not fail, then engine logs are shown.
   // Otherwise, job logs are displayed.
   const hasFinished = FINISHED_STATUSES.includes(workflow.status);
-  let defaultActiveIndex = 1; // job logs
+  const tabKeys = panes.map((p) => p.menuItem.key);
+  let defaultActiveIndex = tabKeys.indexOf("job-logs");
   if (hasFinished && workflow.status !== "failed") {
-    defaultActiveIndex = 0; // engine logs
+    defaultActiveIndex = tabKeys.indexOf("engine-logs");
   }
 
   // If URL has a /:tab value, use it to find the index
-  const tabKeys = panes.map((p) => p.menuItem.key);
   const activeTabIndex = tabFromPath
     ? Math.max(tabKeys.indexOf(tabFromPath), 0)
     : defaultActiveIndex;
