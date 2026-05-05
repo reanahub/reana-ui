@@ -50,16 +50,21 @@ EngineLogs.propTypes = {
 // UI design should be changed to allow for multiple services to be displayed at once if another service is introduced.
 function ServiceLogs({ isDask, components, workflowStatus }) {
   const isExecuting = NON_FINISHED_STATUSES.includes(workflowStatus);
+  const hasComponents = Array.isArray(components) && components.length > 0;
   // start empty to avoid reading components[0] before data arrives
   const [selectedComponentIndex, setSelectedComponentIndex] = useState("");
   const { id: workflowId, job: componentFromPath } = useParams();
   const navigate = useNavigate();
+  const serviceLogsPath = `/workflows/${workflowId}/service-logs`;
 
   // Keep dropdown selection and URL in sync (must run before any early return to satisfy hooks rule)
   useEffect(() => {
     if (!isDask || isExecuting) return;
-    if (!Array.isArray(components) || components.length === 0) {
+    if (!hasComponents) {
       if (selectedComponentIndex !== "") setSelectedComponentIndex("");
+      if (componentFromPath) {
+        navigate(serviceLogsPath, { replace: true });
+      }
       return;
     }
     if (componentFromPath) {
@@ -75,15 +80,16 @@ function ServiceLogs({ isDask, components, workflowStatus }) {
     }
     // Standardize URL to first component when missing/invalid
     navigate(
-      `/workflows/${workflowId}/service-logs/${encodeURIComponent(components[0].component)}`,
+      `${serviceLogsPath}/${encodeURIComponent(components[0].component)}`,
       { replace: true },
     );
   }, [
     isDask,
     isExecuting,
+    hasComponents,
     components,
     componentFromPath,
-    workflowId,
+    serviceLogsPath,
     navigate,
     selectedComponentIndex,
   ]);
@@ -110,15 +116,27 @@ function ServiceLogs({ isDask, components, workflowStatus }) {
     );
   }
 
-  const dropdownOptions = Object.entries(components).map(([id, component]) => ({
-    key: id,
+  if (!hasComponents) {
+    return (
+      <Message
+        icon="info circle"
+        content={
+          "No service components were created for this workflow, so there are no service logs to display."
+        }
+        info
+      />
+    );
+  }
+
+  const dropdownOptions = components.map((component, index) => ({
+    key: component.component || index,
     text: component.component,
     icon: {
       name: "dot circle outline",
       size: "small",
       color: "green",
     },
-    value: id,
+    value: String(index),
   }));
 
   return (
@@ -139,7 +157,7 @@ function ServiceLogs({ isDask, components, workflowStatus }) {
               const componentName = components?.[value]?.component;
               if (componentName) {
                 navigate(
-                  `/workflows/${workflowId}/service-logs/${encodeURIComponent(componentName)}`,
+                  `${serviceLogsPath}/${encodeURIComponent(componentName)}`,
                   { replace: false },
                 );
               }
@@ -155,7 +173,7 @@ function ServiceLogs({ isDask, components, workflowStatus }) {
       ) : (
         <Message
           icon="info circle"
-          content="There are no service logs to display."
+          content="There are no service logs to display for the selected component."
           info
         />
       )}
@@ -164,6 +182,7 @@ function ServiceLogs({ isDask, components, workflowStatus }) {
 }
 
 ServiceLogs.propTypes = {
+  isDask: PropTypes.bool.isRequired,
   components: PropTypes.array.isRequired,
   workflowStatus: PropTypes.string.isRequired,
 };
