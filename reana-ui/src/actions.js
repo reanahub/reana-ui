@@ -14,6 +14,8 @@ import client, {
   CONFIG_URL,
   INTERACTIVE_SESSIONS_CLOSE_URL,
   INTERACTIVE_SESSIONS_OPEN_URL,
+  NOTIFICATION_URL,
+  NOTIFICATIONS_READ_ALL_URL,
   USER_INFO_URL,
   USER_SIGNOUT_URL,
   USERS_SHARED_WITH_YOU_URL,
@@ -44,6 +46,13 @@ export const ERROR = "Error";
 export const NOTIFICATION = "Notification";
 export const WARNING = "Warning";
 export const CLEAR_NOTIFICATION = "Clear notification";
+export const PERSISTENT_NOTIFICATIONS_RECEIVED =
+  "Persistent notifications received";
+export const PERSISTENT_NOTIFICATIONS_ERROR =
+  "Persistent notifications fetch error";
+export const PERSISTENT_NOTIFICATION_READ = "Persistent notification read";
+export const PERSISTENT_NOTIFICATIONS_READ_ALL =
+  "All persistent notifications read";
 
 export const CONFIG_FETCH = "Fetch app config info";
 export const CONFIG_RECEIVED = "App config info received";
@@ -69,6 +78,7 @@ export const GITLAB_WEBHOOK_TOKEN_FETCH_ERROR =
 
 export const GITLAB_WEBHOOK_TOKEN_RETRY_DELAY_MS = 60_000;
 let gitlabWebhookTokenRequestSequence = 0;
+let persistentNotificationsRequestSequence = 0;
 
 export const WORKFLOWS_FETCH = "Fetch workflows info";
 export const WORKFLOWS_RECEIVED = "Workflows info received";
@@ -139,6 +149,52 @@ export function triggerNotification(
 
 export const clearNotification = { type: CLEAR_NOTIFICATION };
 
+export function loadPersistentNotifications() {
+  return async (dispatch) => {
+    // only the newest request may update the bell, so that a late response
+    // cannot undo a read update that completed after it was sent
+    const requestId = ++persistentNotificationsRequestSequence;
+    const isLatest = () => requestId === persistentNotificationsRequestSequence;
+    return client
+      .getNotifications()
+      .then((resp) => {
+        if (!isLatest()) return;
+        dispatch({
+          type: PERSISTENT_NOTIFICATIONS_RECEIVED,
+          notifications: resp.data.notifications,
+          unreadCount: resp.data.unread_count,
+        });
+      })
+      .catch(() => {
+        if (isLatest()) dispatch({ type: PERSISTENT_NOTIFICATIONS_ERROR });
+      });
+  };
+}
+
+export function markPersistentNotificationRead(id) {
+  return async (dispatch) =>
+    client
+      .markNotificationRead(id)
+      .then(() => {
+        dispatch({ type: PERSISTENT_NOTIFICATION_READ, id });
+        return dispatch(loadPersistentNotifications());
+      })
+      .catch((err) => dispatch(errorActionCreator(err, NOTIFICATION_URL(id))));
+}
+
+export function markAllPersistentNotificationsRead() {
+  return async (dispatch) =>
+    client
+      .markAllNotificationsRead()
+      .then(() => {
+        dispatch({ type: PERSISTENT_NOTIFICATIONS_READ_ALL });
+        return dispatch(loadPersistentNotifications());
+      })
+      .catch((err) =>
+        dispatch(errorActionCreator(err, NOTIFICATIONS_READ_ALL_URL)),
+      );
+}
+
 export function loadConfig() {
   return async (dispatch) => {
     dispatch({ type: CONFIG_FETCH });
@@ -161,6 +217,7 @@ export function loadUser({ loader = true } = {}) {
       .then((resp) => {
         dispatch({ type: USER_RECEIVED, ...resp.data });
         dispatch({ type: QUOTA_RECEIVED, ...resp.data });
+        dispatch(loadPersistentNotifications());
       })
       .catch((err) => {
         // 401 Unauthorized: user did not sign in, fail silently.

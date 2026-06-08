@@ -43,6 +43,9 @@ export const CONFIG_URL = `${api}/api/config`;
 export const USER_INFO_URL = `${api}/api/you`;
 export const CLUSTER_INFO_URL = `${api}/api/info`;
 export const USER_SIGNOUT_URL = `${api}/api/logout`;
+export const NOTIFICATIONS_URL = `${api}/api/notifications`;
+export const NOTIFICATION_URL = (id) => `${NOTIFICATIONS_URL}/${id}`;
+export const NOTIFICATIONS_READ_ALL_URL = `${NOTIFICATIONS_URL}/read-all`;
 export const USERS_SHARED_WITH_YOU_URL = `${api}/api/users/shared-with-you`;
 export const USERS_YOU_SHARED_WITH_URL = `${api}/api/users/you-shared-with`;
 export const CLUSTER_STATUS_URL = `${api}/api/status`;
@@ -306,10 +309,11 @@ class Client {
     return this._request(WORKFLOW_SHARE_STATUS_URL(id));
   }
 
-  shareWorkflow(id, { userEmailToShareWith, validUntil }) {
+  shareWorkflow(id, { userEmailToShareWith, message, validUntil }) {
     return this._request(WORKFLOW_SHARE_URL(id), {
       data: {
         user_email_to_share_with: userEmailToShareWith,
+        message,
         valid_until: validUntil,
       },
       method: "post",
@@ -321,6 +325,21 @@ class Client {
       data: { user_email_to_unshare_with: userEmailToUnshareWith },
       method: "post",
     });
+  }
+
+  getNotifications(limit = 20) {
+    return this._request(NOTIFICATIONS_URL, { params: { limit } });
+  }
+
+  markNotificationRead(id) {
+    return this._request(NOTIFICATION_URL(id), {
+      data: { read: true },
+      method: "patch",
+    });
+  }
+
+  markAllNotificationsRead() {
+    return this._request(NOTIFICATIONS_READ_ALL_URL, { method: "post" });
   }
 }
 
