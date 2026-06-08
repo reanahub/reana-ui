@@ -7,6 +7,7 @@
 */
 
 import client from "~/client";
+import reanaApp from "~/reducers";
 import {
   ERROR,
   GITLAB_WEBHOOK_TOKEN_FETCH,
@@ -14,15 +15,24 @@ import {
   GITLAB_WEBHOOK_TOKEN_RECEIVED,
   GITLAB_WEBHOOK_TOKEN_RETRY_DELAY_MS,
   NOTIFICATION,
+  PERSISTENT_NOTIFICATIONS_ERROR,
   USER_FETCH_ERROR,
   USER_SIGNOUT,
   userSignout,
   WORKFLOW_LIST_REFRESH,
   loadUser,
   loadGitlabWebhookTokenStatus,
+  loadPersistentNotifications,
+  markAllPersistentNotificationsRead,
+  markPersistentNotificationRead,
   openInteractiveSession,
 } from "~/actions";
-import { USER_INFO_URL, USER_SIGNOUT_URL } from "~/client";
+import {
+  NOTIFICATION_URL,
+  NOTIFICATIONS_READ_ALL_URL,
+  USER_INFO_URL,
+  USER_SIGNOUT_URL,
+} from "~/client";
 
 afterEach(() => {
   jest.restoreAllMocks();
@@ -224,3 +234,127 @@ test.each([
     });
   },
 );
+
+test("a failed notification fetch is reported to the notification bell", async () => {
+  jest.spyOn(client, "getNotifications").mockRejectedValue(new Error("down"));
+  const dispatch = jest.fn();
+
+  await loadPersistentNotifications()(dispatch);
+
+  expect(dispatch).toHaveBeenCalledWith({
+    type: PERSISTENT_NOTIFICATIONS_ERROR,
+  });
+});
+
+test.each([
+  [
+    "one notification",
+    "markNotificationRead",
+    () => markPersistentNotificationRead("1"),
+    NOTIFICATION_URL("1"),
+  ],
+  [
+    "all notifications",
+    "markAllNotificationsRead",
+    () => markAllPersistentNotificationsRead(),
+    NOTIFICATIONS_READ_ALL_URL,
+  ],
+])(
+  "a failed read update of %s shows an error",
+  async (_, method, action, url) => {
+    jest.spyOn(client, method).mockRejectedValue({
+      response: { status: 500, data: { message: "Database unavailable." } },
+    });
+    const dispatch = jest.fn();
+
+    await expect(action()(dispatch)).resolves.toBeUndefined();
+
+    expect(dispatch).toHaveBeenCalledTimes(1);
+    expect(dispatch).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: ERROR,
+        name: url,
+        message: "Database unavailable.",
+      }),
+    );
+  },
+);
+
+describe("notification refreshes and read updates", () => {
+  const notification = (id, read = false) => ({
+    id,
+    read_at: read ? "2026-10-14T12:00:00" : null,
+  });
+  const response = (notifications) => ({
+    data: {
+      notifications,
+      unread_count: notifications.filter((n) => !n.read_at).length,
+    },
+  });
+  const deferred = () => {
+    let resolve;
+    const promise = new Promise((r) => (resolve = r));
+    return { promise, resolve };
+  };
+  const createStore = () => {
+    let state = reanaApp(undefined, { type: "init" });
+    const dispatch = (action) =>
+      typeof action === "function"
+        ? action(dispatch)
+        : (state = reanaApp(state, action));
+    return { dispatch, getState: () => state.persistentNotifications };
+  };
+
+  test.each([
+    [
+      "one notification",
+      "markNotificationRead",
+      () => markPersistentNotificationRead("1"),
+    ],
+    [
+      "all notifications",
+      "markAllNotificationsRead",
+      () => markAllPersistentNotificationsRead(),
+    ],
+  ])("a late refresh cannot undo a read of %s", async (_, method, action) => {
+    const store = createStore();
+    const stale = deferred();
+    jest
+      .spyOn(client, "getNotifications")
+      .mockReturnValueOnce(stale.promise)
+      .mockResolvedValueOnce(response([notification("1", true)]));
+    jest.spyOn(client, method).mockResolvedValue({ data: {} });
+
+    const refresh = store.dispatch(loadPersistentNotifications());
+    await store.dispatch(action());
+    stale.resolve(response([notification("1")]));
+    await refresh;
+
+    expect(store.getState().unreadCount).toBe(0);
+    expect(store.getState().items).toEqual([notification("1", true)]);
+  });
+
+  test("a notification that arrives during a bulk read stays unread", async () => {
+    const store = createStore();
+    const readAll = deferred();
+    jest
+      .spyOn(client, "getNotifications")
+      .mockResolvedValueOnce(
+        response([notification("2"), notification("1", true)]),
+      )
+      .mockResolvedValueOnce(
+        response([notification("2"), notification("1", true)]),
+      );
+    jest
+      .spyOn(client, "markAllNotificationsRead")
+      .mockReturnValue(readAll.promise);
+
+    const bulkRead = store.dispatch(markAllPersistentNotificationsRead());
+    await store.dispatch(loadPersistentNotifications());
+    readAll.resolve({ data: {} });
+    await bulkRead;
+
+    expect(store.getState().unreadCount).toBe(1);
+    expect(store.getState().items[0]).toEqual(notification("2"));
+  });
+});
