@@ -8,7 +8,7 @@
   under the terms of the MIT License; see LICENSE file for more details.
 */
 
-@import "@palette";
+@use "@palette" as *;
 
 .files-row {
   color: $raven;
@@ -31,4 +31,12 @@
 
 :global(.ui.inline.loader.active).loader {
   margin-top: 1em;
+}
+
+.copy-link-cell {
+  display: flex;
+  justify-content: right;
+  padding-right: 0.75em;
+  align-items: center;
+  gap: 0.5em;
 }

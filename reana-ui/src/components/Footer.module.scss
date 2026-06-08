@@ -8,7 +8,7 @@
   under the terms of the MIT License; see LICENSE file for more details.
 */
 
-@import "@palette";
+@use "@palette" as *;
 
 .footer-bottom {
   display: flex;

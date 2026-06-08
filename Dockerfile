@@ -31,7 +31,7 @@ RUN apt-get update -y && \
 
 # Serve frontend application
 FROM docker.io/library/nginx:1.28
-COPY --from=react-build /code/reana-ui/build /usr/share/nginx/html
+COPY --from=react-build /code/reana-ui/dist /usr/share/nginx/html
 COPY nginx/reana-ui.conf /etc/nginx/conf.d/default.conf
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]

@@ -8,7 +8,8 @@
   under the terms of the MIT License; see LICENSE file for more details.
 */
 
-@import "@palette";
+@use "sass:color";
+@use "@palette" as *;
 
 .flexbox {
   display: flex;
@@ -17,6 +18,14 @@
 
 .deleted {
   opacity: 0.5;
+}
+
+.shared-with-me {
+  border-left-color: $sui-teal !important;
+}
+
+.i-shared {
+  border-left-color: $sui-violet !important;
 }
 
 .divider {
@@ -34,6 +43,6 @@
 .workflow-details-container {
   padding: 1em;
   &:hover {
-    background-color: lighten($sepia, 3%);
+    background-color: color.adjust($sepia, $lightness: 3%);
   }
 }

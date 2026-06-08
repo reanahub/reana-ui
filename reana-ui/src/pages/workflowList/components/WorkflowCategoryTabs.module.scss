@@ -1,0 +1,27 @@
+/*
+  -*- coding: utf-8 -*-
+
+  This file is part of REANA.
+  Copyright (C) 2026 CERN.
+
+  REANA is free software; you can redistribute it and/or modify it
+  under the terms of the MIT License; see LICENSE file for more details.
+*/
+
+@use "@palette" as *;
+
+.categoryGroup {
+  margin-bottom: 0 !important;
+
+  // Lock font-weight so text width never changes between active/inactive states,
+  // which would cause neighboring buttons to shift horizontally.
+  :global(.ui.button) {
+    font-weight: 400 !important;
+  }
+
+  :global(.ui.button.active) {
+    font-weight: 400 !important;
+    background-color: $sepia !important;
+    color: $dark-blue !important;
+  }
+}
