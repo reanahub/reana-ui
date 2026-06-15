@@ -1,0 +1,66 @@
+/*
+  -*- coding: utf-8 -*-
+
+  This file is part of REANA.
+  Copyright (C) 2026 CERN.
+
+  REANA is free software; you can redistribute it and/or modify it
+  under the terms of the MIT License; see LICENSE file for more details.
+*/
+
+@import "@palette";
+
+// Shared styling for the vertical "secondary vertical fluid" menus used as
+// sidebar refinement filters (sharing, sessions, deleted runs, status).
+@mixin vertical-refine-menu {
+  width: 100%;
+  margin: 0;
+
+  :global(.item) {
+    display: flex;
+    align-items: center;
+    margin: 0.1em 0;
+    padding: 0.5em 0.6em !important;
+    border-radius: 0.35em !important;
+    color: $raven !important;
+
+    :global(.icon) {
+      width: 1.25em;
+      margin-right: 0.55em !important;
+    }
+
+    &:hover {
+      background-color: rgba($dark-blue, 0.06) !important;
+      color: $dark-blue !important;
+    }
+  }
+
+  :global(.active.item) {
+    background-color: rgba($dark-blue, 0.1) !important;
+    color: $dark-blue !important;
+    font-weight: 600;
+  }
+}
+
+// Shared styling for inline dropdown triggers and their popup menu chrome
+// (result sorting, results-per-page).
+@mixin inline-dropdown($menu-min-width) {
+  display: inline-flex;
+  align-items: center;
+  color: $dark-blue;
+  font-weight: 600;
+  line-height: 1.25em;
+
+  :global(.dropdown.icon) {
+    flex: 0 0 auto;
+    margin: 0 0 0 0.35em;
+  }
+
+  :global(.menu) {
+    min-width: $menu-min-width;
+    margin-top: 0.75em !important;
+    border-color: darken($sepia, 4%) !important;
+    border-radius: 0.4em !important;
+    box-shadow: 0 5px 18px rgba($dark-blue, 0.12) !important;
+  }
+}

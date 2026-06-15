@@ -2,86 +2,250 @@
   -*- coding: utf-8 -*-
 
   This file is part of REANA.
-  Copyright (C) 2020, 2022, 2023, 2024, 2025 CERN.
+  Copyright (C) 2020, 2022, 2023, 2024, 2025, 2026 CERN.
 
   REANA is free software; you can redistribute it and/or modify it
   under the terms of the MIT License; see LICENSE file for more details.
 */
 
 @import "@palette";
+@import "@menus";
 
 .container {
+  --workflow-view-header-height: 3.5rem;
+  --workflow-sidebar-width: 230px;
+  --workflow-browser-gap: 2em;
+  --workflow-content-margin: max(0px, calc((100vw - 1380px) / 2));
+  --workflow-loading-top-offset: calc(
+    var(--workflow-view-header-height) + 6.25rem
+  );
+  --workflow-loading-bottom-offset: 5.25rem;
+
   flex-grow: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  padding-top: 4em;
-}
-
-.title {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-
-  .refresh {
-    color: $gray;
-    font-size: 12px;
-
-    .icon {
-      cursor: pointer;
-
-      &:hover {
-        color: $dark-gray;
-      }
-    }
-  }
-}
-
-:global(.ui.pagination.menu).pagination {
-  margin: 2em;
 }
 
 :global(.ui.text.container).workflow-list-container {
-  max-width: 1200px !important;
+  max-width: 1380px !important;
+}
+
+.pageHeading {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.browser {
+  display: grid;
+  grid-template-columns: var(--workflow-sidebar-width) minmax(0, 1fr);
+  align-items: start;
+  gap: var(--workflow-browser-gap);
+}
+
+.results {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.resultsHeader {
+  position: sticky;
+  z-index: 2;
+  top: var(--workflow-view-header-height);
+  display: flex;
+  align-items: center;
+  gap: 1em;
+  padding-top: 1.5em;
+  padding-bottom: 0.5em;
+  border-bottom: 1px solid $sepia;
+  background-color: white;
+}
+
+.search {
+  flex: 1;
+  min-width: 14em;
+}
+
+.resultControls {
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+}
+
+.resultContext {
+  padding: 0.75em 0;
+  color: $raven;
+  font-size: 0.9em;
+}
+
+.resultsBody {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: clamp(
+    16rem,
+    calc(100vh - var(--workflow-view-header-height) - 14rem),
+    34rem
+  );
+}
+
+.workflowListFrame {
+  position: relative;
+}
+
+.loadingOverlay {
+  position: fixed;
+  z-index: 3;
+  top: var(--workflow-loading-top-offset);
+  right: var(--workflow-content-margin);
+  bottom: var(--workflow-loading-bottom-offset);
+  left: calc(
+    var(--workflow-content-margin) + var(--workflow-sidebar-width) +
+      var(--workflow-browser-gap)
+  );
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+
+.loadingIndicator {
+  :global(.ui.loader) {
+    position: relative !important;
+    margin: 0;
+    transform: none !important;
+  }
+}
+
+@media only screen and (max-width: 991px) {
+  .browser {
+    grid-template-columns: 1fr;
+    gap: 1.25em;
+  }
+
+  .loadingOverlay {
+    right: max(1rem, var(--workflow-content-margin));
+    left: max(1rem, var(--workflow-content-margin));
+  }
+}
+
+@media only screen and (max-width: 767px) {
+  .container {
+    --workflow-view-header-height: 4.75rem;
+    --workflow-loading-top-offset: calc(
+      var(--workflow-view-header-height) + 7.25rem
+    );
+  }
+
+  .resultsHeader {
+    flex-wrap: wrap;
+  }
+
+  .search {
+    flex: 0 0 100%;
+  }
 }
 
 .paginationRow {
-  display: grid;
+  position: sticky;
+  bottom: 0;
+  z-index: 2;
+  display: flex;
   align-items: center;
-  justify-items: center;
-}
+  justify-content: space-between;
+  gap: 1.5em;
+  min-height: 4.8em;
+  margin-top: auto;
+  padding-top: 0.75em;
+  padding-bottom: 1.5em;
+  border-top: 1px solid $sepia;
+  background-color: white;
 
-.pageSizeNotVisible {
-  grid-column: 1;
-  display: inline-flex;
-  gap: 0.5rem;
-  visibility: hidden;
+  &::before {
+    position: absolute;
+    right: 0;
+    bottom: 100%;
+    left: 0;
+    height: 1.75em;
+    background: radial-gradient(
+      farthest-side at 50% 100%,
+      rgba($dark-blue, 0.2),
+      rgba($sepia, 0.5) 48%,
+      rgba($sepia, 0)
+    );
+    content: "";
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.16s ease-out;
+  }
 
-  :global(.ui.selection.dropdown > .text) {
-    font-size: 1rem;
+  :global(.ui.secondary.pointing.menu) {
+    border-color: $sepia;
+  }
+
+  :global(.ui.secondary.pointing.menu .item) {
+    color: $raven;
+  }
+
+  :global(.ui.secondary.pointing.menu .item:hover) {
+    color: $dark-blue;
+    border-color: rgba($dark-blue, 0.3);
+  }
+
+  :global(.ui.secondary.pointing.menu .active.item) {
+    color: $dark-blue;
+    border-color: $dark-blue;
+    font-weight: 600;
   }
 }
 
-.pagination {
-  grid-column: 2;
-  justify-self: center;
+.paginationRowWithCue::before {
+  opacity: 1;
+}
+
+.paginationSlot {
+  display: flex;
+  flex: 0 0 18em;
+  justify-content: flex-start;
+  min-height: 2.6em;
+}
+
+.paginationSlotEmpty {
+  visibility: hidden;
+  pointer-events: none;
 }
 
 .pageSize {
-  grid-column: 3;
-  justify-self: end;
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  margin-top: 2em;
-  margin-bottom: 2em;
+  gap: 0.35em;
+  color: $raven;
+  font-size: 0.9em;
+  line-height: 1.25em;
+  white-space: nowrap;
 
-  :global(.ui.selection.dropdown > .text) {
-    font-size: 1rem;
+  :global(.ui.inline.dropdown) {
+    @include inline-dropdown(5em);
   }
 }
 
-.pageSizeLabel {
-  font-size: 1rem;
+@media (prefers-reduced-motion: reduce) {
+  .paginationRow::before {
+    transition: none;
+  }
+}
+
+@media only screen and (max-width: 767px) {
+  .paginationRow {
+    justify-content: center;
+  }
+
+  .paginationSlot {
+    flex-basis: auto;
+    justify-content: center;
+  }
 }

@@ -1,0 +1,82 @@
+/*
+  -*- coding: utf-8 -*-
+
+  This file is part of REANA.
+  Copyright (C) 2026 CERN.
+
+  REANA is free software; you can redistribute it and/or modify it
+  under the terms of the MIT License; see LICENSE file for more details.
+*/
+
+@import "@palette";
+
+.viewHeader {
+  position: sticky;
+  z-index: 3;
+  top: 0;
+  display: flex;
+  align-items: flex-end;
+  min-height: var(--workflow-view-header-height);
+  border-bottom: 1px solid $sepia;
+  background-color: white;
+}
+
+.navigation {
+  min-width: 0;
+  overflow-y: hidden;
+  overflow-x: auto;
+  flex: 1 1 auto;
+  scrollbar-width: thin;
+}
+
+.categoryMenu {
+  width: max-content;
+  min-width: 100%;
+  margin: 0 !important;
+  border-bottom: 0 !important;
+
+  :global(.item) {
+    flex: 0 0 auto;
+    margin-bottom: -1px !important;
+    padding: 0.85em 1.25em !important;
+    color: $raven !important;
+  }
+
+  :global(.active.item) {
+    color: $dark-blue !important;
+  }
+}
+
+.refresh {
+  flex: 0 0 auto;
+  margin: 0 0 0.85em 1.5em;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: $gray;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 12px;
+  white-space: nowrap;
+
+  &:hover,
+  &:focus-visible {
+    color: $dark-gray;
+  }
+}
+
+@media only screen and (max-width: 767px) {
+  .viewHeader {
+    align-items: stretch;
+    flex-direction: column-reverse;
+  }
+
+  .refresh {
+    align-self: flex-end;
+    margin: 0 0 0.25em;
+  }
+
+  .refreshLabel {
+    display: none;
+  }
+}

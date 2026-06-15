@@ -2,7 +2,7 @@
   -*- coding: utf-8 -*-
 
   This file is part of REANA.
-  Copyright (C) 2023, 2024 CERN.
+  Copyright (C) 2023, 2024, 2026 CERN.
 
   REANA is free software; you can redistribute it and/or modify it
   under the terms of the MIT License; see LICENSE file for more details.
@@ -26,15 +26,22 @@ export default function WorkflowBadges({ workflow, badgeSize = "tiny" }) {
     services,
     session_uri: sessionUri,
     session_status: sessionStatus,
+    ownerEmail,
+    sharedWith = [],
   } = workflow;
   const hasDiskUsage = size.raw > 0;
   const isSessionOpen = sessionStatus === "running";
   const isDaskClusterUp =
     services.length > 0 && services[0].status === "running";
+  const isOwner = ownerEmail === userEmail;
+  const isSharedWithMe = !isOwner;
+  const iShared = isOwner && sharedWith.length > 0;
+  const sharedWithLabel =
+    sharedWith.length === 1 ? sharedWith[0] : `${sharedWith.length} people`;
 
   return (
     <div className={styles.badgesContainer}>
-      {workflow.ownerEmail === userEmail && (
+      {isOwner && (
         <>
           {workflow.duration && (
             <Label
@@ -83,18 +90,36 @@ export default function WorkflowBadges({ workflow, badgeSize = "tiny" }) {
               rel="noopener noreferrer"
             />
           )}
+          {iShared && (
+            <Popup
+              trigger={
+                <Label
+                  basic
+                  size={badgeSize}
+                  content={`Shared with ${sharedWithLabel}`}
+                  icon="share alternate"
+                  className={styles.sharedByMeBadge}
+                />
+              }
+              position="top center"
+              content={`You shared this workflow with: ${sharedWith.join(", ")}`}
+            />
+          )}
         </>
       )}
-      {workflow.ownerEmail !== userEmail && (
+      {isSharedWithMe && (
         <Popup
           trigger={
-            <Label basic size="tiny" content={workflow.ownerEmail} icon="eye" />
+            <Label
+              basic
+              size={badgeSize}
+              content={`Shared by ${ownerEmail}`}
+              icon="eye"
+              className={styles.sharedWithMeBadge}
+            />
           }
           position="top center"
-          content={
-            "This workflow is read-only shared with you by " +
-            workflow.ownerEmail
-          }
+          content={`This workflow is read-only and shared with you by ${ownerEmail}`}
         />
       )}
     </div>

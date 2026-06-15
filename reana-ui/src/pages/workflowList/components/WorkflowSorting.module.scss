@@ -1,0 +1,31 @@
+/*
+  -*- coding: utf-8 -*-
+
+  This file is part of REANA.
+  Copyright (C) 2026 CERN.
+
+  REANA is free software; you can redistribute it and/or modify it
+  under the terms of the MIT License; see LICENSE file for more details.
+*/
+
+@import "@palette";
+@import "@menus";
+
+.sorting {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  color: $raven;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.label {
+  margin-right: 0.35em;
+  font-size: 0.9em;
+  line-height: 1.25em;
+}
+
+:global(.ui.inline.dropdown).dropdown {
+  @include inline-dropdown(13em);
+}

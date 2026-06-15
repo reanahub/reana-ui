@@ -11,6 +11,7 @@ module.exports = {
         aliases: {
           "~": "./src",
           "@palette": "./src/styles/palette",
+          "@menus": "./src/styles/menus",
         },
       },
     },

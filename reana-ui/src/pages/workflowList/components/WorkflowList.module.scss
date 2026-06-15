@@ -2,7 +2,7 @@
   -*- coding: utf-8 -*-
 
   This file is part of REANA.
-  Copyright (C) 2020, 2021, 2022, 2023, 2024 CERN.
+  Copyright (C) 2020, 2021, 2022, 2023, 2024, 2026 CERN.
 
   REANA is free software; you can redistribute it and/or modify it
   under the terms of the MIT License; see LICENSE file for more details.
@@ -35,5 +35,86 @@
   padding: 1em;
   &:hover {
     background-color: lighten($sepia, 3%);
+  }
+}
+
+.list {
+  position: relative;
+  // contained stacking context — keeps the refetch loader below the sticky bars
+  z-index: 1;
+}
+
+.dimmed {
+  opacity: 0.45;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: clamp(
+    16rem,
+    calc(100vh - var(--workflow-view-header-height) - 14rem),
+    34rem
+  );
+  padding: 2.25em 1.25em;
+  color: $raven;
+  text-align: center;
+
+  h2 {
+    margin: 0 0 0.3em;
+    color: $dark-blue;
+    font-size: 1.15em;
+    font-weight: 600;
+  }
+
+  p {
+    margin: 0 0 0.85em;
+    line-height: 1.45;
+  }
+}
+
+.emptyStateIcon {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  width: 2.4em;
+  height: 2.4em;
+  margin-bottom: 0.85em;
+  border-radius: 50%;
+  background-color: rgba($dark-blue, 0.08);
+  color: rgba($dark-blue, 0.78);
+
+  :global(.icon) {
+    width: 1em;
+    height: 1em;
+    margin: 0 !important;
+    line-height: 1;
+  }
+}
+
+.clearFilters {
+  margin: 0 !important;
+  padding: 0.55em 0.7em !important;
+  border-radius: 0.35em !important;
+  background-color: white !important;
+  box-shadow: inset 0 0 0 1px rgba($dark-blue, 0.18) !important;
+  color: $dark-blue !important;
+  font-weight: 500 !important;
+
+  &:hover,
+  &:focus,
+  &:active {
+    background-color: lighten($sepia, 3%) !important;
+    box-shadow: inset 0 0 0 1px rgba($dark-blue, 0.32) !important;
+    color: darken($dark-blue, 5%) !important;
+  }
+
+  :global(.icon) {
+    color: $raven;
   }
 }

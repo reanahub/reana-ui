@@ -1,0 +1,53 @@
+/*
+  -*- coding: utf-8 -*-
+
+  This file is part of REANA.
+  Copyright (C) 2026 CERN.
+
+  REANA is free software; you can redistribute it and/or modify it
+  under the terms of the MIT License; see LICENSE file for more details.
+*/
+
+@import "@palette";
+@import "@menus";
+
+:global(.ui.secondary.vertical.menu).statusMenu {
+  @include vertical-refine-menu;
+
+  // Status icons carry their own semantic colours, so tint them down at rest
+  // and restore them on hover / when active.
+  :global(.item) {
+    text-transform: capitalize;
+
+    :global(.icon) {
+      filter: grayscale(5%) saturate(70%);
+      opacity: 0.73;
+    }
+
+    &:hover :global(.icon) {
+      filter: grayscale(0%) saturate(95%);
+      opacity: 0.92;
+    }
+  }
+
+  :global(.active.item) :global(.icon) {
+    filter: grayscale(0%) saturate(100%);
+    opacity: 1;
+  }
+}
+
+.moreStatuses {
+  margin-top: 0.4em;
+  padding: 0.45em 0;
+  border: 0;
+  background: transparent;
+  color: $raven;
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: 400;
+
+  &:hover,
+  &:focus-visible {
+    color: $dark-blue;
+  }
+}

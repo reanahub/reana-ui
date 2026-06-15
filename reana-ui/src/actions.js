@@ -290,6 +290,39 @@ export function confirmUserEmail(token) {
   };
 }
 
+/**
+ * Identifies the workflow-list query a `WORKFLOWS_RECEIVED` payload belongs to.
+ *
+ * `fetchWorkflow()` reuses `fetchWorkflows()` for a single workflow, and its
+ * response overwrites the same `workflows`/`total` the list reads. Consumers
+ * that depend on `total` describing the current list page must compare this key
+ * before trusting it; a single-workflow request has no list identity and
+ * returns `null`.
+ */
+export function workflowListQueryKey({
+  pagination,
+  search,
+  status,
+  sharedBy,
+  sharedWith,
+  sort,
+  shared = false,
+  type,
+  workflowIdOrName,
+} = {}) {
+  if (workflowIdOrName) return null;
+  return JSON.stringify({
+    pagination,
+    search,
+    status,
+    sharedBy,
+    sharedWith,
+    sort,
+    shared,
+    type,
+  });
+}
+
 export function fetchWorkflows({
   pagination,
   search,
@@ -302,6 +335,18 @@ export function fetchWorkflows({
   shared = false,
   type,
 }) {
+  const queryKey = workflowListQueryKey({
+    pagination,
+    search,
+    status,
+    sharedBy,
+    sharedWith,
+    sort,
+    shared,
+    type,
+    workflowIdOrName,
+  });
+
   return async (dispatch) => {
     if (showLoader) {
       dispatch({ type: WORKFLOWS_FETCH });
@@ -325,6 +370,7 @@ export function fetchWorkflows({
           workflows: parseWorkflows(resp.data.items),
           total: resp.data.total,
           userHasWorkflows: resp.data.user_has_workflows,
+          queryKey,
         }),
       )
       .catch((err) => {

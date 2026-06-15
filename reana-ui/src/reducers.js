@@ -101,6 +101,8 @@ const workflowsInitialState = {
   workflowsFetched: false,
   loadingWorkflows: false,
   total: null,
+  // identifies the list query `total` belongs to; null for single-workflow responses
+  queryKey: null,
   userHasWorkflows: false,
   workflowDeleteModal: { open: false, workflow: null },
   workflowPruneModal: { open: false, workflow: null },
@@ -277,6 +279,7 @@ const workflows = (state = workflowsInitialState, action) => {
         workflows: action.workflows,
         workflowsFetched: true,
         total: action.total,
+        queryKey: action.queryKey ?? null,
         userHasWorkflows: action.userHasWorkflows,
         loadingWorkflows: false,
       };

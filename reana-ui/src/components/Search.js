@@ -2,7 +2,7 @@
   -*- coding: utf-8 -*-
 
   This file is part of REANA.
-  Copyright (C) 2020, 2021, 2022, 2023, 2024, 2025 CERN.
+  Copyright (C) 2020, 2021, 2022, 2023, 2024, 2025, 2026 CERN.
 
   REANA is free software; you can redistribute it and/or modify it
   under the terms of the MIT License; see LICENSE file for more details.
@@ -17,6 +17,7 @@ export default function Search({
   onChange,
   onSubmit,
   loading = false,
+  placeholder = "Search...",
 }) {
   const handleChange = (text) => {
     if (typeof onChange === "function") {
@@ -40,7 +41,7 @@ export default function Search({
     <Input
       fluid
       icon="search"
-      placeholder="Search..."
+      placeholder={placeholder}
       value={value}
       className={styles.input}
       onChange={(_, data) => handleChange(data.value)}
@@ -60,5 +61,5 @@ Search.propTypes = {
   onChange: PropTypes.func,
   onSubmit: PropTypes.func,
   loading: PropTypes.bool,
-  search: PropTypes.func,
+  placeholder: PropTypes.string,
 };

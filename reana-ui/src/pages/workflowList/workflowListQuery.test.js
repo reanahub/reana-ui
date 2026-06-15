@@ -6,16 +6,12 @@
   under the terms of the MIT License; see LICENSE file for more details.
 */
 
-import { useEffect } from "react";
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { MemoryRouter, useLocation } from "react-router-dom";
-
 import { NON_DELETED_STATUSES } from "~/config";
-import { useWorkflowListQuery } from "./useWorkflowListQuery";
 import {
   parseWorkflowListQuery,
   serializeQueryToApiParams,
   WORKFLOW_LIST_DEFAULT_PAGE_SIZE,
+  WORKFLOW_LIST_DEFAULT_SORT,
 } from "./workflowListQuery";
 
 const parseQuery = (queryString) =>
@@ -24,55 +20,16 @@ const parseQuery = (queryString) =>
 const serializeQueryString = (queryString) =>
   serializeQueryToApiParams(parseQuery(queryString));
 
-function WorkflowListQueryProbe({ onChange }) {
-  const workflowListQuery = useWorkflowListQuery();
-  const location = useLocation();
-
-  useEffect(() => {
-    onChange({ location, workflowListQuery });
-  }, [location, onChange, workflowListQuery]);
-
-  return (
-    <>
-      <button onClick={() => workflowListQuery.setSharing("you", undefined)}>
-        Owned by you
-      </button>
-      <button
-        onClick={() => workflowListQuery.setSharing("anybody", undefined)}
-      >
-        Owned by anybody
-      </button>
-    </>
-  );
-}
-
-function renderWorkflowListQuery(initialEntry) {
-  const snapshots = [];
-  const onChange = (snapshot) => snapshots.push(snapshot);
-
-  render(
-    <MemoryRouter
-      future={{ v7_relativeSplatPath: true, v7_startTransition: true }}
-      initialEntries={[initialEntry]}
-    >
-      <WorkflowListQueryProbe onChange={onChange} />
-    </MemoryRouter>,
-  );
-
-  return {
-    latest: () => snapshots[snapshots.length - 1],
-  };
-}
-
 describe("parseWorkflowListQuery", () => {
-  it("defaults to owned by you when no sharing filter is set", () => {
+  it("defaults to your workflows with no sharing refinement", () => {
     const query = parseQuery("");
 
     expect(query).toEqual(
       expect.objectContaining({
         page: 1,
         pageSize: WORKFLOW_LIST_DEFAULT_PAGE_SIZE,
-        ownedBy: "you",
+        category: "mine",
+        ownedBy: undefined,
         sharedWith: undefined,
       }),
     );
@@ -86,20 +43,31 @@ describe("parseWorkflowListQuery", () => {
     );
   });
 
-  it("supports legacy shared=true as shared with me", () => {
+  it("supports legacy shared=true as shared workflows", () => {
     const query = parseQuery("shared=true");
 
     expect(query).toEqual(
       expect.objectContaining({
+        category: "shared-with-me",
         ownedBy: "anybody",
         sharedWith: undefined,
       }),
     );
     expect(serializeQueryToApiParams(query)).toEqual(
       expect.objectContaining({
-        shared: true,
-        sharedBy: undefined,
+        shared: false,
+        sharedBy: "anybody",
         sharedWith: undefined,
+      }),
+    );
+  });
+
+  it("supports private owned workflows", () => {
+    expect(serializeQueryString("shared-with=nobody")).toEqual(
+      expect.objectContaining({
+        shared: false,
+        sharedBy: undefined,
+        sharedWith: "nobody",
       }),
     );
   });
@@ -109,6 +77,7 @@ describe("parseWorkflowListQuery", () => {
 
     expect(query).toEqual(
       expect.objectContaining({
+        category: "mine",
         ownedBy: undefined,
         sharedWith: "anybody",
       }),
@@ -127,6 +96,7 @@ describe("parseWorkflowListQuery", () => {
 
     expect(query).toEqual(
       expect.objectContaining({
+        category: "mine",
         ownedBy: undefined,
         sharedWith: "alice@example.org",
       }),
@@ -170,68 +140,52 @@ describe("parseWorkflowListQuery", () => {
       }),
     );
   });
+
+  it.each([
+    ["asc", "asc"],
+    ["cpu-desc", "cpu-desc"],
+    ["unexpected", WORKFLOW_LIST_DEFAULT_SORT],
+    ["", WORKFLOW_LIST_DEFAULT_SORT],
+  ])("normalizes ?sort=%s to %s", (rawSort, expected) => {
+    expect(parseQuery(`sort=${rawSort}`).sort).toBe(expected);
+  });
 });
 
-describe("useWorkflowListQuery", () => {
-  it("removes invalid page parameters and normalizes the query page to 1", async () => {
-    const { latest } = renderWorkflowListQuery("/workflows?page=abc");
-
-    await waitFor(() => {
-      expect(latest().location.search).toBe("");
-    });
-    expect(latest().workflowListQuery.query.page).toBe(1);
+describe("serializeQueryToApiParams", () => {
+  it.each([
+    {
+      name: "no status filter hides deleted runs",
+      queryString: "",
+      status: NON_DELETED_STATUSES,
+    },
+    {
+      name: "no status filter with deleted runs included asks for every status",
+      queryString: "show-deleted=true",
+      status: undefined,
+    },
+    {
+      name: "a status filter narrows to that status",
+      queryString: "status=running",
+      status: ["running"],
+    },
+    {
+      name: "a status filter including deleted runs asks for both",
+      queryString: "status=running&show-deleted=true",
+      status: ["running", "deleted"],
+    },
+    {
+      name: "an invalid status is ignored, so deleted runs widen to every status",
+      queryString: "status=unexpected&show-deleted=true",
+      status: undefined,
+    },
+  ])("$name", ({ queryString, status }) => {
+    expect(serializeQueryString(queryString).status).toEqual(status);
   });
 
-  it("removes status=deleted and resets the current page", async () => {
-    const { latest } = renderWorkflowListQuery(
-      "/workflows?status=deleted&page=2",
+  it("requests only interactive workflows for open sessions", () => {
+    expect(serializeQueryString("open-sessions=true")).toEqual(
+      expect.objectContaining({ type: "interactive" }),
     );
-
-    await waitFor(() => {
-      expect(latest().location.search).toBe("");
-    });
-    expect(latest().workflowListQuery.query).toEqual(
-      expect.objectContaining({
-        page: 1,
-        status: undefined,
-        hasStatusFilter: false,
-      }),
-    );
-  });
-
-  it("switches from shared-with mode to owned by you and resets pagination", async () => {
-    const { latest } = renderWorkflowListQuery(
-      "/workflows?shared-with=anybody&page=3",
-    );
-
-    fireEvent.click(screen.getByRole("button", { name: "Owned by you" }));
-
-    await waitFor(() => {
-      expect(latest().location.search).toBe("?owned-by=you");
-    });
-    expect(latest().workflowListQuery.query).toEqual(
-      expect.objectContaining({
-        page: 1,
-        ownedBy: "you",
-        sharedWith: undefined,
-      }),
-    );
-  });
-
-  it("writes owned-by=anybody explicitly because the empty URL defaults to you", async () => {
-    const { latest } = renderWorkflowListQuery("/workflows?page=3");
-
-    fireEvent.click(screen.getByRole("button", { name: "Owned by anybody" }));
-
-    await waitFor(() => {
-      expect(latest().location.search).toBe("?owned-by=anybody");
-    });
-    expect(latest().workflowListQuery.query).toEqual(
-      expect.objectContaining({
-        page: 1,
-        ownedBy: "anybody",
-        sharedWith: undefined,
-      }),
-    );
+    expect(serializeQueryString("")).not.toHaveProperty("type");
   });
 });

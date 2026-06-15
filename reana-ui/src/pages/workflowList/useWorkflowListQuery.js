@@ -14,6 +14,7 @@ import { useSearchParams } from "react-router-dom";
 import {
   serializeQueryToApiParams,
   WORKFLOW_LIST_DEFAULT_PAGE_SIZE,
+  WORKFLOW_LIST_DEFAULT_SORT,
   parseWorkflowListQuery,
 } from "./workflowListQuery";
 
@@ -66,6 +67,37 @@ export function useWorkflowListQuery() {
     }
   }, [searchParams, setSearchParams]);
 
+  useEffect(() => {
+    // Legacy spellings, plus the conflicting combination of both mutually
+    // exclusive parameters: rewriting them keeps the URL in agreement with the
+    // parsed query model, which is what the view and `clearFilters` read.
+    const needsSharingNormalization =
+      searchParams.has("shared") ||
+      searchParams.has("shared-by") ||
+      searchParams.get("owned-by") === "you" ||
+      searchParams.get("shared-with") === "true" ||
+      (searchParams.has("owned-by") && searchParams.has("shared-with"));
+
+    if (needsSharingNormalization) {
+      const { ownedBy, sharedWith } = parseWorkflowListQuery(searchParams);
+      updateParams(
+        setSearchParams,
+        (next) => {
+          next.delete("shared");
+          next.delete("shared-by");
+          next.delete("owned-by");
+          next.delete("shared-with");
+          if (sharedWith !== undefined) {
+            next.set("shared-with", sharedWith);
+          } else if (ownedBy) {
+            next.set("owned-by", ownedBy);
+          }
+        },
+        { replace: true },
+      );
+    }
+  }, [searchParams, setSearchParams]);
+
   const submitSearch = useCallback(() => {
     const nextSearch = searchText.trim();
     updateParams(setSearchParams, (next) => {
@@ -78,15 +110,22 @@ export function useWorkflowListQuery() {
     });
   }, [searchText, setSearchParams]);
 
+  // `options` is forwarded to the router: automatic corrections pass
+  // `{ replace: true }` so they do not leave the invalid page in history,
+  // while deliberate page changes keep the default push behaviour.
   const setPage = useCallback(
-    (nextPage) => {
-      updateParams(setSearchParams, (next) => {
-        if (nextPage > 1) {
-          next.set("page", String(nextPage));
-        } else {
-          next.delete("page");
-        }
-      });
+    (nextPage, options) => {
+      updateParams(
+        setSearchParams,
+        (next) => {
+          if (nextPage > 1) {
+            next.set("page", String(nextPage));
+          } else {
+            next.delete("page");
+          }
+        },
+        options,
+      );
     },
     [setSearchParams],
   );
@@ -136,7 +175,7 @@ export function useWorkflowListQuery() {
   const setSort = useCallback(
     (nextSort) => {
       updateParams(setSearchParams, (next) => {
-        if (nextSort && nextSort !== "desc") {
+        if (nextSort && nextSort !== WORKFLOW_LIST_DEFAULT_SORT) {
           next.set("sort", nextSort);
         } else {
           next.delete("sort");
@@ -174,7 +213,7 @@ export function useWorkflowListQuery() {
           if (ownedBy) {
             next.set("owned-by", ownedBy);
           } else {
-            next.delete("owned-by"); // both undefined -> URL default (owned by you)
+            next.delete("owned-by"); // both undefined -> default "Your workflows" view
           }
         }
         resetPage(next);
@@ -182,6 +221,34 @@ export function useWorkflowListQuery() {
     },
     [setSearchParams],
   );
+
+  const clearFilters = useCallback(() => {
+    setSearchText("");
+    updateParams(setSearchParams, (next) => {
+      next.delete("search");
+      next.delete("status");
+      next.delete("show-deleted");
+      next.delete("open-sessions");
+      // Stay in the current view, but drop the person refinement within it.
+      if (query.category === "shared-with-me") {
+        next.set("owned-by", "anybody");
+      } else {
+        next.delete("owned-by");
+      }
+      next.delete("shared-with");
+      next.delete("shared");
+      next.delete("shared-by");
+      resetPage(next);
+    });
+  }, [setSearchParams, query.category]);
+
+  const hasActiveFilters =
+    Boolean(query.search) ||
+    query.hasStatusFilter ||
+    query.includeDeleted ||
+    query.showOpenSessionsOnly ||
+    (query.category === "shared-with-me" && query.ownedBy !== "anybody") ||
+    query.sharedWith !== undefined;
 
   const requestParams = useMemo(
     () => serializeQueryToApiParams(query),
@@ -201,5 +268,7 @@ export function useWorkflowListQuery() {
     setSort,
     setShowOpenSessionsOnly,
     setSharing,
+    clearFilters,
+    hasActiveFilters,
   };
 }

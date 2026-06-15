@@ -40,6 +40,7 @@ export const loadingWorkflows = (state) => state.workflows.loadingWorkflows;
 export const isWorkflowsFetched = (state) => state.workflows.workflowsFetched;
 export const getWorkflows = (state) => state.workflows.workflows;
 export const getWorkflowsCount = (state) => state.workflows.total;
+export const getWorkflowsQueryKey = (state) => state.workflows.queryKey;
 export const userHasWorkflows = (state) => state.workflows.userHasWorkflows;
 export const getWorkflow = (id) => (state) =>
   state.workflows.workflows && state.workflows.workflows[id];
