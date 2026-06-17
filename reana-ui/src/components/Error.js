@@ -15,12 +15,13 @@ import LogoImg from "~/images/logo-reana.svg";
 
 import styles from "./Error.module.scss";
 
-export default function Error({ message, title }) {
+export default function Error({ action, message, title }) {
   return (
     <Container textAlign="center" className={styles.container}>
       <Image centered spaced src={LogoImg} size="small" />
       <h3>{title}</h3>
       <div>{message}</div>
+      {action}
     </Container>
   );
 }
@@ -28,9 +29,11 @@ export default function Error({ message, title }) {
 Error.propTypes = {
   message: PropTypes.string,
   title: PropTypes.string,
+  action: PropTypes.node,
 };
 
 Error.defaultProps = {
   message: "",
   title: "Error",
+  action: null,
 };

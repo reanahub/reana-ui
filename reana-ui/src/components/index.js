@@ -33,3 +33,4 @@ export { default as PieChart } from "./PieChart";
 export { default as Search } from "./Search";
 export { default as Box } from "./Box";
 export { default as InteractiveSessionModal } from "./InteractiveSessionModal";
+export { default as WebhookExpiryWarning } from "./WebhookExpiryWarning";

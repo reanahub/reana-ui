@@ -12,13 +12,18 @@ import styles from "./WorkflowBadges.module.scss";
 import PropTypes from "prop-types";
 import { Label, Popup } from "semantic-ui-react";
 import { JupyterNotebookIcon, DaskIcon } from "~/components";
-import { INTERACTIVE_SESSION_URL, DASK_DASHBOARD_URL } from "~/client";
+import client, {
+  DASK_DASHBOARD_URL,
+  INTERACTIVE_SESSION_SECRET_URL,
+  INTERACTIVE_SESSION_URL,
+} from "~/client";
+import { errorActionCreator } from "~/actions";
 import { LauncherLabel } from "~/components";
-import { getReanaToken, getUserEmail } from "~/selectors";
-import { useSelector } from "react-redux";
+import { getUserEmail } from "~/selectors";
+import { useDispatch, useSelector } from "react-redux";
 
 export default function WorkflowBadges({ workflow, badgeSize = "tiny" }) {
-  const reanaToken = useSelector(getReanaToken);
+  const dispatch = useDispatch();
   const userEmail = useSelector(getUserEmail);
   const {
     size,
@@ -38,6 +43,46 @@ export default function WorkflowBadges({ workflow, badgeSize = "tiny" }) {
   const iShared = isOwner && sharedWith.length > 0;
   const sharedWithLabel =
     sharedWith.length === 1 ? sharedWith[0] : `${sharedWith.length} people`;
+
+  const handleOpenInteractiveSession = (event) => {
+    event.preventDefault();
+    const sessionWindow = window.open("", "_blank");
+    if (sessionWindow) {
+      sessionWindow.opener = null;
+      // The target URL isn't known synchronously (it needs the async
+      // secret fetch below), so this can't be a real <a rel="noreferrer">
+      // click like the rest of this file uses. Achieve the same effect by
+      // setting the popup's own referrer policy before navigating it --
+      // it starts as a same-origin about:blank document, so this is safe.
+      const noReferrerMeta = sessionWindow.document.createElement("meta");
+      noReferrerMeta.name = "referrer";
+      noReferrerMeta.content = "no-referrer";
+      sessionWindow.document.head.appendChild(noReferrerMeta);
+    }
+
+    client
+      .getInteractiveSessionSecret(workflow.id)
+      .then((resp) => {
+        const sessionUrl = INTERACTIVE_SESSION_URL(
+          sessionUri,
+          resp.data.session_secret,
+        );
+        if (sessionWindow) {
+          sessionWindow.location.href = sessionUrl;
+        } else {
+          window.location.assign(sessionUrl);
+        }
+      })
+      .catch((error) => {
+        if (sessionWindow) sessionWindow.close();
+        dispatch(
+          errorActionCreator(
+            error,
+            INTERACTIVE_SESSION_SECRET_URL(workflow.id),
+          ),
+        );
+      });
+  };
 
   return (
     <div className={styles.badgesContainer}>
@@ -69,10 +114,9 @@ export default function WorkflowBadges({ workflow, badgeSize = "tiny" }) {
                   <JupyterNotebookIcon size={12} />
                 </i>
               }
-              as="a"
-              href={INTERACTIVE_SESSION_URL(sessionUri, reanaToken)}
-              target="_blank"
-              rel="noopener noreferrer"
+              as="button"
+              type="button"
+              onClick={handleOpenInteractiveSession}
             />
           )}
           {isDaskClusterUp && (

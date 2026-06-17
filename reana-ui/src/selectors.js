@@ -16,24 +16,21 @@ export const getNotification = (state) => state.notification;
 // Config
 export const getConfig = (state) => state.config;
 export const isConfigLoaded = (state) => state.config.isLoaded;
-export const isSignupHidden = (state) => state.config.hideSignup;
 export const loadingConfig = (state) => state.config.loading;
 
 // Quota
 export const getUserQuota = (state) => state.quota;
+
+// GitLab webhook authorization
+export const getGitlabWebhookToken = (state) => state.gitlabWebhookToken.status;
+export const getGitlabWebhookTokenRequest = (state) => state.gitlabWebhookToken;
 
 // Auth
 export const isSignedIn = (state) => !!state.auth.email;
 export const getUserEmail = (state) => state.auth.email;
 export const getUserFullName = (state) => state.auth.fullName;
 export const getUserFetchError = (state) => state.auth.error[USER_ERROR.fetch];
-export const getUserSignErrors = (state) => state.auth.error[USER_ERROR.sign];
 export const loadingUser = (state) => state.auth.loadingUser;
-export const getReanaToken = (state) => state.auth.reanaToken.value;
-export const getReanaTokenStatus = (state) => state.auth.reanaToken.status;
-export const loadingTokenStatus = (state) => state.auth.reanaToken.loading;
-export const getReanaTokenRequestedAt = (state) =>
-  state.auth.reanaToken.requestedAt;
 
 // Workflows
 export const loadingWorkflows = (state) => state.workflows.loadingWorkflows;
