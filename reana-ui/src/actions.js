@@ -45,6 +45,11 @@ export const ERROR = "Error";
 export const NOTIFICATION = "Notification";
 export const WARNING = "Warning";
 export const CLEAR_NOTIFICATION = "Clear notification";
+export const PERSISTENT_NOTIFICATIONS_RECEIVED =
+  "Persistent notifications received";
+export const PERSISTENT_NOTIFICATION_READ = "Persistent notification read";
+export const PERSISTENT_NOTIFICATIONS_READ_ALL =
+  "All persistent notifications read";
 
 export const CONFIG_FETCH = "Fetch app config info";
 export const CONFIG_RECEIVED = "App config info received";
@@ -139,6 +144,34 @@ export function triggerNotification(
 
 export const clearNotification = { type: CLEAR_NOTIFICATION };
 
+export function loadPersistentNotifications() {
+  return async (dispatch) =>
+    client
+      .getNotifications()
+      .then((resp) =>
+        dispatch({
+          type: PERSISTENT_NOTIFICATIONS_RECEIVED,
+          notifications: resp.data.notifications,
+          unreadCount: resp.data.unread_count,
+        }),
+      )
+      .catch(() => undefined);
+}
+
+export function markPersistentNotificationRead(id) {
+  return async (dispatch) =>
+    client
+      .markNotificationRead(id)
+      .then(() => dispatch({ type: PERSISTENT_NOTIFICATION_READ, id }));
+}
+
+export function markAllPersistentNotificationsRead() {
+  return async (dispatch) =>
+    client
+      .markAllNotificationsRead()
+      .then(() => dispatch({ type: PERSISTENT_NOTIFICATIONS_READ_ALL }));
+}
+
 export function loadConfig() {
   return async (dispatch) => {
     dispatch({ type: CONFIG_FETCH });
@@ -161,6 +194,7 @@ export function loadUser({ loader = true } = {}) {
       .then((resp) => {
         dispatch({ type: USER_RECEIVED, ...resp.data });
         dispatch({ type: QUOTA_RECEIVED, ...resp.data });
+        dispatch(loadPersistentNotifications());
       })
       .catch((err) => {
         // 403 Forbidden, user token was revoked.

@@ -13,6 +13,9 @@ import {
   ERROR,
   NOTIFICATION,
   CLEAR_NOTIFICATION,
+  PERSISTENT_NOTIFICATIONS_RECEIVED,
+  PERSISTENT_NOTIFICATION_READ,
+  PERSISTENT_NOTIFICATIONS_READ_ALL,
   CONFIG_FETCH,
   CONFIG_RECEIVED,
   CONFIG_ERROR,
@@ -59,6 +62,10 @@ import {
 import { USER_ERROR } from "./errors";
 
 const notificationInitialState = null;
+const persistentNotificationsInitialState = {
+  items: [],
+  unreadCount: 0,
+};
 
 export const configInitialState = {
   announcement: null,
@@ -149,6 +156,40 @@ const notification = (state = notificationInitialState, action) => {
       };
     case CLEAR_NOTIFICATION:
       return notificationInitialState;
+    default:
+      return state;
+  }
+};
+
+const persistentNotifications = (
+  state = persistentNotificationsInitialState,
+  action,
+) => {
+  switch (action.type) {
+    case PERSISTENT_NOTIFICATIONS_RECEIVED:
+      return {
+        items: action.notifications,
+        unreadCount: action.unreadCount,
+      };
+    case PERSISTENT_NOTIFICATION_READ:
+      return {
+        items: state.items.map((item) =>
+          item.id === action.id && !item.read_at
+            ? { ...item, read_at: new Date().toISOString() }
+            : item,
+        ),
+        unreadCount: Math.max(0, state.unreadCount - 1),
+      };
+    case PERSISTENT_NOTIFICATIONS_READ_ALL:
+      return {
+        items: state.items.map((item) => ({
+          ...item,
+          read_at: item.read_at || new Date().toISOString(),
+        })),
+        unreadCount: 0,
+      };
+    case USER_SIGNEDOUT:
+      return persistentNotificationsInitialState;
     default:
       return state;
   }
@@ -436,6 +477,7 @@ const sharing = (state = sharingInitialState, action) => {
 
 const reanaApp = combineReducers({
   notification,
+  persistentNotifications,
   config,
   auth,
   workflows,
