@@ -76,6 +76,7 @@ export const WORKFLOWS_RECEIVED = "Workflows info received";
 export const WORKFLOWS_FETCH_ERROR = "Workflows fetch error";
 export const WORKFLOW_LOGS_FETCH = "Fetch workflow logs";
 export const WORKFLOW_LOGS_RECEIVED = "Workflow logs received";
+export const WORKFLOW_LOGS_PRUNED = "Workflow logs pruned";
 export const WORKFLOW_FILES_FETCH = "Fetch workflow files";
 export const WORKFLOW_FILES_FETCH_ERROR = "Workflow files fetch error";
 export const WORKFLOW_FILES_RECEIVED = "Workflow files received";
@@ -377,6 +378,15 @@ export function fetchWorkflowLogs(
         }),
       )
       .catch((err) => {
+        if (err?.response?.status === 410) {
+          const { message, logs_pruned_at: logsPrunedAt } = err.response.data;
+          return dispatch({
+            type: WORKFLOW_LOGS_PRUNED,
+            id,
+            message,
+            logsPrunedAt,
+          });
+        }
         dispatch(errorActionCreator(err, WORKFLOW_LOGS_URL(id)));
       });
   };
