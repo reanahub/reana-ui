@@ -33,6 +33,7 @@ import {
   WORKFLOW_LIST_REFRESH,
   WORKFLOW_LOGS_FETCH,
   WORKFLOW_LOGS_RECEIVED,
+  WORKFLOW_LOGS_PRUNED,
   WORKFLOW_SPECIFICATION_FETCH,
   WORKFLOW_SPECIFICATION_RECEIVED,
   WORKFLOW_FILES_FETCH,
@@ -338,6 +339,21 @@ const details = (state = detailsInitialState, action) => {
         details: {
           ...state.details,
           [action.id]: { ...state.details[action.id], logs: action.logs },
+        },
+        loadingDetails: false,
+      };
+    case WORKFLOW_LOGS_PRUNED:
+      return {
+        ...state,
+        details: {
+          ...state.details,
+          [action.id]: {
+            ...state.details[action.id],
+            logs: {
+              logsPrunedAt: action.logsPrunedAt,
+              logsPrunedMessage: action.message,
+            },
+          },
         },
         loadingDetails: false,
       };

@@ -340,6 +340,8 @@ export default function WorkflowLogs({
     engineLogs = "",
     jobLogs = {},
     serviceLogs = {},
+    logsPrunedAt = null,
+    logsPrunedMessage = "",
   } = useSelector(getWorkflowLogs(workflow.id));
 
   useEffect(() => {
@@ -348,6 +350,13 @@ export default function WorkflowLogs({
 
   return loading ? (
     <Loader active inline="centered" />
+  ) : logsPrunedAt ? (
+    <Message
+      icon="history"
+      header="Workflow logs expired"
+      content={logsPrunedMessage}
+      warning
+    />
   ) : engine ? (
     <EngineLogs workflowStatus={workflow.status} logs={engineLogs} />
   ) : service ? (
