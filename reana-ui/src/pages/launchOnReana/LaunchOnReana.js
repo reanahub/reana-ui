@@ -18,6 +18,7 @@ import { errorActionCreator, triggerNotification } from "~/actions";
 import client from "~/client";
 import { useQuery } from "~/hooks";
 import { LAUNCH_ON_REANA_PARAMS_WHITELIST } from "~/config";
+import { formatValidationWarnings } from "~/util";
 
 import styles from "./LaunchOnReana.module.scss";
 
@@ -39,37 +40,17 @@ export default function LaunchOnReana() {
         ({
           data: { workflow_id: workflowId, message, validation_warnings },
         }) => {
-          if (validation_warnings) {
-            let warningMessages = [];
-            // Iterate over all keys in validation_warning
-            for (const key in validation_warnings) {
-              if (key === "additional_properties") {
-                const properties = validation_warnings[key]
-                  .map(
-                    (additionalProperty) =>
-                      `${additionalProperty.property}${
-                        additionalProperty.path
-                          ? ` (at ${additionalProperty.path})`
-                          : ""
-                      }`,
-                  )
-                  .join(", ");
-                warningMessages.push(
-                  `Unexpected properties found in the REANA specification: ${properties}.`,
-                );
-              } else {
-                // For other keys, we simply display the key and its value.
-                warningMessages.push(`${key}: ${validation_warnings[key]}`);
-              }
-            }
-
-            warningMessages.forEach((warning) => {
-              message += ` ${warning}`;
-            });
+          const warningMessages = formatValidationWarnings(validation_warnings);
+          if (warningMessages.length) {
+            const notificationMessage = [message, warningMessages.join(" ")]
+              .filter(Boolean)
+              .join(" ");
             dispatch(
-              triggerNotification("Workflow submitted with warnings", message, {
-                warning: true,
-              }),
+              triggerNotification(
+                "Workflow submitted with warnings",
+                notificationMessage,
+                { warning: true },
+              ),
             );
           } else {
             dispatch(triggerNotification("Workflow submitted", message));

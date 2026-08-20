@@ -1,11 +1,82 @@
+/*
+  This file is part of REANA.
+  Copyright (C) 2020, 2022, 2023, 2024, 2026 CERN.
+
+  REANA is free software; you can redistribute it and/or modify it
+  under the terms of the MIT License; see LICENSE file for more details.
+*/
+
 import {
   formatDuration,
   formatFileSize,
   formatSearch,
+  formatValidationWarnings,
   getDuration,
   getMimeType,
   parseWorkflowDates,
 } from "~/util";
+
+test("formats legacy validation warning dictionaries", () => {
+  expect(
+    formatValidationWarnings({
+      additional_properties: [{ property: "resources", path: "workflow" }],
+      parameters: ["Input parameter 'events' is not used."],
+    }),
+  ).toEqual([
+    "Unexpected properties found in the REANA specification: resources (at workflow).",
+    "parameters: Input parameter 'events' is not used.",
+  ]);
+});
+
+test.each([
+  [
+    "a message without punctuation",
+    { message: "Unexpected property 'resources'", path: "workflow" },
+    "Unexpected property 'resources' (at workflow).",
+  ],
+  [
+    "a message ending in a full stop",
+    { message: "Unexpected property 'resources'.", path: "workflow" },
+    "Unexpected property 'resources' (at workflow).",
+  ],
+  [
+    "an exclamation mark",
+    { message: "Check this setting!", path: "workflow" },
+    "Check this setting (at workflow)!",
+  ],
+  [
+    "a question mark",
+    { message: "Is this setting intended?", path: "workflow" },
+    "Is this setting intended (at workflow)?",
+  ],
+  [
+    "a deprecation message that already contains its path",
+    {
+      code: "deprecated_parameters_input",
+      message:
+        "inputs.parameters.input is deprecated; use workflow.parameters.file instead.",
+      path: "inputs.parameters.input",
+    },
+    "inputs.parameters.input is deprecated; use workflow.parameters.file instead.",
+  ],
+  [
+    "an image warning that already contains its path",
+    {
+      code: "image_tag",
+      message:
+        'Using "python:latest" without a fixed tag harms reproducibility; pin an explicit version.',
+      path: "python:latest",
+    },
+    'Using "python:latest" without a fixed tag harms reproducibility; pin an explicit version.',
+  ],
+  [
+    "a code without a message",
+    { code: "additional_properties", path: "workflow" },
+    "additional_properties (at workflow).",
+  ],
+])("formats structured validation warnings with %s", (_, warning, expected) => {
+  expect(formatValidationWarnings([warning])).toEqual([expected]);
+});
 
 test.each([
   ["path/to/test.txt", "text/plain"],
