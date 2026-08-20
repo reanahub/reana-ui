@@ -1,6 +1,6 @@
 /*
   This file is part of REANA.
-  Copyright (C) 2022, 2023 CERN.
+  Copyright (C) 2022, 2023, 2026 CERN.
 
   REANA is free software; you can redistribute it and/or modify it
   under the terms of the MIT License; see LICENSE file for more details.
@@ -12,8 +12,10 @@ import { MemoryRouter } from "react-router-dom";
 import client from "~/client";
 import LaunchOnReana, { DEFAULT_WORKFLOW_NAME } from "../LaunchOnReana";
 
+const mockDispatch = jest.fn();
+
 jest.mock("react-redux", () => ({
-  useDispatch: () => jest.fn(),
+  useDispatch: () => mockDispatch,
   useSelector: () => jest.fn(),
 }));
 jest.mock("../../BasePage", () => ({ children }) => <>{children}</>);
@@ -31,8 +33,14 @@ const component = (searchParams) => (
   </MemoryRouter>
 );
 
-beforeAll(() => {
-  client.launchWorkflow = () => Promise.resolve({ data: { workflow_id: 111 } });
+beforeEach(() => {
+  mockDispatch.mockClear();
+  client.launchWorkflow = jest.fn().mockResolvedValue({
+    data: {
+      workflow_id: 111,
+      message: "The workflow has been successfully submitted.",
+    },
+  });
 });
 
 test("loads and displays launch on reana page", async () => {
@@ -87,4 +95,46 @@ test("invalid workflow parameters are not displayed", async () => {
   await waitFor(() => screen.getByRole("heading"));
   expect(screen.getByRole("heading")).toHaveTextContent("Launch on REANA");
   expect(screen.queryByText("Parameters")).toBeNull();
+});
+
+test("dispatches readable structured validation warnings", async () => {
+  client.launchWorkflow.mockResolvedValueOnce({
+    data: {
+      workflow_id: 111,
+      message:
+        "The workflow has been successfully submitted, but some warnings were issued.",
+      validation_warnings: [
+        {
+          code: "additional_properties",
+          message: "Unexpected property 'resources'",
+          path: "workflow",
+        },
+        {
+          code: "parameters",
+          message: "Input parameter 'events' is not used.",
+          path: "",
+        },
+        { unexpected: "warning" },
+      ],
+    },
+  });
+  render(component({ url: "https://example.org/reana.yaml" }));
+
+  fireEvent.click(screen.getByText("Launch"));
+
+  await waitFor(() =>
+    expect(mockDispatch).toHaveBeenCalledWith({
+      type: "Warning",
+      header: "Workflow submitted with warnings",
+      message:
+        "The workflow has been successfully submitted, but some warnings were issued. " +
+        "Unexpected property 'resources' (at workflow). " +
+        "Input parameter 'events' is not used. " +
+        '{"unexpected":"warning"}.',
+    }),
+  );
+  const warningAction = mockDispatch.mock.calls
+    .map(([action]) => action)
+    .find(({ header }) => header === "Workflow submitted with warnings");
+  expect(warningAction.message).not.toContain("[object Object]");
 });

@@ -41,6 +41,69 @@ export const healthMapping = {
   critical: "red",
 };
 
+function ensureTerminalPunctuation(message) {
+  return /[.!?]$/.test(message) ? message : `${message}.`;
+}
+
+/**
+ * Format validation warnings returned by the launch endpoint.
+ * @param {Array|Object} validationWarnings Structured or legacy warnings.
+ * @returns {String[]} Human-readable warning messages.
+ */
+export function formatValidationWarnings(validationWarnings) {
+  if (Array.isArray(validationWarnings)) {
+    return validationWarnings
+      .map((warning) => {
+        if (typeof warning === "string") return warning;
+        if (!warning || typeof warning !== "object") {
+          return JSON.stringify(warning) ?? String(warning);
+        }
+
+        const warningMessage = warning.message || warning.code;
+        if (!warningMessage) return JSON.stringify(warning);
+        return `${warningMessage}${
+          warning.path ? ` (at ${warning.path})` : ""
+        }`;
+      })
+      .map(ensureTerminalPunctuation);
+  }
+
+  if (!validationWarnings || typeof validationWarnings !== "object") {
+    return [];
+  }
+
+  return Object.entries(validationWarnings)
+    .map(([key, value]) => {
+      if (key === "additional_properties" && Array.isArray(value)) {
+        const properties = value
+          .map((additionalProperty) => {
+            if (typeof additionalProperty === "string") {
+              return additionalProperty;
+            }
+            if (!additionalProperty?.property) return null;
+            return `${additionalProperty.property}${
+              additionalProperty.path ? ` (at ${additionalProperty.path})` : ""
+            }`;
+          })
+          .filter(Boolean)
+          .join(", ");
+        return `Unexpected properties found in the REANA specification: ${properties}.`;
+      }
+
+      const values = Array.isArray(value) ? value : [value];
+      const formattedValue = values
+        .map((item) => {
+          if (item && typeof item === "object") {
+            return item.message || item.code || JSON.stringify(item);
+          }
+          return String(item);
+        })
+        .join(", ");
+      return `${key}: ${formattedValue}`;
+    })
+    .map(ensureTerminalPunctuation);
+}
+
 /**
  * Parses API data into displayable data
  */
