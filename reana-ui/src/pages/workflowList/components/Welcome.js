@@ -8,29 +8,21 @@
   under the terms of the MIT License; see LICENSE file for more details.
 */
 
-import moment from "moment";
-import { useDispatch, useSelector } from "react-redux";
-import { Button, Container, Icon } from "semantic-ui-react";
+import { useSelector } from "react-redux";
+import { Container, Icon } from "semantic-ui-react";
+import PropTypes from "prop-types";
 
-import { requestToken } from "~/actions";
-import {
-  getConfig,
-  getReanaToken,
-  getReanaTokenStatus,
-  getReanaTokenRequestedAt,
-  loadingTokenStatus,
-} from "~/selectors";
+import { getConfig } from "~/selectors";
 import { CodeSnippet, Title } from "~/components";
 import { api } from "~/config";
 
 import styles from "./Welcome.module.scss";
 
 export default function Welcome() {
-  const reanaToken = useSelector(getReanaToken);
   return (
     <Container text className={styles["container"]}>
       <Title as="h2">Welcome to REANA!</Title>
-      {reanaToken ? <WelcomeMsg /> : <WelcomeNoTokenMsg />}
+      <WelcomeMsg />
     </Container>
   );
 }
@@ -39,7 +31,7 @@ function WelcomeMsg() {
   const config = useSelector(getConfig);
   return (
     <div>
-      {config.cernSSO ? <WelcomeCERN /> : <WelcomeRegular />}
+      <WelcomeRegular loginRequired={Boolean(config.auth?.bff_enabled)} />
       <p>and come back to this web page once launched!</p>
       <p>
         For more information about REANA, please see{" "}
@@ -58,7 +50,7 @@ function WelcomeMsg() {
   );
 }
 
-function WelcomeRegular() {
+function WelcomeRegular({ loginRequired }) {
   return (
     <>
       <p>
@@ -73,6 +65,12 @@ function WelcomeRegular() {
         <div>pip install reana-client</div>
         <div># set REANA environment variables for the client</div>
         <WelcomeEnvars />
+        {loginRequired && (
+          <>
+            <div># authenticate with the REANA server</div>
+            <div>reana-client login</div>
+          </>
+        )}
         <div># clone and run a simple analysis example</div>
         <div>git clone https://github.com/reanahub/reana-demo-root6-roofit</div>
         <div>cd reana-demo-root6-roofit</div>
@@ -82,68 +80,14 @@ function WelcomeRegular() {
   );
 }
 
-function WelcomeCERN() {
-  const config = useSelector(getConfig);
-  return (
-    <>
-      <p>
-        It seems that you are using REANA for the first time. Would you like to
-        try out a small example? Please login to LXPLUS and launch:
-      </p>
-      <CodeSnippet reveal>
-        <div>ssh lxplus.cern.ch</div>
-        <div>source {config.clientPyvenv}</div>
-        <WelcomeEnvars />
-        <div>git clone https://github.com/reanahub/reana-demo-root6-roofit</div>
-        <div>cd reana-demo-root6-roofit</div>
-        <div>reana-client run -w root6-roofit</div>
-      </CodeSnippet>
-    </>
-  );
-}
+WelcomeRegular.propTypes = {
+  loginRequired: PropTypes.bool.isRequired,
+};
 
 function WelcomeEnvars() {
-  const reanaToken = useSelector(getReanaToken);
   return (
     <>
       <div>export REANA_SERVER_URL={api}</div>
-      <div>
-        export REANA_ACCESS_TOKEN=
-        <span className="revealable">{reanaToken}</span>
-      </div>
     </>
-  );
-}
-
-export function WelcomeNoTokenMsg() {
-  const tokenStatus = useSelector(getReanaTokenStatus);
-  const tokenRequestedAt = useSelector(getReanaTokenRequestedAt);
-  const loading = useSelector(loadingTokenStatus);
-  const dispatch = useDispatch();
-
-  const handleRequestToken = () => dispatch(requestToken());
-
-  return tokenStatus === "requested" ? (
-    <div>
-      <p>
-        Your access token request has been forwarded to REANA administrators.
-      </p>
-      <Button content="Token requested" disabled />
-      <small className={styles.requested}>
-        <em>{moment.utc(tokenRequestedAt).format("YYYY-MM-DDTHH:mm:ss")}</em>
-      </small>
-    </div>
-  ) : (
-    <div>
-      <p>
-        It seems that this is your first login to REANA. In order to use the
-        system, you need to ask for an access token.
-      </p>
-      <Button
-        content="Request token"
-        onClick={handleRequestToken}
-        loading={loading}
-      />
-    </div>
   );
 }

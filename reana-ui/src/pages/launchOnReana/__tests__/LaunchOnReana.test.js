@@ -12,9 +12,13 @@ import { MemoryRouter } from "react-router-dom";
 import client from "~/client";
 import LaunchOnReana, { DEFAULT_WORKFLOW_NAME } from "../LaunchOnReana";
 
+const mockState = {
+  config: { docsURL: "https://docs.reana.io", launcherExamples: [] },
+};
+
 jest.mock("react-redux", () => ({
   useDispatch: () => jest.fn(),
-  useSelector: () => jest.fn(),
+  useSelector: (selector) => selector(mockState),
 }));
 jest.mock("../../BasePage", () => ({ children }) => <>{children}</>);
 

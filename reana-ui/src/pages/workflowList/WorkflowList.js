@@ -16,7 +16,6 @@ import { Container, Dimmer, Dropdown, Icon, Loader } from "semantic-ui-react";
 import { fetchUsersSharedWithYou, fetchWorkflows } from "~/actions";
 import {
   getConfig,
-  getReanaToken,
   getWorkflows,
   getWorkflowsCount,
   isConfigLoaded,
@@ -53,7 +52,6 @@ function Workflows() {
   const usersSharedWithYou = useSelector(getUsersSharedWithYou);
   const workflowRefresh = useSelector(getWorkflowRefresh);
   const loading = useSelector(loadingWorkflows);
-  const reanaToken = useSelector(getReanaToken);
   const configLoaded = useSelector(isConfigLoaded);
   const hideWelcomePage = !workflows || !configLoaded;
   const { pollingSecs } = config;
@@ -102,15 +100,14 @@ function Workflows() {
   }, [requestParams]);
 
   useEffect(() => {
-    // Only poll if user has a token (no point polling for users without workflows)
-    if (!reanaToken || !pollingSecs || !configLoaded) return;
+    if (!pollingSecs || !configLoaded) return;
     const id = setInterval(() => {
       const apiParams = latestParamsRef.current;
       dispatch(fetchWorkflows({ ...apiParams, showLoader: false }));
       setRefreshedAt(currentUTCTime());
     }, pollingSecs * 1000);
     return () => clearInterval(id);
-  }, [dispatch, reanaToken, pollingSecs, configLoaded]);
+  }, [dispatch, pollingSecs, configLoaded]);
 
   // External refresh trigger
   useEffect(() => {

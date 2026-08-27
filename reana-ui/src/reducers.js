@@ -20,13 +20,13 @@ import {
   USER_RECEIVED,
   USER_FETCH_ERROR,
   USER_SIGNEDOUT,
-  USER_SIGN_ERROR,
-  USER_REQUEST_TOKEN,
-  USER_TOKEN_REQUESTED,
-  USER_TOKEN_ERROR,
   QUOTA_FETCH,
   QUOTA_RECEIVED,
   QUOTA_FETCH_ERROR,
+  GITLAB_WEBHOOK_TOKEN_FETCH,
+  GITLAB_WEBHOOK_TOKEN_RECEIVED,
+  GITLAB_WEBHOOK_TOKEN_UPDATED,
+  GITLAB_WEBHOOK_TOKEN_FETCH_ERROR,
   WORKFLOWS_FETCH,
   WORKFLOWS_RECEIVED,
   WORKFLOWS_FETCH_ERROR,
@@ -68,15 +68,10 @@ export const configInitialState = {
   forumURL: null,
   chatURL: null,
   privacyNoticeURL: null,
-  cernSSO: false,
-  eoscSSO: false,
-  loginProviderConfig: null,
+  auth: {},
   adminEmail: null,
   maxInteractiveSessionInactivityPeriod: null,
-  localUsers: false,
-  hideSignup: false,
   isLoaded: false,
-  userConfirmation: true,
   loading: false,
   filePreviewSizeLimit: null,
   launcherExamples: [],
@@ -86,12 +81,6 @@ export const configInitialState = {
 const authInitialState = {
   id: null,
   email: null,
-  reanaToken: {
-    value: null,
-    status: null,
-    requestedAt: null,
-    loading: false,
-  },
   loadingUser: false,
   error: {},
 };
@@ -180,15 +169,10 @@ const config = (state = configInitialState, action) => {
         forumURL: action.forum_url,
         chatURL: action.chat_url,
         privacyNoticeURL: action.privacy_notice_url,
-        cernSSO: action.cern_sso,
-        eoscSSO: action.eosc_sso,
-        loginProviderConfig: action.login_provider_config,
+        auth: action.auth ?? {},
         adminEmail: action.admin_email,
         maxInteractiveSessionInactivityPeriod:
           action.maximum_interactive_session_inactivity_period,
-        localUsers: action.local_users,
-        hideSignup: action.hide_signup,
-        userConfirmation: action.user_confirmation,
         quotaEnabled: action.quota_enabled,
         filePreviewSizeLimit: action.file_preview_size_limit,
         launcherExamples: action.launcher_examples,
@@ -208,24 +192,36 @@ const config = (state = configInitialState, action) => {
 const auth = (state = authInitialState, action) => {
   switch (action.type) {
     case USER_FETCH:
-      return { ...state, loadingUser: action.loader };
+      // Clear any error left by a previous attempt so a retry (whether
+      // triggered by the user or a background refresh) isn't permanently
+      // shadowed by a stale failure.
+      return { ...state, loadingUser: action.loader, error: {} };
     case USER_RECEIVED:
       return {
         ...state,
-        id: action.id_,
+        id: action.id ?? action.id_,
         email: action.email,
         fullName: action.full_name,
         username: action.username,
-        reanaToken: {
-          ...state.reanaToken,
-          value: action.reana_token?.value,
-          status: action.reana_token?.status,
-          requestedAt: action.reana_token?.requested_at,
-        },
         loadingUser: false,
+        error: {},
       };
-    case USER_FETCH_ERROR:
-      const { type, ...errorData } = action;
+    case USER_FETCH_ERROR: {
+      const { type, loader, ...errorData } = action;
+      const isAccessNotGranted =
+        errorData.status === 403 && errorData.code === "access_not_granted";
+      if (!loader && !isAccessNotGranted) {
+        // A background refresh's transient failure (e.g. Profile's
+        // non-disruptive re-fetch hitting a 503) must not block the whole
+        // app behind App's error gate -- it's already surfaced via the
+        // notification dispatched alongside this action. Only a foreground
+        // (initial-load) failure does that. access_not_granted is exempted
+        // from this: a role revoked mid-session is a real, actionable state
+        // (App.js routes it to the dedicated AccessNotGranted screen, not
+        // the generic error gate) and must surface however it's discovered,
+        // not just on the very first load.
+        return { ...state, loadingUser: false };
+      }
       return {
         ...state,
         error: {
@@ -233,35 +229,9 @@ const auth = (state = authInitialState, action) => {
         },
         loadingUser: false,
       };
+    }
     case USER_SIGNEDOUT:
       return authInitialState;
-    case USER_SIGN_ERROR:
-      return {
-        ...state,
-        error: {
-          [USER_ERROR.sign]: action.errors,
-        },
-      };
-    case USER_REQUEST_TOKEN:
-      return { ...state, reanaToken: { ...state.reanaToken, loading: true } };
-    case USER_TOKEN_REQUESTED:
-      return {
-        ...state,
-        reanaToken: {
-          ...state.reanaToken,
-          status: action.reana_token?.status,
-          requestedAt: action.reana_token?.requested_at,
-          loading: false,
-        },
-      };
-    case USER_TOKEN_ERROR:
-      return {
-        ...state,
-        reanaToken: {
-          ...state.reanaToken,
-          loading: false,
-        },
-      };
     default:
       return state;
   }
@@ -400,6 +370,67 @@ const quota = (state = quotaInitialState, action) => {
   }
 };
 
+const gitlabWebhookTokenInitialState = {
+  phase: "idle",
+  status: null,
+  retryAt: null,
+  activeRequestId: null,
+};
+
+// A single shared status object, kept in sync by every component that
+// fetches or renews it (GitLabProjects's profile-page view, and the global
+// WebhookExpiryWarning banner), so a renewal made from one place is
+// immediately reflected in the other without a separate refetch.
+//
+// The request phase is shared as well as the value: WebhookExpiryWarning is
+// remounted on every page navigation, so a component-local loading flag would
+// permit a second request while the first one is still in flight. Errors keep
+// one absolute retry deadline, preventing remounts from postponing or
+// accelerating the bounded retry.
+const gitlabWebhookToken = (state = gitlabWebhookTokenInitialState, action) => {
+  switch (action.type) {
+    case GITLAB_WEBHOOK_TOKEN_FETCH:
+      return {
+        ...state,
+        phase: "loading",
+        retryAt: null,
+        activeRequestId: action.requestId,
+      };
+    case GITLAB_WEBHOOK_TOKEN_RECEIVED:
+      if (
+        action.requestId !== undefined &&
+        action.requestId !== state.activeRequestId
+      ) {
+        return state;
+      }
+      return {
+        phase: "ready",
+        status: action.status,
+        retryAt: null,
+        activeRequestId: null,
+      };
+    case GITLAB_WEBHOOK_TOKEN_UPDATED:
+      return {
+        phase: "ready",
+        status: action.status,
+        retryAt: null,
+        activeRequestId: null,
+      };
+    case GITLAB_WEBHOOK_TOKEN_FETCH_ERROR:
+      if (action.requestId !== state.activeRequestId) return state;
+      return {
+        ...state,
+        phase: action.retryAt === null ? "error" : "retry_wait",
+        retryAt: action.retryAt,
+        activeRequestId: null,
+      };
+    case USER_SIGNEDOUT:
+      return gitlabWebhookTokenInitialState;
+    default:
+      return state;
+  }
+};
+
 const sharing = (state = sharingInitialState, action) => {
   switch (action.type) {
     case USERS_SHARED_WITH_YOU_RECEIVED:
@@ -442,6 +473,7 @@ const reanaApp = combineReducers({
   details,
   quota,
   sharing,
+  gitlabWebhookToken,
 });
 
 export default reanaApp;

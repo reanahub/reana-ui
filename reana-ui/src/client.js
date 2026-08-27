@@ -13,21 +13,16 @@ import axios from "axios";
 import { api } from "~/config";
 import { stringifyQueryParams } from "~/util";
 
-export function isNoActiveTokensError(error) {
-  const status = error?.response?.status;
-  const message = (error?.response?.data?.message || "").toLowerCase();
-  return (
-    (status === 401 || status === 403) && message.includes("no active tokens")
-  );
-}
-
 export function isSessionExpiredError(error) {
   const status = error?.response?.status;
+  const code = error?.response?.data?.code;
   const message = (error?.response?.data?.message || "").toLowerCase();
   return (
     status === 401 &&
-    (message.includes("user not signed in") ||
-      message.includes("user not logged in"))
+    (code === "session_terminated" ||
+      message.includes("user not signed in") ||
+      message.includes("user not logged in") ||
+      message.includes("session expired"))
   );
 }
 
@@ -35,13 +30,7 @@ export function isSessionExpiredError(error) {
 export const CONFIG_URL = `${api}/api/config`;
 export const USER_INFO_URL = `${api}/api/you`;
 export const CLUSTER_INFO_URL = `${api}/api/info`;
-export const USER_SIGNUP_URL = `${api}/api/register`;
-export const USER_OAUTH_SIGNIN_URL = (next, ssoProvider) =>
-  `${api}/api/oauth/login/${ssoProvider}?${stringifyQueryParams({ next })}`;
-export const USER_SIGNIN_URL = `${api}/api/login`;
 export const USER_SIGNOUT_URL = `${api}/api/logout`;
-export const USER_REQUEST_TOKEN_URL = `${api}/api/token`;
-export const USER_CONFIRM_EMAIL_URL = `${api}/api/confirm-email`;
 export const USERS_SHARED_WITH_YOU_URL = `${api}/api/users/shared-with-you`;
 export const USERS_YOU_SHARED_WITH_URL = `${api}/api/users/you-shared-with`;
 export const CLUSTER_STATUS_URL = `${api}/api/status`;
@@ -49,6 +38,7 @@ export const GITLAB_AUTH_URL = `${api}/api/gitlab/connect`;
 export const GITLAB_PROJECTS_URL = (params) =>
   `${api}/api/gitlab/projects?${stringifyQueryParams(params)}`;
 export const GITLAB_WEBHOOK_URL = `${api}/api/gitlab/webhook`;
+export const GITLAB_WEBHOOK_TOKEN_URL = `${api}/api/gitlab/webhook-token`;
 export const WORKFLOWS_URL = (params) =>
   `${api}/api/workflows?verbose=true&${stringifyQueryParams(params)}`;
 export const WORKFLOW_LOGS_URL = (id) => `${api}/api/workflows/${id}/logs`;
@@ -75,11 +65,28 @@ export const INTERACTIVE_SESSIONS_OPEN_URL = (id, type = "jupyter") =>
   `${api}/api/workflows/${id}/open/${type}`;
 export const INTERACTIVE_SESSIONS_CLOSE_URL = (id) =>
   `${api}/api/workflows/${id}/close/`;
-export const INTERACTIVE_SESSION_URL = (sessionUri, reanaToken) =>
-  `${api}${sessionUri}?token=${reanaToken}`;
+export const INTERACTIVE_SESSION_SECRET_URL = (id) =>
+  `${api}/api/workflows/${id}/interactive-session-secret`;
+export const INTERACTIVE_SESSION_URL = (sessionUri, sessionSecret) => {
+  const sessionUrl = `${api}${sessionUri}`;
+  if (!sessionSecret) return sessionUrl;
+  const separator = sessionUrl.includes("?") ? "&" : "?";
+  return `${sessionUrl}${separator}token=${encodeURIComponent(sessionSecret)}`;
+};
 export const DASK_DASHBOARD_URL = (workflow_id) =>
   `${api}/${workflow_id}/dashboard/status`;
 export const LAUNCH_ON_REANA_URL = `${api}/api/launch`;
+
+const CSRF_COOKIE = "reana_csrf";
+const CSRF_HEADER = "X-REANA-CSRF";
+
+function getCookieValue(name) {
+  return document.cookie
+    .split(";")
+    .map((cookie) => cookie.trim())
+    .find((cookie) => cookie.startsWith(`${name}=`))
+    ?.slice(name.length + 1);
+}
 
 class Client {
   /**
@@ -104,14 +111,29 @@ class Client {
 
   async _request(
     url,
-    { data = null, method = "get", withCredentials = true, ...options } = {},
+    {
+      data = null,
+      method = "get",
+      withCredentials = true,
+      headers: optionHeaders = {},
+      ...options
+    } = {},
   ) {
+    const requestMethod = method.toLowerCase();
+    const csrfToken = !["get", "head", "options"].includes(requestMethod)
+      ? getCookieValue(CSRF_COOKIE)
+      : null;
+    const headers = {
+      ...optionHeaders,
+      ...(csrfToken ? { [CSRF_HEADER]: csrfToken } : {}),
+    };
     try {
       return await axios({
         method,
         url,
         data,
         withCredentials,
+        headers,
         ...options,
       });
     } catch (error) {
@@ -134,37 +156,8 @@ class Client {
     return this._request(CLUSTER_INFO_URL);
   }
 
-  _sign(url, data) {
-    const formData = new URLSearchParams(data);
-    return this._request(url, {
-      data: formData,
-      method: "post",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    });
-  }
-
-  signUp(data) {
-    return this._sign(USER_SIGNUP_URL, data);
-  }
-
-  signIn(data) {
-    return this._sign(USER_SIGNIN_URL, data);
-  }
-
   signOut() {
     return this._request(USER_SIGNOUT_URL, { method: "post" });
-  }
-
-  requestToken() {
-    return this._request(USER_REQUEST_TOKEN_URL, { method: "put" });
-  }
-
-  confirmEmail(data) {
-    return this._request(USER_CONFIRM_EMAIL_URL, {
-      data,
-      method: "post",
-      headers: { "Content-Type": "application/json" },
-    });
   }
 
   getWorkflows({
@@ -249,6 +242,10 @@ class Client {
     });
   }
 
+  getInteractiveSessionSecret(id) {
+    return this._request(INTERACTIVE_SESSION_SECRET_URL(id));
+  }
+
   closeInteractiveSession(id) {
     return this._request(INTERACTIVE_SESSIONS_CLOSE_URL(id), {
       method: "post",
@@ -263,6 +260,14 @@ class Client {
 
   toggleGitlabProject(method, data) {
     return this._request(GITLAB_WEBHOOK_URL, { data, method });
+  }
+
+  getGitlabWebhookToken() {
+    return this._request(GITLAB_WEBHOOK_TOKEN_URL);
+  }
+
+  renewGitlabWebhookToken() {
+    return this._request(GITLAB_WEBHOOK_TOKEN_URL, { method: "put" });
   }
 
   getClusterStatus() {
