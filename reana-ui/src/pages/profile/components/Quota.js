@@ -115,7 +115,6 @@ export default function Quota() {
                   message={message}
                   error={notification.type === "error"}
                   warning={notification.type === "warning"}
-                  closable={false}
                 />
               </div>
             );

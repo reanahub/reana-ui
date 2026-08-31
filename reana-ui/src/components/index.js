@@ -14,6 +14,7 @@ export { default as CopyButton } from "./CopyButton";
 export { default as LogViewer } from "./LogViewer";
 export { default as Footer } from "./Footer";
 export { default as Notification } from "./Notification";
+export { default as GlobalNotification } from "./GlobalNotification";
 export { default as Pagination } from "./Pagination";
 export { default as Title } from "./Title";
 export { default as TopHeader } from "./TopHeader";

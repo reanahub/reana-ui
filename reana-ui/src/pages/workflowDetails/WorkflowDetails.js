@@ -167,7 +167,6 @@ export default function WorkflowDetails() {
         icon="warning sign"
         header="An error has occurred"
         message="Sorry, this workflow either does not exist or you are not authorised to see it."
-        closable={false}
         error
       />
     );
