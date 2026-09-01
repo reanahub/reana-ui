@@ -127,8 +127,10 @@ export default function WorkflowDetails() {
   const refetchWorkflow = useCallback(() => {
     const options = { refetch: true, showLoader: false };
     dispatch(fetchWorkflow(workflowId, options));
-    dispatch(fetchWorkflowLogs(workflowId, options));
-  }, [dispatch, workflowId]);
+    if (!workflow || NON_FINISHED_STATUSES.includes(workflow.status)) {
+      dispatch(fetchWorkflowLogs(workflowId, options));
+    }
+  }, [dispatch, workflow?.status, workflowId]);
 
   useEffect(() => {
     if (!interval.current && pollingSecs) {
@@ -143,7 +145,7 @@ export default function WorkflowDetails() {
   useEffect(refetchWorkflow, [dispatch, refetchWorkflow, workflowRefresh]);
 
   useEffect(() => {
-    if (workflow && FINISHED_STATUSES.includes(workflow.status)) {
+    if (workflow?.status === "deleted") {
       cleanPolling();
     }
   }, [workflow]);
