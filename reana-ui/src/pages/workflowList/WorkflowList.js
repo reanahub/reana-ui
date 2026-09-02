@@ -142,7 +142,10 @@ function Workflows() {
       `Total: ${workflowArray.length}`,
       ...Object.entries(summary)
         .filter(([_, count]) => Number(count) > 0)
-        .map(([status, count]) => `${status.charAt(0).toUpperCase() + status.slice(1)}: ${count}`),
+        .map(
+          ([status, count]) =>
+            `${status.charAt(0).toUpperCase() + status.slice(1)}: ${count}`,
+        ),
     ].join(" | ");
   }, [workflowsCount, workflowArray]);
 
@@ -196,13 +199,8 @@ function Workflows() {
         <WorkflowList workflows={workflowArray} loading={loading} />
         {!loading && (
           <div className={styles.paginationRow}>
-            <div
-              className={styles.workflowSummary}
-              title={summaryText}
-            >
-              <span className={styles.pageSizeLabel}>
-                {summaryText}
-              </span>
+            <div className={styles.workflowSummary} title={summaryText}>
+              <span className={styles.pageSizeLabel}>{summaryText}</span>
             </div>
             {workflowsCount > pageSize && (
               <Pagination
@@ -223,13 +221,13 @@ function Workflows() {
                   )
                     ? WORKFLOW_LIST_PAGE_SIZE_OPTIONS
                     : [
-                      ...WORKFLOW_LIST_PAGE_SIZE_OPTIONS,
-                      {
-                        key: pageSize,
-                        text: String(pageSize),
-                        value: pageSize,
-                      },
-                    ].sort((a, b) => a.value - b.value)
+                        ...WORKFLOW_LIST_PAGE_SIZE_OPTIONS,
+                        {
+                          key: pageSize,
+                          text: String(pageSize),
+                          value: pageSize,
+                        },
+                      ].sort((a, b) => a.value - b.value)
                 }
                 value={pageSize}
                 onChange={(_, { value }) => {
