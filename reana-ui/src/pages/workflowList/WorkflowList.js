@@ -9,7 +9,7 @@
 */
 
 import moment from "moment";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Container, Dimmer, Dropdown, Icon, Loader } from "semantic-ui-react";
 
@@ -26,6 +26,7 @@ import {
   getUsersSharedWithYou,
 } from "~/selectors";
 import { Title, Pagination, Search } from "~/components";
+import { WORKFLOW_STATUSES } from "~/config";
 import BasePage from "../BasePage";
 import Welcome from "./components/Welcome";
 import WorkflowFilters from "./components/WorkflowFilters";
@@ -119,6 +120,31 @@ function Workflows() {
     const apiParams = latestParamsRef.current;
     dispatch(fetchWorkflows({ ...apiParams, showLoader: false }));
   }, [workflowRefresh, dispatch, configLoaded]);
+  // Flatten workflows object to array for rendering
+  const workflowArray = Object.values(workflows || {});
+
+  // Generate workflow status summary for the pagination bar
+  const summaryText = useMemo(() => {
+    if (workflowsCount === 0 || workflowArray.length === 0) return "No results";
+
+    const summary = WORKFLOW_STATUSES.reduce((acc, status) => {
+      acc[status] = 0;
+      return acc;
+    }, {});
+
+    workflowArray.forEach((wf) => {
+      if (wf.status in summary) {
+        summary[wf.status]++;
+      }
+    });
+
+    return [
+      `Total: ${workflowArray.length}`,
+      ...Object.entries(summary)
+        .filter(([_, count]) => Number(count) > 0)
+        .map(([status, count]) => `${status.charAt(0).toUpperCase() + status.slice(1)}: ${count}`),
+    ].join(" | ");
+  }, [workflowsCount, workflowArray]);
 
   if (hideWelcomePage) {
     return (
@@ -133,9 +159,6 @@ function Workflows() {
   if (!hasUserWorkflows && usersSharedWithYou.length === 0) {
     return <Welcome />;
   }
-
-  // Flatten workflows object to array for rendering
-  const workflowArray = Object.values(workflows || {});
 
   return (
     <div className={styles.container}>
@@ -173,15 +196,13 @@ function Workflows() {
         <WorkflowList workflows={workflowArray} loading={loading} />
         {!loading && (
           <div className={styles.paginationRow}>
-            {/* To emulate size of page-size dropdown and ensure page buttons stay in middle of screen */}
-            <div className={styles.pageSizeNotVisible}>
-              <span className={styles.pageSizeLabel}>Results per page:</span>
-              <Dropdown
-                selection
-                compact
-                options={WORKFLOW_LIST_PAGE_SIZE_OPTIONS}
-                value={pageSize}
-              />
+            <div
+              className={styles.workflowSummary}
+              title={summaryText}
+            >
+              <span className={styles.pageSizeLabel}>
+                {summaryText}
+              </span>
             </div>
             {workflowsCount > pageSize && (
               <Pagination
@@ -202,13 +223,13 @@ function Workflows() {
                   )
                     ? WORKFLOW_LIST_PAGE_SIZE_OPTIONS
                     : [
-                        ...WORKFLOW_LIST_PAGE_SIZE_OPTIONS,
-                        {
-                          key: pageSize,
-                          text: String(pageSize),
-                          value: pageSize,
-                        },
-                      ].sort((a, b) => a.value - b.value)
+                      ...WORKFLOW_LIST_PAGE_SIZE_OPTIONS,
+                      {
+                        key: pageSize,
+                        text: String(pageSize),
+                        value: pageSize,
+                      },
+                    ].sort((a, b) => a.value - b.value)
                 }
                 value={pageSize}
                 onChange={(_, { value }) => {

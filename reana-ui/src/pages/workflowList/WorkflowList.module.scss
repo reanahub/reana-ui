@@ -48,19 +48,9 @@
 
 .paginationRow {
   display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   align-items: center;
   justify-items: center;
-}
-
-.pageSizeNotVisible {
-  grid-column: 1;
-  display: inline-flex;
-  gap: 0.5rem;
-  visibility: hidden;
-
-  :global(.ui.selection.dropdown > .text) {
-    font-size: 1rem;
-  }
 }
 
 .pagination {
@@ -84,4 +74,14 @@
 
 .pageSizeLabel {
   font-size: 1rem;
+}
+
+.workflowSummary {
+  grid-column: 1;
+  justify-self: start;
+  width: 100%;
+  padding-right: 2rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
