@@ -1,11 +1,32 @@
+/*
+  This file is part of REANA.
+  Copyright (C) 2020, 2022, 2023, 2024, 2026 CERN.
+
+  REANA is free software; you can redistribute it and/or modify it
+  under the terms of the MIT License; see LICENSE file for more details.
+*/
+
 import {
   formatDuration,
   formatFileSize,
   formatSearch,
+  formatValidationWarnings,
   getDuration,
   getMimeType,
   parseWorkflowDates,
 } from "~/util";
+
+test("formats legacy validation warning dictionaries", () => {
+  expect(
+    formatValidationWarnings({
+      additional_properties: [{ property: "resources", path: "workflow" }],
+      parameters: ["Input parameter 'events' is not used."],
+    }),
+  ).toEqual([
+    "Unexpected properties found in the REANA specification: resources (at workflow).",
+    "parameters: Input parameter 'events' is not used.",
+  ]);
+});
 
 test.each([
   ["path/to/test.txt", "text/plain"],
