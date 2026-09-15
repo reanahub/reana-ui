@@ -8,29 +8,19 @@
   under the terms of the MIT License; see LICENSE file for more details.
 */
 
-import { useSelector } from "react-redux";
-
-import { getReanaToken } from "~/selectors";
 import { CodeSnippet } from "~/components";
-import { WelcomeNoTokenMsg } from "~/pages/workflowList/components/Welcome";
 import { api } from "~/config";
 
 export default function Token() {
-  const reanaToken = useSelector(getReanaToken);
-
-  return reanaToken ? (
+  return (
     <>
-      In order to use your token, make sure you have reana-client installed and
+      Your browser session is used to authenticate REANA web requests. To use
+      the command-line client, make sure you have reana-client installed and
       run:
       <CodeSnippet copy reveal>
         <div>export REANA_SERVER_URL={api}</div>
-        <div>
-          export REANA_ACCESS_TOKEN=
-          <span className="revealable">{reanaToken}</span>
-        </div>
+        <div>reana-client login</div>
       </CodeSnippet>
     </>
-  ) : (
-    <WelcomeNoTokenMsg />
   );
 }

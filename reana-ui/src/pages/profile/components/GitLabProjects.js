@@ -9,26 +9,92 @@
 */
 
 import isEmpty from "lodash/isEmpty";
-import { useEffect, useState, useRef } from "react";
+import { useCallback, useEffect, useState, useRef } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Button, List, Loader, Radio, Message, Icon } from "semantic-ui-react";
 
+import {
+  errorActionCreator,
+  GITLAB_WEBHOOK_TOKEN_UPDATED,
+  loadGitlabWebhookTokenStatus,
+  triggerNotification,
+} from "~/actions";
 import client, { GITLAB_AUTH_URL } from "~/client";
 import { Search, Pagination } from "~/components";
+import {
+  nextWebhookAuthorizationTransition,
+  webhookAuthorizationIsExpired,
+} from "~/components/WebhookExpiryWarning";
+import {
+  getGitlabWebhookToken,
+  getGitlabWebhookTokenRequest,
+} from "~/selectors";
 
 import styles from "./GitLabProjects.module.scss";
 
 export default function GitLabProjects() {
   const DEFAULT_PAGINATION = { page: 1, size: 10 };
+  const dispatch = useDispatch();
 
   const [projects, setProjects] = useState(null);
   const [fetchingProjects, setFetchingProjects] = useState(false);
   const [searchFilter, setSearchFilter] = useState(null);
   const [pagination, setPagination] = useState(DEFAULT_PAGINATION);
   const [totalPages, setTotalPages] = useState(0);
+  const [renewingWebhookToken, setRenewingWebhookToken] = useState(false);
+  const [webhookNow, setWebhookNow] = useState(Date.now());
+  const [webhookTokenRenewalError, setWebhookTokenRenewalError] =
+    useState(null);
+  const webhookToken = useSelector(getGitlabWebhookToken);
+  const { phase: webhookTokenPhase } = useSelector(
+    getGitlabWebhookTokenRequest,
+  );
+  // Tracks a user-initiated Retry specifically, as opposed to the very
+  // first, unrelated fetch WebhookExpiryWarning may already have kicked
+  // off elsewhere -- the two share the same phase state, but only a
+  // retry should show this component's own loading feedback.
+  const [retryingWebhookStatus, setRetryingWebhookStatus] = useState(false);
+  useEffect(() => {
+    if (webhookTokenPhase !== "loading") {
+      setRetryingWebhookStatus(false);
+    }
+  }, [webhookTokenPhase]);
+  const webhookTokenExpired = webhookAuthorizationIsExpired(
+    webhookToken,
+    webhookNow,
+  );
 
   // keep track of last fetch request in order to avoid
   // updating the state with out-of-order responses
   const lastFetchRequest = useRef(null);
+
+  const fetchWebhookTokenStatus = useCallback(
+    () => dispatch(loadGitlabWebhookTokenStatus()),
+    [dispatch],
+  );
+
+  // The webhook-token phase is shared with WebhookExpiryWarning, which
+  // normally kicks off the first fetch -- but this page must not depend on
+  // that component happening to be mounted too, so trigger it here as well
+  // if nothing has fetched yet.
+  useEffect(() => {
+    if (webhookTokenPhase === "idle") {
+      fetchWebhookTokenStatus();
+    }
+  }, [webhookTokenPhase, fetchWebhookTokenStatus]);
+
+  useEffect(() => {
+    const transitionAt = nextWebhookAuthorizationTransition(
+      webhookToken,
+      webhookNow,
+    );
+    if (transitionAt === null) return undefined;
+    const timer = window.setTimeout(
+      () => setWebhookNow(Date.now()),
+      Math.min(transitionAt - webhookNow, 2_147_483_647),
+    );
+    return () => window.clearTimeout(timer);
+  }, [webhookToken, webhookNow]);
 
   useEffect(() => {
     // Fetch project list
@@ -106,10 +172,28 @@ export default function GitLabProjects() {
               hook_id: checked ? res.data.id : null,
             },
           }));
+          if (checked) {
+            fetchWebhookTokenStatus();
+          }
         }
       })
       .catch((e) => {
-        throw new Error(e);
+        // A 409 means the delegated GitLab authorization expired between page
+        // load and this toggle. Refresh the status so the renewal banner and
+        // its action are shown, instead of silently reverting the toggle.
+        if (e?.response?.status === 409) {
+          fetchWebhookTokenStatus();
+          dispatch(
+            triggerNotification(
+              "GitLab authorization expired",
+              "Your delegated GitLab authorization expired. Renew it below, " +
+                "then try again.",
+              { warning: true },
+            ),
+          );
+          return;
+        }
+        dispatch(errorActionCreator(e));
       })
       .finally(() => {
         setToggling(projectId, false);
@@ -120,6 +204,25 @@ export default function GitLabProjects() {
     // reset pagination if search filter changes
     setPagination(DEFAULT_PAGINATION);
     setSearchFilter(value);
+  };
+
+  const renewWebhookToken = () => {
+    setRenewingWebhookToken(true);
+    setWebhookTokenRenewalError(null);
+    client
+      .renewGitlabWebhookToken()
+      .then(({ data }) => {
+        // Keeps the global WebhookExpiryWarning banner (and any other
+        // consumer) in sync with this renewal immediately, instead of it
+        // only finding out on its own next independent fetch.
+        dispatch({ type: GITLAB_WEBHOOK_TOKEN_UPDATED, status: data });
+      })
+      .catch(() =>
+        setWebhookTokenRenewalError(
+          "The GitLab webhook authorization could not be renewed.",
+        ),
+      )
+      .finally(() => setRenewingWebhookToken(false));
   };
 
   if (fetchingProjects && projects === null) {
@@ -157,6 +260,55 @@ export default function GitLabProjects() {
   } else {
     return (
       <>
+        {(webhookTokenPhase === "error" ||
+          webhookTokenPhase === "retry_wait" ||
+          (webhookTokenPhase === "loading" && retryingWebhookStatus)) && (
+          <Message warning>
+            <Message.Header>
+              GitLab webhook authorization status is unavailable
+            </Message.Header>
+            <p>The GitLab webhook authorization status could not be loaded.</p>
+            <Button
+              type="button"
+              loading={retryingWebhookStatus}
+              disabled={retryingWebhookStatus}
+              onClick={() => {
+                setRetryingWebhookStatus(true);
+                fetchWebhookTokenStatus();
+              }}
+            >
+              Retry loading authorization status
+            </Button>
+          </Message>
+        )}
+        {webhookToken?.configured && (
+          <Message warning={webhookTokenExpired} info={!webhookTokenExpired}>
+            <Message.Header>
+              GitLab webhook authorization
+              {webhookTokenExpired ? " has expired" : " is time-limited"}
+            </Message.Header>
+            <p>
+              {webhookTokenExpired
+                ? "GitLab cannot start workflows until you renew this authorization."
+                : "Existing GitLab webhooks are authorized until " +
+                  new Date(webhookToken.expires_at).toLocaleString() +
+                  "."}{" "}
+              Renewal confirms your current REANA entitlement and keeps the
+              secret already installed in your GitLab projects. If GitLab has
+              disabled a webhook, send a test delivery or re-enable it from that
+              project's GitLab webhook settings after renewing.
+            </p>
+            <Button
+              type="button"
+              loading={renewingWebhookToken}
+              disabled={renewingWebhookToken}
+              onClick={renewWebhookToken}
+            >
+              Renew webhook authorization
+            </Button>
+            {webhookTokenRenewalError && <p>{webhookTokenRenewalError}</p>}
+          </Message>
+        )}
         <Search search={onSearchFilterChange} loading={fetchingProjects} />
         {!isEmpty(projects) ? (
           <>
@@ -190,7 +342,12 @@ export default function GitLabProjects() {
                       </List.Content>
                       <Radio
                         toggle
-                        disabled={toggling}
+                        // While the delegated authorization is expired, block
+                        // enabling new projects (which would install a webhook
+                        // REANA rejects) but keep disabling existing ones.
+                        disabled={
+                          toggling || (webhookTokenExpired && hookId === null)
+                        }
                         value={id}
                         checked={hookId !== null}
                         onChange={onToggleProject}

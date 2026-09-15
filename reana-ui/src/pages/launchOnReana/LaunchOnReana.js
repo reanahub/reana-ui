@@ -7,8 +7,8 @@
 */
 
 import { useState, useMemo } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import { Button, Container, Icon, Loader, Table } from "semantic-ui-react";
 
 import BasePage from "../BasePage";
@@ -18,7 +18,6 @@ import { errorActionCreator, triggerNotification } from "~/actions";
 import client from "~/client";
 import { useQuery } from "~/hooks";
 import { LAUNCH_ON_REANA_PARAMS_WHITELIST } from "~/config";
-import { getReanaToken } from "~/selectors";
 
 import styles from "./LaunchOnReana.module.scss";
 
@@ -26,7 +25,6 @@ export const DEFAULT_WORKFLOW_NAME = "workflow";
 export const DEFAULT_SPEC_FILENAME = "reana.yaml";
 
 export default function LaunchOnReana() {
-  const reanaToken = useSelector(getReanaToken);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const query = useQuery();
@@ -151,10 +149,6 @@ export default function LaunchOnReana() {
     }
     return fn(query);
   }, [dispatch, query]);
-
-  if (!reanaToken) {
-    return <Navigate to="/" />;
-  }
 
   const pageTitle =
     "Launch on REANA" + (query.get("name") ? `: ${query.get("name")}` : "");

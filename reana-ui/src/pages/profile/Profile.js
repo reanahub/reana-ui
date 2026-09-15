@@ -12,7 +12,7 @@ import { Container } from "semantic-ui-react";
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
-import { getConfig, getReanaToken } from "~/selectors";
+import { getConfig } from "~/selectors";
 import { loadUser } from "~/actions";
 import BasePage from "../BasePage";
 import GitLabProjects from "./components/GitLabProjects";
@@ -25,7 +25,6 @@ import client from "~/client";
 
 export default function Profile() {
   const dispatch = useDispatch();
-  const reanaToken = useSelector(getReanaToken);
   const { quotaEnabled } = useSelector(getConfig);
 
   const [hasGitLabIntegration, setHasGitLabIntegration] = useState(null);
@@ -52,24 +51,20 @@ export default function Profile() {
     <BasePage title="Your profile">
       <Container text className={styles["container"]}>
         <div>
-          <Title>Your REANA token</Title>
+          <Title>Your REANA session</Title>
           <Token />
         </div>
-        {reanaToken && (
-          <>
-            {hasGitLabIntegration && (
-              <div>
-                <Title>Your GitLab projects</Title>
-                <GitLabProjects />
-              </div>
-            )}
-            {quotaEnabled && (
-              <div>
-                <Title>Your quota</Title>
-                <Quota />
-              </div>
-            )}
-          </>
+        {hasGitLabIntegration && (
+          <div>
+            <Title>Your GitLab projects</Title>
+            <GitLabProjects />
+          </div>
+        )}
+        {quotaEnabled && (
+          <div>
+            <Title>Your quota</Title>
+            <Quota />
+          </div>
         )}
       </Container>
     </BasePage>

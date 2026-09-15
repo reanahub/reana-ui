@@ -8,7 +8,13 @@
   under the terms of the MIT License; see LICENSE file for more details.
 */
 
-import { Announcement, Notification, Footer, TopHeader } from "~/components";
+import {
+  Announcement,
+  Notification,
+  Footer,
+  TopHeader,
+  WebhookExpiryWarning,
+} from "~/components";
 import { useDocumentTitle } from "~/hooks";
 
 import styles from "./BasePage.module.scss";
@@ -20,6 +26,9 @@ export default function BasePage({ title, children }) {
       <Announcement />
       <TopHeader />
       <Notification />
+      <div className={styles["global-warning"]}>
+        <WebhookExpiryWarning />
+      </div>
       <div className={styles["main"]}>{children}</div>
       <Footer />
     </div>

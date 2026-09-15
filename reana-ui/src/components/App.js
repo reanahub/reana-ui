@@ -17,25 +17,23 @@ import {
   useParams,
   useLocation,
 } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { Dimmer, Loader } from "semantic-ui-react";
+import { useDispatch, useSelector } from "react-redux";
+import { Button, Dimmer, Loader } from "semantic-ui-react";
 
+import { loadUser } from "~/actions";
 import {
   getUserFetchError,
   isSignedIn,
-  isSignupHidden,
   loadingUser,
   loadingConfig,
 } from "~/selectors";
-import Confirm from "~/pages/signin/Confirm";
 import Signin from "~/pages/signin/Signin";
-import Signup from "~/pages/signin/Signup";
-import OAuthSignin from "~/pages/signin/OAuthSignin";
 import WorkflowList from "~/pages/workflowList/WorkflowList";
 import WorkflowDetails from "~/pages/workflowDetails/WorkflowDetails";
 import Profile from "~/pages/profile/Profile";
 import Status from "~/pages/status/Status";
 import LaunchOnReana from "~/pages/launchOnReana/LaunchOnReana";
+import AccessNotGranted from "~/pages/error/AccessNotGranted";
 import NotFound from "~/pages/error/NotFound";
 import Error from "./Error";
 
@@ -59,14 +57,23 @@ function RedirectDetailsToWorkflows() {
 }
 
 export default function App() {
+  const dispatch = useDispatch();
   const userLoading = useSelector(loadingUser);
   const configLoading = useSelector(loadingConfig);
   const loading = userLoading || configLoading;
   const signedIn = useSelector(isSignedIn);
-  const signupHidden = useSelector(isSignupHidden);
   const error = useSelector(getUserFetchError);
+  if (error?.status === 403 && error?.code === "access_not_granted") {
+    return <AccessNotGranted />;
+  }
   if (!isEmpty(error)) {
-    return <Error title={error.statusText} message={error.message} />;
+    return (
+      <Error
+        title={error.statusText}
+        message={error.message}
+        action={<Button onClick={() => dispatch(loadUser())}>Retry</Button>}
+      />
+    );
   }
   return (
     <BrowserRouter>
@@ -80,14 +87,8 @@ export default function App() {
             path="/signin"
             element={signedIn ? <Navigate to="/" /> : <Signin />}
           />
-          <Route
-            path="/signup"
-            element={
-              signedIn || signupHidden ? <Navigate to="/" /> : <Signup />
-            }
-          />
-          <Route path="/confirm/:token" element={<Confirm />} />
-          <Route path="/signin_callback" element={<OAuthSignin />} />
+          <Route path="/signup" element={<Navigate to="/" />} />
+          <Route path="/confirm/:token" element={<Navigate to="/" />} />
           <Route
             path="/"
             element={
