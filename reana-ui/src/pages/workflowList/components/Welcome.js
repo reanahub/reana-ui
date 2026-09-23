@@ -2,7 +2,7 @@
   -*- coding: utf-8 -*-
 
   This file is part of REANA.
-  Copyright (C) 2020, 2022 CERN.
+  Copyright (C) 2020, 2022, 2026 CERN.
 
   REANA is free software; you can redistribute it and/or modify it
   under the terms of the MIT License; see LICENSE file for more details.
@@ -10,7 +10,6 @@
 
 import { useSelector } from "react-redux";
 import { Container, Icon } from "semantic-ui-react";
-import PropTypes from "prop-types";
 
 import { getConfig } from "~/selectors";
 import { CodeSnippet, Title } from "~/components";
@@ -31,7 +30,7 @@ function WelcomeMsg() {
   const config = useSelector(getConfig);
   return (
     <div>
-      <WelcomeRegular loginRequired={Boolean(config.auth?.bff_enabled)} />
+      <WelcomeRegular />
       <p>and come back to this web page once launched!</p>
       <p>
         For more information about REANA, please see{" "}
@@ -50,7 +49,7 @@ function WelcomeMsg() {
   );
 }
 
-function WelcomeRegular({ loginRequired }) {
+function WelcomeRegular() {
   return (
     <>
       <p>
@@ -63,31 +62,13 @@ function WelcomeRegular({ loginRequired }) {
         <div>source ~/.virtualenvs/reana/bin/activate</div>
         <div># install reana-client</div>
         <div>pip install reana-client</div>
-        <div># set REANA environment variables for the client</div>
-        <WelcomeEnvars />
-        {loginRequired && (
-          <>
-            <div># authenticate with the REANA server</div>
-            <div>reana-client login</div>
-          </>
-        )}
+        <div># authenticate with the REANA server</div>
+        <div>reana-client login --server {api}</div>
         <div># clone and run a simple analysis example</div>
         <div>git clone https://github.com/reanahub/reana-demo-root6-roofit</div>
         <div>cd reana-demo-root6-roofit</div>
         <div>reana-client run -w root6-roofit</div>
       </CodeSnippet>
-    </>
-  );
-}
-
-WelcomeRegular.propTypes = {
-  loginRequired: PropTypes.bool.isRequired,
-};
-
-function WelcomeEnvars() {
-  return (
-    <>
-      <div>export REANA_SERVER_URL={api}</div>
     </>
   );
 }

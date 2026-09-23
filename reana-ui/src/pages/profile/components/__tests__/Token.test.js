@@ -8,29 +8,13 @@
 
 import { render, screen } from "@testing-library/react";
 
-import Welcome from "../Welcome";
+import Token from "../Token";
 
-const mockState = {
-  config: {
-    chatURL: null,
-    docsURL: "https://docs.reana.io",
-  },
-};
-
-jest.mock("react-redux", () => ({
-  useSelector: (selector) => selector(mockState),
-}));
-
-test("shows the CLI login command", () => {
-  render(<Welcome />);
+test("shows the reana-client login command for this server", () => {
+  render(<Token />);
 
   expect(
     screen.getByText("reana-client login --server http://localhost"),
   ).toBeInTheDocument();
-});
-
-test("does not suggest the retired REANA_SERVER_URL variable", () => {
-  render(<Welcome />);
-
   expect(screen.queryByText(/REANA_SERVER_URL/)).toBeNull();
 });
