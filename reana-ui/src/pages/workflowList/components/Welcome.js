@@ -2,7 +2,7 @@
   -*- coding: utf-8 -*-
 
   This file is part of REANA.
-  Copyright (C) 2020, 2022 CERN.
+  Copyright (C) 2020, 2022, 2026 CERN.
 
   REANA is free software; you can redistribute it and/or modify it
   under the terms of the MIT License; see LICENSE file for more details.
@@ -63,12 +63,16 @@ function WelcomeRegular({ loginRequired }) {
         <div>source ~/.virtualenvs/reana/bin/activate</div>
         <div># install reana-client</div>
         <div>pip install reana-client</div>
-        <div># set REANA environment variables for the client</div>
-        <WelcomeEnvars />
-        {loginRequired && (
+        {loginRequired ? (
           <>
             <div># authenticate with the REANA server</div>
-            <div>reana-client login</div>
+            <div>reana-client login --server {api}</div>
+          </>
+        ) : (
+          <>
+            <div># connect the client to the REANA server</div>
+            <div>reana-client server-add {api}</div>
+            <div>reana-client server-use {api}</div>
           </>
         )}
         <div># clone and run a simple analysis example</div>
@@ -83,11 +87,3 @@ function WelcomeRegular({ loginRequired }) {
 WelcomeRegular.propTypes = {
   loginRequired: PropTypes.bool.isRequired,
 };
-
-function WelcomeEnvars() {
-  return (
-    <>
-      <div>export REANA_SERVER_URL={api}</div>
-    </>
-  );
-}
