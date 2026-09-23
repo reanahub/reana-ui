@@ -317,8 +317,9 @@ class Client {
   }
 
   unshareWorkflow(id, { userEmailToUnshareWith }) {
+    // reana-server reads the email from the query string, not the body.
     return this._request(WORKFLOW_UNSHARE_URL(id), {
-      data: { user_email_to_unshare_with: userEmailToUnshareWith },
+      params: { user_email_to_unshare_with: userEmailToUnshareWith },
       method: "post",
     });
   }
