@@ -30,6 +30,32 @@ test.each([
 
   render(<Welcome />);
 
-  const loginCommand = screen.queryByText("reana-client login");
+  const loginCommand = screen.queryByText(
+    "reana-client login --server http://localhost",
+  );
   expect(Boolean(loginCommand)).toBe(expected);
+});
+
+test.each([true, false])(
+  "does not suggest the retired REANA_SERVER_URL variable (BFF: %s)",
+  (bffEnabled) => {
+    mockState.config.auth.bff_enabled = bffEnabled;
+
+    render(<Welcome />);
+
+    expect(screen.queryByText(/REANA_SERVER_URL/)).toBeNull();
+  },
+);
+
+test("connects to the server without logging in when BFF auth is disabled", () => {
+  mockState.config.auth.bff_enabled = false;
+
+  render(<Welcome />);
+
+  expect(
+    screen.getByText("reana-client server-add http://localhost"),
+  ).toBeInTheDocument();
+  expect(
+    screen.getByText("reana-client server-use http://localhost"),
+  ).toBeInTheDocument();
 });
