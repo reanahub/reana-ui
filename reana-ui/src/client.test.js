@@ -11,6 +11,7 @@ import axios from "axios";
 import client, {
   INTERACTIVE_SESSION_URL,
   USER_INFO_URL,
+  WORKFLOW_UNSHARE_URL,
   isSessionExpiredError,
 } from "~/client";
 
@@ -134,5 +135,22 @@ test("does not add a CSRF header to GET requests", async () => {
 
   expect(axios).toHaveBeenCalledWith(
     expect.objectContaining({ method: "get", headers: {} }),
+  );
+});
+
+test("sends the unshare email as a query parameter", async () => {
+  axios.mockResolvedValueOnce({ data: {} });
+
+  await client.unshareWorkflow("workflow-id", {
+    userEmailToUnshareWith: "jane@example.org",
+  });
+
+  expect(axios).toHaveBeenCalledWith(
+    expect.objectContaining({
+      url: WORKFLOW_UNSHARE_URL("workflow-id"),
+      method: "post",
+      params: { user_email_to_unshare_with: "jane@example.org" },
+      data: null,
+    }),
   );
 });
