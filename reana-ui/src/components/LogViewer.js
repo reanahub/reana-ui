@@ -9,6 +9,7 @@
 */
 
 import {
+  Fragment,
   useCallback,
   useDeferredValue,
   useEffect,
@@ -21,6 +22,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { Icon } from "semantic-ui-react";
 import CopyButton from "./CopyButton";
+import { applyStyleSpans, parseAnsiLines, resolveStyle } from "./ansi";
 import LogSearchBar from "./LogSearchBar";
 import styles from "./LogViewer.module.scss";
 
@@ -206,7 +208,14 @@ export default function LogViewer({ logs, className = "" }) {
   const skipNextSelectionScrollRef = useRef(false);
   const searchInputRef = useRef(null);
   const hScrolledForRef = useRef(-1);
-  const lines = useMemo(() => splitLogLines(logs), [logs]);
+  const parsedLines = useMemo(
+    () => parseAnsiLines(splitLogLines(logs)),
+    [logs],
+  );
+  const lines = useMemo(
+    () => parsedLines.map((parsed) => parsed.text),
+    [parsedLines],
+  );
   const selection = useMemo(
     () => parseLogFragment(location.hash, lines.length),
     [location.hash, lines.length],
@@ -470,6 +479,7 @@ export default function LogViewer({ logs, className = "" }) {
               lineNumber >= selection.start &&
               lineNumber <= selection.end;
             const line = lines[virtualLine.index];
+            const { spans } = parsedLines[virtualLine.index];
 
             return (
               <div
@@ -506,35 +516,67 @@ export default function LogViewer({ logs, className = "" }) {
                   {lineNumber}
                 </a>
                 <span className={styles.content}>
-                  {matches.length === 0
+                  {matches.length === 0 && spans.length === 0
                     ? line
-                    : getLineSegments(
-                        line,
-                        lineOffsets[virtualLine.index],
-                        matches,
-                        activeIndex,
-                      ).map((segment, index) =>
-                        segment.highlight === "none" ? (
-                          segment.text
-                        ) : (
-                          <mark
+                    : applyStyleSpans(
+                        matches.length === 0
+                          ? [{ text: line, highlight: "none" }]
+                          : getLineSegments(
+                              line,
+                              lineOffsets[virtualLine.index],
+                              matches,
+                              activeIndex,
+                            ),
+                        spans,
+                      ).map((segment, index) => {
+                        const { classNames, css } = resolveStyle(segment.style);
+                        const styled = classNames.length > 0 || css;
+
+                        // Nested inside the styling so a background cannot
+                        // paint over the match.
+                        const body =
+                          segment.highlight === "none" ? (
+                            segment.text
+                          ) : (
+                            <mark
+                              ref={
+                                segment.highlight === "current" &&
+                                virtualLine.index === activeStartLine
+                                  ? revealActiveMark
+                                  : undefined
+                              }
+                              className={`${styles.mark} ${
+                                segment.highlight === "current"
+                                  ? styles["mark-current"]
+                                  : ""
+                              }`}
+                            >
+                              {segment.text}
+                            </mark>
+                          );
+
+                        if (!styled) {
+                          return segment.highlight === "none" ? (
+                            body
+                          ) : (
+                            <Fragment key={index}>{body}</Fragment>
+                          );
+                        }
+
+                        return (
+                          <span
                             key={index}
-                            ref={
-                              segment.highlight === "current" &&
-                              virtualLine.index === activeStartLine
-                                ? revealActiveMark
+                            className={
+                              classNames.length > 0
+                                ? classNames.map((n) => styles[n]).join(" ")
                                 : undefined
                             }
-                            className={`${styles.mark} ${
-                              segment.highlight === "current"
-                                ? styles["mark-current"]
-                                : ""
-                            }`}
+                            style={css ?? undefined}
                           >
-                            {segment.text}
-                          </mark>
-                        ),
-                      )}
+                            {body}
+                          </span>
+                        );
+                      })}
                 </span>
               </div>
             );
