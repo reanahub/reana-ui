@@ -1,5 +1,73 @@
-const { getLoaders, loaderByName } = require("@craco/craco");
+const fs = require("fs");
+const path = require("path");
 const CracoAlias = require("craco-alias");
+
+const JSROOT_DIR = path.resolve(path.dirname(require.resolve("jsroot")), "..");
+const MATHJAX_DIR = path.dirname(
+  require.resolve("mathjax/es5/tex-svg.js", { paths: [JSROOT_DIR] }),
+);
+
+// Third-party files of the sandboxed ROOT file viewer in
+// `public/root-viewer/app/`. jsroot loads MathJax from `../mathjax/3.2.0/`
+// relative to the viewer page, together with the TeX extensions it configures.
+const ROOT_VIEWER_FILES = [
+  // The package's `jsroot.min.js` is a build of another jsroot version, so
+  // publish `jsroot.js` and let the production build minify it.
+  {
+    target: "root-viewer/app/jsroot.js",
+    source: path.join(JSROOT_DIR, "build", "jsroot.js"),
+    minimized: false,
+  },
+  {
+    target: "root-viewer/mathjax/3.2.0/es5/tex-svg.js",
+    source: path.join(MATHJAX_DIR, "tex-svg.js"),
+    minimized: true,
+  },
+  ...["color", "mathtools", "physics", "upgreek"].map((extension) => ({
+    target: `root-viewer/mathjax/3.2.0/es5/input/tex/extensions/${extension}.js`,
+    source: path.join(
+      MATHJAX_DIR,
+      "input",
+      "tex",
+      "extensions",
+      `${extension}.js`,
+    ),
+    minimized: true,
+  })),
+];
+
+/**
+ * Webpack plugin publishing files from `node_modules`, e.g.
+ * `{ target: "published/path.js", source: "/path/to/file.js", minimized: true }`.
+ * Files marked as `minimized` are not minified again in production builds.
+ */
+class PublishFilesPlugin {
+  constructor(files) {
+    this.files = files;
+  }
+
+  apply(compiler) {
+    const { Compilation, sources } = compiler.webpack;
+    compiler.hooks.thisCompilation.tap("PublishFilesPlugin", (compilation) => {
+      compilation.hooks.processAssets.tap(
+        {
+          name: "PublishFilesPlugin",
+          stage: Compilation.PROCESS_ASSETS_STAGE_ADDITIONAL,
+        },
+        () => {
+          for (const { target, source, minimized } of this.files) {
+            compilation.fileDependencies.add(source);
+            compilation.emitAsset(
+              target,
+              new sources.RawSource(fs.readFileSync(source)),
+              { minimized },
+            );
+          }
+        },
+      );
+    });
+  }
+}
 
 module.exports = {
   plugins: [
@@ -37,32 +105,8 @@ module.exports = {
     enable: false,
   },
   webpack: {
-    configure: (webpackConfig) => {
-      // With the current production browserslist targets, Babel rewrites
-      // jsroot's `import.meta?.url` so a bare `import.meta` survives webpack
-      // and makes the preview chunk invalid as a classic script ("Cannot use
-      // 'import.meta' outside a module"). Development targets do not trigger
-      // this, so check the production output. Exclude jsroot from the
-      // dependency Babel rule (the one without `include`) and let webpack
-      // resolve the URL. This leaves ES2020 syntax in the jsroot chunks.
-      const { matches } = getLoaders(
-        webpackConfig,
-        loaderByName("babel-loader"),
-      );
-      const dependencyRules = matches
-        .map(({ parent, index }) => parent[index])
-        .filter((rule) => !rule.include);
-      if (dependencyRules.length !== 1) {
-        throw new Error(
-          `craco.config.js: expected one babel-loader rule for dependencies, found ${dependencyRules.length}`,
-        );
-      }
-      const [dependencyRule] = dependencyRules;
-      dependencyRule.exclude = [
-        dependencyRule.exclude,
-        /node_modules[\\/]jsroot[\\/]/,
-      ].filter(Boolean);
-      return webpackConfig;
+    plugins: {
+      add: [new PublishFilesPlugin(ROOT_VIEWER_FILES)],
     },
   },
 };

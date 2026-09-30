@@ -1,0 +1,52 @@
+<!doctype html>
+<!--
+  -*- coding: utf-8 -*-
+
+  This file is part of REANA.
+  Copyright (C) 2026 CERN.
+
+  REANA is free software; you can redistribute it and/or modify it
+  under the terms of the MIT License; see LICENSE file for more details.
+-->
+<!--
+  Sandboxed viewer for ROOT file previews.
+
+  jsroot evaluates formulas stored in ROOT files as JavaScript, so it must not
+  run in REANA's origin. REANA-UI embeds this page in a sandboxed iframe (and
+  the web server serves it with a `sandbox` Content-Security-Policy), which
+  gives it an opaque origin without access to REANA cookies or the REANA API.
+  The file content is sent by REANA-UI with `postMessage`.
+
+  jsroot loads MathJax from `../mathjax/3.2.0/` relative to this page, which is
+  why the build copies MathJax to `root-viewer/mathjax/3.2.0/`.
+-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>ROOT file viewer</title>
+    <style>
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+      }
+
+      body {
+        background: #e6e6fa;
+        box-sizing: border-box;
+        padding-left: 1em;
+      }
+
+      #root-browser {
+        height: 100%;
+        /* jsroot's browser positions its internal components absolutely */
+        position: relative;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root-browser" ignoreurl="true" noselect="true"></div>
+    <script src="viewer.js"></script>
+    <script src="jsroot.js"></script>
+  </body>
+</html>

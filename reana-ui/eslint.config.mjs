@@ -14,6 +14,8 @@ const compat = new FlatCompat({
 
 // eslint-disable-next-line import/no-anonymous-default-export
 export default [
+  // Production build output, including the third-party ROOT file viewer files
+  { ignores: ["build/"] },
   ...fixupConfigRules(
     compat.extends("plugin:prettier/recommended", "react-app", "prettier"),
   ),
