@@ -10,7 +10,7 @@
 
 import sortBy from "lodash/sortBy";
 import PropTypes from "prop-types";
-import { Suspense, lazy, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useNavigationType } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { Button, Icon, Loader, Message, Modal } from "semantic-ui-react";
@@ -20,11 +20,9 @@ import { getConfig } from "~/selectors";
 import { formatFileSize, getMimeType, parseFiles } from "~/util";
 import { CopyButton } from "~/components";
 
-import styles from "./FilePreview.module.scss";
+import ROOTPreview from "./ROOTPreview";
 
-// ROOTPreview is lazily loaded to enable code splitting, so that jsroot is not part of
-// the main application bundle
-const ROOTPreview = lazy(() => import("./ROOTPreview.js"));
+import styles from "./FilePreview.module.scss";
 
 /**
  * Preview of image files.
@@ -278,20 +276,7 @@ export default function FilePreview({ workflow, fileName, onClose }) {
           </Modal.Description>
         </Modal.Content>
       )}
-      <Suspense
-        fallback={
-          <Modal.Content>
-            <Loader
-              active
-              className={styles["dark-loader"]}
-              inline="centered"
-              content="Loading file preview..."
-            />
-          </Modal.Content>
-        }
-      >
-        {preview}
-      </Suspense>
+      {preview}
       {!error && (
         <Modal.Actions>
           <CopyButton text={shareUrl} label="Copy link" icon="linkify" />
