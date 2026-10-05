@@ -12,15 +12,21 @@ import AccessNotGranted from "./AccessNotGranted";
 
 const mockDispatch = jest.fn();
 let mockNotification = null;
+let mockFetchError = undefined;
 
 jest.mock("react-redux", () => ({
   useDispatch: () => mockDispatch,
-  useSelector: (selector) => selector({ notification: mockNotification }),
+  useSelector: (selector) =>
+    selector({
+      notification: mockNotification,
+      auth: { error: { authorizationError: mockFetchError } },
+    }),
 }));
 
 beforeEach(() => {
   mockDispatch.mockClear();
   mockNotification = null;
+  mockFetchError = undefined;
 });
 
 test("explains that authentication succeeded but entitlement did not", () => {
@@ -31,6 +37,19 @@ test("explains that authentication succeeded but entitlement did not", () => {
   ).toBeInTheDocument();
   expect(
     screen.getByText(/authenticated, but your identity/i),
+  ).toBeInTheDocument();
+});
+
+test("shows the server's reason in the page body", () => {
+  mockFetchError = {
+    status: 403,
+    code: "access_not_granted",
+    message: "User does not have the required 'reana:user' role.",
+  };
+  render(<AccessNotGranted />);
+
+  expect(
+    screen.getByText("User does not have the required 'reana:user' role."),
   ).toBeInTheDocument();
 });
 

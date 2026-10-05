@@ -172,7 +172,11 @@ export function loadUser({ loader = true } = {}) {
             data: { code, message } = {},
           } = err.response ?? {};
           errorData = { status, statusText, code, message };
-          dispatch(errorActionCreator(err, USER_INFO_URL));
+          // A missing entitlement gets its own screen, which already shows
+          // the server's message; a notification would only duplicate it.
+          if (!(status === 403 && code === "access_not_granted")) {
+            dispatch(errorActionCreator(err, USER_INFO_URL));
+          }
         }
         // Only a foreground fetch (the initial app load) may block the whole
         // app behind App's error gate. A background refresh (e.g. Profile's
