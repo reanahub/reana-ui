@@ -101,6 +101,15 @@ function getCookieValue(name) {
   return rawValue === undefined ? undefined : decodeURIComponent(rawValue);
 }
 
+/**
+ * Whether this browser holds a REANA session, judged by the CSRF cookie that
+ * is set on sign-in and cleared on sign-out. Usable when the user details
+ * cannot be fetched, e.g. while the identity provider is failing.
+ */
+export function hasBrowserSession() {
+  return !!getCookieValue(CSRF_COOKIE);
+}
+
 class Client {
   /**
    * Class responsible of encapsulating all the network calls so the library used

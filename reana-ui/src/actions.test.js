@@ -15,6 +15,7 @@ import {
   GITLAB_WEBHOOK_TOKEN_RETRY_DELAY_MS,
   NOTIFICATION,
   USER_FETCH_ERROR,
+  USER_SIGNEDOUT,
   USER_SIGNOUT,
   userSignout,
   WORKFLOW_LIST_REFRESH,
@@ -221,3 +222,13 @@ test.each([
     });
   },
 );
+
+test("treats an empty logout URL as a completed local sign-out", async () => {
+  jest.spyOn(client, "signOut").mockResolvedValue({ data: { logout_url: "" } });
+  const dispatch = jest.fn();
+
+  await userSignout()(dispatch);
+
+  expect(dispatch).toHaveBeenCalledTimes(2);
+  expect(dispatch).toHaveBeenLastCalledWith({ type: USER_SIGNEDOUT });
+});
