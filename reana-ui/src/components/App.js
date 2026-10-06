@@ -2,7 +2,7 @@
 	-*- coding: utf-8 -*-
 
 	This file is part of REANA.
-	Copyright (C) 2019, 2020, 2021, 2022, 2023, 2024, 2025 CERN.
+	Copyright (C) 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026 CERN.
 
   REANA is free software; you can redistribute it and/or modify it
   under the terms of the MIT License; see LICENSE file for more details.
@@ -20,8 +20,10 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { Button, Dimmer, Loader } from "semantic-ui-react";
 
-import { loadUser } from "~/actions";
+import { loadUser, userSignout } from "~/actions";
+import { hasBrowserSession } from "~/client";
 import {
+  getNotification,
   getUserFetchError,
   isSignedIn,
   loadingUser,
@@ -36,6 +38,7 @@ import LaunchOnReana from "~/pages/launchOnReana/LaunchOnReana";
 import AccessNotGranted from "~/pages/error/AccessNotGranted";
 import NotFound from "~/pages/error/NotFound";
 import Error from "./Error";
+import Notification from "./Notification";
 
 import "./App.module.scss";
 import LauncherBadgeCreator from "~/pages/badgeCreator/LauncherBadgeCreator";
@@ -63,16 +66,31 @@ export default function App() {
   const loading = userLoading || configLoading;
   const signedIn = useSelector(isSignedIn);
   const error = useSelector(getUserFetchError);
+  const notification = useSelector(getNotification);
   if (error?.status === 403 && error?.code === "access_not_granted") {
     return <AccessNotGranted />;
   }
   if (!isEmpty(error)) {
     return (
-      <Error
-        title={error.statusText}
-        message={error.message}
-        action={<Button onClick={() => dispatch(loadUser())}>Retry</Button>}
-      />
+      <>
+        {/* The fetch failure is already described below; only surface other
+            notifications, such as a failed sign-out. */}
+        {notification?.message !== error.message && <Notification />}
+        <Error
+          title={error.statusText}
+          message={error.message}
+          action={
+            <>
+              <Button onClick={() => dispatch(loadUser())}>Retry</Button>
+              {hasBrowserSession() && (
+                <Button onClick={() => dispatch(userSignout())}>
+                  Sign out
+                </Button>
+              )}
+            </>
+          }
+        />
+      </>
     );
   }
   return (
