@@ -2,14 +2,12 @@
 	-*- coding: utf-8 -*-
 
 	This file is part of REANA.
-	Copyright (C) 2023 CERN.
+	Copyright (C) 2023, 2026 CERN.
 
   REANA is free software; you can redistribute it and/or modify it
   under the terms of the MIT License; see LICENSE file for more details.
 */
 
-import { buildGUI } from "jsroot";
-import uniqueId from "lodash/uniqueId";
 import { useEffect, useRef, useState } from "react";
 import { Modal } from "semantic-ui-react";
 
@@ -17,14 +15,17 @@ import client from "~/client";
 
 import styles from "./FilePreview.module.scss";
 
+// jsroot evaluates formulas stored in ROOT files as JavaScript, so it runs in
+// a sandboxed viewer with an opaque origin instead of in REANA's origin.
+const ROOT_VIEWER_URL = `${process.env.PUBLIC_URL}/root-viewer/app/index.html`;
+
 /**
  * Preview of ROOT files.
  */
 export default function ROOTPreview({ workflow, fileName }) {
-  // Ref used to check whether the div is ready to be modified by jsroot
-  const divRef = useRef(null);
-  const [id] = useState(uniqueId("RootBrowser-"));
+  const viewerRef = useRef(null);
   const [filebuffer, setFilebuffer] = useState(null);
+  const [viewerReady, setViewerReady] = useState(false);
 
   // Download the file and save it as an ArrayBuffer
   useEffect(() => {
@@ -33,25 +34,43 @@ export default function ROOTPreview({ workflow, fileName }) {
       .then((res) => setFilebuffer(res.data));
   }, [workflow, fileName]);
 
-  // Open the ROOT file after the download, when the div is ready
+  // Wait for the viewer to announce that it can receive the file
   useEffect(() => {
-    if (divRef.current === null || filebuffer === null) {
+    function handleMessage(event) {
+      if (
+        event.source !== viewerRef.current?.contentWindow ||
+        event.origin !== "null"
+      ) {
+        return;
+      }
+      if (event.data?.type === "reana-root-viewer:ready") {
+        setViewerReady(true);
+      }
+    }
+    window.addEventListener("message", handleMessage);
+    return () => window.removeEventListener("message", handleMessage);
+  }, []);
+
+  // Send the file to the viewer. Its origin is opaque, so it can only be
+  // addressed with the "*" target origin.
+  useEffect(() => {
+    if (!viewerReady || filebuffer === null) {
       return;
     }
-    buildGUI(divRef.current.id).then((rootGUI) => {
-      rootGUI.openRootFile(filebuffer);
-    });
-  });
+    viewerRef.current.contentWindow.postMessage(
+      { type: "reana-root-viewer:open", buffer: filebuffer },
+      "*",
+    );
+  }, [viewerReady, filebuffer]);
 
   return (
-    <Modal.Content
-      className={`${styles["fill-modal"]} ${styles["root-modal"]}`}
-    >
-      <div
-        className={styles["root-browser"]}
-        id={id}
-        noselect="true"
-        ref={divRef}
+    <Modal.Content className={styles["fill-modal"]}>
+      <iframe
+        className={styles["root-viewer"]}
+        ref={viewerRef}
+        src={ROOT_VIEWER_URL}
+        sandbox="allow-scripts allow-downloads"
+        title={`ROOT file viewer for ${fileName}`}
       />
     </Modal.Content>
   );
