@@ -10,10 +10,23 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { useParams, useSearchParams, useNavigate } from "react-router-dom";
-import { Container, Dimmer, Icon, Loader, Tab } from "semantic-ui-react";
+import {
+  Link,
+  useParams,
+  useSearchParams,
+  useNavigate,
+} from "react-router-dom";
+import {
+  Button,
+  Container,
+  Dimmer,
+  Icon,
+  Loader,
+  Tab,
+} from "semantic-ui-react";
 import client from "~/client";
 import {
+  clearNotification,
   fetchWorkflow,
   fetchWorkflowLogs,
   fetchWorkflowSpecification,
@@ -166,7 +179,24 @@ export default function WorkflowDetails() {
       <Notification
         icon="warning sign"
         header="An error has occurred"
-        message="Sorry, this workflow either does not exist or you are not authorised to see it."
+        message={
+          <>
+            Sorry, this workflow either does not exist or you are not authorised
+            to see it.
+            <span style={{ display: "block", marginTop: "1em" }}>
+              <Button
+                as={Link}
+                to="/"
+                size="small"
+                basic
+                onClick={() => dispatch(clearNotification)}
+              >
+                <Icon name="arrow left" />
+                Back to your workflows
+              </Button>
+            </span>
+          </>
+        }
         closable={false}
         error
       />
