@@ -10,7 +10,7 @@
 
 import sortBy from "lodash/sortBy";
 import PropTypes from "prop-types";
-import { Suspense, lazy, useEffect, useState } from "react";
+import { Component, Suspense, lazy, useEffect, useState } from "react";
 import { useLocation, useNavigationType } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { Button, Icon, Loader, Message, Modal } from "semantic-ui-react";
@@ -108,6 +108,37 @@ function PDFPreview({ fileName, url }) {
       </object>
     </Modal.Content>
   );
+}
+
+/**
+ * Catch errors thrown while rendering a file preview, so that a broken preview
+ * shows a message inside the modal instead of unmounting the whole page.
+ */
+class PreviewErrorBoundary extends Component {
+  state = { error: null };
+
+  static getDerivedStateFromError(error) {
+    return { error };
+  }
+
+  componentDidCatch(error, info) {
+    console.error("File preview failed", error, info.componentStack);
+  }
+
+  render() {
+    if (this.state.error) {
+      return (
+        <Modal.Content>
+          <Message
+            icon="exclamation triangle"
+            content="An error occurred while displaying the file preview. Please use the download button."
+            warning
+          />
+        </Modal.Content>
+      );
+    }
+    return this.props.children;
+  }
 }
 
 const PREVIEW_MIME_PREFIX_WHITELIST = {
@@ -278,20 +309,23 @@ export default function FilePreview({ workflow, fileName, onClose }) {
           </Modal.Description>
         </Modal.Content>
       )}
-      <Suspense
-        fallback={
-          <Modal.Content>
-            <Loader
-              active
-              className={styles["dark-loader"]}
-              inline="centered"
-              content="Loading file preview..."
-            />
-          </Modal.Content>
-        }
-      >
-        {preview}
-      </Suspense>
+      {/* Remount the boundary when the file changes to clear a previous error */}
+      <PreviewErrorBoundary key={`${workflow}/${fileName}`}>
+        <Suspense
+          fallback={
+            <Modal.Content>
+              <Loader
+                active
+                className={styles["dark-loader"]}
+                inline="centered"
+                content="Loading file preview..."
+              />
+            </Modal.Content>
+          }
+        >
+          {preview}
+        </Suspense>
+      </PreviewErrorBoundary>
       {!error && (
         <Modal.Actions>
           <CopyButton text={shareUrl} label="Copy link" icon="linkify" />
