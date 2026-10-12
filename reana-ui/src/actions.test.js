@@ -75,6 +75,9 @@ test("preserves the machine-readable access entitlement error", async () => {
     code: "access_not_granted",
     message: "The required REANA role is missing.",
   });
+  expect(dispatch).not.toHaveBeenCalledWith(
+    expect.objectContaining({ type: ERROR }),
+  );
 });
 
 test("handles a user-info network failure without throwing", async () => {

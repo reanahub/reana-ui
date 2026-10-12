@@ -9,17 +9,28 @@
 import Error from "~/components/Error";
 import Notification from "~/components/Notification";
 import { userSignout } from "~/actions";
-import { useDispatch } from "react-redux";
+import { getUserFetchError } from "~/selectors";
+import { useDispatch, useSelector } from "react-redux";
 import { Button } from "semantic-ui-react";
 
 export default function AccessNotGranted() {
   const dispatch = useDispatch();
+  const error = useSelector(getUserFetchError);
   return (
     <>
       <Notification />
       <Error
         title="Access not granted"
-        message="You are authenticated, but your identity is not entitled to use this REANA deployment. Contact the deployment administrator to request access."
+        message={
+          <>
+            <p>
+              You are authenticated, but your identity is not entitled to use
+              this REANA deployment. Contact the deployment administrator to
+              request access.
+            </p>
+            {error?.message && <p>{error.message}</p>}
+          </>
+        }
         action={
           <Button onClick={() => dispatch(userSignout())}>Sign out</Button>
         }
