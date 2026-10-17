@@ -12,6 +12,7 @@ import { useSelector } from "react-redux";
 import { Container, Icon } from "semantic-ui-react";
 
 import { getConfig } from "~/selectors";
+import { getDocsPageURL } from "~/util";
 import { CodeSnippet, Title } from "~/components";
 import { api } from "~/config";
 
@@ -50,18 +51,24 @@ function WelcomeMsg() {
 }
 
 function WelcomeRegular() {
+  const config = useSelector(getConfig);
+  const installationURL = getDocsPageURL(
+    config.docsURL,
+    "getting-started/installation/",
+  );
   return (
     <>
       <p>
         It seems that you are using REANA for the first time. Would you like to
-        try out a small example? Please proceed as follows:
+        try out a small example? First,{" "}
+        {installationURL ? (
+          <a href={installationURL}>install reana-client</a>
+        ) : (
+          "install reana-client"
+        )}
+        , then proceed as follows:
       </p>
       <CodeSnippet reveal>
-        <div># create new virtual environment</div>
-        <div>virtualenv ~/.virtualenvs/reana</div>
-        <div>source ~/.virtualenvs/reana/bin/activate</div>
-        <div># install reana-client</div>
-        <div>pip install reana-client</div>
         <div># authenticate with the REANA server</div>
         <div>reana-client login --server {api}</div>
         <div># clone and run a simple analysis example</div>

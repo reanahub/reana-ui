@@ -11,6 +11,7 @@ import {
   formatFileSize,
   formatSearch,
   formatValidationWarnings,
+  getDocsPageURL,
   getDuration,
   getMimeType,
   parseWorkflowDates,
@@ -154,5 +155,20 @@ test.each([
     jest.useFakeTimers();
     jest.setSystemTime(new Date(2024, 0, 18, 8, 50, 0));
     expect(parseWorkflowDates(workflow).duration).toEqual(duration);
+  },
+);
+
+test.each([
+  ["https://docs.reana.io", "https://docs.reana.io/getting-started/"],
+  ["https://docs.reana.io/", "https://docs.reana.io/getting-started/"],
+  ["https://example.org/docs/", "https://example.org/docs/getting-started/"],
+])("getDocsPageURL joins %p with a page path", (docsURL, expected) => {
+  expect(getDocsPageURL(docsURL, "getting-started/")).toEqual(expected);
+});
+
+test.each([null, undefined, ""])(
+  "getDocsPageURL returns null without a docs URL (%p)",
+  (docsURL) => {
+    expect(getDocsPageURL(docsURL, "getting-started/")).toBeNull();
   },
 );
