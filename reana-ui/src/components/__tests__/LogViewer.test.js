@@ -23,6 +23,8 @@ import LogViewer, {
   splitLogLines,
 } from "~/components/LogViewer";
 
+const ESC = "\u001b";
+
 const mockScrollToIndex = jest.fn();
 
 jest.mock("@tanstack/react-virtual", () => ({
@@ -277,6 +279,110 @@ describe("LogViewer", () => {
     await waitFor(() =>
       expect(mockScrollToIndex).toHaveBeenCalledWith(1, { align: "start" }),
     );
+  });
+
+  it("renders terminal attributes as styling and hides the escape sequences", () => {
+    const { container } = renderLogViewer(
+      "/workflows/1/job-logs/job-1",
+      `plain ${ESC}[1;31mloud${ESC}[0m tail\n`,
+    );
+
+    const content = container.querySelector(".content");
+    expect(content).toHaveTextContent("plain loud tail");
+    expect(content.textContent).not.toContain("[1;31m");
+
+    const styled = screen.getByText("loud");
+    expect(styled).toHaveStyle({ fontWeight: "bold" });
+    expect(styled).toHaveClass("ansi-fg-1");
+  });
+
+  it("renders a 256-colour sequence as an inline colour", () => {
+    renderLogViewer(
+      "/workflows/1/job-logs/job-1",
+      `${ESC}[38;5;208mwarning${ESC}[39m: deprecated\n`,
+    );
+
+    // The colour is darkened so it stays legible on the light viewport.
+    const styled = screen.getByText("warning");
+    expect(styled).toHaveStyle({ color: "rgb(204, 108, 0)" });
+    expect(styled.className).toBe("");
+  });
+
+  it("leaves plain lines as bare text without wrapper elements", () => {
+    const { container } = renderLogViewer(
+      "/workflows/1/job-logs/job-1",
+      "nothing special here\n",
+    );
+
+    const content = container.querySelector(".content");
+    expect(content).toHaveTextContent("nothing special here");
+    expect(content.querySelector("span")).toBeNull();
+  });
+
+  it("searches the visible text, not the escape sequences", async () => {
+    const { container } = renderLogViewer(
+      "/workflows/1/job-logs/job-1",
+      `${ESC}[32minstalled${ESC}[0m\n`,
+    );
+
+    openSearch();
+    fireEvent.change(screen.getByPlaceholderText("Find in logs"), {
+      target: { value: "installed" },
+    });
+
+    await waitFor(() =>
+      expect(container.querySelectorAll("mark")).toHaveLength(1),
+    );
+    // The colour survives the highlight instead of being replaced by it.
+    expect(container.querySelector(".ansi-fg-2 mark")).not.toBeNull();
+  });
+
+  it("splits a match that straddles a colour change, keeping both colours", async () => {
+    const { container } = renderLogViewer(
+      "/workflows/1/job-logs/job-1",
+      `${ESC}[31mERR${ESC}[32mOR${ESC}[0m tail\n`,
+    );
+
+    openSearch();
+    fireEvent.change(screen.getByPlaceholderText("Find in logs"), {
+      target: { value: "error" },
+    });
+
+    await waitFor(() =>
+      expect(container.querySelectorAll("mark")).toHaveLength(2),
+    );
+    expect(screen.getByText("1 / 1")).toBeInTheDocument();
+
+    expect(container.querySelector(".ansi-fg-1 mark")).not.toBeNull();
+    expect(container.querySelector(".ansi-fg-2 mark")).not.toBeNull();
+    expect(container.querySelector(".content")).toHaveTextContent("ERROR tail");
+  });
+
+  it("keeps the match indicator visible over an ANSI background", async () => {
+    const { container } = renderLogViewer(
+      "/workflows/1/job-logs/job-1",
+      `${ESC}[41mfailed${ESC}[0m\n`,
+    );
+
+    openSearch();
+    fireEvent.change(screen.getByPlaceholderText("Find in logs"), {
+      target: { value: "failed" },
+    });
+
+    await waitFor(() =>
+      expect(container.querySelectorAll("mark")).toHaveLength(1),
+    );
+    expect(container.querySelector(".ansi-bg-1 mark")).not.toBeNull();
+  });
+
+  it("keeps line numbering and selection working on styled logs", () => {
+    renderLogViewer(
+      "/workflows/1/job-logs/job-1#L2",
+      `${ESC}[1mfirst\nsecond${ESC}[0m\n`,
+    );
+
+    expect(screen.getByText("second").closest(".line")).toHaveClass("selected");
+    expect(screen.getByLabelText("Select log line 1")).toBeInTheDocument();
   });
 
   it("updates the fragment while preserving the query string", async () => {
