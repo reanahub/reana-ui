@@ -82,17 +82,20 @@ export default function Status() {
         ...rest,
       };
     },
-    workflow: ({ running, pending, queued, available, ...rest }) => ({
+    workflow: ({ running, pending, queued, available, health, ...rest }) => ({
       title: "Workflows",
       details: [
         `${running} running`,
-        `${pending} pending`,
+        <span className={pending > 0 ? styles.pending : ""}>
+          {`${pending} pending`}
+        </span>,
         `${available} available`,
         <span
-          className={queued > 0 ? styles.highlight : ""}
+          className={queued > 0 ? styles[health] : ""}
         >{`${queued} queued`}</span>,
       ],
       data: getDataSeries({ running, pending, available }),
+      health,
       ...rest,
     }),
     job: ({ running, pending, available, ...rest }) => ({

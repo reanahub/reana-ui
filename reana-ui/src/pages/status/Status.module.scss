@@ -41,8 +41,23 @@
     .usage {
       font-size: 0.8em;
 
-      .highlight {
-        color: teal;
+      .pending {
+        color: #e5975e;
+        font-weight: bold;
+      }
+
+      .healthy {
+        color: #36a165;
+        font-weight: bold;
+      }
+
+      .warning {
+        color: #e5975e;
+        font-weight: bold;
+      }
+
+      .critical {
+        color: #e55e5e;
         font-weight: bold;
       }
     }
