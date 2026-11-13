@@ -659,6 +659,7 @@ export function fetchWorkflowShareStatus(id) {
           sharedWith.push({
             userEmail: share.user_email,
             validUntil: share.valid_until,
+            expired: share.expired,
           });
         }
         dispatch({
