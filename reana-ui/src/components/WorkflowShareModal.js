@@ -18,6 +18,7 @@ import {
   Form,
   Header,
   Icon,
+  Label,
   Loader,
   Message,
   Modal,
@@ -39,6 +40,19 @@ import {
 } from "~/selectors";
 
 import styles from "./WorkflowShareModal.module.scss";
+
+// The server checks share expiry against the current UTC date.
+function getTodayUTC() {
+  const now = new Date();
+  return new Date(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
+}
+
+function getShareExpiryHint({ validUntil, expired }) {
+  if (!validUntil) return "Access does not expire";
+  return expired
+    ? "Access ended at the end of this day (UTC)"
+    : "Access ends at the end of this day (UTC)";
+}
 
 function WorkflowShareStatus({
   workflow,
@@ -100,10 +114,20 @@ function WorkflowShareStatus({
                       className={styles["share-user-icon"]}
                     />
                     {share.userEmail}
+                    {share.expired && (
+                      <Label
+                        basic
+                        color="red"
+                        size="tiny"
+                        className={styles["share-expired-label"]}
+                      >
+                        Expired
+                      </Label>
+                    )}
                   </div>
                   <div>
                     <Popup
-                      content={"Expires"}
+                      content={getShareExpiryHint(share)}
                       position="top center"
                       disabled={false}
                       trigger={
@@ -361,7 +385,7 @@ export default function WorkflowShareModal() {
               }
             />
             <Popup
-              content={"Expires"}
+              content={"Last day of access (UTC)"}
               position="top center"
               trigger={
                 <Button
@@ -431,7 +455,7 @@ export default function WorkflowShareModal() {
           closeIcon
           size="mini"
         >
-          <Modal.Header>Set expiration date</Modal.Header>
+          <Modal.Header>Set last day of access</Modal.Header>
           <Modal.Content>
             <Checkbox
               label="Never expires"
@@ -449,8 +473,11 @@ export default function WorkflowShareModal() {
               disabled={neverExpires}
               value={expirationDate}
               locale="en-US"
-              minDate={new Date()}
+              minDate={getTodayUTC()}
             />
+            <p className={styles["expiration-date-hint"]}>
+              Access ends at the end of this day (UTC).
+            </p>
           </Modal.Content>
           <Modal.Actions className={styles["expiration-modal-actions"]}>
             <Button
