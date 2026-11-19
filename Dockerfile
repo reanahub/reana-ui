@@ -30,7 +30,7 @@ RUN apt-get update -y && \
     rm -rf /var/lib/apt/lists/*
 
 # Serve frontend application
-FROM docker.io/library/nginx:1.28
+FROM docker.io/library/nginx:1.30.7-alpine
 COPY --from=react-build /code/reana-ui/build /usr/share/nginx/html
 COPY nginx/reana-ui.conf /etc/nginx/conf.d/default.conf
 EXPOSE 80
