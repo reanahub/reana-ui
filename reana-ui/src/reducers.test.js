@@ -11,6 +11,9 @@ import {
   GITLAB_WEBHOOK_TOKEN_FETCH,
   GITLAB_WEBHOOK_TOKEN_RECEIVED,
   GITLAB_WEBHOOK_TOKEN_UPDATED,
+  PERSISTENT_NOTIFICATIONS_ERROR,
+  PERSISTENT_NOTIFICATIONS_RECEIVED,
+  PERSISTENT_NOTIFICATION_READ,
   USER_FETCH,
   USER_FETCH_ERROR,
   USER_RECEIVED,
@@ -164,4 +167,34 @@ test("a late status read cannot overwrite a successful renewal", () => {
   });
 
   expect(state.gitlabWebhookToken.status).toEqual(renewed);
+});
+
+test("a repeated read acknowledgement keeps other unread notifications counted", () => {
+  let state = reanaApp(undefined, {
+    type: PERSISTENT_NOTIFICATIONS_RECEIVED,
+    notifications: [
+      { id: "1", read_at: null },
+      { id: "2", read_at: null },
+    ],
+    unreadCount: 2,
+  });
+
+  state = reanaApp(state, { type: PERSISTENT_NOTIFICATION_READ, id: "1" });
+  state = reanaApp(state, { type: PERSISTENT_NOTIFICATION_READ, id: "1" });
+
+  expect(state.persistentNotifications.unreadCount).toBe(1);
+  expect(state.persistentNotifications.items[0].read_at).not.toBeNull();
+  expect(state.persistentNotifications.items[1].read_at).toBeNull();
+});
+
+test("a failed notification fetch is remembered until the next success", () => {
+  let state = reanaApp(undefined, { type: PERSISTENT_NOTIFICATIONS_ERROR });
+  expect(state.persistentNotifications.error).toBe(true);
+
+  state = reanaApp(state, {
+    type: PERSISTENT_NOTIFICATIONS_RECEIVED,
+    notifications: [],
+    unreadCount: 0,
+  });
+  expect(state.persistentNotifications.error).toBe(false);
 });

@@ -12,6 +12,12 @@ import { USER_ERROR } from "./errors";
 
 // Notification
 export const getNotification = (state) => state.notification;
+export const getPersistentNotifications = (state) =>
+  state.persistentNotifications.items;
+export const getPersistentNotificationsUnreadCount = (state) =>
+  state.persistentNotifications.unreadCount;
+export const getPersistentNotificationsError = (state) =>
+  state.persistentNotifications.error;
 
 // Config
 export const getConfig = (state) => state.config;
