@@ -180,6 +180,30 @@ beforeEach(() => {
   mockDispatch.mockClear();
 });
 
+test("expired logs display the cluster retention message", () => {
+  mockState = {
+    details: {
+      loadingDetails: false,
+      details: {
+        [WORKFLOW_ID]: {
+          logs: {
+            logsPrunedAt: "2026-07-13T03:00:00Z",
+            logsPrunedMessage:
+              "The logs for this run were pruned by the cluster's retention policy on 2026-07-13T03:00:00Z and are no longer available.",
+          },
+        },
+      },
+    },
+  };
+
+  renderJobLogs(`/workflows/${WORKFLOW_ID}/job-logs`);
+
+  expect(screen.getByText("Workflow logs expired")).toBeInTheDocument();
+  expect(
+    screen.getByText(/pruned by the cluster's retention policy/),
+  ).toBeInTheDocument();
+});
+
 test("job-logs/:job#L42 — correct job is selected and line 42 is highlighted", async () => {
   mockState = JOB_STATE;
   renderJobLogs(`/workflows/${WORKFLOW_ID}/job-logs/${JOB_ID}#L42`);
