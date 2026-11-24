@@ -1,6 +1,6 @@
 /*
   This file is part of REANA.
-  Copyright (C) 2022, 2023 CERN.
+  Copyright (C) 2022, 2023, 2026 CERN.
 
   REANA is free software; you can redistribute it and/or modify it
   under the terms of the MIT License; see LICENSE file for more details.
@@ -11,6 +11,7 @@ import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 import { getConfig } from "~/selectors";
+import { getDocsPageURL } from "~/util";
 
 import exampleRootImg from "~/images/example-root.png";
 import exampleAtlasRecastImg from "~/images/example-atlas-recast.png";
@@ -46,6 +47,10 @@ export default function Welcome() {
   // If the REANA admin has not specified a list of demo repositories, use the
   // default ones.
   const launcherExamples = repositoriesFromConfig ?? DEFAULT_DEMO_REPOSITORIES;
+  const launcherDocsURL = getDocsPageURL(
+    docsURL,
+    "running-workflows/launching-workflows/",
+  );
 
   return (
     <Container text className={styles.container}>
@@ -56,11 +61,14 @@ export default function Welcome() {
       <p>
         If your analysis is hosted on an external site, please provide a{" "}
         <code>url</code> parameter that would point to where your analysis is
-        hosted. See the{" "}
-        <a href={`${docsURL}/running-workflows/launching-workflows/`}>
-          launcher docs
-        </a>{" "}
-        for more details.
+        hosted.
+        {launcherDocsURL && (
+          <>
+            {" "}
+            See the <a href={launcherDocsURL}>launcher docs</a> for more
+            details.
+          </>
+        )}
       </p>
       <p>You can start by launching one of the following demo examples:</p>
       <Card.Group itemsPerRow={3} className={styles["card-container"]} centered>

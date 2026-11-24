@@ -379,3 +379,16 @@ export function stringifyQueryParams(params) {
     skipEmptyString: true,
   });
 }
+
+/**
+ * Returns the URL of a page of the REANA documentation.
+ * @param {String} docsURL Base URL of the documentation, as configured
+ * @param {String} path Page path, relative to the documentation root
+ * @returns {String|null} Page URL, or null when no documentation URL is set
+ */
+export function getDocsPageURL(docsURL, path) {
+  if (!docsURL) {
+    return null;
+  }
+  return `${docsURL.replace(/\/+$/, "")}/${path.replace(/^\/+/, "")}`;
+}
