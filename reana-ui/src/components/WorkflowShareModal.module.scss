@@ -2,11 +2,13 @@
   -*- coding: utf-8 -*-
 
   This file is part of REANA.
-  Copyright (C) 2023, 2024 CERN.
+  Copyright (C) 2023, 2024, 2026 CERN.
 
   REANA is free software; you can redistribute it and/or modify it
   under the terms of the MIT License; see LICENSE file for more details.
 */
+
+@import "@palette";
 
 :global(.ui.dimmer) :global(.ui.loader).loader-share-status:after {
   border-color: #767676 transparent transparent;
@@ -43,6 +45,15 @@
 
 :global(i.icon).share-user-icon {
   margin-right: 0.25em;
+}
+
+:global(.ui.label).share-expired-label {
+  margin-left: 0.5em;
+}
+
+.expiration-date-hint {
+  margin-top: 1em;
+  color: $gray;
 }
 
 :global(.ui.modal) > :global(.actions).sharing-modal-actions {
