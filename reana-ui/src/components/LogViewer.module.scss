@@ -15,6 +15,66 @@
   margin: 1em 0;
 }
 
+// Darkened from the terminal defaults: bright yellow and cyan are unreadable
+// on $sepia.
+$ansi-foreground: (
+  $dark-blue,
+  $sui-red,
+  #1a7f37,
+  #8a6d00,
+  #1a69a4,
+  $sui-violet,
+  #00807a,
+  $gray,
+  $raven,
+  #e03c3c,
+  #1f9e46,
+  #a88400,
+  $sui-blue,
+  #8055d8,
+  $sui-teal,
+  $dark-gray
+);
+
+// Tinted: the foreground palette would paint dark on dark.
+$ansi-background: (
+  #92bcfc,
+  #fda1a6,
+  #4fe74b,
+  #fab838,
+  #7ebffc,
+  #d6a5fd,
+  #53dfd7,
+  #b8b8b8,
+  #9cc2fc,
+  #fdaaaf,
+  #62f25f,
+  #fbc356,
+  #8dc7fc,
+  #dbaffd,
+  #66eae2,
+  #c2c2c2
+);
+
+@for $i from 0 through 15 {
+  .ansi-fg-#{$i} {
+    color: nth($ansi-foreground, $i + 1);
+  }
+
+  .ansi-bg-#{$i} {
+    background-color: nth($ansi-background, $i + 1);
+  }
+}
+
+// Inverse video with only one colour set falls back to these.
+.ansi-fg-default {
+  color: $sepia;
+}
+
+.ansi-bg-default {
+  background-color: $dark-blue;
+}
+
 .viewport {
   width: 100%;
   overflow: auto;
