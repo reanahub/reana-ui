@@ -34,21 +34,21 @@ as follows.
 Install a local REANA instance on your laptop, following [REANA developer
 wiki](https://github.com/reanahub/reana/wiki/Using-live-code-reload-and-debug-mode).
 
-Install Node version 18 and Yarn version 4. If you are on macOS, beware that
-Yarn v4 may not be available in brew, so use the official upstream
-installation technique. For example:
-
-```console
-mise use -g node@18
-open https://yarnpkg.com/getting-started/install
-```
-
 Clone this repository if you haven't already and go into the React package
 directory:
 
 ```console
 git clone https://github.com/reanahub/reana-ui.git
 cd reana-ui/reana-ui
+```
+
+Install Node version 22 and Yarn version 4. If you are on macOS, beware that
+Yarn v4 may not be available in brew, so use the official upstream
+installation technique. For example:
+
+```console
+mise install
+open https://yarnpkg.com/getting-started/install
 ```
 
 We can now install dependencies and start the development server:

@@ -1,6 +1,6 @@
-# Use Node 22.16
+# Use Node 22.23
 # hadolint ignore=DL3029
-FROM --platform=$BUILDPLATFORM docker.io/library/node:22.16.0 AS react-build
+FROM --platform=$BUILDPLATFORM docker.io/library/node:22.23.5 AS react-build
 
 # Use default answers in installation commands
 ENV DEBIAN_FRONTEND=noninteractive
